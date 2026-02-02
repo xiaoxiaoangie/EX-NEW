@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EX平台功能清单 - 项目管理</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg: #f8fafc;
+            --bg-card: #ffffff;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .stat-card .progress-bar {
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            margin-top: 12px;
+            overflow: hidden;
+        }
+
+        .stat-card .progress-fill {
+            height: 100%;
+            background: var(--success);
+            transition: width 0.3s ease;
+        }
+
+        .filters {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-group label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+            color: var(--text);
+            min-width: 150px;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .actions {
+            margin-left: auto;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg);
+        }
+
+        .content {
+            background: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .role-section {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .role-section:last-child {
+            border-bottom: none;
+        }
+
+        .role-header {
+            padding: 20px 30px;
+            background: linear-gradient(135deg, var(--primary) 0%, #6366f1 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .role-header h2 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .role-header .role-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+        }
+
+        .role-header .role-stats span {
+            opacity: 0.9;
+        }
+
+        .module-section {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .module-section:last-child {
+            border-bottom: none;
+        }
+
+        .module-header {
+            padding: 15px 30px;
+            background: #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .module-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .module-header .module-stats {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .feature-list {
+            padding: 0;
+        }
+
+        .feature-item {
+            padding: 12px 30px 12px 50px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: background 0.2s;
+        }
+
+        .feature-item:hover {
+            background: #f9fafb;
+        }
+
+        .feature-item:last-child {
+            border-bottom: none;
+        }
+
+        .feature-item.completed {
+            opacity: 0.6;
+        }
+
+        .feature-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .feature-name {
+            flex: 1;
+            font-size: 14px;
+            color: var(--text);
+        }
+
+        .feature-item.completed .feature-name {
+            text-decoration: line-through;
+        }
+
+        .priority-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .priority-P0 {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .priority-P1 {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .priority-P2 {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .status-select {
+            padding: 4px 8px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 12px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .status-未开始 { color: var(--text-muted); }
+        .status-进行中 { color: var(--warning); }
+        .status-已完成 { color: var(--success); }
+        .status-已测试 { color: #8b5cf6; }
+        .status-已上线 { color: var(--primary); }
+
+        .collapsed {
+            display: none;
+        }
+
+        .expand-icon {
+            transition: transform 0.3s;
+        }
+
+        .expand-icon.expanded {
+            transform: rotate(180deg);
+        }
+
+        .search-highlight {
+            background: #fef08a;
+            padding: 2px 0;
+        }
+
+        .empty-state {
+            padding: 60px 30px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .filters, .actions {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>EX平台功能清单 - 项目管理</h1>
+            <p>实时跟踪项目进度，管理功能开发状态</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <h3>总功能数</h3>
+                <div class="value" id="totalFeatures">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>已完成</h3>
+                <div class="value" id="completedFeatures">0</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="completedProgress"></div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <h3>进行中</h3>
+                <div class="value" id="inProgressFeatures">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>完成率</h3>
+                <div class="value" id="completionRate">0%</div>
+            </div>
+        </div>
+
+        <div class="filters">
+            <div class="filter-group">
+                <label>角色</label>
+                <select id="roleFilter">
+                    <option value="all">全部角色</option>
+                    <option value="SP">服务商 (SP)</option>
+                    <option value="TP">租户 (TP)</option>
+                    <option value="Merchant">商户 (Merchant)</option>
+                    <option value="EX">EX管理后台</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>优先级</label>
+                <select id="priorityFilter">
+                    <option value="all">全部优先级</option>
+                    <option value="P0">P0 - 必须</option>
+                    <option value="P1">P1 - 重要</option>
+                    <option value="P2">P2 - 优化</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>状态</label>
+                <select id="statusFilter">
+                    <option value="all">全部状态</option>
+                    <option value="未开始">未开始</option>
+                    <option value="进行中">进行中</option>
+                    <option value="已完成">已完成</option>
+                    <option value="已测试">已测试</option>
+                    <option value="已上线">已上线</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>搜索</label>
+                <input type="text" id="searchInput" placeholder="搜索功能...">
+            </div>
+            <div class="actions">
+                <button class="btn btn-secondary" onclick="exportToCSV()">导出CSV</button>
+                <button class="btn btn-secondary" onclick="clearAllData()">清除数据</button>
+                <button class="btn btn-primary" onclick="expandAll()">展开全部</button>
+            </div>
+        </div>
+
+        <div class="content" id="featureList">
+            <!-- 功能列表将通过JavaScript动态生成 -->
+        </div>
+    </div>
+
+    <script>
+        // 功能数据
+        const features = [
+            // SP - 服务商
+            { role: 'SP', module: '产品管理', subModule: '产品上架', feature: '产品基本信息配置', priority: 'P0', status: '未开始' },
+            { role: 'SP', module: '产品管理', subModule: '产品上架', feature: '产品能力配置', priority: 'P0', status: '未开始' },
+            { role: 'SP', module: '产品管理', subModule: '产品上架', feature: '产品定价', priority: 'P0', status: '未开始' },
+            { role: 'SP', module: '产品管理', subModule: '产品管理', feature: '产品列表查看', priority: 'P0', status: '未开始' },
+            { role: 'SP', module: '产品管理', subModule: '产品管理', feature: '产品编辑/更新', priority: 'P0', status: '未开始' },
+            { role: 'SP', module: '产品管理', subModule: '产品管理', feature: '产品上下架管理', priority: 'P0', status: '未开始' },
+            { role: 'SP', module: 'TP管理', subModule: 'TP接入管理', feature: 'TP接入申请审核', priority: 'P0', status: '未开始' },
+            { role: 'SP', module: 'TP管理', subModule: 'TP接入管理', feature: 'TP资质审核(KYB)', priority: 'P0', status: '未开始' },
+            { role: 'SP', module: 'TP管理', subModule: 'TP接入管理', feature: 'TP签约管理', priority: 'P0', status: '未开始' },
+            { role: 'SP', module: 'TP管理', subModule: 'TP接入管理', feature: 'TP账号开通', priority: 'P0', status: '未开始' },
+            { role: 'SP', module: 'TP管理', subModule: 'TP关系管理', feature: 'TP列表查看', priority: 'P0', status: '未开始' },
+            { role: 'SP', module: 'TP管理', subModule: 'TP关系管理', feature: 'TP基本信息管理', priority: 'P0', status: '未开始' },
+            { role: 'SP', module: 'TP管理', subModule: 'TP关系管理', feature: 'TP状态管理', priority: 'P0', status: '未开始' },
+            { role: 'SP', module: 'TP管理', subModule: 'TP产品授权', feature: '产品授权管理', priority: 'P0', status: '未开始' },
+            { role: 'SP', module: 'TP管理', subModule: 'TP产品授权', feature: 'TP专属定价', priority: 'P0', status: '未开始' },
+            { role: 'SP', module: '销售中心', subModule: 'TP合作管理', feature: 'TP合作伙伴列表', priority: 'P1', status: '未开始' },
+            { role: 'SP', module: '销售中心', subModule: 'TP合作管理', feature: 'TP层级管理', priority: 'P1', status: '未开始' },
+            { role: 'SP', module: '销售中心', subModule: '分佣管理', feature: '分佣规则配置', priority: 'P1', status: '未开始' },
+            { role: 'SP', module: '销售中心', subModule: '分佣管理', feature: 'TP分佣账单生成', priority: 'P1', status: '未开始' },
+            { role: 'SP', module: '销售中心', subModule: '分佣管理', feature: 'TP分佣明细查询', priority: 'P1', status: '未开始' },
+            { role: 'SP', module: '销售中心', subModule: '结算管理', feature: 'TP结算单生成', priority: 'P1', status: '未开始' },
+            { role: 'SP', module: '销售中心', subModule: '结算管理', feature: 'TP付款单管理', priority: 'P1', status: '未开始' },
+            { role: 'SP', module: '销售中心', subModule: '结算管理', feature: '结算记录查询', priority: 'P1', status: '未开始' },
+            { role: 'SP', module: '订单管理', subModule: '订单管理', feature: '订单列表查看', priority: 'P0', status: '未开始' },
+            { role: 'SP', module: '订单管理', subModule: '订单管理', feature: '订单详情查询', priority: 'P0', status: '未开始' },
+            { role: 'SP', module: '订单管理', subModule: '订单管理', feature: '订单统计分析', priority: 'P1', status: '未开始' },
+            { role: 'SP', module: '渠道管理', subModule: '渠道配置', feature: '银行渠道配置', priority: 'P1', status: '未开始' },
+            { role: 'SP', module: '渠道管理', subModule: '渠道配置', feature: '卡组织配置', priority: 'P1', status: '未开始' },
+            { role: 'SP', module: '渠道管理', subModule: '渠道配置', feature: '本地支付渠道配置', priority: 'P1', status: '未开始' },
+            { role: 'SP', module: '渠道管理', subModule: '渠道监控', feature: '渠道成功率监控', priority: 'P1', status: '未开始' },
+            { role: 'SP', module: '渠道管理', subModule: '渠道监控', feature: '渠道可用性监控', priority: 'P1', status: '未开始' },
+
+            // TP - 租户
+            { role: 'TP', module: '工作台', subModule: '数据概览', feature: '今日交易概览', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '工作台', subModule: '数据概览', feature: '本月业绩统计', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '工作台', subModule: '数据概览', feature: '商户数量统计', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '工作台', subModule: '实时监控', feature: '交易实时监控', priority: 'P1', status: '未开始' },
+            { role: 'TP', module: '工作台', subModule: '实时监控', feature: '成功率监控', priority: 'P1', status: '未开始' },
+            { role: 'TP', module: '采购中心', subModule: '产品市场', feature: '浏览SP产品', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '采购中心', subModule: '产品市场', feature: '产品搜索/筛选', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '采购中心', subModule: '产品市场', feature: '产品详情查看', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '采购中心', subModule: '产品市场', feature: '产品对比功能', priority: 'P2', status: '未开始' },
+            { role: 'TP', module: '采购中心', subModule: '我的产品', feature: '已签约产品列表', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '采购中心', subModule: '我的产品', feature: '待生效产品', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '采购中心', subModule: '签约管理', feature: '发起签约申请', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '采购中心', subModule: '签约管理', feature: '签约记录查询', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '采购中心', subModule: '签约管理', feature: '合同管理', priority: 'P1', status: '未开始' },
+            { role: 'TP', module: '供应中心', subModule: '产品管理', feature: '产品列表', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '供应中心', subModule: '产品管理', feature: '产品配置', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '供应中心', subModule: '产品定价', feature: '基础费率配置', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '供应中心', subModule: '产品定价', feature: '差异化定价', priority: 'P1', status: '未开始' },
+            { role: 'TP', module: '供应中心', subModule: '产品定价', feature: '汇率加点配置', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '商户中心', subModule: '商户管理', feature: '商户列表', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '商户中心', subModule: '商户管理', feature: '新建商户', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '商户中心', subModule: '商户管理', feature: '商户基本信息管理', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '商户中心', subModule: '商户管理', feature: '商户状态管理', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '商户中心', subModule: '商户签约', feature: '商户签约产品', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '商户中心', subModule: '商户签约', feature: '商户专属报价', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '商户中心', subModule: '商户签约', feature: '商户专属汇率', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '商户中心', subModule: '商户交易管理', feature: 'VA账户管理', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '商户中心', subModule: '商户交易管理', feature: '收款交易查询', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '商户中心', subModule: '商户交易管理', feature: '付款交易查询', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '商户中心', subModule: '商户交易管理', feature: '换汇交易查询', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '商户中心', subModule: '商户交易管理', feature: 'Crypto交易查询', priority: 'P1', status: '未开始' },
+            { role: 'TP', module: '商户中心', subModule: '商户交易管理', feature: '卡片交易查询', priority: 'P1', status: '未开始' },
+            { role: 'TP', module: '账户中心', subModule: '账户总览', feature: '账户余额查询', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '账户中心', subModule: '账户总览', feature: '多币种余额', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '账户中心', subModule: '资金流水', feature: '交易记录', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '账户中心', subModule: '资金流水', feature: '充值记录', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '账户中心', subModule: '资金流水', feature: '提现记录', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '开发者中心', subModule: 'API接入', feature: 'API文档查看', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '开发者中心', subModule: 'API接入', feature: 'SDK下载', priority: 'P1', status: '未开始' },
+            { role: 'TP', module: '开发者中心', subModule: '密钥管理', feature: 'API密钥管理', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '开发者中心', subModule: '回调配置', feature: 'Webhooks配置', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '开发者中心', subModule: '回调配置', feature: '回调日志查询', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '设置', subModule: '团队管理', feature: '成员管理', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '设置', subModule: '团队管理', feature: '角色管理', priority: 'P0', status: '未开始' },
+            { role: 'TP', module: '设置', subModule: '团队管理', feature: '权限配置', priority: 'P0', status: '未开始' },
+
+            // Merchant - 商户
+            { role: 'Merchant', module: 'Dashboard', subModule: '概览', feature: '账户余额展示', priority: 'P0', status: '未开始' },
+            { role: 'Merchant', module: 'Dashboard', subModule: '概览', feature: '今日交易统计', priority: 'P0', status: '未开始' },
+            { role: 'Merchant', module: 'Dashboard', subModule: '概览', feature: '本月交易统计', priority: 'P0', status: '未开始' },
+            { role: 'Merchant', module: 'Dashboard', subModule: '快捷入口', feature: '快速收款', priority: 'P0', status: '未开始' },
+            { role: 'Merchant', module: 'Dashboard', subModule: '快捷入口', feature: '快速付款', priority: 'P0', status: '未开始' },
+            { role: 'Merchant', module: 'Dashboard', subModule: '快捷入口', feature: '快速换汇', priority: 'P1', status: '未开始' },
+            { role: 'Merchant', module: '资产管理', subModule: '法币账户', feature: '多币种余额查看', priority: 'P0', status: '未开始' },
+            { role: 'Merchant', module: '资产管理', subModule: '法币账户', feature: '可用余额/冻结余额', priority: 'P0', status: '未开始' },
+            { role: 'Merchant', module: '资产管理', subModule: '法币账户', feature: '交易记录查询', priority: 'P0', status: '未开始' },
+            { role: 'Merchant', module: '资产管理', subModule: '加密货币钱包', feature: '加密货币余额查看', priority: 'P1', status: '未开始' },
+            { role: 'Merchant', module: '资产管理', subModule: '加密货币钱包', feature: '充值地址管理', priority: 'P1', status: '未开始' },
+            { role: 'Merchant', module: '转账', subModule: '收款', feature: '创建收款订单', priority: 'P0', status: '未开始' },
+            { role: 'Merchant', module: '转账', subModule: '收款', feature: '收款方式选择', priority: 'P0', status: '未开始' },
+            { role: 'Merchant', module: '转账', subModule: '收款', feature: '收款记录查询', priority: 'P0', status: '未开始' },
+            { role: 'Merchant', module: '转账', subModule: '收款', feature: '收款状态跟踪', priority: 'P0', status: '未开始' },
+            { role: 'Merchant', module: '转账', subModule: '付款', feature: '创建付款订单', priority: 'P0', status: '未开始' },
+            { role: 'Merchant', module: '转账', subModule: '付款', feature: '收款人管理', priority: 'P0', status: '未开始' },
+            { role: 'Merchant', module: '转账', subModule: '付款', feature: '批量付款', priority: 'P1', status: '未开始' },
+            { role: 'Merchant', module: '转账', subModule: '付款', feature: '付款记录查询', priority: 'P0', status: '未开始' },
+            { role: 'Merchant', module: '转账', subModule: '换汇', feature: '实时汇率查询', priority: 'P0', status: '未开始' },
+            { role: 'Merchant', module: '转账', subModule: '换汇', feature: '创建换汇订单', priority: 'P0', status: '未开始' },
+            { role: 'Merchant', module: '转账', subModule: '换汇', feature: '换汇记录查询', priority: 'P0', status: '未开始' },
+            { role: 'Merchant', module: 'Crypto', subModule: '充值', feature: '生成充值地址', priority: 'P1', status: '未开始' },
+            { role: 'Merchant', module: 'Crypto', subModule: '充值', feature: '充值记录查询', priority: 'P1', status: '未开始' },
+            { role: 'Merchant', module: 'Crypto', subModule: '提现', feature: '创建提现订单', priority: 'P1', status: '未开始' },
+            { role: 'Merchant', module: 'Crypto', subModule: '提现', feature: '提现地址管理', priority: 'P1', status: '未开始' },
+            { role: 'Merchant', module: 'Crypto', subModule: '兑换', feature: 'Crypto↔Fiat兑换', priority: 'P1', status: '未开始' },
+            { role: 'Merchant', module: 'Crypto', subModule: 'On/Off Ramp', feature: '法币入金', priority: 'P1', status: '未开始' },
+            { role: 'Merchant', module: 'Crypto', subModule: 'On/Off Ramp', feature: '法币出金', priority: 'P1', status: '未开始' },
+            { role: 'Merchant', module: '卡片', subModule: '虚拟卡', feature: '申请虚拟卡', priority: 'P2', status: '未开始' },
+            { role: 'Merchant', module: '卡片', subModule: '虚拟卡', feature: '卡片列表', priority: 'P2', status: '未开始' },
+            { role: 'Merchant', module: '卡片', subModule: '虚拟卡', feature: '卡片充值', priority: 'P2', status: '未开始' },
+            { role: 'Merchant', module: '收单', subModule: '支付网关', feature: '支付链接生成', priority: 'P1', status: '未开始' },
+            { role: 'Merchant', module: '收单', subModule: '订单管理', feature: '订单列表', priority: 'P1', status: '未开始' },
+            { role: 'Merchant', module: '收单', subModule: '订单管理', feature: '订单退款', priority: 'P1', status: '未开始' },
+            { role: 'Merchant', module: '报表', subModule: '交易报表', feature: '交易汇总报表', priority: 'P1', status: '未开始' },
+            { role: 'Merchant', module: '报表', subModule: '交易报表', feature: '交易明细报表', priority: 'P1', status: '未开始' },
+            { role: 'Merchant', module: '报表', subModule: '财务报表', feature: '收入报表', priority: 'P1', status: '未开始' },
+            { role: 'Merchant', module: '报表', subModule: '财务报表', feature: '手续费报表', priority: 'P1', status: '未开始' },
+            { role: 'Merchant', module: '开发者', subModule: 'API密钥', feature: '生成API Key', priority: 'P0', status: '未开始' },
+            { role: 'Merchant', module: '开发者', subModule: 'API密钥', feature: 'API Key管理', priority: 'P0', status: '未开始' },
+            { role: 'Merchant', module: '开发者', subModule: 'Webhooks', feature: 'Webhook URL配置', priority: 'P0', status: '未开始' },
+            { role: 'Merchant', module: '开发者', subModule: 'Webhooks', feature: 'Webhook日志查询', priority: 'P0', status: '未开始' },
+            { role: 'Merchant', module: '设置', subModule: '账户设置', feature: '公司信息', priority: 'P0', status: '未开始' },
+            { role: 'Merchant', module: '设置', subModule: '账户设置', feature: 'KYB认证', priority: 'P0', status: '未开始' },
+            { role: 'Merchant', module: '设置', subModule: '安全设置', feature: '密码修改', priority: 'P0', status: '未开始' },
+            { role: 'Merchant', module: '设置', subModule: '安全设置', feature: '双因素认证(2FA)', priority: 'P0', status: '未开始' },
+            { role: 'Merchant', module: '设置', subModule: '团队管理', feature: '成员管理', priority: 'P0', status: '未开始' },
+            { role: 'Merchant', module: '设置', subModule: '团队管理', feature: '角色权限', priority: 'P0', status: '未开始' },
+
+            // EX - 管理后台
+            { role: 'EX', module: '产品中心', subModule: '产品管理', feature: '产品属性', priority: 'P0', status: '未开始' },
+            { role: 'EX', module: '产品中心', subModule: '产品管理', feature: '产品配置', priority: 'P0', status: '未开始' },
+            { role: 'EX', module: '产品中心', subModule: '产品管理', feature: 'EX套餐管理', priority: 'P0', status: '未开始' },
+            { role: 'EX', module: '服务商管理', subModule: '服务商管理', feature: '服务商档案', priority: 'P0', status: '未开始' },
+            { role: 'EX', module: '服务商管理', subModule: '服务商管理', feature: '服务商产品', priority: 'P0', status: '未开始' },
+            { role: 'EX', module: '租户管理', subModule: '租户管理', feature: '租户签约申请', priority: 'P0', status: '未开始' },
+            { role: 'EX', module: '租户管理', subModule: '租户管理', feature: '租户基本信息', priority: 'P0', status: '未开始' },
+            { role: 'EX', module: '租户管理', subModule: '租户管理', feature: '租户产品签约', priority: 'P0', status: '未开始' },
+            { role: 'EX', module: '计费中心', subModule: '业务产品', feature: '业务产品收费', priority: 'P0', status: '未开始' },
+            { role: 'EX', module: '计费中心', subModule: 'EX服务', feature: 'EX白牌API收费', priority: 'P0', status: '未开始' },
+            { role: 'EX', module: '汇率中心', subModule: '汇率管理', feature: '汇率源管理', priority: 'P0', status: '未开始' },
+            { role: 'EX', module: '汇率中心', subModule: '汇率管理', feature: '汇率源币种对', priority: 'P0', status: '未开始' },
+            { role: 'EX', module: '汇率中心', subModule: '汇率管理', feature: '汇率查询', priority: 'P0', status: '未开始' },
+            { role: 'EX', module: '系统管理', subModule: '系统管理', feature: '租户账号管理', priority: 'P0', status: '未开始' },
+            { role: 'EX', module: '系统管理', subModule: '系统管理', feature: '角色权限管理', priority: 'P0', status: '未开始' },
+            { role: 'EX', module: '系统管理', subModule: '系统管理', feature: 'API密钥管理', priority: 'P0', status: '未开始' },
+            { role: 'EX', module: '系统管理', subModule: '系统管理', feature: '系统参数配置', priority: 'P0', status: '未开始' },
+        ];
+
+        // 从localStorage加载数据
+        function loadData() {
+            const saved = localStorage.getItem('exFeatureList');
+            if (saved) {
+                const savedData = JSON.parse(saved);
+                features.forEach((feature, index) => {
+                    if (savedData[index]) {
+                        feature.status = savedData[index].status;
+                        feature.completed = savedData[index].completed;
+                    }
+                });
+            }
+        }
+
+        // 保存数据到localStorage
+        function saveData() {
+            const data = features.map(f => ({
+                status: f.status,
+                completed: f.completed || false
+            }));
+            localStorage.setItem('exFeatureList', JSON.stringify(data));
+        }
+
+        // 渲染功能列表
+        function renderFeatures() {
+            const container = document.getElementById('featureList');
+            const roleFilter = document.getElementById('roleFilter').value;
+            const priorityFilter = document.getElementById('priorityFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+            // 过滤功能
+            let filtered = features.filter(f => {
+                if (roleFilter !== 'all' && f.role !== roleFilter) return false;
+                if (priorityFilter !== 'all' && f.priority !== priorityFilter) return false;
+                if (statusFilter !== 'all' && f.status !== statusFilter) return false;
+                if (searchTerm && !f.feature.toLowerCase().includes(searchTerm)) return false;
+                return true;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        <p>没有找到匹配的功能</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // 按角色分组
+            const grouped = {};
+            filtered.forEach(f => {
+                if (!grouped[f.role]) grouped[f.role] = {};
+                if (!grouped[f.role][f.module]) grouped[f.role][f.module] = [];
+                grouped[f.role][f.module].push(f);
+            });
+
+            let html = '';
+            Object.keys(grouped).forEach(role => {
+                const roleFeatures = Object.values(grouped[role]).flat();
+                const roleCompleted = roleFeatures.filter(f => f.completed).length;
+                const roleTotal = roleFeatures.length;
+                
+                html += `
+                    <div class="role-section">
+                        <div class="role-header" onclick="toggleRole(this)">
+                            <h2>${getRoleName(role)}</h2>
+                            <div class="role-stats">
+                                <span>总计: ${roleTotal}</span>
+                                <span>已完成: ${roleCompleted}</span>
+                                <span>完成率: ${((roleCompleted/roleTotal)*100).toFixed(0)}%</span>
+                            </div>
+                            <svg class="expand-icon expanded" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </div>
+                        <div class="role-content">
+                `;
+
+                Object.keys(grouped[role]).forEach(module => {
+                    const moduleFeatures = grouped[role][module];
+                    const moduleCompleted = moduleFeatures.filter(f => f.completed).length;
+                    
+                    html += `
+                        <div class="module-section">
+                            <div class="module-header" onclick="toggleModule(this)">
+                                <h3>${module}</h3>
+                                <div class="module-stats">
+                                    ${moduleCompleted}/${moduleFeatures.length} 已完成
+                                </div>
+                                <svg class="expand-icon expanded" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="6 9 12 15 18 9"/>
+                                </svg>
+                            </div>
+                            <div class="feature-list">
+                    `;
+
+                    moduleFeatures.forEach((feature, index) => {
+                        const featureIndex = features.indexOf(feature);
+                        html += `
+                            <div class="feature-item ${feature.completed ? 'completed' : ''}" data-index="${featureIndex}">
+                                <input type="checkbox" ${feature.completed ? 'checked' : ''} onchange="toggleFeature(${featureIndex})">
+                                <span class="feature-name">${highlightSearch(feature.feature, searchTerm)}</span>
+                                <span class="priority-badge priority-${feature.priority}">${feature.priority}</span>
+                                <select class="status-select status-${feature.status}" onchange="updateStatus(${featureIndex}, this.value)">
+                                    <option value="未开始" ${feature.status === '未开始' ? 'selected' : ''}>未开始</option>
+                                    <option value="进行中" ${feature.status === '进行中' ? 'selected' : ''}>进行中</option>
+                                    <option value="已完成" ${feature.status === '已完成' ? 'selected' : ''}>已完成</option>
+                                    <option value="已测试" ${feature.status === '已测试' ? 'selected' : ''}>已测试</option>
+                                    <option value="已上线" ${feature.status === '已上线' ? 'selected' : ''}>已上线</option>
+                                </select>
+                            </div>
+                        `;
+                    });
+
+                    html += `
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            updateStats();
+        }
+
+        function getRoleName(role) {
+            const names = {
+                'SP': '服务商 (SP)',
+                'TP': '租户 (TP)',
+                'Merchant': '商户 (Merchant)',
+                'EX': 'EX管理后台'
+            };
+            return names[role] || role;
+        }
+
+        function highlightSearch(text, search) {
+            if (!search) return text;
+            const regex = new RegExp(`(${search})`, 'gi');
+            return text.replace(regex, '<span class="search-highlight">$1</span>');
+        }
+
+        function toggleFeature(index) {
+            features[index].completed = !features[index].completed;
+            if (features[index].completed && features[index].status === '未开始') {
+                features[index].status = '已完成';
+            }
+            saveData();
+            renderFeatures();
+        }
+
+        function updateStatus(index, status) {
+            features[index].status = status;
+            if (status === '已完成' || status === '已测试' || status === '已上线') {
+                features[index].completed = true;
+            }
+            saveData();
+            renderFeatures();
+        }
+
+        function updateStats() {
+            const total = features.length;
+            const completed = features.filter(f => f.completed).length;
+            const inProgress = features.filter(f => f.status === '进行中').length;
+            const rate = ((completed / total) * 100).toFixed(1);
+
+            document.getElementById('totalFeatures').textContent = total;
+            document.getElementById('completedFeatures').textContent = completed;
+            document.getElementById('inProgressFeatures').textContent = inProgress;
+            document.getElementById('completionRate').textContent = rate + '%';
+            document.getElementById('completedProgress').style.width = rate + '%';
+        }
+
+        function toggleRole(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.expand-icon');
+            content.classList.toggle('collapsed');
+            icon.classList.toggle('expanded');
+        }
+
+        function toggleModule(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.expand-icon');
+            content.classList.toggle('collapsed');
+            icon.classList.toggle('expanded');
+        }
+
+        function expandAll() {
+            document.querySelectorAll('.role-content, .feature-list').forEach(el => {
+                el.classList.remove('collapsed');
+            });
+            document.querySelectorAll('.expand-icon').forEach(icon => {
+                icon.classList.add('expanded');
+            });
+        }
+
+        function exportToCSV() {
+            let csv = '角色,模块,子模块,功能点,优先级,状态,完成\n';
+            features.forEach(f => {
+                csv += `${f.role},${f.module},${f.subModule},${f.feature},${f.priority},${f.status},${f.completed ? '是' : '否'}\n`;
+            });
+            
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'EX功能清单_' + new Date().toISOString().split('T')[0] + '.csv';
+            link.click();
+        }
+
+        function clearAllData() {
+            if (confirm('确定要清除所有进度数据吗？此操作不可恢复！')) {
+                localStorage.removeItem('exFeatureList');
+                features.forEach(f => {
+                    f.status = '未开始';
+                    f.completed = false;
+                });
+                renderFeatures();
+            }
+        }
+
+        // 初始化
+        document.getElementById('roleFilter').addEventListener('change', renderFeatures);
+        document.getElementById('priorityFilter').addEventListener('change', renderFeatures);
+        document.getElementById('statusFilter').addEventListener('change', renderFeatures);
+        document.getElementById('searchInput').addEventListener('input', renderFeatures);
+
+        loadData();
+        renderFeatures();
+    </script>
+</body>
+</html>

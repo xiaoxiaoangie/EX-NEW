@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EX Partner Portal</title>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --bg-elevated: #ffffff;
+            --bg-card: #ffffff;
+            --bg-hover: #f1f5f9;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --accent: #4f46e5;
+            --accent-hover: #6366f1;
+            --accent-bg: #eef2ff;
+            --success: #10b981;
+            --success-bg: #ecfdf5;
+            --warning: #f59e0b;
+            --warning-bg: #fffbeb;
+            --danger: #ef4444;
+            --danger-bg: #fef2f2;
+            --cyan: #06b6d4;
+            --cyan-bg: #ecfeff;
+            --purple: #8b5cf6;
+            --purple-bg: #f5f3ff;
+            --pink: #ec4899;
+            --pink-bg: #fdf2f8;
+            --orange: #f97316;
+            --orange-bg: #fff7ed;
+            --teal: #14b8a6;
+            --teal-bg: #f0fdfa;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        /* 顶部简洁导航 */
+        .topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: var(--bg-elevated);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            z-index: 1000;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .logo-mark {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);
+        }
+        .logo-mark svg { width: 20px; height: 20px; color: white; }
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .logo-badge {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--accent);
+            background: var(--accent-bg);
+            padding: 4px 10px;
+            border-radius: 6px;
+            margin-left: 8px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* 角色切换器 */
+        .role-switcher {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-hover);
+            padding: 4px;
+            border-radius: 10px;
+            margin-right: 16px;
+        }
+        .role-btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            background: transparent;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .role-btn:hover {
+            color: var(--text);
+        }
+        .role-btn.active {
+            background: var(--bg-card);
+            color: var(--accent);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+            position: relative;
+        }
+        .icon-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text);
+        }
+        .icon-btn svg { width: 20px; height: 20px; }
+        .icon-btn .dot {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background: var(--danger);
+            border-radius: 50%;
+            border: 2px solid var(--bg-card);
+        }
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+
+        /* 主内容区 */
+        .main {
+            margin-top: 64px;
+            padding: 40px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* 欢迎区域 */
+        .welcome {
+            margin-bottom: 40px;
+        }
+        .welcome-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .welcome-desc {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        /* 中心网格 */
+        .centers-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        /* 中心卡片 */
+        .center-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        .center-card:hover {
+            border-color: transparent;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+        .center-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .center-card:hover::before {
+            opacity: 1;
+        }
+
+        .center-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+        .center-icon svg { width: 24px; height: 24px; }
+
+        .center-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .center-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+        .center-stats {
+            display: flex;
+            gap: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+        .center-stat {
+            display: flex;
+            flex-direction: column;
+        }
+        .center-stat-value {
+            font-size: 18px;
+            font-weight: 700;
+        }
+        .center-stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        .center-badge {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        /* 颜色主题 */
+        .center-card.accent::before { background: var(--accent); }
+        .center-card.accent .center-icon { background: var(--accent-bg); color: var(--accent); }
+        .center-card.accent .center-stat-value { color: var(--accent); }
+
+        .center-card.cyan::before { background: var(--cyan); }
+        .center-card.cyan .center-icon { background: var(--cyan-bg); color: var(--cyan); }
+        .center-card.cyan .center-stat-value { color: var(--cyan); }
+
+        .center-card.success::before { background: var(--success); }
+        .center-card.success .center-icon { background: var(--success-bg); color: var(--success); }
+        .center-card.success .center-stat-value { color: var(--success); }
+
+        .center-card.purple::before { background: var(--purple); }
+        .center-card.purple .center-icon { background: var(--purple-bg); color: var(--purple); }
+        .center-card.purple .center-stat-value { color: var(--purple); }
+
+        .center-card.warning::before { background: var(--warning); }
+        .center-card.warning .center-icon { background: var(--warning-bg); color: var(--warning); }
+        .center-card.warning .center-stat-value { color: var(--warning); }
+
+        .center-card.pink::before { background: var(--pink); }
+        .center-card.pink .center-icon { background: var(--pink-bg); color: var(--pink); }
+        .center-card.pink .center-stat-value { color: var(--pink); }
+
+        .center-card.orange::before { background: var(--orange); }
+        .center-card.orange .center-icon { background: var(--orange-bg); color: var(--orange); }
+        .center-card.orange .center-stat-value { color: var(--orange); }
+
+        .center-card.teal::before { background: var(--teal); }
+        .center-card.teal .center-icon { background: var(--teal-bg); color: var(--teal); }
+        .center-card.teal .center-stat-value { color: var(--teal); }
+
+        .center-card.danger::before { background: var(--danger); }
+        .center-card.danger .center-icon { background: var(--danger-bg); color: var(--danger); }
+        .center-card.danger .center-stat-value { color: var(--danger); }
+
+        /* 徽章颜色 */
+        .badge-danger { background: var(--danger-bg); color: var(--danger); }
+        .badge-warning { background: var(--warning-bg); color: var(--warning); }
+        .badge-success { background: var(--success-bg); color: var(--success); }
+
+        /* 分组标题 */
+        .section-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+            margin-top: 32px;
+        }
+        .section-title:first-child {
+            margin-top: 0;
+        }
+
+        /* 响应式 */
+        @media (max-width: 1200px) {
+            .centers-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 900px) {
+            .centers-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 600px) {
+            .centers-grid { grid-template-columns: 1fr; }
+            .main { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header class="topbar">
+        <div class="logo">
+            <div class="logo-mark">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                    <path d="M2 17l10 5 10-5"/>
+                    <path d="M2 12l10 5 10-5"/>
+                </svg>
+            </div>
+            <span class="logo-text">EX Partner Portal</span>
+            <span class="logo-badge">TP + SP</span>
+        </div>
+
+        <div class="topbar-right">
+            <!-- 角色切换器 -->
+            <div class="role-switcher">
+                <button class="role-btn" data-role="sp" onclick="switchRole('sp')">仅 SP</button>
+                <button class="role-btn" data-role="tp" onclick="switchRole('tp')">仅 TP</button>
+                <button class="role-btn active" data-role="both" onclick="switchRole('both')">SP + TP</button>
+            </div>
+            <button class="icon-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="m21 21-4.35-4.35"/>
+                </svg>
+            </button>
+            <button class="icon-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                </svg>
+                <span class="dot"></span>
+            </button>
+            <div class="avatar">EX</div>
+        </div>
+    </header>
+
+    <!-- 主内容 -->
+    <main class="main">
+        <div class="welcome">
+            <h1 class="welcome-title">欢迎回来，Partner</h1>
+            <p class="welcome-desc">选择一个中心开始您的工作</p>
+        </div>
+
+        <!-- 核心经营 -->
+        <div class="section-title">核心经营</div>
+        <div class="centers-grid">
+            <!-- 工作台 -->
+            <div class="center-card accent" data-role="both" onclick="enterCenter('dashboard')">
+                <div class="center-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="9" rx="1"/>
+                        <rect x="14" y="3" width="7" height="5" rx="1"/>
+                        <rect x="14" y="12" width="7" height="9" rx="1"/>
+                        <rect x="3" y="16" width="7" height="5" rx="1"/>
+                    </svg>
+                </div>
+                <span class="center-badge badge-danger">3 待办</span>
+                <h3 class="center-name">工作台</h3>
+                <p class="center-desc">数据概览、待办事项、快捷入口</p>
+                <div class="center-stats">
+                    <div class="center-stat">
+                        <span class="center-stat-value">$2.4M</span>
+                        <span class="center-stat-label">本月交易</span>
+                    </div>
+                    <div class="center-stat">
+                        <span class="center-stat-value">156</span>
+                        <span class="center-stat-label">活跃商户</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 采购中心 -->
+            <div class="center-card cyan" data-role="tp" onclick="enterCenter('procurement')">
+                <div class="center-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="9" cy="21" r="1"/>
+                        <circle cx="20" cy="21" r="1"/>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                    </svg>
+                </div>
+                <span class="center-badge badge-warning">2 到期</span>
+                <h3 class="center-name">采购中心</h3>
+                <p class="center-desc">选品、代理产品、签约SP</p>
+                <div class="center-stats">
+                    <div class="center-stat">
+                        <span class="center-stat-value">24</span>
+                        <span class="center-stat-label">签约产品</span>
+                    </div>
+                    <div class="center-stat">
+                        <span class="center-stat-value">8</span>
+                        <span class="center-stat-label">合作SP</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 供应中心 -->
+            <div class="center-card purple" data-role="sp" onclick="enterCenter('supply')">
+                <div class="center-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                        <line x1="12" y1="22.08" x2="12" y2="12"/>
+                    </svg>
+                </div>
+                <h3 class="center-name">供应中心</h3>
+                <p class="center-desc">上架产品、管理产品、接入TP</p>
+                <div class="center-stats">
+                    <div class="center-stat">
+                        <span class="center-stat-value">12</span>
+                        <span class="center-stat-label">上架产品</span>
+                    </div>
+                    <div class="center-stat">
+                        <span class="center-stat-value">45</span>
+                        <span class="center-stat-label">接入TP</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 商户中心 -->
+            <div class="center-card success" data-role="both" onclick="enterCenter('merchant')">
+                <div class="center-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                </div>
+                <h3 class="center-name">商户中心</h3>
+                <p class="center-desc">商户管理、交易查询、报价配置</p>
+                <div class="center-stats">
+                    <div class="center-stat">
+                        <span class="center-stat-value">156</span>
+                        <span class="center-stat-label">总商户</span>
+                    </div>
+                    <div class="center-stat">
+                        <span class="center-stat-value">89</span>
+                        <span class="center-stat-label">直客</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 销售与财务 -->
+        <div class="section-title">销售与财务</div>
+        <div class="centers-grid">
+            <!-- 销售中心 - TP -->
+            <div class="center-card warning" data-role="tp" onclick="enterCenter('sales')">
+                <div class="center-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                </div>
+                <span class="center-badge badge-warning">TP</span>
+                <h3 class="center-name">销售中心</h3>
+                <p class="center-desc">代理商管理、销售团队、分佣规则</p>
+                <div class="center-stats">
+                    <div class="center-stat">
+                        <span class="center-stat-value">32</span>
+                        <span class="center-stat-label">代理商</span>
+                    </div>
+                    <div class="center-stat">
+                        <span class="center-stat-value">15</span>
+                        <span class="center-stat-label">销售</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 销售中心 - SP -->
+            <div class="center-card warning" data-role="sp" onclick="enterCenter('spSales')">
+                <div class="center-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                </div>
+                <span class="center-badge badge-success">SP</span>
+                <h3 class="center-name">销售中心</h3>
+                <p class="center-desc">TP合作管理、分佣结算、业绩统计</p>
+                <div class="center-stats">
+                    <div class="center-stat">
+                        <span class="center-stat-value">45</span>
+                        <span class="center-stat-label">合作TP</span>
+                    </div>
+                    <div class="center-stat">
+                        <span class="center-stat-value">$85K</span>
+                        <span class="center-stat-label">本月分佣</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 账户中心 -->
+            <div class="center-card pink" data-role="both" onclick="enterCenter('account')">
+                <div class="center-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                        <line x1="1" y1="10" x2="23" y2="10"/>
+                    </svg>
+                </div>
+                <span class="center-badge badge-success">可提现</span>
+                <h3 class="center-name">账户中心</h3>
+                <p class="center-desc">我的余额、交易记录、分佣结算</p>
+                <div class="center-stats">
+                    <div class="center-stat">
+                        <span class="center-stat-value">$128K</span>
+                        <span class="center-stat-label">账户余额</span>
+                    </div>
+                    <div class="center-stat">
+                        <span class="center-stat-value">$45K</span>
+                        <span class="center-stat-label">本月分佣</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 渠道中心 -->
+            <div class="center-card orange" data-role="sp" onclick="enterCenter('channel')">
+                <div class="center-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                    </svg>
+                </div>
+                <h3 class="center-name">渠道中心</h3>
+                <p class="center-desc">金融渠道管理、银行、卡组织</p>
+                <div class="center-stats">
+                    <div class="center-stat">
+                        <span class="center-stat-value">18</span>
+                        <span class="center-stat-label">接入渠道</span>
+                    </div>
+                    <div class="center-stat">
+                        <span class="center-stat-value">6</span>
+                        <span class="center-stat-label">银行</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 清结算中心 -->
+            <div class="center-card teal" data-role="sp" onclick="enterCenter('settlement')">
+                <div class="center-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                </div>
+                <h3 class="center-name">清结算中心</h3>
+                <p class="center-desc">清算、结算、对账管理</p>
+                <div class="center-stats">
+                    <div class="center-stat">
+                        <span class="center-stat-value">$1.2M</span>
+                        <span class="center-stat-label">待结算</span>
+                    </div>
+                    <div class="center-stat">
+                        <span class="center-stat-value">98.5%</span>
+                        <span class="center-stat-label">对账率</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 司库中心 -->
+            <div class="center-card cyan" data-role="sp" onclick="enterCenter('treasury')">
+                <div class="center-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="4" width="20" height="16" rx="2"/>
+                        <path d="M12 8v8"/>
+                        <path d="M8 12h8"/>
+                    </svg>
+                </div>
+                <h3 class="center-name">司库中心</h3>
+                <p class="center-desc">资金管理、汇率管理、头寸管理</p>
+                <div class="center-stats">
+                    <div class="center-stat">
+                        <span class="center-stat-value">$5.8M</span>
+                        <span class="center-stat-label">总头寸</span>
+                    </div>
+                    <div class="center-stat">
+                        <span class="center-stat-value">12</span>
+                        <span class="center-stat-label">币种</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 运营支撑 -->
+        <div class="section-title">运营支撑</div>
+        <div class="centers-grid">
+            <!-- 数据中心 -->
+            <div class="center-card accent" data-role="both" onclick="enterCenter('data')">
+                <div class="center-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 20V10"/>
+                        <path d="M12 20V4"/>
+                        <path d="M6 20v-6"/>
+                    </svg>
+                </div>
+                <h3 class="center-name">数据中心</h3>
+                <p class="center-desc">报表统计、趋势分析、数据导出</p>
+                <div class="center-stats">
+                    <div class="center-stat">
+                        <span class="center-stat-value">+15%</span>
+                        <span class="center-stat-label">月环比</span>
+                    </div>
+                    <div class="center-stat">
+                        <span class="center-stat-value">12</span>
+                        <span class="center-stat-label">报表</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 工单中心 -->
+            <div class="center-card danger" data-role="both" onclick="enterCenter('ticket')">
+                <div class="center-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                    </svg>
+                </div>
+                <span class="center-badge badge-danger">3 待审</span>
+                <h3 class="center-name">工单中心</h3>
+                <p class="center-desc">配置审批、流程管理</p>
+                <div class="center-stats">
+                    <div class="center-stat">
+                        <span class="center-stat-value">3</span>
+                        <span class="center-stat-label">待审核</span>
+                    </div>
+                    <div class="center-stat">
+                        <span class="center-stat-value">128</span>
+                        <span class="center-stat-label">已处理</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 开发者中心 -->
+            <div class="center-card cyan" data-role="both" onclick="enterCenter('developer')">
+                <div class="center-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="16 18 22 12 16 6"/>
+                        <polyline points="8 6 2 12 8 18"/>
+                    </svg>
+                </div>
+                <h3 class="center-name">开发者中心</h3>
+                <p class="center-desc">API文档、密钥、Webhooks</p>
+                <div class="center-stats">
+                    <div class="center-stat">
+                        <span class="center-stat-value">2</span>
+                        <span class="center-stat-label">API密钥</span>
+                    </div>
+                    <div class="center-stat">
+                        <span class="center-stat-value">5</span>
+                        <span class="center-stat-label">Webhooks</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 设置 -->
+            <div class="center-card purple" data-role="both" onclick="enterCenter('settings')">
+                <div class="center-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                </div>
+                <h3 class="center-name">设置</h3>
+                <p class="center-desc">账号管理、权限配置、通知设置</p>
+                <div class="center-stats">
+                    <div class="center-stat">
+                        <span class="center-stat-value">8</span>
+                        <span class="center-stat-label">用户</span>
+                    </div>
+                    <div class="center-stat">
+                        <span class="center-stat-value">3</span>
+                        <span class="center-stat-label">角色</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 风控合规 -->
+        <div class="section-title">风控合规</div>
+        <div class="centers-grid">
+            <!-- 风控合规中心 -->
+            <div class="center-card danger" data-role="sp" onclick="enterCenter('risk')">
+                <div class="center-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                </div>
+                <span class="center-badge badge-warning">5 预警</span>
+                <h3 class="center-name">风控合规中心</h3>
+                <p class="center-desc">风控规则、KYC/KYB、AML合规</p>
+                <div class="center-stats">
+                    <div class="center-stat">
+                        <span class="center-stat-value">5</span>
+                        <span class="center-stat-label">风险预警</span>
+                    </div>
+                    <div class="center-stat">
+                        <span class="center-stat-value">99.2%</span>
+                        <span class="center-stat-label">合规率</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 中心详情页面（覆盖层） -->
+    <div class="center-detail" id="centerDetail">
+        <header class="detail-topbar">
+            <div class="detail-left">
+                <button class="back-btn" onclick="goBack()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                </button>
+                <span class="current-center" id="currentCenterName">工作台</span>
+            </div>
+            <div class="detail-right">
+                <button class="icon-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                    </svg>
+                </button>
+                <div class="avatar">EX</div>
+            </div>
+        </header>
+        <div class="detail-layout">
+            <aside class="detail-sidebar" id="detailSidebar"></aside>
+            <main class="detail-main" id="detailMain"></main>
+        </div>
+    </div>
+
+    <style>
+        .center-detail { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); z-index: 2000; display: none; }
+        .center-detail.show { display: block; }
+        .detail-topbar { height: 56px; background: var(--bg-elevated); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; }
+        .detail-left { display: flex; align-items: center; gap: 16px; }
+        .back-btn { width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .back-btn:hover { background: var(--bg-hover); color: var(--text); }
+        .back-btn svg { width: 18px; height: 18px; }
+        .current-center { font-size: 16px; font-weight: 600; color: var(--text); }
+        .detail-right { display: flex; align-items: center; gap: 8px; }
+        .detail-layout { display: flex; height: calc(100vh - 56px); }
+        .detail-sidebar { width: 240px; background: var(--bg-elevated); border-right: 1px solid var(--border); padding: 16px 12px; overflow-y: auto; }
+        .detail-main { flex: 1; padding: 24px; overflow-y: auto; background: var(--bg); }
+        .menu-group { margin-bottom: 20px; }
+        .menu-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; padding: 0 12px; margin-bottom: 8px; }
+        .menu-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 6px; font-size: 13px; color: var(--text-secondary); cursor: pointer; transition: all 0.15s; margin-bottom: 2px; }
+        .menu-item:hover { background: var(--bg-hover); color: var(--text); }
+        .menu-item.active { background: var(--accent-bg); color: var(--accent); font-weight: 600; }
+        .menu-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+        .menu-item .badge { margin-left: auto; background: var(--danger); color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; }
+        .page-header { margin-bottom: 24px; }
+        .page-title { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+        .page-desc { font-size: 14px; color: var(--text-secondary); }
+        .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
+        .breadcrumb a { color: var(--text-secondary); text-decoration: none; }
+        .breadcrumb a:hover { color: var(--accent); }
+        .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+        .stat-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+        .stat-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+        .stat-icon.purple { background: var(--accent-bg); color: var(--accent); }
+        .stat-icon.green { background: var(--success-bg); color: var(--success); }
+        .stat-icon.yellow { background: var(--warning-bg); color: var(--warning); }
+        .stat-icon.red { background: var(--danger-bg); color: var(--danger); }
+        .stat-icon svg { width: 20px; height: 20px; }
+        .stat-trend { font-size: 12px; padding: 4px 8px; border-radius: 4px; }
+        .stat-trend.up { background: var(--success-bg); color: var(--success); }
+        .stat-value { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+        .stat-label { font-size: 13px; color: var(--text-secondary); }
+        .content-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+        .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+        .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+        .card-title { font-size: 15px; font-weight: 600; }
+        .quick-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .quick-item { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px 12px; border-radius: 10px; border: 1px solid var(--border); cursor: pointer; }
+        .quick-item:hover { border-color: var(--accent); background: var(--accent-bg); }
+        .quick-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--bg-hover); display: flex; align-items: center; justify-content: center; color: var(--text-secondary); }
+        .quick-icon svg { width: 20px; height: 20px; }
+        .quick-item:hover .quick-icon { background: var(--accent); color: white; }
+        .quick-label { font-size: 12px; color: var(--text-secondary); }
+        .todo-list { display: flex; flex-direction: column; gap: 8px; }
+        .todo-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 8px; background: var(--bg-hover); }
+        .todo-check { width: 18px; height: 18px; border: 2px solid var(--border); border-radius: 4px; }
+        .todo-text { flex: 1; font-size: 13px; }
+        .todo-tag { font-size: 11px; padding: 2px 8px; border-radius: 4px; }
+        .todo-tag.urgent { background: var(--danger-bg); color: var(--danger); }
+        .todo-tag.normal { background: var(--accent-bg); color: var(--accent); }
+    </style>
+
+    <script src="tp-tenant-dashboard-v5-menus.js"></script>
+</body>
+</html>

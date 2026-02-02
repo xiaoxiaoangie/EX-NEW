@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merchant Portal - 数法融合</title>
+    <link rel="stylesheet" href="merchant-portal.css">
+</head>
+<body>
+    <div class="portal-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="32" height="32" rx="8" fill="#5b6cf5"/>
+                        <path d="M16 8L22 12V20L16 24L10 20V12L16 8Z" fill="white"/>
+                    </svg>
+                </div>
+                <div>
+                    <h2>Merchant Portal</h2>
+                    <p class="logo-subtitle">Payment Platform</p>
+                </div>
+            </div>
+            
+            <nav class="menu">
+                <div class="menu-section">
+                    <ul class="menu-list">
+                        <li class="menu-item" data-page="dashboard">
+                            <span class="menu-text">Dashboard</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="menu-section">
+                    <h3 class="menu-title">ASSETS</h3>
+                    <ul class="menu-list">
+                        <li class="menu-item" data-page="fiat-accounts">
+                            <span class="menu-text">Fiat Accounts</span>
+                        </li>
+                        <li class="menu-item" data-page="crypto-wallet">
+                            <span class="menu-text">Crypto Wallet</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="menu-section">
+                    <h3 class="menu-title">TRANSFER</h3>
+                    <ul class="menu-list">
+                        <li class="menu-item" data-page="global-accounts">
+                            <span class="menu-text">Global Accounts</span>
+                        </li>
+                        <li class="menu-item" data-page="payins">
+                            <span class="menu-text">Payins</span>
+                        </li>
+                        <li class="menu-item" data-page="payouts">
+                            <span class="menu-text">Payouts</span>
+                        </li>
+                        <li class="menu-item" data-page="instant-exchange">
+                            <span class="menu-text">Instant Exchange</span>
+                        </li>
+                        <li class="menu-item" data-page="trade-documents">
+                            <span class="menu-text">Trade Documents</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="menu-section">
+                    <h3 class="menu-title">CRYPTO</h3>
+                    <ul class="menu-list">
+                        <li class="menu-item" data-page="deposit">
+                            <span class="menu-text">Deposit</span>
+                        </li>
+                        <li class="menu-item" data-page="withdraw">
+                            <span class="menu-text">Withdraw</span>
+                        </li>
+                        <li class="menu-item" data-page="on-off-ramp">
+                            <span class="menu-text">On/Off Ramp</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="menu-section">
+                    <h3 class="menu-title">CARDS</h3>
+                    <ul class="menu-list">
+                        <li class="menu-item" data-page="cards-management">
+                            <span class="menu-text">Cards Management</span>
+                        </li>
+                        <li class="menu-item" data-page="card-transactions">
+                            <span class="menu-text">Card Transactions</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="menu-section">
+                    <h3 class="menu-title">ACQUIRING</h3>
+                    <ul class="menu-list">
+                        <li class="menu-item" data-page="merchant-orders">
+                            <span class="menu-text">Merchant Orders</span>
+                        </li>
+                        <li class="menu-item" data-page="channel-orders">
+                            <span class="menu-text">Channel Orders</span>
+                        </li>
+                        <li class="menu-item" data-page="payment-settings">
+                            <span class="menu-text">Payment Settings</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="menu-section">
+                    <h3 class="menu-title">REPORTS</h3>
+                    <ul class="menu-list">
+                        <li class="menu-item" data-page="reports">
+                            <span class="menu-text">Reports</span>
+                        </li>
+                        <li class="menu-item" data-page="downloads">
+                            <span class="menu-text">Downloads</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="menu-section">
+                    <h3 class="menu-title">DEVELOPER</h3>
+                    <ul class="menu-list">
+                        <li class="menu-item" data-page="api-keys">
+                            <span class="menu-text">API Keys</span>
+                        </li>
+                        <li class="menu-item" data-page="webhooks">
+                            <span class="menu-text">Webhooks</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="menu-section">
+                    <h3 class="menu-title">SETTINGS</h3>
+                    <ul class="menu-list">
+                        <li class="menu-item" data-page="company-profile">
+                            <span class="menu-text">Company Profile</span>
+                        </li>
+                        <li class="menu-item" data-page="roles-permissions">
+                            <span class="menu-text">Roles & Permissions</span>
+                        </li>
+                        <li class="menu-item" data-page="notifications">
+                            <span class="menu-text">Notifications</span>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+        
+        <main class="main-content">
+            <header class="header">
+                <div class="header-left">
+                    <h1 id="page-title">Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <span class="user-name">John Doe</span>
+                        <button class="logout-btn">Logout</button>
+                    </div>
+                </div>
+            </header>
+            
+            <div class="content-area" id="content-area">
+            </div>
+        </main>
+    </div>
+    
+    <script src="merchant-portal.js"></script>
+    <script src="merchant-portal-pages.js"></script>
+</body>
+</html>

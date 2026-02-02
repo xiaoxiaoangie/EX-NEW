@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Management - Card List</title>
+    <style>
+        :root {
+            --primary: #5b5ff9;
+            --primary-light: #7b7fff;
+            --bg-main: #f8fafc;
+            --text-primary: #1a1a2e;
+            --text-secondary: #6b7280;
+            --border-color: #e5e7eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            padding: 40px;
+        }
+
+        .container { max-width: 1600px; margin: 0 auto; }
+
+        /* 页面头部 */
+        .page-header {
+            margin-bottom: 24px;
+        }
+        .page-title { font-size: 24px; font-weight: 600; margin-bottom: 4px; }
+        .page-subtitle { font-size: 14px; color: var(--text-secondary); }
+
+        /* 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .stat-label { font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; }
+        .stat-value { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+        .stat-subtitle { font-size: 12px; color: var(--text-secondary); }
+
+        /* 标签页 */
+        .tabs {
+            display: flex;
+            gap: 32px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 24px;
+        }
+        .tab {
+            padding: 12px 4px;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .tab:hover { color: var(--text-primary); }
+        .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+        /* 工具栏 */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .toolbar-left { font-size: 16px; font-weight: 600; }
+        .toolbar-right { display: flex; gap: 12px; align-items: center; }
+
+        /* 下拉按钮 */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-btn {
+            padding: 10px 16px;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .dropdown-btn:hover { border-color: var(--primary); background: #f8f9ff; }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            min-width: 200px;
+            z-index: 100;
+            overflow: hidden;
+        }
+        .dropdown.active .dropdown-menu { display: block; }
+        .dropdown-item {
+            padding: 12px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .dropdown-item:hover { background: #f8fafc; }
+        .dropdown-item.active { background: #f0f1ff; color: var(--primary); }
+        .dropdown-item .check { margin-left: auto; opacity: 0; }
+        .dropdown-item.active .check { opacity: 1; }
+
+        .btn-new {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .btn-new:hover { background: var(--primary-light); }
+
+        /* 表格 */
+        .card-table {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        thead {
+            background: #f8fafc;
+            border-bottom: 1px solid var(--border-color);
+        }
+        th {
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        td {
+            padding: 16px;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 14px;
+        }
+        tr:last-child td { border-bottom: none; }
+        tbody tr {
+            transition: all 0.2s;
+        }
+        tbody tr:hover { background: #f8fafc; }
+
+        /* 卡片信息列 */
+        .card-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-icon {
+            width: 40px;
+            height: 28px;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .card-details { flex: 1; }
+        .card-number { font-weight: 600; font-family: 'Courier New', monospace; }
+        .card-label { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+        /* 共享账户标签 */
+        .shared-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: #eff6ff;
+            color: var(--primary);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .shared-account {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-left: 4px;
+        }
+
+        /* 余额 */
+        .balance {
+            font-weight: 600;
+        }
+        .balance-type {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        /* 限额使用 */
+        .limits {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .limit-item {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+        .limit-item.show { display: flex; }
+        .limit-label {
+            color: var(--text-secondary);
+            min-width: 60px;
+        }
+        .limit-value { font-weight: 600; }
+        .limit-bar {
+            flex: 1;
+            height: 4px;
+            background: #e5e7eb;
+            border-radius: 2px;
+            overflow: hidden;
+            max-width: 80px;
+        }
+        .limit-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+        .limit-fill.high { background: var(--warning); }
+        .limit-percent {
+            font-size: 11px;
+            color: var(--text-secondary);
+            min-width: 30px;
+            text-align: right;
+        }
+
+        /* 状态标签 */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .status-badge.active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .status-badge.inactive {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* 操作按钮 */
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: #f3f4f6;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+        .action-btn:hover { background: #e5e7eb; }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 页面头部 -->
+        <div class="page-header">
+            <h1 class="page-title">Card Management</h1>
+            <p class="page-subtitle">Manage your virtual and physical cards</p>
+        </div>
+
+        <!-- 统计卡片 -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Cards</div>
+                <div class="stat-value">4</div>
+                <div class="stat-subtitle">3 active</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Balance</div>
+                <div class="stat-value">$29,500</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Monthly Spend</div>
+                <div class="stat-value">$112,400</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Spend</div>
+                <div class="stat-value">$1,007,700</div>
+            </div>
+        </div>
+
+        <!-- 标签页 -->
+        <div class="tabs">
+            <div class="tab active">Card List</div>
+            <div class="tab">Shared Accounts</div>
+            <div class="tab">Applications</div>
+        </div>
+
+        <!-- 工具栏 -->
+        <div class="toolbar">
+            <div class="toolbar-left">All Cards</div>
+            <div class="toolbar-right">
+                <!-- 排序下拉 -->
+                <div class="dropdown" id="sort-dropdown">
+                    <button class="dropdown-btn" onclick="toggleDropdown('sort-dropdown')">
+                        <span id="sort-label">Default Order</span>
+                        <span>▼</span>
+                    </button>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-item active" onclick="selectSort('default')">
+                            Default Order
+                            <span class="check">✓</span>
+                        </div>
+                        <div class="dropdown-item" onclick="selectSort('spending-high')">
+                            Spending: High to Low
+                            <span class="check">✓</span>
+                        </div>
+                        <div class="dropdown-item" onclick="selectSort('spending-low')">
+                            Spending: Low to High
+                            <span class="check">✓</span>
+                        </div>
+                        <div class="dropdown-item" onclick="selectSort('newest')">
+                            Newest First
+                            <span class="check">✓</span>
+                        </div>
+                        <div class="dropdown-item" onclick="selectSort('oldest')">
+                            Oldest First
+                            <span class="check">✓</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 限额显示下拉 -->
+                <div class="dropdown" id="limit-dropdown">
+                    <button class="dropdown-btn" onclick="toggleDropdown('limit-dropdown')">
+                        <span>Limit Display</span>
+                        <span>▼</span>
+                    </button>
+                    <div class="dropdown-menu">
+                        <div style="padding: 8px 16px; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; font-weight: 600;">Show Limits</div>
+                        <div class="dropdown-item" onclick="toggleLimit('transaction')">
+                            <input type="checkbox" id="limit-transaction">
+                            Per Transaction
+                        </div>
+                        <div class="dropdown-item active" onclick="toggleLimit('daily')">
+                            <input type="checkbox" id="limit-daily" checked>
+                            Daily
+                        </div>
+                        <div class="dropdown-item" onclick="toggleLimit('weekly')">
+                            <input type="checkbox" id="limit-weekly">
+                            Weekly
+                        </div>
+                        <div class="dropdown-item active" onclick="toggleLimit('monthly')">
+                            <input type="checkbox" id="limit-monthly" checked>
+                            Monthly
+                        </div>
+                        <div class="dropdown-item active" onclick="toggleLimit('total')">
+                            <input type="checkbox" id="limit-total" checked>
+                            Total (Card)
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 新建卡片按钮 -->
+                <button class="btn-new">
+                    <span>+</span>
+                    <span>New Card</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 卡片列表表格 -->
+        <div class="card-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Card Info</th>
+                        <th>Shared/Normal</th>
+                        <th>Balance</th>
+                        <th>Card Holder</th>
+                        <th>Limits & Usage</th>
+                        <th>Created Time</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="card-list">
+                    <!-- 卡片1 -->
+                    <tr>
+                        <td>
+                            <div class="card-info">
+                                <div class="card-icon">VISA</div>
+                                <div class="card-details">
+                                    <div class="card-number">4413 63•••••• 9753</div>
+                                    <div class="card-label">Marketing ...</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="shared-badge">
+                                🔗 Shared <span class="shared-account">(Kaden)</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="balance">••••••</div>
+                            <span class="balance-type">Single: $10,000</span>
+                        </td>
+                        <td>Zhang San</td>
+                        <td>
+                            <div class="limits">
+                                <div class="limit-item show" data-type="daily">
+                                    <span class="limit-label">Daily</span>
+                                    <span class="limit-value">$3,200 / $50,000</span>
+                                    <div class="limit-bar"><div class="limit-fill" style="width: 6%"></div></div>
+                                    <span class="limit-percent">6%</span>
+                                </div>
+                                <div class="limit-item show" data-type="monthly">
+                                    <span class="limit-label">Monthly</span>
+                                    <span class="limit-value">$45,200 / $500,000</span>
+                                    <div class="limit-bar"><div class="limit-fill" style="width: 9%"></div></div>
+                                    <span class="limit-percent">9%</span>
+                                </div>
+                                <div class="limit-item show" data-type="total">
+                                    <span class="limit-label">Total (Card)</span>
+                                    <span class="limit-value">$287,500 / $5,000,000</span>
+                                    <div class="limit-bar"><div class="limit-fill" style="width: 6%"></div></div>
+                                    <span class="limit-percent">6%</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>2025-01-15 10:30</td>
+                        <td><span class="status-badge active">Active</span></td>
+                        <td>
+                            <div class="actions">
+                                <button class="action-btn" title="View">👁️</button>
+                                <button class="action-btn" title="Edit">✏️</button>
+                                <button class="action-btn" title="More">⋮</button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- 卡片2 -->
+                    <tr>
+                        <td>
+                            <div class="card-info">
+                                <div class="card-icon">VISA</div>
+                                <div class="card-details">
+                                    <div class="card-number">4413 63•••••• 1208</div>
+                                    <div class="card-label">Sales Team</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="shared-badge">
+                                🔗 Shared <span class="shared-account">(Kaden)</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="balance">••••••</div>
+                            <span class="balance-type">Single: $10,000</span>
+                        </td>
+                        <td>Li Si</td>
+                        <td>
+                            <div class="limits">
+                                <div class="limit-item show" data-type="daily">
+                                    <span class="limit-label">Daily</span>
+                                    <span class="limit-value">$1,500 / $50,000</span>
+                                    <div class="limit-bar"><div class="limit-fill" style="width: 3%"></div></div>
+                                    <span class="limit-percent">3%</span>
+                                </div>
+                                <div class="limit-item show" data-type="monthly">
+                                    <span class="limit-label">Monthly</span>
+                                    <span class="limit-value">$38,900 / $500,000</span>
+                                    <div class="limit-bar"><div class="limit-fill" style="width: 8%"></div></div>
+                                    <span class="limit-percent">8%</span>
+                                </div>
+                                <div class="limit-item show" data-type="total">
+                                    <span class="limit-label">Total (Card)</span>
+                                    <span class="limit-value">$156,800 / $5,000,000</span>
+                                    <div class="limit-bar"><div class="limit-fill" style="width: 3%"></div></div>
+                                    <span class="limit-percent">3%</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>2025-01-10 14:20</td>
+                        <td><span class="status-badge active">Active</span></td>
+                        <td>
+                            <div class="actions">
+                                <button class="action-btn" title="View">👁️</button>
+                                <button class="action-btn" title="Edit">✏️</button>
+                                <button class="action-btn" title="More">⋮</button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- 卡片3 -->
+                    <tr>
+                        <td>
+                            <div class="card-info">
+                                <div class="card-icon" style="background: linear-gradient(135deg, #dc2626, #ef4444);">MC</div>
+                                <div class="card-details">
+                                    <div class="card-number">5412 75•••••• 3456</div>
+                                    <div class="card-label">Operations</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="color: var(--text-secondary); font-size: 13px;">Normal</div>
+                        </td>
+                        <td>
+                            <div class="balance">$15,280</div>
+                            <span class="balance-type">Single: $5,000</span>
+                        </td>
+                        <td>Wang Wu</td>
+                        <td>
+                            <div class="limits">
+                                <div class="limit-item show" data-type="daily">
+                                    <span class="limit-label">Daily</span>
+                                    <span class="limit-value">$2,800 / $20,000</span>
+                                    <div class="limit-bar"><div class="limit-fill" style="width: 14%"></div></div>
+                                    <span class="limit-percent">14%</span>
+                                </div>
+                                <div class="limit-item show" data-type="monthly">
+                                    <span class="limit-label">Monthly</span>
+                                    <span class="limit-value">$28,300 / $200,000</span>
+                                    <div class="limit-bar"><div class="limit-fill" style="width: 14%"></div></div>
+                                    <span class="limit-percent">14%</span>
+                                </div>
+                                <div class="limit-item show" data-type="total">
+                                    <span class="limit-label">Total (Card)</span>
+                                    <span class="limit-value">$563,200 / $2,000,000</span>
+                                    <div class="limit-bar"><div class="limit-fill" style="width: 28%"></div></div>
+                                    <span class="limit-percent">28%</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>2024-12-20 09:15</td>
+                        <td><span class="status-badge active">Active</span></td>
+                        <td>
+                            <div class="actions">
+                                <button class="action-btn" title="View">👁️</button>
+                                <button class="action-btn" title="Edit">✏️</button>
+                                <button class="action-btn" title="More">⋮</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // 下拉菜单控制
+        function toggleDropdown(id) {
+            const dropdown = document.getElementById(id);
+            const allDropdowns = document.querySelectorAll('.dropdown');
+            
+            allDropdowns.forEach(d => {
+                if (d.id !== id) d.classList.remove('active');
+            });
+            
+            dropdown.classList.toggle('active');
+        }
+
+        // 关闭下拉菜单
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.dropdown')) {
+                document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
+            }
+        });
+
+        // 排序选择
+        function selectSort(type) {
+            const labels = {
+                'default': 'Default Order',
+                'spending-high': 'Spending: High to Low',
+                'spending-low': 'Spending: Low to High',
+                'newest': 'Newest First',
+                'oldest': 'Oldest First'
+            };
+            
+            document.getElementById('sort-label').textContent = labels[type];
+            
+            // 更新选中状态
+            document.querySelectorAll('#sort-dropdown .dropdown-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // 这里可以添加实际的排序逻辑
+            console.log('Sort by:', type);
+            
+            toggleDropdown('sort-dropdown');
+        }
+
+        // 限额显示切换
+        function toggleLimit(type) {
+            const checkbox = document.getElementById(`limit-${type}`);
+            checkbox.checked = !checkbox.checked;
+            
+            const item = event.currentTarget;
+            if (checkbox.checked) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+            
+            // 显示/隐藏对应的限额行
+            const limitItems = document.querySelectorAll(`.limit-item[data-type="${type}"]`);
+            limitItems.forEach(limitItem => {
+                if (checkbox.checked) {
+                    limitItem.classList.add('show');
+                } else {
+                    limitItem.classList.remove('show');
+                }
+            });
+            
+            console.log('Toggle limit:', type, checkbox.checked);
+            
+            event.stopPropagation();
+        }
+
+        // 初始化复选框状态
+        document.addEventListener('DOMContentLoaded', () => {
+            ['daily', 'monthly', 'total'].forEach(type => {
+                const checkbox = document.getElementById(`limit-${type}`);
+                if (checkbox) checkbox.checked = true;
+            });
+        });
+    </script>
+</body>
+</html>
