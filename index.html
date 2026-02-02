@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EX平台项目导航</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        
+        .cards {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+        
+        .card-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        .card h2 {
+            font-size: 24px;
+            color: #4f46e5;
+            margin-bottom: 10px;
+        }
+        
+        .card p {
+            color: #64748b;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #eef2ff;
+            color: #4f46e5;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 EX平台</h1>
+            <p>项目文档与工具导航</p>
+        </div>
+        
+        <div class="cards">
+            <a href="PORTAL/EXfunctionlist.html" class="card">
+                <div class="card-icon">📋</div>
+                <h2>功能清单管理工具</h2>
+                <p>实时跟踪项目进度，管理功能开发状态。支持多维度筛选、进度统计、数据导出等功能。</p>
+                <span class="badge">项目管理</span>
+            </a>
+            
+            <a href="PORTAL/SA/sa-admin-portal.html" class="card">
+                <div class="card-icon">🔧</div>
+                <h2>SA管理后台</h2>
+                <p>EX平台超级管理员后台，包含产品中心、服务商管理、租户管理等13个核心模块。</p>
+                <span class="badge">管理后台</span>
+            </a>
+            
+            <a href="PORTAL/EX平台业务流程与功能清单.md" class="card">
+                <div class="card-icon">📖</div>
+                <h2>业务流程文档</h2>
+                <p>完整的业务流程梳理，包含SP、TP、Merchant三个角色的详细功能清单。</p>
+                <span class="badge">产品文档</span>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
