@@ -114,14 +114,20 @@ const centerMenus = {
     sales: {
         name: '销售中心',
         groups: [
-            { label: '代理商管理', items: [
+            { label: '机构代理管理', items: [
                 { name: '代理商列表', icon: 'users', active: true },
                 { name: '新建代理商', icon: 'user-plus' },
-                { name: '代理商层级', icon: 'git-branch' }
+                { name: '代理商层级', icon: 'git-branch' },
+                { name: '代理商授权', icon: 'shield' }
+            ]},
+            { label: '销售代理管理', items: [
+                { name: 'TP合作伙伴列表', icon: 'briefcase' },
+                { name: 'TP层级管理', icon: 'git-branch' },
+                { name: 'TP合作协议', icon: 'file-text' }
             ]},
             { label: '分佣管理', items: [
-                { name: '分佣规则', icon: 'sliders' },
-                { name: '分佣账单', icon: 'file-text' },
+                { name: '分佣规则配置', icon: 'sliders' },
+                { name: '分佣账单生成', icon: 'file-text' },
                 { name: '分佣明细', icon: 'list' }
             ]},
             { label: '结算管理', items: [
@@ -134,24 +140,24 @@ const centerMenus = {
     account: {
         name: '账户中心',
         groups: [
-            { label: '账户总览', items: [
-                { name: '账户余额', icon: 'wallet', active: true },
-                { name: '多币种余额', icon: 'globe' },
+            { label: '佣金账户', items: [
+                { name: '佣金余额', icon: 'wallet', active: true },
+                { name: '可提现金额', icon: 'dollar-sign' },
                 { name: '冻结资金', icon: 'lock' }
             ]},
-            { label: '资金流水', items: [
-                { name: '交易记录', icon: 'list' },
-                { name: '充值记录', icon: 'download' },
-                { name: '提现记录', icon: 'upload' }
+            { label: '交易数据', items: [
+                { name: '推荐客户列表', icon: 'users' },
+                { name: '客户交易统计', icon: 'bar-chart' },
+                { name: '佣金明细', icon: 'list' }
+            ]},
+            { label: '资金操作', items: [
+                { name: '充值', icon: 'download' },
+                { name: '提现', icon: 'upload' },
+                { name: '充值提现记录', icon: 'file-text' }
             ]},
             { label: '分佣收益', items: [
                 { name: '分佣账单', icon: 'file-text' },
-                { name: '收益明细', icon: 'trending-up' }
-            ]},
-            { label: '结算提现', items: [
-                { name: '待结算', icon: 'clock' },
-                { name: '发起提现', icon: 'upload' },
-                { name: '提现记录', icon: 'check-circle' }
+                { name: '收益统计', icon: 'trending-up' }
             ]}
         ]
     },
@@ -300,21 +306,35 @@ const centerMenus = {
     treasury: {
         name: '司库中心',
         groups: [
-            { label: '资金管理', items: [
-                { name: '头寸管理', icon: 'layers', active: true },
-                { name: '资金调拨', icon: 'repeat' },
-                { name: '银行账户', icon: 'building' },
-                { name: '流动性监控', icon: 'activity' }
+            { label: '资金账户', items: [
+                { name: '账户总览', icon: 'wallet', active: true },
+                { name: '多渠道账户', icon: 'layers' },
+                { name: '资金流水', icon: 'list' },
+                { name: '可用余额/冻结余额', icon: 'lock' }
             ]},
-            { label: '汇率管理', items: [
-                { name: '汇率配置', icon: 'trending-up' },
-                { name: '汇率策略', icon: 'sliders' },
-                { name: '实时监控', icon: 'activity' },
-                { name: '锁汇管理', icon: 'lock' }
+            { label: '资金调拨', items: [
+                { name: '跨账户调拨', icon: 'repeat' },
+                { name: '调拨记录', icon: 'file-text' },
+                { name: '调拨审核', icon: 'check-circle' }
             ]},
-            { label: '成本收益', items: [
-                { name: '渠道成本', icon: 'dollar-sign' },
-                { name: '利润分析', icon: 'bar-chart' }
+            { label: '清结算', items: [
+                { name: '清算管理', icon: 'layers' },
+                { name: '结算管理', icon: 'calendar' },
+                { name: '对账管理', icon: 'check-square' }
+            ]},
+            { label: '资金运营', items: [
+                { name: '头寸管理', icon: 'trending-up' },
+                { name: '流动性管理', icon: 'activity' },
+                { name: '资金预测', icon: 'bar-chart' }
+            ]},
+            { label: '汇率运营', items: [
+                { name: '汇率监控', icon: 'eye' },
+                { name: '套利管理', icon: 'dollar-sign' },
+                { name: '对冲管理', icon: 'shield' }
+            ]},
+            { label: '分佣结算', items: [
+                { name: 'TP分佣账单', icon: 'file-text' },
+                { name: 'TP结算付款', icon: 'credit-card' }
             ]}
         ]
     },
