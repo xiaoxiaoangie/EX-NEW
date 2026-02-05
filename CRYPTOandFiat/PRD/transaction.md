@@ -802,35 +802,62 @@ sequenceDiagram
     end
   
     rect rgb(255, 240, 245)
-        Note over HUB,Payee: 阶段9：交易引擎执行-路由+渠道调用
-        TE->>Router: 18. 请求路由
-        Router-->>TE: 19. 返回目标渠道
-        TE->>CO: 20. 创建渠道单
-        CO-->>TE: 21. 返回渠道单ID
-        TE->>Channel: 22. 调用渠道执行银行转账
-        Channel->>Payee: 23. 银行转账
-        Channel-->>TE: 24. 返回转账结果
-        TE->>TE: 25. 更新交易单(渠道结果)
+        Note over HUB,Payee: 阶段9：交易引擎执行-路由
+        TE->>Router: 18. 请求路由(金额/币种/商户信息)
+        Router->>Router: 19. 路由计算(成本/成功率/限额)
+        Router-->>TE: 20. 返回目标渠道(如BB)
     end
   
     rect rgb(240, 248, 255)
-        Note over HUB,Payee: 阶段10：交易引擎执行-确认记账
-        TE->>Account: 26. 确认扣款(冻结→扣除)
-        Account-->>TE: 27. 记账成功
-        TE->>CO: 28. 更新渠道单状态(SUCCESS)
-        TE->>TE: 29. 更新交易单状态(SUCCESS)
+        Note over HUB,Payee: 阶段10：交易引擎调用渠道服务
+        TE->>CO: 21. 调用渠道服务(TXN_123, BB, 金额等)
     end
   
     rect rgb(255, 250, 240)
-        Note over HUB,Payee: 阶段11：聚合到商户单+通知
-        TE->>HUB: 30. 通知交易完成
-        HUB->>HUB: 31. 更新商户单状态(SUCCESS)
-        HUB-->>WP: 32. 返回付款结果
+        Note over HUB,Payee: 阶段11：渠道服务创建渠道单
+        CO->>CO: 22. 创建渠道单(CH_BB_789)
+        CO->>CO: 23. 生成渠道请求号(REQ_BB_001)
+        Note over CO: 渠道单用于平台内部管理<br/>请求号用于调用真实渠道(幂等性保证)
+    end
+  
+    rect rgb(240, 255, 240)
+        Note over HUB,Payee: 阶段12：渠道服务调用真实渠道
+        CO->>Channel: 24. 调用真实渠道(REQ_BB_001, 金额等)
+        Channel->>Channel: 25. 真实渠道处理(银行转账)
+        Channel->>Payee: 26. 银行转账到收款方
+        Channel-->>CO: 27. 返回真实渠道单号(BANK_XYZ)
+    end
+  
+    rect rgb(255, 245, 238)
+        Note over HUB,Payee: 阶段13：渠道服务返回结果
+        CO->>CO: 28. 更新渠道单(关联BANK_XYZ)
+        CO->>CO: 29. 更新渠道单状态(SUCCESS)
+        CO-->>TE: 30. 返回渠道结果(CH_BB_789, BANK_XYZ)
+    end
+  
+    rect rgb(230, 240, 255)
+        Note over HUB,Payee: 阶段14：交易引擎处理渠道结果
+        TE->>TE: 31. 更新交易单(关联渠道单CH_BB_789)
+        TE->>TE: 32. 更新交易单(渠道结果)
+    end
+  
+    rect rgb(255, 240, 245)
+        Note over HUB,Payee: 阶段15：交易引擎执行-确认记账
+        TE->>Account: 33. 确认扣款(冻结→扣除)
+        Account-->>TE: 34. 记账成功
+        TE->>TE: 35. 更新交易单状态(SUCCESS)
+    end
+  
+    rect rgb(255, 250, 240)
+        Note over HUB,Payee: 阶段16：聚合到商户单+通知
+        TE->>HUB: 36. 通知交易完成
+        HUB->>HUB: 37. 更新商户单状态(SUCCESS)
+        HUB-->>WP: 38. 返回付款结果
+        Note over HUB,Payee: 数据同步到TP Portal和PP Portal
     end
 ```
 
 ---
-
 
 ### 4.7 IPL法币换汇
 
@@ -1088,7 +1115,7 @@ sequenceDiagram
             BL->>TE: 7a. 调用交易引擎
             TE->>TE: 8a. 创建交易单(BB)
         and
-            HUB->>TE: 7b. 请求创建交易单(IPL-法币侧)
+            BL->>TE: 7b. 请求创建交易单(IPL-法币侧)
             TE->>TE: 8b. 创建交易单(IPL)
         end
     end
@@ -1158,105 +1185,6 @@ sequenceDiagram
 ---
 
 ### 5.3 出金（调用外部渠道）
-
-**场景：** 商户从法币账户出金到外部银行账户
-
-**单据流转：** 商户单 → 交易单 → 渠道单（调用外部银行/PSP）
-
-```mermaid
-sequenceDiagram
-    participant WP as 白牌/API
-    participant HUB as EX HUB
-    participant BL as 业务层
-    participant TE as 交易引擎
-    participant Pricing as 计费服务
-    participant Account as 账户服务
-    participant Risk as 风控服务
-    participant Router as 路由引擎
-    participant CO as 渠道服务
-    participant Channel as 外部渠道(银行/PSP)
-    participant Payee as 收款方
-  
-    WP->>HUB: 1. 申请出金(USD, 收款银行账户)
-  
-    Note over WP,HUB: 白牌已预计费、预路由
-  
-    rect rgb(240, 248, 255)
-        Note over HUB,Payee: 阶段1：创建商户单(聚合层)
-        HUB->>HUB: 2. 创建商户单
-    end
-  
-    rect rgb(255, 250, 240)
-        Note over HUB,Payee: 阶段2：业务层校验
-        HUB->>BL: 3. 请求业务校验
-    end
-  
-    rect rgb(250, 250, 250)
-        Note over HUB,Payee: 阶段3：业务层-基础校验
-        BL->>BL: 4. 基础校验(余额、账户状态、权限、产品启用、有效期)
-    end
-  
-    rect rgb(245, 245, 245)
-        Note over HUB,Payee: 阶段4：业务层-产品配置检查
-        BL->>BL: 5. 产品配置(限额、产品能力)
-  
-    end
-  
-    rect rgb(255, 250, 240)
-        Note over HUB,Payee: 阶段5：交易引擎创建交易单
-        HUB->>TE: 7. 调用交易引擎
-        TE->>TE: 8. 创建交易单
-    end
-  
-    rect rgb(240, 255, 240)
-        Note over HUB,Payee: 阶段6：交易引擎执行-计费
-        TE->>Pricing: 9. 计算出金费用
-        Pricing-->>TE: 10. 返回费用明细
-        TE->>TE: 11. 更新交易单(费用信息)
-    end
-  
-    rect rgb(255, 245, 238)
-        Note over HUB,Payee: 阶段7：交易引擎执行-记账(冻结)
-        TE->>Account: 12. 冻结商户法币账户余额
-        Account-->>TE: 13. 冻结成功
-        TE->>TE: 14. 更新交易单(冻结信息)
-    end
-  
-    rect rgb(230, 240, 255)
-        Note over HUB,Payee: 阶段8：交易引擎执行-风控
-        TE->>Risk: 15. 风控检查
-        Risk-->>TE: 16. 风控通过
-        TE->>TE: 17. 更新交易单(风控通过)
-    end
-  
-    rect rgb(255, 240, 245)
-        Note over HUB,Payee: 阶段9：交易引擎执行-路由+渠道调用
-        TE->>Router: 18. 请求路由
-        Router-->>TE: 19. 返回目标渠道
-        TE->>CO: 20. 创建渠道单
-        CO-->>TE: 21. 返回渠道单ID
-        TE->>Channel: 22. 调用外部渠道执行银行转账
-        Channel->>Payee: 23. 银行转账
-        Channel-->>TE: 24. 返回转账结果
-        TE->>CO: 25. 更新渠道单状态(SUCCESS)
-        TE->>TE: 26. 更新交易单(渠道结果)
-    end
-  
-    rect rgb(240, 248, 255)
-        Note over HUB,Payee: 阶段10：交易引擎执行-确认记账
-        TE->>Account: 27. 确认扣款(冻结→扣除)
-        Account-->>TE: 28. 记账成功
-        TE->>TE: 29. 更新交易单状态(SUCCESS)
-    end
-  
-    rect rgb(255, 250, 240)
-        Note over HUB,Payee: 阶段11：聚合到商户单+通知
-        TE->>HUB: 30. 通知交易单完成
-        HUB->>HUB: 31. 更新商户单状态(SUCCESS)
-        HUB-->>WP: 32. 返回出金结果
-        Note over HUB,Payee: 数据同步到TP Portal和PP Portal
-    end
-```
 
 **说明：**
 
