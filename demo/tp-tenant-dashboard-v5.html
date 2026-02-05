@@ -422,8 +422,8 @@
                 </div>
             </div>
 
-            <!-- 采购中心 -->
-            <div class="center-card cyan" data-role="tp" onclick="enterCenter('procurement')">
+            <!-- 产品中心 -->
+            <div class="center-card cyan" data-role="tp" onclick="enterCenter('product')">
                 <div class="center-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="9" cy="21" r="1"/>
@@ -432,16 +432,16 @@
                     </svg>
                 </div>
                 <span class="center-badge badge-warning">2 到期</span>
-                <h3 class="center-name">采购中心</h3>
-                <p class="center-desc">选品、代理产品、签约SP</p>
+                <h3 class="center-name">产品中心</h3>
+                <p class="center-desc">Product Center - 上架产品、产品管理</p>
                 <div class="center-stats">
                     <div class="center-stat">
                         <span class="center-stat-value">24</span>
-                        <span class="center-stat-label">签约产品</span>
+                        <span class="center-stat-label">上架产品</span>
                     </div>
                     <div class="center-stat">
                         <span class="center-stat-value">8</span>
-                        <span class="center-stat-label">合作SP</span>
+                        <span class="center-stat-label">签约SP</span>
                     </div>
                 </div>
             </div>
@@ -495,8 +495,8 @@
         <!-- 销售与财务 -->
         <div class="section-title">销售与财务</div>
         <div class="centers-grid">
-            <!-- 销售中心 - 统一 -->
-            <div class="center-card warning" data-role="both" onclick="enterCenter('sales')">
+            <!-- 销售渠道中心 -->
+            <div class="center-card warning" data-role="both" onclick="enterCenter('sales-channel')">
                 <div class="center-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
@@ -506,8 +506,8 @@
                     </svg>
                 </div>
                 <span class="center-badge badge-warning">销售</span>
-                <h3 class="center-name">销售中心</h3>
-                <p class="center-desc">机构代理、销售代理、分佣管理</p>
+                <h3 class="center-name">销售渠道中心</h3>
+                <p class="center-desc">Sales Channel Center - 机构代理、销售代理、分润配置、分佣账单、结算单、付款单</p>
                 <div class="center-stats">
                     <div class="center-stat">
                         <span class="center-stat-value">77</span>
@@ -520,17 +520,18 @@
                 </div>
             </div>
 
-            <!-- 账户中心 - 仅TP角色 -->
-            <div class="center-card pink" data-role="tp" onclick="enterCenter('account')">
+            <!-- 财务中心 - TP角色 -->
+            <div class="center-card pink" data-role="tp" onclick="enterCenter('finance')">
                 <div class="center-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
-                        <line x1="1" y1="10" x2="23" y2="10"/>
+                        <rect x="2" y="4" width="20" height="16" rx="2"/>
+                        <path d="M12 8v8"/>
+                        <path d="M8 12h8"/>
                     </svg>
                 </div>
                 <span class="center-badge badge-success">可提现</span>
-                <h3 class="center-name">账户中心</h3>
-                <p class="center-desc">佣金账户、交易数据、充值提现</p>
+                <h3 class="center-name">财务中心</h3>
+                <p class="center-desc">Finance Center - 佣金账户、交易数据、充值提现</p>
                 <div class="center-stats">
                     <div class="center-stat">
                         <span class="center-stat-value">$45K</span>
@@ -573,7 +574,7 @@
                     </svg>
                 </div>
                 <h3 class="center-name">清结算中心</h3>
-                <p class="center-desc">清算、结算、对账管理</p>
+                <p class="center-desc">清算、结算、对账、商户收费、商户汇率路由、商户MK配置</p>
                 <div class="center-stats">
                     <div class="center-stat">
                         <span class="center-stat-value">$1.2M</span>
@@ -586,8 +587,8 @@
                 </div>
             </div>
 
-            <!-- 司库中心 - 有资金账户的角色 -->
-            <div class="center-card cyan" data-role="sp" onclick="enterCenter('treasury')">
+            <!-- 财务中心 - SP角色 -->
+            <div class="center-card cyan" data-role="sp" onclick="enterCenter('finance')">
                 <div class="center-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="2" y="4" width="20" height="16" rx="2"/>
@@ -595,8 +596,8 @@
                         <path d="M8 12h8"/>
                     </svg>
                 </div>
-                <h3 class="center-name">司库中心</h3>
-                <p class="center-desc">资金账户、清结算、资金运营、汇率管理</p>
+                <h3 class="center-name">财务中心</h3>
+                <p class="center-desc">Finance Center - 资金账户、清结算、资金运营、汇率管理</p>
                 <div class="center-stats">
                     <div class="center-stat">
                         <span class="center-stat-value">$5.8M</span>
