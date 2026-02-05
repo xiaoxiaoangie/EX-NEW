@@ -20,66 +20,54 @@ const centerMenus = {
             ]}
         ]
     },
-    procurement: {
-        name: '采购中心',
+    product: {
+        name: '产品市场',
         groups: [
             { label: '产品市场', items: [
-                { name: '浏览产品', icon: 'search', active: true },
-                { name: '产品对比', icon: 'columns' },
-                { name: '收藏产品', icon: 'heart' }
-            ]},
-            { label: '我的产品', items: [
-                { name: '已签约产品', icon: 'package' },
-                { name: '待生效产品', icon: 'clock' },
-                { name: '即将到期', icon: 'alert-triangle', badge: '2' }
-            ]},
-            { label: '签约管理', items: [
-                { name: '签约记录', icon: 'file-text' },
-                { name: '续签申请', icon: 'refresh' },
-                { name: '合同管理', icon: 'folder' }
+                { name: '浏览产品', icon: 'grid', active: true },
+                { name: '已签约产品', icon: 'package' }
             ]}
         ]
     },
     supply: {
-        name: '供应中心',
+        name: '产品中心',
         groups: [
-            { label: '产品管理', items: [
-                { name: '产品列表', icon: 'package', active: true },
-                { name: '新建产品', icon: 'plus-circle' },
-                { name: '产品定价', icon: 'dollar-sign' },
-                { name: '产品配置', icon: 'settings' }
+            { label: '产品中心', items: [
+                { name: '上架产品', icon: 'package', active: true },
+                { name: '产品管理', icon: 'settings' }
             ]},
-            { label: 'TP管理', items: [
-                { name: 'TP列表', icon: 'users' },
-                { name: '接入申请', icon: 'user-plus', badge: '3' },
-                { name: 'TP报价', icon: 'tag' }
+            { label: '机构伙伴', items: [
+                { name: '机构伙伴查询', icon: 'users' },
+                { name: '机构签约产品', icon: 'package' }
             ]},
-            { label: '订单管理', items: [
-                { name: '订单列表', icon: 'shopping-cart' },
-                { name: '订单统计', icon: 'bar-chart' }
+            
+            { label: '机构佣金配置', items: [
+                { name: '模版配置', icon: 'sliders' },
+                { name: '机构佣金配置', icon: 'settings' }
+            ]},
+            { label: '机构佣金结算', items: [
+                { name: '分佣账单', icon: 'file-text' },
+                { name: '分佣明细', icon: 'list' },
+                { name: '结算单', icon: 'calendar' },
             ]}
         ]
     },
     spSales: {
-        name: '销售中心',
+        name: '销售渠道',
         groups: [
-            { label: 'TP合作管理', items: [
-                { name: 'TP合作伙伴列表', icon: 'users', active: true },
-                { name: 'TP层级管理', icon: 'git-branch' },
-                { name: 'TP合作协议', icon: 'file-text' }
+            { label: '代理商管理', items: [
+                { name: '代理商签约', icon: 'users', active: true },
+                { name: '代理商管理', icon: 'git-branch' },
             ]},
-            { label: '分佣管理', items: [
-                { name: '分佣规则配置', icon: 'sliders' },
-                { name: 'TP分佣账单', icon: 'file-text' },
-                { name: 'TP分佣明细', icon: 'list' },
-                { name: '分佣统计报表', icon: 'bar-chart' }
+            { label: '代理商分佣', items: [
+                { name: '分佣账单', icon: 'file-text' },
+                { name: '分佣明细', icon: 'list' },
+                { name: '代理商结算', icon: 'check-circle' },
+                { name: '代理商付款', icon: 'check-circle' },
+
+
             ]},
-            { label: '结算管理', items: [
-                { name: 'TP结算单', icon: 'calendar' },
-                { name: 'TP付款单', icon: 'credit-card' },
-                { name: '结算记录', icon: 'check-circle' },
-                { name: '结算审核', icon: 'user-check', badge: '2' }
-            ]}
+           
         ]
     },
     merchant: {
@@ -87,19 +75,20 @@ const centerMenus = {
         groups: [
             { label: '基础信息', items: [
                 { name: '商户基本信息', icon: 'user', active: true },
-                { name: '商户签约产品', icon: 'package' },
+                { name: '商户开通产品', icon: 'package' },
                 { name: '商户报价', icon: 'dollar-sign' },
                 { name: '商户汇率', icon: 'trending-up' }
             ]},
-            { label: '交易管理', items: [
+            { label: '商户单管理', items: [
                 { name: 'VA账户', icon: 'credit-card' },
-                { name: '收款交易', icon: 'download' },
-                { name: '付款交易', icon: 'upload' },
-                { name: '换汇交易', icon: 'repeat' },
-                { name: 'On/Off Ramp', icon: 'zap' },
-                { name: 'Crypto', icon: 'bitcoin' },
+                { name: '收款商户单', icon: 'download' },
+                { name: '付款商户单', icon: 'upload' },
+                { name: '换汇商户单', icon: 'repeat' },
+                { name: 'Ramp商户单', icon: 'zap' },
+                { name: '充提币商户单', icon: 'bitcoin' },
                 { name: '卡片查询', icon: 'credit-card' },
-                { name: '收单交易', icon: 'tag' }
+                { name: 'VCC商户单', icon: 'credit-card' },
+                { name: '收单商户单', icon: 'tag' }
             ]},
             { label: '交易背景', items: [
                 { name: '订单管理', icon: 'clipboard' },
@@ -111,53 +100,60 @@ const centerMenus = {
             ]}
         ]
     },
-    sales: {
-        name: '销售中心',
+    'sales-channel': {
+        name: '销售渠道中心',
         groups: [
-            { label: '机构代理管理', items: [
-                { name: '代理商列表', icon: 'users', active: true },
-                { name: '新建代理商', icon: 'user-plus' },
-                { name: '代理商层级', icon: 'git-branch' },
-                { name: '代理商授权', icon: 'shield' }
+            { label: '销售代理', items: [
+                { name: '销售代理查询', icon: 'user' },
+                { name: '销售代理产品查询', icon: 'shopping-cart' }
             ]},
-            { label: '销售代理管理', items: [
-                { name: 'TP合作伙伴列表', icon: 'briefcase' },
-                { name: 'TP层级管理', icon: 'git-branch' },
-                { name: 'TP合作协议', icon: 'file-text' }
+            { label: '商户查询', items: [
+                { name: '代理商拓客查询', icon: 'search' }
             ]},
-            { label: '分佣管理', items: [
-                { name: '分佣规则配置', icon: 'sliders' },
-                { name: '分佣账单生成', icon: 'file-text' },
-                { name: '分佣明细', icon: 'list' }
+            { label: '分润/返点配置', items: [
+                { name: '模版配置', icon: 'sliders' },
+                { name: '代理商配置', icon: 'settings' }
             ]},
-            { label: '结算管理', items: [
+            { label: '分佣结算', items: [
+                { name: '分佣账单', icon: 'file-text' },
+                { name: '分佣明细', icon: 'list' },
                 { name: '结算单', icon: 'calendar' },
-                { name: '付款单', icon: 'credit-card' },
-                { name: '结算记录', icon: 'check-circle' }
+                { name: '付款单', icon: 'credit-card' }
             ]}
         ]
     },
-    account: {
-        name: '账户中心',
+    finance: {
+        name: '财资中心',
         groups: [
-            { label: '佣金账户', items: [
-                { name: '佣金余额', icon: 'wallet', active: true },
-                { name: '可提现金额', icon: 'dollar-sign' },
-                { name: '冻结资金', icon: 'lock' }
+            { label: '资金账户', items: [
+                { name: '账户总览', icon: 'wallet', active: true },
+                { name: '多渠道账户', icon: 'layers' },
+                { name: '资金流水', icon: 'list' },
+                { name: '可用余额/冻绗余额', icon: 'lock' }
             ]},
-            { label: '交易数据', items: [
-                { name: '推荐客户列表', icon: 'users' },
-                { name: '客户交易统计', icon: 'bar-chart' },
-                { name: '佣金明细', icon: 'list' }
+            { label: '资金调拨', items: [
+                { name: '跨账户调拨', icon: 'repeat' },
+                { name: '调拨记录', icon: 'file-text' },
+                { name: '调拨审核', icon: 'check-circle' }
             ]},
-            { label: '资金操作', items: [
-                { name: '充值', icon: 'download' },
-                { name: '提现', icon: 'upload' },
-                { name: '充值提现记录', icon: 'file-text' }
+            { label: '清结算', items: [
+                { name: '清算管理', icon: 'layers' },
+                { name: '结算管理', icon: 'calendar' },
+                { name: '对账管理', icon: 'check-square' }
             ]},
-            { label: '分佣收益', items: [
-                { name: '分佣账单', icon: 'file-text' },
-                { name: '收益统计', icon: 'trending-up' }
+            { label: '资金运营', items: [
+                { name: '头寸管理', icon: 'trending-up' },
+                { name: '流动性管理', icon: 'activity' },
+                { name: '资金预测', icon: 'bar-chart' }
+            ]},
+            { label: '汇率运营', items: [
+                { name: '汇率监控', icon: 'eye' },
+                { name: '套利管理', icon: 'dollar-sign' },
+                { name: '对冲管理', icon: 'shield' }
+            ]},
+            { label: '分佣结算', items: [
+                { name: 'TP分佣账单', icon: 'file-text' },
+                { name: 'TP结算付款', icon: 'credit-card' }
             ]}
         ]
     },
@@ -185,23 +181,33 @@ const centerMenus = {
         name: '清结算中心',
         groups: [
             { label: '清算管理', items: [
-                { name: '清算任务', icon: 'layers', active: true },
-                { name: '清算记录', icon: 'file-text' },
-                { name: '清算规则', icon: 'sliders' }
+                { name: '交易单', icon: 'file-text', active: true },
+                { name: '渠道单', icon: 'layers' },
+                { name: '清算报表', icon: 'bar-chart' }
             ]},
-            { label: '结算管理', items: [
-                { name: '结算任务', icon: 'check-square' },
-                { name: '结算记录', icon: 'file-text' },
-                { name: '结算规则', icon: 'sliders' }
+            { label: '商户结算', items: [
+                { name: '商户结算单', icon: 'file-text' },
+                { name: '结算记录', icon: 'clock' }
+            ]},
+            { label: '代理商分佣', items: [
+                { name: '分佣账单', icon: 'file-text' },
+                { name: '代理商结算', icon: 'calendar' },
+                { name: '代理商付款', icon: 'credit-card' }
             ]},
             { label: '对账管理', items: [
                 { name: '对账任务', icon: 'check-circle' },
                 { name: '对账差异', icon: 'alert-triangle' },
                 { name: '差异处理', icon: 'edit' }
             ]},
-            { label: '报表', items: [
-                { name: '清算报表', icon: 'bar-chart' },
-                { name: '结算报表', icon: 'pie-chart' }
+            { label: '费率配置', items: [
+                { name: '产品收费配置', icon: 'dollar-sign' },
+                { name: '产品收费查询', icon: 'dollar-sign' },
+                { name: '模板管理', icon: 'sliders' }
+            ]},
+            { label: '汇率配置', items: [
+                { name: '汇率MK配置', icon: 'trending-up' },
+                { name: '汇率路由规则', icon: 'git-branch' },
+                { name: '汇率查询', icon: 'git-branch' }
             ]}
         ]
     },
@@ -300,41 +306,6 @@ const centerMenus = {
             { label: '审计与日志', items: [
                 { name: '操作日志', icon: 'file-text' },
                 { name: '审计追踪', icon: 'eye' }
-            ]}
-        ]
-    },
-    treasury: {
-        name: '司库中心',
-        groups: [
-            { label: '资金账户', items: [
-                { name: '账户总览', icon: 'wallet', active: true },
-                { name: '多渠道账户', icon: 'layers' },
-                { name: '资金流水', icon: 'list' },
-                { name: '可用余额/冻结余额', icon: 'lock' }
-            ]},
-            { label: '资金调拨', items: [
-                { name: '跨账户调拨', icon: 'repeat' },
-                { name: '调拨记录', icon: 'file-text' },
-                { name: '调拨审核', icon: 'check-circle' }
-            ]},
-            { label: '清结算', items: [
-                { name: '清算管理', icon: 'layers' },
-                { name: '结算管理', icon: 'calendar' },
-                { name: '对账管理', icon: 'check-square' }
-            ]},
-            { label: '资金运营', items: [
-                { name: '头寸管理', icon: 'trending-up' },
-                { name: '流动性管理', icon: 'activity' },
-                { name: '资金预测', icon: 'bar-chart' }
-            ]},
-            { label: '汇率运营', items: [
-                { name: '汇率监控', icon: 'eye' },
-                { name: '套利管理', icon: 'dollar-sign' },
-                { name: '对冲管理', icon: 'shield' }
-            ]},
-            { label: '分佣结算', items: [
-                { name: 'TP分佣账单', icon: 'file-text' },
-                { name: 'TP结算付款', icon: 'credit-card' }
             ]}
         ]
     },
@@ -445,30 +416,46 @@ function enterCenter(center) {
             const icon = icons[item.icon] || icons['file'];
             const activeClass = item.active ? ' active' : '';
             const badge = item.badge ? `<span class="badge">${item.badge}</span>` : '';
-            menuHtml += `<div class="menu-item${activeClass}">${icon}${item.name}${badge}</div>`;
+            menuHtml += `<div class="menu-item${activeClass}" data-page="${item.name}">${icon}${item.name}${badge}</div>`;
         });
         menuHtml += '</div>';
     });
     document.getElementById('detailSidebar').innerHTML = menuHtml;
 
-    // 生成主内容
-    document.getElementById('detailMain').innerHTML = `
-        <div class="page-header">
-            <div class="breadcrumb">
-                <a href="#" onclick="goBack()">首页</a> / <span>${config.name}</span>
+    // 为产品中心生成特殊内容
+    if (center === 'product') {
+        document.getElementById('detailMain').innerHTML = `
+            <div class="page-header">
+                <div class="breadcrumb">
+                    <a href="#" onclick="goBack()">首页</a> / <span>${config.name}</span>
+                </div>
+                <h1 class="page-title">${config.name}</h1>
+                <p class="page-desc">探索和管理您的产品服务</p>
             </div>
-            <h1 class="page-title">${config.name}</h1>
-            <p class="page-desc">管理您的${config.name}相关业务</p>
-        </div>
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">${config.groups[0]?.items[0]?.name || '概览'}</h2>
+            <div class="product-container">
+                ${renderProductList('all')}
             </div>
-            <p style="color: var(--text-secondary); padding: 40px; text-align: center;">
-                ${config.name}内容区域，点击左侧菜单查看详情
-            </p>
-        </div>
-    `;
+        `;
+    } else {
+        // 其他中心使用默认内容
+        document.getElementById('detailMain').innerHTML = `
+            <div class="page-header">
+                <div class="breadcrumb">
+                    <a href="#" onclick="goBack()">首页</a> / <span>${config.name}</span>
+                </div>
+                <h1 class="page-title">${config.name}</h1>
+                <p class="page-desc">管理您的${config.name}相关业务</p>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">${config.groups[0]?.items[0]?.name || '概览'}</h2>
+                </div>
+                <p style="color: var(--text-secondary); padding: 40px; text-align: center;">
+                    ${config.name}内容区域，点击左侧菜单查看详情
+                </p>
+            </div>
+        `;
+    }
 
     document.getElementById('centerDetail').classList.add('show');
 }
@@ -481,9 +468,30 @@ function goBack() {
 // 菜单点击事件
 document.addEventListener('click', function(e) {
     if (e.target.closest('.menu-item') && e.target.closest('.detail-sidebar')) {
+        const menuItem = e.target.closest('.menu-item');
         const items = document.querySelectorAll('.detail-sidebar .menu-item');
         items.forEach(item => item.classList.remove('active'));
-        e.target.closest('.menu-item').classList.add('active');
+        menuItem.classList.add('active');
+        
+        // 处理产品中心的菜单切换
+        const pageName = menuItem.getAttribute('data-page');
+        if (pageName) {
+            if (pageName === '浏览产品') {
+                filterProducts('all');
+            } else if (pageName === '已签约产品') {
+                filterProducts('signed');
+            } else if (pageName === '机构伙伴查询') {
+                renderAgencyQuery();
+            } else if (pageName === '机构签约产品') {
+                renderAgencyProductQuery();
+            } else if (pageName === '模版配置') {
+                renderTemplateConfig();
+            } else if (pageName === '机构返点配置') {
+                renderAgencyRebateConfig();
+            } else if (pageName === '商户开通产品') {
+                renderMerchantProducts();
+            }
+        }
     }
 });
 
@@ -517,4 +525,1089 @@ function switchRole(role) {
             card.style.display = 'none';
         }
     });
+}
+
+// 产品数据
+const products = [
+    {
+        id: 1,
+        name: '数币收款',
+        nameEn: 'Crypto Collection',
+        provider: 'Blockchain Bank',
+        providerLogo: '🏦',
+        category: 'Crypto',
+        description: 'Accept cryptocurrency payments with real-time settlement and multi-currency support.',
+        features: ['Support BTC/ETH/USDT', 'Real-time conversion', '24/7 settlement', 'Multi-layer security'],
+        price: '0.5% - 1.2%',
+        status: 'active',
+        signedDate: '2025-01-15',
+        expiryDate: '2026-01-15',
+        rating: 4.8,
+        users: 1250,
+        color: '#64748b'
+    },
+    {
+        id: 2,
+        name: '数币付款',
+        nameEn: 'Crypto Payment',
+        provider: 'IPayLinks',
+        providerLogo: '💳',
+        category: 'Crypto',
+        description: 'Fast and convenient cryptocurrency payout solution with batch payment support.',
+        features: ['Batch payment', 'Auto reconciliation', 'Multi-signature', 'Complete API'],
+        price: '0.3% - 0.8%',
+        status: 'active',
+        signedDate: '2025-02-01',
+        expiryDate: '2026-02-01',
+        rating: 4.9,
+        users: 980,
+        color: '#64748b'
+    },
+    {
+        id: 3,
+        name: '法币VA收款',
+        nameEn: 'Fiat VA Collection',
+        provider: 'Circle',
+        providerLogo: '🔵',
+        category: 'Fiat',
+        description: 'Virtual account collection service supporting major global fiat currencies.',
+        features: ['Global banking network', 'Virtual account management', 'Auto reconciliation', 'Multi-currency'],
+        price: '1.0% - 2.0%',
+        status: 'active',
+        signedDate: '2024-12-01',
+        expiryDate: '2025-12-01',
+        rating: 4.7,
+        users: 2100,
+        color: '#64748b'
+    },
+    {
+        id: 4,
+        name: '法币代付出款',
+        nameEn: 'Fiat Payout',
+        provider: 'Blockchain Bank',
+        providerLogo: '🏦',
+        category: 'Fiat',
+        description: 'Global fiat payout service supporting bank cards and e-wallets.',
+        features: ['Global coverage', 'Real-time payout', 'Compliance', 'Competitive rates'],
+        price: '0.8% - 1.5%',
+        status: 'expiring',
+        signedDate: '2024-03-15',
+        expiryDate: '2025-03-15',
+        rating: 4.6,
+        users: 1560,
+        color: '#64748b'
+    },
+    {
+        id: 5,
+        name: '承兑服务',
+        nameEn: 'Acceptance Service',
+        provider: 'IPayLinks',
+        providerLogo: '💳',
+        category: 'Exchange',
+        description: 'Professional cryptocurrency acceptance service with deep liquidity.',
+        features: ['Deep liquidity', 'Best rates', 'Instant execution', 'Professional support'],
+        price: '0.2% - 0.6%',
+        status: 'expiring',
+        signedDate: '2024-04-01',
+        expiryDate: '2025-04-01',
+        rating: 4.9,
+        users: 850,
+        color: '#64748b'
+    },
+    {
+        id: 6,
+        name: 'On/Off Ramp',
+        nameEn: 'On/Off Ramp',
+        provider: 'Circle',
+        providerLogo: '🔵',
+        category: 'Exchange',
+        description: 'Bidirectional exchange channel between fiat and cryptocurrency.',
+        features: ['Fast exchange', 'Compliant KYC', 'Multi-channel', 'Competitive rates'],
+        price: '0.5% - 1.0%',
+        status: 'available',
+        signedDate: null,
+        expiryDate: null,
+        rating: 4.8,
+        users: 3200,
+        color: '#64748b'
+    },
+    {
+        id: 7,
+        name: '虚拟卡发行',
+        nameEn: 'Virtual Card Issuing',
+        provider: 'Blockchain Bank',
+        providerLogo: '🏦',
+        category: 'Card',
+        description: 'Virtual credit card issuing service for global online payments.',
+        features: ['Instant issuance', 'Global acceptance', 'Spending control', 'Security management'],
+        price: '$2 - $5 /card',
+        status: 'available',
+        signedDate: null,
+        expiryDate: null,
+        rating: 4.7,
+        users: 1800,
+        color: '#64748b'
+    },
+    {
+        id: 8,
+        name: '收单服务',
+        nameEn: 'Acquiring Service',
+        provider: 'IPayLinks',
+        providerLogo: '💳',
+        category: 'Card',
+        description: 'Professional card acquiring service supporting multiple card networks.',
+        features: ['Visa/Master/UnionPay', '3D Secure', 'Risk management', 'Fast settlement'],
+        price: '1.5% - 2.5%',
+        status: 'available',
+        signedDate: null,
+        expiryDate: null,
+        rating: 4.6,
+        users: 2500,
+        color: '#64748b'
+    }
+];
+
+// 渲染产品列表
+function renderProductList(filter = 'all') {
+    let filteredProducts = products;
+    
+    if (filter === 'signed') {
+        filteredProducts = products.filter(p => p.status === 'active' || p.status === 'expiring');
+        // 将即将到期的产品排在前面
+        filteredProducts.sort((a, b) => {
+            if (a.status === 'expiring' && b.status !== 'expiring') return -1;
+            if (a.status !== 'expiring' && b.status === 'expiring') return 1;
+            return 0;
+        });
+    }
+
+    // 如果是已签约，使用列表视图
+    if (filter === 'signed') {
+        return renderProductTable(filteredProducts, filter);
+    }
+
+    // 浏览产品使用卡片网格
+    const productGrid = filteredProducts.map(product => `
+        <div class="product-card" onclick="showProductDetail(${product.id})">
+            <div class="product-header">
+                <div class="product-icon" style="background: linear-gradient(135deg, ${product.color}, ${product.color}dd);">
+                    ${product.providerLogo}
+                </div>
+                <div class="product-header-info">
+                    <h3 class="product-name">${product.name}</h3>
+                    <p class="product-name-en">${product.nameEn}</p>
+                </div>
+                ${product.status === 'active' ? '<span class="product-badge active">已签约</span>' : ''}
+                ${product.status === 'expiring' ? '<span class="product-badge expiring">即将到期</span>' : ''}
+            </div>
+            <div class="product-info">
+                <p class="product-provider">${product.provider}</p>
+                <p class="product-desc">${product.description}</p>
+            </div>
+        </div>
+    `).join('');
+
+    return `
+        <div class="product-list-header">
+            <div class="product-search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="m21 21-4.35-4.35"/>
+                </svg>
+                <input type="text" placeholder="搜索产品..." id="productSearch">
+            </div>
+        </div>
+        <div class="products-grid">
+            ${productGrid}
+        </div>
+    `;
+}
+
+// 渲染产品表格（已签约和即将到期）
+function renderProductTable(filteredProducts, filter) {
+    const title = filter === 'signed' ? '已签约产品' : '即将到期产品';
+    const emptyText = filter === 'signed' ? '暂无已签约产品' : '暂无即将到期产品';
+    
+    if (filteredProducts.length === 0) {
+        return `
+            <div class="product-table-header">
+                <h2 class="product-table-title">${title}</h2>
+            </div>
+            <div class="empty-state-table">
+                <div class="empty-icon">📦</div>
+                <p>${emptyText}</p>
+            </div>
+        `;
+    }
+
+    const tableRows = filteredProducts.map(product => `
+        <tr onclick="showProductDetail(${product.id})" style="cursor: pointer;">
+            <td>
+                <div class="product-table-name">
+                    <div class="product-table-icon" style="background: linear-gradient(135deg, ${product.color}, ${product.color}dd);">
+                        ${product.providerLogo}
+                    </div>
+                    <div>
+                        <div class="product-table-title-text">${product.name}</div>
+                        <div class="product-table-subtitle">${product.nameEn}</div>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="product-table-provider">${product.provider}</div>
+            </td>
+            <td>
+                <div class="product-table-date">${product.signedDate || '-'}</div>
+            </td>
+            <td>
+                <div class="product-table-date ${product.status === 'expiring' ? 'expiring' : ''}">${product.expiryDate || '-'}</div>
+            </td>
+            <td>
+                ${product.status === 'active' ? '<span class="table-badge active">使用中</span>' : ''}
+                ${product.status === 'expiring' ? '<span class="table-badge expiring">即将到期</span>' : ''}
+            </td>
+        </tr>
+    `).join('');
+
+    return `
+        <div class="product-table-header">
+            <h2 class="product-table-title">${title}</h2>
+            <div class="product-search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="m21 21-4.35-4.35"/>
+                </svg>
+                <input type="text" placeholder="搜索产品..." id="productSearch">
+            </div>
+        </div>
+        <div class="product-table-container">
+            <table class="product-table">
+                <thead>
+                    <tr>
+                        <th>产品名称</th>
+                        <th>服务商</th>
+                        <th>签约时间</th>
+                        <th>到期时间</th>
+                        <th>状态</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${tableRows}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+// 显示产品详情
+function showProductDetail(productId) {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    const modal = document.createElement('div');
+    modal.className = 'product-modal';
+    modal.innerHTML = `
+        <div class="product-modal-overlay" onclick="this.parentElement.remove()"></div>
+        <div class="product-modal-content">
+            <button class="modal-close" onclick="this.closest('.product-modal').remove()">×</button>
+            
+            <div class="product-detail-header">
+                <div class="product-detail-icon" style="background: linear-gradient(135deg, ${product.color}, ${product.color}dd);">
+                    ${product.providerLogo}
+                </div>
+                <div class="product-detail-title">
+                    <h2>${product.name}</h2>
+                    <p class="product-detail-en">${product.nameEn}</p>
+                    <div class="product-detail-provider">
+                        <span>服务商：${product.provider}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-detail-body">
+                <div class="product-detail-section">
+                    <h3>产品介绍</h3>
+                    <p>${product.description}</p>
+                </div>
+
+                <div class="product-detail-section">
+                    <h3>核心功能</h3>
+                    <ul class="product-features">
+                        ${product.features.map(f => `<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>${f}</li>`).join('')}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="product-detail-footer">
+                ${product.status === 'available' ? `
+                    <button class="btn-primary-large" onclick="signProduct(${product.id})">立即签约</button>
+                ` : ''}
+                ${product.status === 'active' ? `
+                    <button class="btn-secondary-large" onclick="manageProduct(${product.id})">管理产品</button>
+                ` : ''}
+                ${product.status === 'expiring' ? `
+                    <button class="btn-primary-large" onclick="renewProduct(${product.id})">续签产品</button>
+                    <button class="btn-secondary-large" onclick="manageProduct(${product.id})">管理产品</button>
+                ` : ''}
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+// 筛选产品
+function filterProducts(filter) {
+    const mainContent = document.getElementById('detailMain');
+    if (mainContent) {
+        const html = renderProductList(filter);
+        mainContent.querySelector('.product-container').innerHTML = html;
+    }
+}
+
+// 签约产品
+function signProduct(productId) {
+    alert(`正在发起产品签约流程... 产品ID: ${productId}`);
+}
+
+// 续签产品
+function renewProduct(productId) {
+    alert(`正在发起产品续签流程... 产品ID: ${productId}`);
+}
+
+// 管理产品
+function manageProduct(productId) {
+    alert(`正在打开产品管理页面... 产品ID: ${productId}`);
+}
+
+// 渲染机构伙伴查询页面
+function renderAgencyQuery() {
+    const mainContent = document.getElementById('detailMain');
+    if (!mainContent) return;
+    
+    mainContent.innerHTML = `
+        <div class="page-header">
+            <div class="breadcrumb">
+                <a href="#" onclick="goBack()">首页</a> / <span>产品中心</span> / <span>机构伙伴查询</span>
+            </div>
+            <h1 class="page-title">机构伙伴查询</h1>
+            <p class="page-desc">查询和管理机构伙伴信息</p>
+        </div>
+        
+        <!-- 搜索表单 -->
+        <div class="card" style="margin-bottom: 16px;">
+            <div style="padding: 24px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-bottom: 16px;">
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">机构伙伴ID</label>
+                        <input type="text" placeholder="请输入机构伙伴ID" id="agencyId" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">机构名称</label>
+                        <input type="text" placeholder="请输入机构名称" id="agencyName" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">身份类型</label>
+                        <select id="identityType" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                            <option value="">全部</option>
+                            <option value="institution">机构</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">状态</label>
+                        <select id="status" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                            <option value="">全部</option>
+                            <option value="active">正常</option>
+                            <option value="suspended">暂停</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">来源</label>
+                        <select id="source" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                            <option value="">全部</option>
+                            <option value="EX">EX</option>
+                            <option value="Direct">直接签约</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">签约时间</label>
+                        <input type="date" id="signDate" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <button onclick="searchAgencies()" style="padding: 8px 20px; background: #4f46e5; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: 500;">查询</button>
+                    <button onclick="resetAgencyForm()" style="padding: 8px 20px; background: white; color: #6c757d; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: 500;">重置</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 数据表格 -->
+        <div class="card">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 class="card-title">机构伙伴列表</h2>
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="exportAgencyData()" style="padding: 6px 12px; background: white; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer; color: #6c757d;">导出</button>
+                    <button onclick="refreshAgencyData()" style="padding: 6px 12px; background: white; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer; color: #6c757d;">刷新</button>
+                </div>
+            </div>
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead style="background: #f8f9fa;">
+                        <tr>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">机构伙伴ID</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">机构名称</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">身份类型</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">状态</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">签约时间</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">来源</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">创建时间</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="agencyTableBody">
+                        ${renderAgencyTableRows()}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 渲染机构伙伴表格行
+function renderAgencyTableRows() {
+    const mockData = [
+        { id: 'AGT001', name: '深圳科技有限公司', identityType: '机构', status: 'active', signDate: '2024-01-16', source: 'EX', createTime: '2024-01-10 10:30:00' },
+        { id: 'AGT002', name: '上海贸易集团', identityType: '机构', status: 'active', signDate: '2024-02-20', source: 'EX', createTime: '2024-02-15 14:20:00' },
+        { id: 'AGT003', name: '北京投资公司', identityType: '机构', status: 'suspended', signDate: '2023-12-05', source: 'Direct', createTime: '2023-12-01 09:15:00' },
+        { id: 'AGT004', name: '广州电商平台', identityType: '机构', status: 'active', signDate: '2024-03-10', source: 'EX', createTime: '2024-03-05 16:45:00' },
+        { id: 'AGT005', name: '杭州金融服务', identityType: '机构', status: 'active', signDate: '2024-01-25', source: 'EX', createTime: '2024-01-20 11:00:00' }
+    ];
+    
+    return mockData.map(item => `
+        <tr style="border-bottom: 1px solid #e9ecef;">
+            <td style="padding: 16px; font-size: 14px;">${item.id}</td>
+            <td style="padding: 16px; font-size: 14px;">${item.name}</td>
+            <td style="padding: 16px; font-size: 14px;">${item.identityType}</td>
+            <td style="padding: 16px; font-size: 14px;">
+                <span style="display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; background: ${item.status === 'active' ? '#d1fae5' : '#fef3c7'}; color: ${item.status === 'active' ? '#065f46' : '#92400e'};">
+                    ${item.status === 'active' ? '正常' : '暂停'}
+                </span>
+            </td>
+            <td style="padding: 16px; font-size: 14px;">${item.signDate}</td>
+            <td style="padding: 16px; font-size: 14px;">
+                <span style="display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; background: #dbeafe; color: #1e40af;">${item.source}</span>
+            </td>
+            <td style="padding: 16px; font-size: 14px;">${item.createTime}</td>
+            <td style="padding: 16px; font-size: 14px;">
+                <button onclick="viewAgencyDetail('${item.id}')" style="background: none; border: none; color: #4f46e5; cursor: pointer; font-size: 14px; text-decoration: underline;">详情</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// 搜索机构伙伴
+function searchAgencies() {
+    console.log('执行搜索');
+    alert('搜索功能开发中');
+}
+
+// 重置表单
+function resetAgencyForm() {
+    document.getElementById('agencyId').value = '';
+    document.getElementById('agencyName').value = '';
+    document.getElementById('identityType').value = '';
+    document.getElementById('status').value = '';
+    document.getElementById('source').value = '';
+    document.getElementById('signDate').value = '';
+}
+
+// 导出数据
+function exportAgencyData() {
+    alert('导出功能开发中');
+}
+
+// 刷新数据
+function refreshAgencyData() {
+    renderAgencyQuery();
+}
+
+// 查看详情
+function viewAgencyDetail(id) {
+    alert(`查看机构伙伴详情: ${id}`);
+}
+
+// 渲染机构签约产品查询页面
+function renderAgencyProductQuery() {
+    const mainContent = document.getElementById('detailMain');
+    if (!mainContent) return;
+    
+    mainContent.innerHTML = `
+        <div class="page-header">
+            <div class="breadcrumb">
+                <a href="#" onclick="goBack()">首页</a> / <span>产品中心</span> / <span>机构签约产品</span>
+            </div>
+            <h1 class="page-title">管理机构(伙伴)签约产品的信息</h1>
+        </div>
+        
+        <!-- 搜索表单 -->
+        <div class="card" style="margin-bottom: 16px;">
+            <div style="padding: 24px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-bottom: 16px;">
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">机构代理ID</label>
+                        <input type="text" placeholder="请输入机构代理ID" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">机构名称</label>
+                        <input type="text" placeholder="请输入机构名称" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">身份类型</label>
+                        <select style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                            <option value="">全部</option>
+                            <option value="institution">机构</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">签约产品</label>
+                        <input type="text" placeholder="请输入产品名称" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">签约方式</label>
+                        <select style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                            <option value="">全部</option>
+                            <option value="online">线上签约</option>
+                            <option value="offline">线下签约</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">签约状态</label>
+                        <select style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                            <option value="">全部</option>
+                            <option value="active">生效中</option>
+                            <option value="pending">即将到期</option>
+                            <option value="expired">已过期</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <button onclick="alert('查询功能开发中')" style="padding: 8px 20px; background: #4f46e5; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: 500;">查询</button>
+                    <button onclick="alert('重置功能开发中')" style="padding: 8px 20px; background: white; color: #6c757d; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: 500;">重置</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 数据表格 -->
+        <div class="card">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 class="card-title">产品签约列表</h2>
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="alert('导出功能开发中')" style="padding: 6px 12px; background: white; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer; color: #6c757d;">导出</button>
+                    <button onclick="renderAgencyProductQuery()" style="padding: 6px 12px; background: white; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer; color: #6c757d;">刷新</button>
+                </div>
+            </div>
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead style="background: #f8f9fa;">
+                        <tr>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">机构代理ID</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">机构名称</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">身份类型</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">签约产品</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">签约方式</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">签约有效期</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">签约状态</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">创建时间</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${renderAgencyProductRows()}
+                    </tbody>
+                </table>
+            </div>
+            <div style="display: flex; justify-content: center; align-items: center; gap: 8px; padding: 16px;">
+                <button style="padding: 6px 12px; border: 1px solid #dee2e6; background: white; border-radius: 4px; cursor: pointer; font-size: 14px;">上一页</button>
+                <button style="padding: 6px 12px; border: 1px solid #4f46e5; background: #4f46e5; color: white; border-radius: 4px; cursor: pointer; font-size: 14px;">1</button>
+                <button style="padding: 6px 12px; border: 1px solid #dee2e6; background: white; border-radius: 4px; cursor: pointer; font-size: 14px;">2</button>
+                <button style="padding: 6px 12px; border: 1px solid #dee2e6; background: white; border-radius: 4px; cursor: pointer; font-size: 14px;">3</button>
+                <button style="padding: 6px 12px; border: 1px solid #dee2e6; background: white; border-radius: 4px; cursor: pointer; font-size: 14px;">下一页</button>
+            </div>
+        </div>
+    `;
+}
+
+// 渲染机构签约产品表格行
+function renderAgencyProductRows() {
+    const mockData = [
+        { id: 'AGT001', name: '深圳科技有限公司', identityType: '机构', product: 'Crypto Collection', method: '线上签约', validity: '2024-01-15 ~ 2025-01-15', status: 'active', createTime: '2024-01-10 10:30:00' },
+        { id: 'AGT001', name: '深圳科技有限公司', identityType: '机构', product: 'Fiat VA Collection', method: '线下签约', validity: '2024-02-01 ~ 2025-02-01', status: 'active', createTime: '2024-01-25 14:20:00' },
+        { id: 'AGT002', name: '上海贸易集团', identityType: '机构', product: 'Crypto Payment', method: '线上签约', validity: '2024-03-01 ~ 2024-12-31', status: 'pending', createTime: '2024-02-20 16:45:00' },
+        { id: 'AGT003', name: '北京投资公司', identityType: '机构', product: 'Virtual Card Issuing', method: '线下签约', validity: '2023-06-01 ~ 2024-06-01', status: 'expired', createTime: '2023-05-20 11:00:00' },
+        { id: 'AGT004', name: '广州电商平台', identityType: '机构', product: 'On/Off Ramp', method: '线上签约', validity: '2024-04-01 ~ 2025-04-01', status: 'active', createTime: '2024-03-25 09:30:00' }
+    ];
+    
+    return mockData.map(item => `
+        <tr style="border-bottom: 1px solid #e9ecef;">
+            <td style="padding: 16px; font-size: 14px;">${item.id}</td>
+            <td style="padding: 16px; font-size: 14px;">${item.name}</td>
+            <td style="padding: 16px; font-size: 14px;">${item.identityType}</td>
+            <td style="padding: 16px; font-size: 14px;">${item.product}</td>
+            <td style="padding: 16px; font-size: 14px;">
+                <span style="display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; background: #dbeafe; color: #1e40af;">${item.method}</span>
+            </td>
+            <td style="padding: 16px; font-size: 14px;">${item.validity}</td>
+            <td style="padding: 16px; font-size: 14px;">
+                <span style="display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; background: ${item.status === 'active' ? '#d1fae5' : item.status === 'pending' ? '#fef3c7' : '#fee2e2'}; color: ${item.status === 'active' ? '#065f46' : item.status === 'pending' ? '#92400e' : '#991b1b'};">
+                    ${item.status === 'active' ? '生效中' : item.status === 'pending' ? '即将到期' : '已过期'}
+                </span>
+            </td>
+            <td style="padding: 16px; font-size: 14px;">${item.createTime}</td>
+            <td style="padding: 16px; font-size: 14px;">
+                <button onclick="alert('查看详情: ${item.id}')" style="background: none; border: none; color: #4f46e5; cursor: pointer; font-size: 14px; text-decoration: underline;">详情</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// 渲染模版配置页面（卡片样式）
+function renderTemplateConfig() {
+    const mainContent = document.getElementById('detailMain');
+    if (!mainContent) return;
+    
+    mainContent.innerHTML = `
+        <div class="page-header">
+            <div class="breadcrumb">
+                <a href="#" onclick="goBack()">首页</a> / <span>产品中心</span> / <span>模版配置</span>
+            </div>
+            <h1 class="page-title">模版配置</h1>
+            <p class="page-desc">管理返点模版配置</p>
+        </div>
+        
+        <!-- 搜索表单 -->
+        <div class="card" style="margin-bottom: 16px;">
+            <div style="padding: 24px;">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px;">
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">模版名称</label>
+                        <input type="text" placeholder="请输入模版名称" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">签约产品</label>
+                        <input type="text" placeholder="请输入产品名称" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">创建时间</label>
+                        <input type="date" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <button onclick="alert('查询功能开发中')" style="padding: 8px 20px; background: #4f46e5; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: 500;">查询</button>
+                    <button onclick="alert('重置功能开发中')" style="padding: 8px 20px; background: white; color: #6c757d; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: 500;">重置</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 模版卡片列表 -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;">
+            ${renderTemplateCards()}
+        </div>
+    `;
+}
+
+// 渲染模版卡片
+function renderTemplateCards() {
+    const templates = [
+        { name: '标准收款模版', product: 'Crypto Collection', date: '2024-01-15', usage: '12 使用' },
+        { name: '法币VA收款模版', product: 'Fiat VA Collection', date: '2024-02-20', usage: '8 使用' },
+        { name: '加密支付模版', product: 'Crypto Payment', date: '2024-03-10', usage: '15 使用' },
+        { name: '虚拟卡发卡模版', product: 'Virtual Card Issuing', date: '2024-03-25', usage: '6 使用' },
+        { name: '出入金模版', product: 'On/Off Ramp', date: '2024-04-05', usage: '10 使用' },
+        { name: '商级收款模版', product: 'Crypto Collection', date: '2024-04-15', usage: '4 使用' }
+    ];
+    
+    return templates.map(template => `
+        <div class="card" style="position: relative;">
+            <div style="position: absolute; top: 12px; right: 12px; display: flex; gap: 8px;">
+                <button onclick="alert('编辑模版: ${template.name}')" style="padding: 4px 8px; background: white; border: 1px solid #dee2e6; border-radius: 4px; cursor: pointer;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                </button>
+                <button onclick="alert('删除模版: ${template.name}')" style="padding: 4px 8px; background: white; border: 1px solid #dee2e6; border-radius: 4px; cursor: pointer;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"/>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                </button>
+            </div>
+            <div style="padding: 24px; padding-top: 48px;">
+                <div style="width: 48px; height: 48px; background: #4f46e5; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                </div>
+                <h3 style="font-size: 16px; font-weight: 600; color: #2c3e50; margin-bottom: 8px;">${template.name}</h3>
+                <p style="font-size: 13px; color: #6c757d; margin-bottom: 12px;">○ ${template.product}</p>
+                <div style="display: flex; align-items: center; gap: 16px; font-size: 13px; color: #6c757d;">
+                    <span>📅 ${template.date}</span>
+                    <span>👥 ${template.usage}</span>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// 渲染机构返点配置页面
+function renderAgencyRebateConfig() {
+    const mainContent = document.getElementById('detailMain');
+    if (!mainContent) return;
+    
+    mainContent.innerHTML = `
+        <div class="page-header">
+            <div class="breadcrumb">
+                <a href="#" onclick="goBack()">首页</a> / <span>产品中心</span> / <span>机构返点配置</span>
+            </div>
+            <h1 class="page-title">机构返点配置</h1>
+            <p class="page-desc">管理机构伙伴的返点配置</p>
+        </div>
+        
+        <!-- 搜索表单 -->
+        <div class="card" style="margin-bottom: 16px;">
+            <div style="padding: 24px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-bottom: 16px;">
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">机构伙伴ID</label>
+                        <input type="text" placeholder="请输入机构伙伴ID" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">机构名称</label>
+                        <input type="text" placeholder="请输入机构名称" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">产品</label>
+                        <input type="text" placeholder="请输入产品名称" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">状态</label>
+                        <select style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                            <option value="">全部</option>
+                            <option value="active">启用</option>
+                            <option value="inactive">停用</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <button onclick="alert('查询功能开发中')" style="padding: 8px 20px; background: #4f46e5; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: 500;">查询</button>
+                    <button onclick="alert('重置功能开发中')" style="padding: 8px 20px; background: white; color: #6c757d; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: 500;">重置</button>
+                    <button onclick="alert('新增配置')" style="padding: 8px 20px; background: #10b981; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: 500; margin-left: auto;">+ 新增配置</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 数据表格 -->
+        <div class="card">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 class="card-title">返点配置列表</h2>
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="alert('导出功能开发中')" style="padding: 6px 12px; background: white; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer; color: #6c757d;">导出</button>
+                    <button onclick="renderAgencyRebateConfig()" style="padding: 6px 12px; background: white; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer; color: #6c757d;">刷新</button>
+                </div>
+            </div>
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead style="background: #f8f9fa;">
+                        <tr>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">机构伙伴ID</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">机构名称</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">产品</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">返点比例</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">返点类型</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">状态</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">创建时间</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${renderAgencyRebateRows()}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 渲染机构返点配置表格行
+function renderAgencyRebateRows() {
+    const mockData = [
+        { id: 'AGT001', name: '深圳科技有限公司', product: 'Crypto Collection', rate: '0.5%', type: '按交易额', status: 'active', createTime: '2024-01-10 10:30:00' },
+        { id: 'AGT002', name: '上海贸易集团', product: 'Fiat VA Collection', rate: '0.3%', type: '按交易额', status: 'active', createTime: '2024-02-15 14:20:00' },
+        { id: 'AGT003', name: '北京投资公司', product: 'Crypto Payment', rate: '0.4%', type: '按交易额', status: 'inactive', createTime: '2023-12-01 09:15:00' },
+        { id: 'AGT004', name: '广州电商平台', product: 'Virtual Card Issuing', rate: '1.0%', type: '按交易笔数', status: 'active', createTime: '2024-03-05 16:45:00' },
+        { id: 'AGT005', name: '杭州金融服务', product: 'On/Off Ramp', rate: '0.6%', type: '按交易额', status: 'active', createTime: '2024-01-20 11:00:00' }
+    ];
+    
+    return mockData.map(item => `
+        <tr style="border-bottom: 1px solid #e9ecef;">
+            <td style="padding: 16px; font-size: 14px;">${item.id}</td>
+            <td style="padding: 16px; font-size: 14px;">${item.name}</td>
+            <td style="padding: 16px; font-size: 14px;">${item.product}</td>
+            <td style="padding: 16px; font-size: 14px; font-weight: 600; color: #10b981;">${item.rate}</td>
+            <td style="padding: 16px; font-size: 14px;">${item.type}</td>
+            <td style="padding: 16px; font-size: 14px;">
+                <span style="display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; background: ${item.status === 'active' ? '#d1fae5' : '#fee2e2'}; color: ${item.status === 'active' ? '#065f46' : '#991b1b'};">
+                    ${item.status === 'active' ? '启用' : '停用'}
+                </span>
+            </td>
+            <td style="padding: 16px; font-size: 14px;">${item.createTime}</td>
+            <td style="padding: 16px; font-size: 14px;">
+                <button onclick="alert('编辑配置: ${item.id}')" style="background: none; border: none; color: #4f46e5; cursor: pointer; font-size: 14px; text-decoration: underline; margin-right: 8px;">编辑</button>
+                <button onclick="alert('删除配置: ${item.id}')" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 14px; text-decoration: underline;">删除</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// 渲染商户开通产品页面（带tab）
+function renderMerchantProducts() {
+    const mainContent = document.getElementById('detailMain');
+    if (!mainContent) return;
+    
+    mainContent.innerHTML = `
+        <div class="page-header">
+            <div class="breadcrumb">
+                <a href="#" onclick="goBack()">首页</a> / <span>商户中心</span> / <span>商户开通产品</span>
+            </div>
+            <h1 class="page-title">商户开通产品</h1>
+            <p class="page-desc">管理商户开通的产品信息</p>
+        </div>
+        
+        <!-- Tab导航 -->
+        <div style="margin-bottom: 16px;">
+            <div style="border-bottom: 2px solid #e9ecef; display: flex; gap: 32px;">
+                <button id="tab-active" onclick="switchMerchantProductTab('active')" style="padding: 12px 0; border: none; background: none; font-size: 15px; font-weight: 600; color: #4f46e5; border-bottom: 2px solid #4f46e5; margin-bottom: -2px; cursor: pointer;">已开通产品</button>
+                <button id="tab-history" onclick="switchMerchantProductTab('history')" style="padding: 12px 0; border: none; background: none; font-size: 15px; font-weight: 500; color: #6c757d; cursor: pointer;">开通记录</button>
+            </div>
+        </div>
+        
+        <div id="merchant-product-content">
+            ${renderMerchantProductActiveTab()}
+        </div>
+    `;
+}
+
+// 切换商户产品tab
+function switchMerchantProductTab(tab) {
+    const activeBtn = document.getElementById('tab-active');
+    const historyBtn = document.getElementById('tab-history');
+    const content = document.getElementById('merchant-product-content');
+    
+    if (tab === 'active') {
+        activeBtn.style.color = '#4f46e5';
+        activeBtn.style.fontWeight = '600';
+        activeBtn.style.borderBottom = '2px solid #4f46e5';
+        historyBtn.style.color = '#6c757d';
+        historyBtn.style.fontWeight = '500';
+        historyBtn.style.borderBottom = 'none';
+        content.innerHTML = renderMerchantProductActiveTab();
+    } else {
+        historyBtn.style.color = '#4f46e5';
+        historyBtn.style.fontWeight = '600';
+        historyBtn.style.borderBottom = '2px solid #4f46e5';
+        activeBtn.style.color = '#6c757d';
+        activeBtn.style.fontWeight = '500';
+        activeBtn.style.borderBottom = 'none';
+        content.innerHTML = renderMerchantProductHistoryTab();
+    }
+}
+
+// 渲染已开通产品tab
+function renderMerchantProductActiveTab() {
+    return `
+        <!-- 搜索表单 -->
+        <div class="card" style="margin-bottom: 16px;">
+            <div style="padding: 24px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-bottom: 16px;">
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">商户MID</label>
+                        <input type="text" placeholder="请输入商户MID" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">商户名称</label>
+                        <input type="text" placeholder="请输入商户名称" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">商户来源</label>
+                        <select style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                            <option value="">全部</option>
+                            <option value="direct">直客</option>
+                            <option value="agent">代理商</option>
+                            <option value="partner">机构伙伴</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">商户类型</label>
+                        <select style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                            <option value="">全部</option>
+                            <option value="enterprise">企业</option>
+                            <option value="individual">个人</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">签约产品</label>
+                        <input type="text" placeholder="请输入产品名称" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <button onclick="alert('查询功能开发中')" style="padding: 8px 20px; background: #4f46e5; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: 500;">查询</button>
+                    <button onclick="alert('重置功能开发中')" style="padding: 8px 20px; background: white; color: #6c757d; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: 500;">重置</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 数据表格 -->
+        <div class="card">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 class="card-title">已开通产品列表</h2>
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="alert('导出功能开发中')" style="padding: 6px 12px; background: white; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer; color: #6c757d;">导出</button>
+                    <button onclick="renderMerchantProducts()" style="padding: 6px 12px; background: white; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer; color: #6c757d;">刷新</button>
+                </div>
+            </div>
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead style="background: #f8f9fa;">
+                        <tr>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">商户MID</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">商户名称</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">商户来源</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">商户类型</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">签约产品</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">开通时间</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${renderMerchantProductActiveRows()}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 渲染开通记录tab
+function renderMerchantProductHistoryTab() {
+    return `
+        <!-- 搜索表单 -->
+        <div class="card" style="margin-bottom: 16px;">
+            <div style="padding: 24px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-bottom: 16px;">
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">商户MID</label>
+                        <input type="text" placeholder="请输入商户MID" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">商户名称</label>
+                        <input type="text" placeholder="请输入商户名称" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">产品名称</label>
+                        <input type="text" placeholder="请输入产品名称" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">开通时间</label>
+                        <input type="date" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <button onclick="alert('查询功能开发中')" style="padding: 8px 20px; background: #4f46e5; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: 500;">查询</button>
+                    <button onclick="alert('重置功能开发中')" style="padding: 8px 20px; background: white; color: #6c757d; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: 500;">重置</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 数据表格 -->
+        <div class="card">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 class="card-title">开通记录</h2>
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="alert('导出功能开发中')" style="padding: 6px 12px; background: white; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer; color: #6c757d;">导出</button>
+                </div>
+            </div>
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead style="background: #f8f9fa;">
+                        <tr>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">商户MID</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">商户名称</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">产品名称</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">操作类型</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">操作人</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">操作时间</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">备注</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${renderMerchantProductHistoryRows()}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 渲染已开通产品表格行
+function renderMerchantProductActiveRows() {
+    const mockData = [
+        { mid: 'M001', name: '深圳电商有限公司', source: '直客', type: '企业', product: 'Crypto Collection', openTime: '2024-01-15 10:30:00' },
+        { mid: 'M001', name: '深圳电商有限公司', source: '直客', type: '企业', product: 'Fiat VA Collection', openTime: '2024-02-20 14:20:00' },
+        { mid: 'M002', name: '上海贸易公司', source: '代理商', type: '企业', product: 'Crypto Payment', openTime: '2024-03-10 09:15:00' },
+        { mid: 'M003', name: '北京科技', source: '机构伙伴', type: '企业', product: 'Virtual Card Issuing', openTime: '2024-03-25 16:45:00' },
+        { mid: 'M004', name: '广州跨境', source: '直客', type: '企业', product: 'On/Off Ramp', openTime: '2024-04-05 11:00:00' }
+    ];
+    
+    return mockData.map(item => `
+        <tr style="border-bottom: 1px solid #e9ecef;">
+            <td style="padding: 16px; font-size: 14px;">${item.mid}</td>
+            <td style="padding: 16px; font-size: 14px;">${item.name}</td>
+            <td style="padding: 16px; font-size: 14px;">
+                <span style="display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; background: #dbeafe; color: #1e40af;">${item.source}</span>
+            </td>
+            <td style="padding: 16px; font-size: 14px;">${item.type}</td>
+            <td style="padding: 16px; font-size: 14px;">${item.product}</td>
+            <td style="padding: 16px; font-size: 14px;">${item.openTime}</td>
+            <td style="padding: 16px; font-size: 14px;">
+                <button onclick="alert('产品配置: ${item.mid} - ${item.product}')" style="background: none; border: none; color: #4f46e5; cursor: pointer; font-size: 14px; text-decoration: underline;">产品配置</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// 渲染开通记录表格行
+function renderMerchantProductHistoryRows() {
+    const mockData = [
+        { mid: 'M001', name: '深圳电商有限公司', product: 'Crypto Collection', action: '开通', operator: '张三', time: '2024-01-15 10:30:00', remark: '首次开通' },
+        { mid: 'M001', name: '深圳电商有限公司', product: 'Fiat VA Collection', action: '开通', operator: '李四', time: '2024-02-20 14:20:00', remark: '业务扩展' },
+        { mid: 'M002', name: '上海贸易公司', product: 'Crypto Payment', action: '开通', operator: '王五', time: '2024-03-10 09:15:00', remark: '' },
+        { mid: 'M001', name: '深圳电商有限公司', product: 'Crypto Collection', action: '配置变更', operator: '张三', time: '2024-03-15 11:20:00', remark: '费率调整' },
+        { mid: 'M003', name: '北京科技', product: 'Virtual Card Issuing', action: '开通', operator: '赵六', time: '2024-03-25 16:45:00', remark: '机构推荐' }
+    ];
+    
+    return mockData.map(item => `
+        <tr style="border-bottom: 1px solid #e9ecef;">
+            <td style="padding: 16px; font-size: 14px;">${item.mid}</td>
+            <td style="padding: 16px; font-size: 14px;">${item.name}</td>
+            <td style="padding: 16px; font-size: 14px;">${item.product}</td>
+            <td style="padding: 16px; font-size: 14px;">
+                <span style="display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; background: ${item.action === '开通' ? '#d1fae5' : '#fef3c7'}; color: ${item.action === '开通' ? '#065f46' : '#92400e'};">
+                    ${item.action}
+                </span>
+            </td>
+            <td style="padding: 16px; font-size: 14px;">${item.operator}</td>
+            <td style="padding: 16px; font-size: 14px;">${item.time}</td>
+            <td style="padding: 16px; font-size: 14px;">${item.remark || '-'}</td>
+        </tr>
+    `).join('');
 }

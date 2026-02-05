@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>产品签约管理</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f7fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .page-header {
+            margin-bottom: 24px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .page-desc {
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .search-card {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            font-size: 13px;
+            color: #495057;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .form-input, .form-select {
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+
+        .search-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4338ca;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #6c757d;
+            border: 1px solid #dee2e6;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f9fa;
+        }
+
+        .table-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-icon {
+            padding: 6px 12px;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            color: #6c757d;
+            transition: all 0.2s;
+        }
+
+        .btn-icon:hover {
+            background: #f8f9fa;
+            border-color: #4f46e5;
+            color: #4f46e5;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1200px;
+        }
+
+        thead {
+            background: #f8f9fa;
+        }
+
+        th {
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            color: #495057;
+            border-bottom: 2px solid #e9ecef;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 16px;
+            font-size: 14px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .btn-link {
+            background: none;
+            border: none;
+            color: #4f46e5;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: underline;
+            padding: 0;
+        }
+
+        .btn-link:hover {
+            color: #4338ca;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            padding: 16px;
+        }
+
+        .pagination button {
+            padding: 6px 12px;
+            border: 1px solid #dee2e6;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .pagination button:hover:not(:disabled) {
+            background: #f8f9fa;
+            border-color: #4f46e5;
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination .active {
+            background: #4f46e5;
+            color: white;
+            border-color: #4f46e5;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            width: 95%;
+            max-width: 1200px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #6c757d;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+
+        .modal-close:hover {
+            background: #f8f9fa;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e9ecef;
+            margin-bottom: 24px;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            font-size: 15px;
+            font-weight: 500;
+            color: #6c757d;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            color: #4f46e5;
+        }
+
+        .tab.active {
+            color: #4f46e5;
+            border-bottom-color: #4f46e5;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .detail-section {
+            margin-bottom: 24px;
+        }
+
+        .detail-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .detail-section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-label {
+            font-size: 13px;
+            color: #6c757d;
+            margin-bottom: 4px;
+        }
+
+        .detail-value {
+            font-size: 14px;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .btn-action {
+            padding: 10px 24px;
+            border: 1px solid #dee2e6;
+            background: white;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .btn-action:hover {
+            background: #f8f9fa;
+            border-color: #4f46e5;
+            color: #4f46e5;
+        }
+
+        .history-table {
+            margin-top: 16px;
+        }
+
+        .history-table table {
+            min-width: auto;
+        }
+
+        .snapshot-link {
+            color: #4f46e5;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .snapshot-link:hover {
+            color: #4338ca;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">产品签约管理</h1>
+            <p class="page-desc">管理机构代理的产品签约信息</p>
+        </div>
+
+        <!-- 搜索表单 -->
+        <div class="search-card">
+            <form class="search-form" id="searchForm">
+                <div class="form-group">
+                    <label class="form-label">机构代理ID</label>
+                    <input type="text" class="form-input" placeholder="请输入机构代理ID" id="agencyId">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">机构名称</label>
+                    <input type="text" class="form-input" placeholder="请输入机构名称" id="agencyName">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">身份类型</label>
+                    <select class="form-select" id="identityType">
+                        <option value="">全部</option>
+                        <option value="institution">机构</option>
+                        <option value="individual">个人</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">签约产品</label>
+                    <input type="text" class="form-input" placeholder="请输入产品名称" id="productName">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">签约方式</label>
+                    <select class="form-select" id="contractType">
+                        <option value="">全部</option>
+                        <option value="online">线上签约</option>
+                        <option value="offline">线下签约</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">签约状态</label>
+                    <select class="form-select" id="contractStatus">
+                        <option value="">全部</option>
+                        <option value="active">生效中</option>
+                        <option value="expiring">即将到期</option>
+                        <option value="expired">已过期</option>
+                    </select>
+                </div>
+            </form>
+            <div class="search-actions">
+                <button class="btn btn-primary" onclick="searchContracts()">查询</button>
+                <button class="btn btn-secondary" onclick="resetForm()">重置</button>
+            </div>
+        </div>
+
+        <!-- 数据表格 -->
+        <div class="table-card">
+            <div class="table-header">
+                <div class="table-title">产品签约列表</div>
+                <div class="table-actions">
+                    <button class="btn-icon" onclick="exportData()">导出</button>
+                    <button class="btn-icon" onclick="refreshData()">刷新</button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>机构代理ID</th>
+                            <th>机构名称</th>
+                            <th>身份类型</th>
+                            <th>签约产品</th>
+                            <th>签约方式</th>
+                            <th>签约有效期</th>
+                            <th>签约状态</th>
+                            <th>创建时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- 数据将通过JavaScript动态填充 -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination">
+                <button onclick="changePage(-1)">上一页</button>
+                <button class="active">1</button>
+                <button>2</button>
+                <button>3</button>
+                <button onclick="changePage(1)">下一页</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 详情弹窗 -->
+    <div class="modal" id="detailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">产品签约详情</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Tabs -->
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('current')">当前生效</button>
+                    <button class="tab" onclick="switchTab('history')">签约记录</button>
+                </div>
+
+                <!-- 当前生效 Tab -->
+                <div class="tab-content active" id="currentTab">
+                    <div class="detail-section">
+                        <h3 class="detail-section-title">签约信息</h3>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <span class="detail-label">机构代理ID</span>
+                                <span class="detail-value" id="currentAgencyId">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">机构名称</span>
+                                <span class="detail-value" id="currentAgencyName">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">身份类型</span>
+                                <span class="detail-value" id="currentIdentityType">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">签约产品</span>
+                                <span class="detail-value" id="currentProduct">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">签约方式</span>
+                                <span class="detail-value" id="currentContractType">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">签约状态</span>
+                                <span class="detail-value" id="currentStatus">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">生效日期</span>
+                                <span class="detail-value" id="currentStartDate">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">结束日期</span>
+                                <span class="detail-value" id="currentEndDate">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">创建时间</span>
+                                <span class="detail-value" id="currentCreateTime">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn-action" onclick="viewPricing()">查看产品收费</button>
+                        <button class="btn-action" onclick="viewExchangeRate()">查看汇率报价</button>
+                        <button class="btn-action" onclick="viewCommission()">查看分润/返点</button>
+                    </div>
+                </div>
+
+                <!-- 签约记录 Tab -->
+                <div class="tab-content" id="historyTab">
+                    <div class="detail-section">
+                        <h3 class="detail-section-title">历史签约记录</h3>
+                        <div class="history-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>签约时间</th>
+                                        <th>生效日期</th>
+                                        <th>结束日期</th>
+                                        <th>签约方式</th>
+                                        <th>状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="historyTableBody">
+                                    <!-- 历史记录将动态填充 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 签约快照弹窗 -->
+    <div class="modal" id="snapshotModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">签约快照</h2>
+                <button class="modal-close" onclick="closeSnapshotModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-section">
+                    <h3 class="detail-section-title">签约信息</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">机构代理ID</span>
+                            <span class="detail-value" id="snapshotAgencyId">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">机构名称</span>
+                            <span class="detail-value" id="snapshotAgencyName">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">身份类型</span>
+                            <span class="detail-value" id="snapshotIdentityType">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">签约产品</span>
+                            <span class="detail-value" id="snapshotProduct">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">签约方式</span>
+                            <span class="detail-value" id="snapshotContractType">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">签约状态</span>
+                            <span class="detail-value" id="snapshotStatus">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">生效日期</span>
+                            <span class="detail-value" id="snapshotStartDate">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">结束日期</span>
+                            <span class="detail-value" id="snapshotEndDate">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">签约时间</span>
+                            <span class="detail-value" id="snapshotCreateTime">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 模拟数据
+        const mockData = [
+            {
+                agencyId: 'AGT001',
+                agencyName: '深圳科技有限公司',
+                identityType: '机构',
+                product: 'Crypto Collection',
+                contractType: '线上签约',
+                startDate: '2024-01-15',
+                endDate: '2025-01-15',
+                status: 'active',
+                createTime: '2024-01-10 10:30:00',
+                history: [
+                    { signTime: '2024-01-10 10:30:00', startDate: '2024-01-15', endDate: '2025-01-15', type: '线上签约', status: '生效中' },
+                    { signTime: '2023-01-10 09:20:00', startDate: '2023-01-15', endDate: '2024-01-15', type: '线上签约', status: '已过期' }
+                ]
+            },
+            {
+                agencyId: 'AGT001',
+                agencyName: '深圳科技有限公司',
+                identityType: '机构',
+                product: 'Fiat VA Collection',
+                contractType: '线下签约',
+                startDate: '2024-02-01',
+                endDate: '2025-02-01',
+                status: 'active',
+                createTime: '2024-01-25 14:20:00',
+                history: [
+                    { signTime: '2024-01-25 14:20:00', startDate: '2024-02-01', endDate: '2025-02-01', type: '线下签约', status: '生效中' }
+                ]
+            },
+            {
+                agencyId: 'AGT002',
+                agencyName: '上海贸易集团',
+                identityType: '机构',
+                product: 'Crypto Payment',
+                contractType: '线上签约',
+                startDate: '2024-03-01',
+                endDate: '2024-12-31',
+                status: 'expiring',
+                createTime: '2024-02-20 16:45:00',
+                history: [
+                    { signTime: '2024-02-20 16:45:00', startDate: '2024-03-01', endDate: '2024-12-31', type: '线上签约', status: '即将到期' }
+                ]
+            },
+            {
+                agencyId: 'AGT003',
+                agencyName: '北京投资公司',
+                identityType: '机构',
+                product: 'Virtual Card Issuing',
+                contractType: '线下签约',
+                startDate: '2023-06-01',
+                endDate: '2024-06-01',
+                status: 'expired',
+                createTime: '2023-05-20 11:00:00',
+                history: [
+                    { signTime: '2023-05-20 11:00:00', startDate: '2023-06-01', endDate: '2024-06-01', type: '线下签约', status: '已过期' }
+                ]
+            },
+            {
+                agencyId: 'AGT004',
+                agencyName: '广州电商平台',
+                identityType: '机构',
+                product: 'On/Off Ramp',
+                contractType: '线上签约',
+                startDate: '2024-04-01',
+                endDate: '2025-04-01',
+                status: 'active',
+                createTime: '2024-03-25 09:30:00',
+                history: [
+                    { signTime: '2024-03-25 09:30:00', startDate: '2024-04-01', endDate: '2025-04-01', type: '线上签约', status: '生效中' }
+                ]
+            }
+        ];
+
+        let currentDetailData = null;
+
+        // 渲染表格
+        function renderTable(data = mockData) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = data.map(item => `
+                <tr>
+                    <td>${item.agencyId}</td>
+                    <td>${item.agencyName}</td>
+                    <td>${item.identityType}</td>
+                    <td>${item.product}</td>
+                    <td><span class="badge badge-info">${item.contractType}</span></td>
+                    <td>${item.startDate} ~ ${item.endDate}</td>
+                    <td>
+                        <span class="badge ${
+                            item.status === 'active' ? 'badge-success' : 
+                            item.status === 'expiring' ? 'badge-warning' : 
+                            'badge-danger'
+                        }">
+                            ${item.status === 'active' ? '生效中' : item.status === 'expiring' ? '即将到期' : '已过期'}
+                        </span>
+                    </td>
+                    <td>${item.createTime}</td>
+                    <td>
+                        <button class="btn-link" onclick='showDetail(${JSON.stringify(item).replace(/'/g, "&apos;")})'>详情</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // 显示详情
+        function showDetail(item) {
+            currentDetailData = item;
+            
+            // 填充当前生效信息
+            document.getElementById('currentAgencyId').textContent = item.agencyId;
+            document.getElementById('currentAgencyName').textContent = item.agencyName;
+            document.getElementById('currentIdentityType').textContent = item.identityType;
+            document.getElementById('currentProduct').textContent = item.product;
+            document.getElementById('currentContractType').textContent = item.contractType;
+            document.getElementById('currentStatus').textContent = 
+                item.status === 'active' ? '生效中' : item.status === 'expiring' ? '即将到期' : '已过期';
+            document.getElementById('currentStartDate').textContent = item.startDate;
+            document.getElementById('currentEndDate').textContent = item.endDate;
+            document.getElementById('currentCreateTime').textContent = item.createTime;
+            
+            // 填充历史记录
+            const historyBody = document.getElementById('historyTableBody');
+            historyBody.innerHTML = item.history.map((record, index) => `
+                <tr>
+                    <td>${record.signTime}</td>
+                    <td>${record.startDate}</td>
+                    <td>${record.endDate}</td>
+                    <td><span class="badge badge-info">${record.type}</span></td>
+                    <td>
+                        <span class="badge ${
+                            record.status === '生效中' ? 'badge-success' : 
+                            record.status === '即将到期' ? 'badge-warning' : 
+                            'badge-danger'
+                        }">
+                            ${record.status}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="snapshot-link" onclick='showSnapshot(${JSON.stringify({...item, ...record}).replace(/'/g, "&apos;")})'>查看快照</span>
+                    </td>
+                </tr>
+            `).join('');
+            
+            // 切换到当前生效tab
+            switchTab('current');
+            
+            document.getElementById('detailModal').classList.add('active');
+        }
+
+        // 显示快照
+        function showSnapshot(data) {
+            document.getElementById('snapshotAgencyId').textContent = data.agencyId;
+            document.getElementById('snapshotAgencyName').textContent = data.agencyName;
+            document.getElementById('snapshotIdentityType').textContent = data.identityType;
+            document.getElementById('snapshotProduct').textContent = data.product;
+            document.getElementById('snapshotContractType').textContent = data.type || data.contractType;
+            document.getElementById('snapshotStatus').textContent = data.status;
+            document.getElementById('snapshotStartDate').textContent = data.startDate;
+            document.getElementById('snapshotEndDate').textContent = data.endDate;
+            document.getElementById('snapshotCreateTime').textContent = data.signTime || data.createTime;
+            
+            document.getElementById('snapshotModal').classList.add('active');
+        }
+
+        // 切换Tab
+        function switchTab(tabName) {
+            // 更新tab按钮状态
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // 更新tab内容
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tabName + 'Tab').classList.add('active');
+        }
+
+        // 关闭弹窗
+        function closeModal() {
+            document.getElementById('detailModal').classList.remove('active');
+        }
+
+        function closeSnapshotModal() {
+            document.getElementById('snapshotModal').classList.remove('active');
+        }
+
+        // 查看产品收费
+        function viewPricing() {
+            alert('查看产品收费功能开发中');
+        }
+
+        // 查看汇率报价
+        function viewExchangeRate() {
+            alert('查看汇率报价功能开发中');
+        }
+
+        // 查看分润/返点
+        function viewCommission() {
+            alert('查看分润/返点功能开发中');
+        }
+
+        // 搜索
+        function searchContracts() {
+            console.log('执行搜索');
+            renderTable();
+        }
+
+        // 重置表单
+        function resetForm() {
+            document.getElementById('searchForm').reset();
+        }
+
+        // 导出数据
+        function exportData() {
+            alert('导出功能开发中');
+        }
+
+        // 刷新数据
+        function refreshData() {
+            renderTable();
+        }
+
+        // 翻页
+        function changePage(direction) {
+            console.log('翻页:', direction);
+        }
+
+        // 初始化
+        renderTable();
+    </script>
+</body>
+</html>
