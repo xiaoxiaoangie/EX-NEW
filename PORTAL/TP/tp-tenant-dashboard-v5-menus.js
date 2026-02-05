@@ -103,9 +103,9 @@ const centerMenus = {
     'sales-channel': {
         name: '销售渠道中心',
         groups: [
-            { label: '销售代理', items: [
-                { name: '销售代理查询', icon: 'user' },
-                { name: '销售代理产品查询', icon: 'shopping-cart' }
+            { label: '代理商', items: [
+                { name: '代理商查询', icon: 'user' },
+                { name: '代理商产品查询', icon: 'shopping-cart' }
             ]},
             { label: '商户查询', items: [
                 { name: '代理商拓客查询', icon: 'search' }
@@ -490,6 +490,10 @@ document.addEventListener('click', function(e) {
                 renderAgencyRebateConfig();
             } else if (pageName === '商户开通产品') {
                 renderMerchantProducts();
+            } else if (pageName === '代理商查询') {
+                renderSalesAgentQuery();
+            } else if (pageName === '代理商产品查询') {
+                renderSalesAgentProductQuery();
             }
         }
     }
@@ -1045,7 +1049,7 @@ function renderAgencyProductQuery() {
             <div class="breadcrumb">
                 <a href="#" onclick="goBack()">首页</a> / <span>产品中心</span> / <span>机构签约产品</span>
             </div>
-            <h1 class="page-title">管理机构(伙伴)签约产品的信息</h1>
+            <h1 class="page-title">机构签约产品</h1>
         </div>
         
         <!-- 搜索表单 -->
@@ -1075,8 +1079,8 @@ function renderAgencyProductQuery() {
                         <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">签约方式</label>
                         <select style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
                             <option value="">全部</option>
-                            <option value="online">线上签约</option>
-                            <option value="offline">线下签约</option>
+                            <option value="direct">机构直签</option>
+                            <option value="agent">EX总代</option>
                         </select>
                     </div>
                     <div style="display: flex; flex-direction: column;">
@@ -1139,11 +1143,11 @@ function renderAgencyProductQuery() {
 // 渲染机构签约产品表格行
 function renderAgencyProductRows() {
     const mockData = [
-        { id: 'AGT001', name: '深圳科技有限公司', identityType: '机构', product: 'Crypto Collection', method: '线上签约', validity: '2024-01-15 ~ 2025-01-15', status: 'active', createTime: '2024-01-10 10:30:00' },
-        { id: 'AGT001', name: '深圳科技有限公司', identityType: '机构', product: 'Fiat VA Collection', method: '线下签约', validity: '2024-02-01 ~ 2025-02-01', status: 'active', createTime: '2024-01-25 14:20:00' },
-        { id: 'AGT002', name: '上海贸易集团', identityType: '机构', product: 'Crypto Payment', method: '线上签约', validity: '2024-03-01 ~ 2024-12-31', status: 'pending', createTime: '2024-02-20 16:45:00' },
-        { id: 'AGT003', name: '北京投资公司', identityType: '机构', product: 'Virtual Card Issuing', method: '线下签约', validity: '2023-06-01 ~ 2024-06-01', status: 'expired', createTime: '2023-05-20 11:00:00' },
-        { id: 'AGT004', name: '广州电商平台', identityType: '机构', product: 'On/Off Ramp', method: '线上签约', validity: '2024-04-01 ~ 2025-04-01', status: 'active', createTime: '2024-03-25 09:30:00' }
+        { id: 'AGT001', name: '深圳科技有限公司', identityType: '机构', product: 'Crypto Collection', method: '机构直签', validity: '2024-01-15 ~ 2025-01-15', status: 'active', createTime: '2024-01-10 10:30:00' },
+        { id: 'AGT001', name: '深圳科技有限公司', identityType: '机构', product: 'Fiat VA Collection', method: 'EX总代', validity: '2024-02-01 ~ 2025-02-01', status: 'active', createTime: '2024-01-25 14:20:00' },
+        { id: 'AGT002', name: '上海贸易集团', identityType: '机构', product: 'Crypto Payment', method: '机构直签', validity: '2024-03-01 ~ 2024-12-31', status: 'pending', createTime: '2024-02-20 16:45:00' },
+        { id: 'AGT003', name: '北京投资公司', identityType: '机构', product: 'Virtual Card Issuing', method: 'EX总代', validity: '2023-06-01 ~ 2024-06-01', status: 'expired', createTime: '2023-05-20 11:00:00' },
+        { id: 'AGT004', name: '广州电商平台', identityType: '机构', product: 'On/Off Ramp', method: '机构直签', validity: '2024-04-01 ~ 2025-04-01', status: 'active', createTime: '2024-03-25 09:30:00' }
     ];
     
     return mockData.map(item => `
@@ -1579,7 +1583,7 @@ function renderMerchantProductActiveRows() {
             <td style="padding: 16px; font-size: 14px;">${item.product}</td>
             <td style="padding: 16px; font-size: 14px;">${item.openTime}</td>
             <td style="padding: 16px; font-size: 14px;">
-                <button onclick="alert('产品配置: ${item.mid} - ${item.product}')" style="background: none; border: none; color: #4f46e5; cursor: pointer; font-size: 14px; text-decoration: underline;">产品配置</button>
+                <button onclick="goToProductConfig('${item.mid}', '${item.product}')" style="background: none; border: none; color: #4f46e5; cursor: pointer; font-size: 14px; text-decoration: underline;">产品配置</button>
             </td>
         </tr>
     `).join('');
@@ -1608,6 +1612,241 @@ function renderMerchantProductHistoryRows() {
             <td style="padding: 16px; font-size: 14px;">${item.operator}</td>
             <td style="padding: 16px; font-size: 14px;">${item.time}</td>
             <td style="padding: 16px; font-size: 14px;">${item.remark || '-'}</td>
+        </tr>
+    `).join('');
+}
+
+// 跳转到产品配置页面
+function goToProductConfig(mid, product) {
+    window.location.href = `merchant-product-detail-editable.html?mid=${mid}&product=${encodeURIComponent(product)}`;
+}
+
+// 渲染代理商查询页面
+function renderSalesAgentQuery() {
+    const mainContent = document.getElementById('detailMain');
+    if (!mainContent) return;
+    
+    mainContent.innerHTML = `
+        <div class="page-header">
+            <div class="breadcrumb">
+                <a href="#" onclick="goBack()">首页</a> / <span>销售渠道中心</span> / <span>代理商查询</span>
+            </div>
+            <h1 class="page-title">代理商查询</h1>
+        </div>
+        
+        <!-- 搜索表单 -->
+        <div class="card" style="margin-bottom: 16px;">
+            <div style="padding: 24px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 16px;">
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">代理商简称</label>
+                        <input type="text" placeholder="请输入代理商简称" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">签约状态</label>
+                        <select style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                            <option value="">全部</option>
+                            <option value="active">生效中</option>
+                            <option value="expired">已过期</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">标签名称</label>
+                        <select style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                            <option value="">全部</option>
+                            <option value="secretary">秘书公司</option>
+                            <option value="freight">货代</option>
+                            <option value="logistics">物流公司</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">创建时间</label>
+                        <input type="date" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <button onclick="alert('查询功能开发中')" style="padding: 8px 20px; background: #4f46e5; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: 500;">查询</button>
+                    <button onclick="alert('重置功能开发中')" style="padding: 8px 20px; background: white; color: #6c757d; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: 500;">重置</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 数据表格 -->
+        <div class="card">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 class="card-title">代理商列表</h2>
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="alert('创建代理商')" style="padding: 6px 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; font-size: 13px; cursor: pointer;">创建代理商</button>
+                    <button onclick="alert('导出功能开发中')" style="padding: 6px 12px; background: white; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer; color: #6c757d;">导出</button>
+                    <button onclick="renderSalesAgentQuery()" style="padding: 6px 12px; background: white; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer; color: #6c757d;">刷新</button>
+                </div>
+            </div>
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead style="background: #f8f9fa;">
+                        <tr>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">代理商简称</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">名称</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">签约时间</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">签约状态</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">签约产品</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">拓客数量</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">所属期间</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">创建</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${renderSalesAgentRows()}
+                    </tbody>
+                </table>
+            </div>
+            <div style="display: flex; justify-content: center; align-items: center; gap: 8px; padding: 16px;">
+                <button style="padding: 6px 12px; border: 1px solid #dee2e6; background: white; border-radius: 4px; cursor: pointer; font-size: 14px;">上一页</button>
+                <button style="padding: 6px 12px; border: 1px solid #4f46e5; background: #4f46e5; color: white; border-radius: 4px; cursor: pointer; font-size: 14px;">1</button>
+                <button style="padding: 6px 12px; border: 1px solid #dee2e6; background: white; border-radius: 4px; cursor: pointer; font-size: 14px;">2</button>
+                <button style="padding: 6px 12px; border: 1px solid #dee2e6; background: white; border-radius: 4px; cursor: pointer; font-size: 14px;">3</button>
+                <button style="padding: 6px 12px; border: 1px solid #dee2e6; background: white; border-radius: 4px; cursor: pointer; font-size: 14px;">下一页</button>
+            </div>
+        </div>
+    `;
+}
+
+// 渲染代理商表格行
+function renderSalesAgentRows() {
+    const mockData = [
+        { code: 'ring', name: 'ring', signDate: '2026-08-11', status: 'active', products: '2个', merchants: '海外公司', period: 'CNY', createTime: '2025-03-12 17:05:32' },
+        { code: 'keni1', name: 'keni1', signDate: '2025-08-31', status: 'active', products: '1个', merchants: '海外公司', period: 'USD', createTime: '2025-03-09 16:07:00' },
+        { code: 'test', name: '1', signDate: '2025-08-31', status: 'active', products: '1个', merchants: '234<br>test', period: 'CNY', createTime: '2025-03-07 10:06:37' },
+        { code: 'gaming', name: '游戏总代', signDate: '2027-11-25', status: 'active', products: '1个', merchants: 'hd.azxdkjdxjjkn.com<br>hd.azxdkjdxjjkn.com', period: 'CNY', createTime: '2024-07-31 15:03:35' },
+        { code: 'MAOHAO', name: 'MAOHAO', signDate: '2026-06-30', status: 'active', products: '1个', merchants: 'test.maohao.com<br>www.maohao.com', period: 'USD', createTime: '2025-07-20 22:59:29' }
+    ];
+    
+    return mockData.map(item => `
+        <tr style="border-bottom: 1px solid #e9ecef;">
+            <td style="padding: 16px; font-size: 14px;">
+                <a href="#" onclick="alert('查看代理商: ${item.code}')" style="color: #4f46e5; text-decoration: none;">${item.code}</a>
+            </td>
+            <td style="padding: 16px; font-size: 14px;">${item.name}</td>
+            <td style="padding: 16px; font-size: 14px;">${item.signDate}</td>
+            <td style="padding: 16px; font-size: 14px;">
+                <span style="display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; background: ${item.status === 'active' ? '#d1fae5' : '#fee2e2'}; color: ${item.status === 'active' ? '#065f46' : '#991b1b'};">
+                    ${item.status === 'active' ? '生效中' : '已过期'}
+                </span>
+            </td>
+            <td style="padding: 16px; font-size: 14px;">
+                <a href="#" onclick="alert('查看产品')" style="color: #4f46e5; text-decoration: none;">${item.products}</a>
+            </td>
+            <td style="padding: 16px; font-size: 14px;">${item.merchants}</td>
+            <td style="padding: 16px; font-size: 14px;">
+                <span style="display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; background: #fef3c7; color: #92400e;">${item.period}</span>
+            </td>
+            <td style="padding: 16px; font-size: 14px; color: #6c757d;">${item.createTime}</td>
+            <td style="padding: 16px; font-size: 14px;">
+                <button onclick="alert('详情: ${item.code}')" style="background: none; border: none; color: #4f46e5; cursor: pointer; font-size: 14px; text-decoration: underline; margin-right: 8px;">详情</button>
+                <button onclick="alert('编辑: ${item.code}')" style="background: none; border: none; color: #4f46e5; cursor: pointer; font-size: 14px; text-decoration: underline;">编辑</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// 渲染代理商产品查询页面
+function renderSalesAgentProductQuery() {
+    const mainContent = document.getElementById('detailMain');
+    if (!mainContent) return;
+    
+    mainContent.innerHTML = `
+        <div class="page-header">
+            <div class="breadcrumb">
+                <a href="#" onclick="goBack()">首页</a> / <span>销售渠道中心</span> / <span>代理商产品查询</span>
+            </div>
+            <h1 class="page-title">代理商产品查询</h1>
+            <p class="page-desc">查询代理商签约的产品信息</p>
+        </div>
+        
+        <!-- 搜索表单 -->
+        <div class="card" style="margin-bottom: 16px;">
+            <div style="padding: 24px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-bottom: 16px;">
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">代理商简称</label>
+                        <input type="text" placeholder="请输入代理商简称" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">产品名称</label>
+                        <input type="text" placeholder="请输入产品名称" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">签约状态</label>
+                        <select style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                            <option value="">全部</option>
+                            <option value="active">生效中</option>
+                            <option value="expired">已过期</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <button onclick="alert('查询功能开发中')" style="padding: 8px 20px; background: #4f46e5; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: 500;">查询</button>
+                    <button onclick="alert('重置功能开发中')" style="padding: 8px 20px; background: white; color: #6c757d; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: 500;">重置</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 数据表格 -->
+        <div class="card">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 class="card-title">代理商产品列表</h2>
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="alert('导出功能开发中')" style="padding: 6px 12px; background: white; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer; color: #6c757d;">导出</button>
+                    <button onclick="renderSalesAgentProductQuery()" style="padding: 6px 12px; background: white; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer; color: #6c757d;">刷新</button>
+                </div>
+            </div>
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead style="background: #f8f9fa;">
+                        <tr>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">代理商简称</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">代理商名称</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">产品名称</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">签约时间</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">签约状态</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">创建时间</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${renderSalesAgentProductRows()}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 渲染代理商产品表格行
+function renderSalesAgentProductRows() {
+    const mockData = [
+        { code: 'ring', name: 'ring', product: 'Crypto Collection', signDate: '2026-08-11', status: 'active', createTime: '2025-03-12 17:05:32' },
+        { code: 'keni1', name: 'keni1', product: 'Fiat VA Collection', signDate: '2025-08-31', status: 'active', createTime: '2025-03-09 16:07:00' },
+        { code: 'test', name: '1', product: 'Crypto Payment', signDate: '2025-08-31', status: 'active', createTime: '2025-03-07 10:06:37' },
+        { code: 'gaming', name: '游戏总代', product: 'Virtual Card Issuing', signDate: '2027-11-25', status: 'active', createTime: '2024-07-31 15:03:35' }
+    ];
+    
+    return mockData.map(item => `
+        <tr style="border-bottom: 1px solid #e9ecef;">
+            <td style="padding: 16px; font-size: 14px;">${item.code}</td>
+            <td style="padding: 16px; font-size: 14px;">${item.name}</td>
+            <td style="padding: 16px; font-size: 14px;">${item.product}</td>
+            <td style="padding: 16px; font-size: 14px;">${item.signDate}</td>
+            <td style="padding: 16px; font-size: 14px;">
+                <span style="display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; background: ${item.status === 'active' ? '#d1fae5' : '#fee2e2'}; color: ${item.status === 'active' ? '#065f46' : '#991b1b'};">
+                    ${item.status === 'active' ? '生效中' : '已过期'}
+                </span>
+            </td>
+            <td style="padding: 16px; font-size: 14px; color: #6c757d;">${item.createTime}</td>
+            <td style="padding: 16px; font-size: 14px;">
+                <button onclick="alert('详情: ${item.code} - ${item.product}')" style="background: none; border: none; color: #4f46e5; cursor: pointer; font-size: 14px; text-decoration: underline;">详情</button>
+            </td>
         </tr>
     `).join('');
 }
