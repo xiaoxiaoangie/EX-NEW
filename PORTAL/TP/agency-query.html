@@ -368,7 +368,7 @@
 <body>
     <div class="container">
         <div class="page-header">
-            <h1 class="page-title">机构伙伴查询</h1>
+            <h1 class="page-title">代理商查询</h1>
             <p class="page-desc">查询和管理机构伙伴信息</p>
         </div>
 
@@ -376,15 +376,15 @@
         <div class="search-card">
             <form class="search-form" id="searchForm">
                 <div class="form-group">
-                    <label class="form-label">机构伙伴ID</label>
+                    <label class="form-label">代理商ID</label>
                     <input type="text" class="form-input" placeholder="请输入机构伙伴ID" id="agencyId">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">机构名称</label>
+                    <label class="form-label">代理商名称</label>
                     <input type="text" class="form-input" placeholder="请输入机构名称" id="agencyName">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">身份类型</label>
+                    <label class="form-label">代理商类型</label>
                     <select class="form-select" id="identityType">
                         <option value="">全部</option>
                         <option value="institution">机构</option>
@@ -401,11 +401,11 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">来源</label>
+                    <label class="form-label">标签</label>
                     <select class="form-select" id="source">
-                        <option value="">全部</option>
-                        <option value="EX">EX</option>
-                        <option value="Direct">直接签约</option>
+                        <option value="">秘书公司</option>
+                        <option value="EX">货代</option>
+                        <option value="Direct">物流公司</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -422,7 +422,7 @@
         <!-- 数据表格 -->
         <div class="table-card">
             <div class="table-header">
-                <div class="table-title">机构伙伴列表</div>
+                <div class="table-title">代理商列表</div>
                 <div class="table-actions">
                     <button class="btn-icon" onclick="exportData()">导出</button>
                     <button class="btn-icon" onclick="refreshData()">刷新</button>
@@ -431,12 +431,12 @@
             <table>
                 <thead>
                     <tr>
-                        <th>机构伙伴ID</th>
-                        <th>机构名称</th>
-                        <th>身份类型</th>
+                        <th>代理商ID</th>
+                        <th>代理商名称</th>
+                        <th>类型</th>
                         <th>状态</th>
                         <th>签约时间</th>
-                        <th>来源</th>
+                        <th>标签</th>
                         <th>创建时间</th>
                         <th>操作</th>
                     </tr>
@@ -467,15 +467,15 @@
                     <h3 class="detail-section-title">基本信息</h3>
                     <div class="detail-grid">
                         <div class="detail-item">
-                            <span class="detail-label">机构伙伴ID</span>
+                            <span class="detail-label">代理商ID</span>
                             <span class="detail-value" id="detailAgencyId">-</span>
                         </div>
                         <div class="detail-item">
-                            <span class="detail-label">机构名称</span>
+                            <span class="detail-label">代理商名称</span>
                             <span class="detail-value" id="detailAgencyName">-</span>
                         </div>
                         <div class="detail-item">
-                            <span class="detail-label">身份类型</span>
+                            <span class="detail-label">类型</span>
                             <span class="detail-value" id="detailIdentityType">-</span>
                         </div>
                         <div class="detail-item">
@@ -487,7 +487,7 @@
                             <span class="detail-value" id="detailSignDate">-</span>
                         </div>
                         <div class="detail-item">
-                            <span class="detail-label">来源</span>
+                            <span class="detail-label">标签</span>
                             <span class="detail-value" id="detailSource">-</span>
                         </div>
                         <div class="detail-item">
@@ -532,10 +532,10 @@
             {
                 id: 'AGT001',
                 name: '深圳科技有限公司',
-                identityType: '机构',
+                identityType: '企业',
                 status: 'active',
                 signDate: '2024-01-15',
-                source: 'EX',
+                source: '秘书公司',
                 createTime: '2024-01-10 10:30:00',
                 contact: '张经理',
                 productCount: 5,
@@ -546,10 +546,10 @@
             {
                 id: 'AGT002',
                 name: '上海贸易集团',
-                identityType: '机构',
+                identityType: '企业',
                 status: 'active',
                 signDate: '2024-02-20',
-                source: 'EX',
+                source: ' 货代',
                 createTime: '2024-02-15 14:20:00',
                 contact: '李总',
                 productCount: 8,
@@ -559,13 +559,13 @@
             },
             {
                 id: 'AGT003',
-                name: '北京投资公司',
-                identityType: '机构',
+                name: '陆总',
+                identityType: '个人',
                 status: 'suspended',
                 signDate: '2023-12-05',
                 source: 'Direct',
                 createTime: '2023-12-01 09:15:00',
-                contact: '王主管',
+                contact: '路六',
                 productCount: 3,
                 merchantCount: 12,
                 monthlyVolume: '$0',
@@ -574,10 +574,10 @@
             {
                 id: 'AGT004',
                 name: '广州电商平台',
-                identityType: '机构',
+                identityType: '企业',
                 status: 'active',
                 signDate: '2024-03-10',
-                source: 'EX',
+                source: '秘书公司',
                 createTime: '2024-03-05 16:45:00',
                 contact: '陈经理',
                 productCount: 6,
@@ -587,11 +587,11 @@
             },
             {
                 id: 'AGT005',
-                name: '杭州金融服务',
-                identityType: '机构',
+                name: '王总',
+                identityType: '个人',
                 status: 'active',
                 signDate: '2024-01-25',
-                source: 'EX',
+                source: '个人',
                 createTime: '2024-01-20 11:00:00',
                 contact: '刘总监',
                 productCount: 4,
