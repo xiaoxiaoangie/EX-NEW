@@ -39,7 +39,7 @@ const centerMenus = {
                 { name: '产品管理', icon: 'settings' }
             ]},
             { label: '产品市场', items: [
-                { name: '浏览产品', icon: 'grid' },
+                { name: '产品市场', icon: 'grid' },
                 { name: '已签约产品', icon: 'package' }
             ]}
         ]
