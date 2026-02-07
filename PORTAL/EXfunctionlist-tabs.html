@@ -3,14 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EX平台功能清单 - 项目管理</title>
+    <title>EX平台功能矩阵 - 按业务流程</title>
     <style>
         :root {
             --primary: #4f46e5;
             --primary-hover: #4338ca;
+            --primary-bg: #eef2ff;
             --success: #10b981;
+            --success-bg: #d1fae5;
             --warning: #f59e0b;
+            --warning-bg: #fef3c7;
             --danger: #ef4444;
+            --danger-bg: #fee2e2;
             --bg: #f8fafc;
             --bg-card: #ffffff;
             --border: #e2e8f0;
@@ -18,855 +22,370 @@
             --text-secondary: #64748b;
             --text-muted: #94a3b8;
         }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', 'PingFang SC', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding: 24px; }
+        .container { max-width: 1600px; margin: 0 auto; }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        /* Header */
+        .header { background: var(--bg-card); padding: 32px; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 24px; }
+        .header h1 { font-size: 26px; margin-bottom: 6px; }
+        .header p { color: var(--text-secondary); font-size: 14px; }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            padding: 20px;
-        }
+        /* Tabs - 按端分 */
+        .tabs { background: var(--bg-card); border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 20px; padding: 6px; display: flex; gap: 6px; }
+        .tab-btn { flex: 1; padding: 10px 20px; border: none; background: transparent; color: var(--text-secondary); font-size: 14px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .tab-btn:hover { background: var(--bg); color: var(--text); }
+        .tab-btn.active { background: var(--primary); color: white; }
+        .tab-badge { padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; background: rgba(0,0,0,0.06); }
+        .tab-btn.active .tab-badge { background: rgba(255,255,255,0.25); }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
+        /* Flow filter */
+        .flow-tabs { background: var(--bg-card); border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 20px; padding: 6px; display: flex; gap: 6px; flex-wrap: wrap; }
+        .flow-btn { padding: 8px 18px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-secondary); font-size: 13px; font-weight: 500; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+        .flow-btn:hover { border-color: var(--primary); color: var(--primary); }
+        .flow-btn.active { background: var(--primary-bg); color: var(--primary); border-color: var(--primary); font-weight: 600; }
 
-        .header {
-            background: var(--bg-card);
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
+        /* Stats */
+        .stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: var(--bg-card); padding: 18px 20px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        .stat-card h3 { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-card .value { font-size: 28px; font-weight: 700; }
 
-        .header h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-            color: var(--text);
-        }
+        /* Filters */
+        .filters { background: var(--bg-card); padding: 16px 20px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 20px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+        .filter-group { display: flex; align-items: center; gap: 6px; }
+        .filter-group label { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
+        .filter-group select, .filter-group input { padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; background: white; color: var(--text); }
+        .filter-group select:focus, .filter-group input:focus { outline: none; border-color: var(--primary); }
+        .actions { margin-left: auto; display: flex; gap: 8px; }
+        .btn { padding: 7px 14px; border: none; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-secondary { background: white; color: var(--text); border: 1px solid var(--border); }
+        .btn-secondary:hover { background: var(--bg); }
 
-        .header p {
-            color: var(--text-secondary);
-            font-size: 14px;
-        }
+        /* Tab content */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
-        /* 标签页导航 */
-        .tabs {
-            background: var(--bg-card);
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            padding: 8px;
-            display: flex;
-            gap: 8px;
-        }
+        /* Flow section */
+        .flow-section { margin-bottom: 24px; }
+        .flow-header { background: linear-gradient(135deg, var(--primary), #7c3aed); color: white; padding: 16px 24px; border-radius: 12px 12px 0 0; display: flex; align-items: center; gap: 12px; }
+        .flow-header h2 { font-size: 16px; font-weight: 700; }
+        .flow-number { background: rgba(255,255,255,0.2); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+        .flow-desc { font-size: 12px; opacity: 0.8; margin-left: auto; }
 
-        .tab-btn {
-            flex: 1;
-            padding: 12px 24px;
-            border: none;
-            background: transparent;
-            color: var(--text-secondary);
-            font-size: 15px;
-            font-weight: 500;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
+        /* Table */
+        .func-table-wrap { background: var(--bg-card); border-radius: 0 0 12px 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); overflow-x: auto; }
+        .func-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .func-table thead { background: #f1f5f9; position: sticky; top: 0; z-index: 1; }
+        .func-table th { padding: 12px 16px; text-align: left; font-weight: 600; color: var(--text-secondary); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid var(--border); white-space: nowrap; }
+        .func-table td { padding: 10px 16px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+        .func-table tbody tr:hover { background: #f8fafc; }
+        .func-table tbody tr:last-child td { border-bottom: none; }
 
-        .tab-btn:hover {
-            background: var(--bg);
-            color: var(--text);
-        }
+        /* Tags */
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+        .tag-role-ex { background: #fef3c7; color: #92400e; }
+        .tag-role-sp { background: #dbeafe; color: #1e40af; }
+        .tag-role-tp { background: #d1fae5; color: #065f46; }
+        .tag-role-merchant { background: #fce7f3; color: #9d174d; }
+        .tag-端-sa { background: #f3e8ff; color: #6b21a8; }
+        .tag-端-pp { background: #e0f2fe; color: #0369a1; }
+        .tag-端-mp { background: #fce7f3; color: #9d174d; }
+        .tag-center { background: #f1f5f9; color: var(--text-secondary); }
 
-        .tab-btn.active {
-            background: var(--primary);
-            color: white;
-        }
+        /* Status */
+        .status-select { padding: 3px 6px; border: 1px solid var(--border); border-radius: 4px; font-size: 11px; background: white; cursor: pointer; }
 
-        .tab-badge {
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 12px;
-            font-weight: 600;
-            background: rgba(255,255,255,0.2);
-        }
+        /* Priority */
+        .priority-badge { padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+        .priority-P0 { background: #fee2e2; color: #dc2626; }
+        .priority-P1 { background: #fef3c7; color: #d97706; }
+        .priority-P2 { background: #dbeafe; color: #2563eb; }
 
-        .tab-btn.active .tab-badge {
-            background: rgba(255,255,255,0.3);
-        }
+        /* Merge cell helper */
+        .merge-cell { font-weight: 600; color: var(--text); background: #fafbfc; }
+        .func-list { margin: 0; padding: 0; list-style: none; }
+        .func-list li { padding: 2px 0; display: flex; align-items: center; gap: 6px; }
+        .func-list li::before { content: '•'; color: var(--primary); font-weight: bold; }
+        .note { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
 
-        /* 统计卡片 */
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
+        .empty-state { padding: 60px; text-align: center; color: var(--text-secondary); }
 
-        .stat-card {
-            background: var(--bg-card);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        .stat-card h3 {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .stat-card .value {
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--text);
-        }
-
-        .stat-card .progress-bar {
-            height: 6px;
-            background: var(--border);
-            border-radius: 3px;
-            margin-top: 12px;
-            overflow: hidden;
-        }
-
-        .stat-card .progress-fill {
-            height: 100%;
-            background: var(--success);
-            transition: width 0.3s ease;
-        }
-
-        /* 筛选器 */
-        .filters {
-            background: var(--bg-card);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .filter-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .filter-group label {
-            font-size: 14px;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .filter-group select,
-        .filter-group input {
-            padding: 8px 12px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            font-size: 14px;
-            background: white;
-            color: var(--text);
-            min-width: 150px;
-        }
-
-        .filter-group select:focus,
-        .filter-group input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .actions {
-            margin-left: auto;
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-hover);
-        }
-
-        .btn-secondary {
-            background: white;
-            color: var(--text);
-            border: 1px solid var(--border);
-        }
-
-        .btn-secondary:hover {
-            background: var(--bg);
-        }
-
-        /* 标签页内容 */
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .content {
-            background: var(--bg-card);
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-
-        .module-section {
-            border-bottom: 1px solid var(--border);
-        }
-
-        .module-section:last-child {
-            border-bottom: none;
-        }
-
-        .module-header {
-            padding: 15px 30px;
-            background: #f1f5f9;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .module-header h3 {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text);
-        }
-
-        .module-header .module-stats {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-
-        .feature-list {
-            padding: 0;
-        }
-
-        .feature-item {
-            padding: 12px 30px 12px 50px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            transition: background 0.2s;
-        }
-
-        .feature-item:hover {
-            background: #f9fafb;
-        }
-
-        .feature-item:last-child {
-            border-bottom: none;
-        }
-
-        .feature-item.completed {
-            opacity: 0.6;
-        }
-
-        .feature-item input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-        }
-
-        .feature-name {
-            flex: 1;
-            font-size: 14px;
-            color: var(--text);
-        }
-
-        .feature-item.completed .feature-name {
-            text-decoration: line-through;
-        }
-
-        .priority-badge {
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-            min-width: 40px;
-            text-align: center;
-        }
-
-        .priority-P0 {
-            background: #fee2e2;
-            color: #dc2626;
-        }
-
-        .priority-P1 {
-            background: #fef3c7;
-            color: #d97706;
-        }
-
-        .priority-P2 {
-            background: #dbeafe;
-            color: #2563eb;
-        }
-
-        .status-select {
-            padding: 4px 8px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            font-size: 12px;
-            background: white;
-            cursor: pointer;
-        }
-
-        .status-未开始 { color: var(--text-muted); }
-        .status-进行中 { color: var(--warning); }
-        .status-已完成 { color: var(--success); }
-        .status-已测试 { color: #8b5cf6; }
-        .status-已上线 { color: var(--primary); }
-
-        .collapsed {
-            display: none;
-        }
-
-        .expand-icon {
-            transition: transform 0.3s;
-        }
-
-        .expand-icon.expanded {
-            transform: rotate(180deg);
-        }
-
-        .empty-state {
-            padding: 60px 30px;
-            text-align: center;
-            color: var(--text-secondary);
-        }
-
-        .empty-state svg {
-            width: 64px;
-            height: 64px;
-            margin-bottom: 16px;
-            opacity: 0.3;
+        @media (max-width: 1200px) {
+            .stats { grid-template-columns: repeat(3, 1fr); }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>EX平台功能清单 - 项目管理</h1>
-            <p>实时跟踪项目进度，管理功能开发状态</p>
-        </div>
+<div class="container">
+    <div class="header">
+        <h1>EX平台功能矩阵</h1>
+        <p>按业务流程梳理各端功能清单 — 角色 / 端 / 中心 / 模块 / 菜单 / 页面 / 功能 / 说明</p>
+    </div>
 
-        <!-- 标签页导航 -->
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('merchant')" data-tab="merchant">
-                <span>🏪 商户 (MP)</span>
-                <span class="tab-badge" id="merchant-count">0</span>
-            </button>
-            <button class="tab-btn" onclick="switchTab('tenant')" data-tab="tenant">
-                <span>🏢 租户 (TP)</span>
-                <span class="tab-badge" id="tenant-count">0</span>
-            </button>
-            <button class="tab-btn" onclick="switchTab('provider')" data-tab="provider">
-                <span>🏦 服务商 (SP)</span>
-                <span class="tab-badge" id="provider-count">0</span>
-            </button>
-            <button class="tab-btn" onclick="switchTab('admin')" data-tab="admin">
-                <span>⚙️ 管理后台 (SA)</span>
-                <span class="tab-badge" id="admin-count">0</span>
-            </button>
-        </div>
+    <!-- 按端分Tab -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('all')" data-tab="all">
+            <span>📋 全部</span><span class="tab-badge" id="all-count">0</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('SA')" data-tab="SA">
+            <span>⚙️ SA 管理后台</span><span class="tab-badge" id="SA-count">0</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('PP-SP')" data-tab="PP-SP">
+            <span>🏦 PP (SP)</span><span class="tab-badge" id="PP-SP-count">0</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('PP-TP')" data-tab="PP-TP">
+            <span>🏢 PP (TP)</span><span class="tab-badge" id="PP-TP-count">0</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('MP')" data-tab="MP">
+            <span>🏪 MP 商户端</span><span class="tab-badge" id="MP-count">0</span>
+        </button>
+    </div>
 
-        <div class="stats">
-            <div class="stat-card">
-                <h3>总功能数</h3>
-                <div class="value" id="totalFeatures">0</div>
-            </div>
-            <div class="stat-card">
-                <h3>已完成</h3>
-                <div class="value" id="completedFeatures">0</div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="completedProgress"></div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <h3>进行中</h3>
-                <div class="value" id="inProgressFeatures">0</div>
-            </div>
-            <div class="stat-card">
-                <h3>完成率</h3>
-                <div class="value" id="completionRate">0%</div>
-            </div>
-        </div>
+    <!-- 按业务流程筛选 -->
+    <div class="flow-tabs" id="flowTabs">
+        <button class="flow-btn active" onclick="switchFlow('all')">全部流程</button>
+        <button class="flow-btn" onclick="switchFlow('flow1')">一、服务商管理</button>
+        <button class="flow-btn" onclick="switchFlow('flow2')">二、产品上架</button>
+        <button class="flow-btn" onclick="switchFlow('flow3')">三、租户签约</button>
+        <button class="flow-btn" onclick="switchFlow('flow4a')">四、商户登录注册</button>
+        <button class="flow-btn" onclick="switchFlow('flow4b')">四、商户开通产品</button>
+    </div>
 
-        <div class="filters">
-            <div class="filter-group">
-                <label>优先级</label>
-                <select id="priorityFilter" onchange="renderCurrentTab()">
-                    <option value="all">全部优先级</option>
-                    <option value="P0">P0 - 必须</option>
-                    <option value="P1">P1 - 重要</option>
-                    <option value="P2">P2 - 优化</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label>状态</label>
-                <select id="statusFilter" onchange="renderCurrentTab()">
-                    <option value="all">全部状态</option>
-                    <option value="未开始">未开始</option>
-                    <option value="进行中">进行中</option>
-                    <option value="已完成">已完成</option>
-                    <option value="已测试">已测试</option>
-                    <option value="已上线">已上线</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label>搜索</label>
-                <input type="text" id="searchInput" placeholder="搜索功能..." oninput="renderCurrentTab()">
-            </div>
-            <div class="actions">
-                <button class="btn btn-secondary" onclick="exportToCSV()">导出CSV</button>
-                <button class="btn btn-secondary" onclick="clearAllData()">清除数据</button>
-                <button class="btn btn-primary" onclick="expandAll()">展开全部</button>
-            </div>
-        </div>
+    <div class="stats">
+        <div class="stat-card"><h3>总功能数</h3><div class="value" id="totalCount">0</div></div>
+        <div class="stat-card"><h3>SA 后台</h3><div class="value" id="saCount">0</div></div>
+        <div class="stat-card"><h3>PP (SP)</h3><div class="value" id="spCount">0</div></div>
+        <div class="stat-card"><h3>PP (TP)</h3><div class="value" id="tpCount">0</div></div>
+        <div class="stat-card"><h3>MP 商户</h3><div class="value" id="mpCount">0</div></div>
+    </div>
 
-        <!-- 商户 (MP) 标签页 -->
-        <div id="merchant-tab" class="tab-content active">
-            <div class="content" id="merchant-list"></div>
+    <div class="filters">
+        <div class="filter-group">
+            <label>搜索</label>
+            <input type="text" id="searchInput" placeholder="搜索页面/功能..." oninput="render()">
         </div>
-
-        <!-- 租户 (TP) 标签页 -->
-        <div id="tenant-tab" class="tab-content">
-            <div class="content" id="tenant-list"></div>
-        </div>
-
-        <!-- 服务商 (SP) 标签页 -->
-        <div id="provider-tab" class="tab-content">
-            <div class="content" id="provider-list"></div>
-        </div>
-
-        <!-- 管理后台 (SA) 标签页 -->
-        <div id="admin-tab" class="tab-content">
-            <div class="content" id="admin-list"></div>
+        <div class="actions">
+            <button class="btn btn-secondary" onclick="exportToCSV()">📥 导出CSV</button>
+            <button class="btn btn-primary" onclick="expandAll()">展开全部</button>
         </div>
     </div>
 
-    <script>
-        let currentTab = 'merchant';
+    <div id="mainContent"></div>
+</div>
 
-        // 功能数据
-        const features = {
-            merchant: [
-                { module: 'Dashboard', subModule: '概览', feature: '账户余额展示', priority: 'P0', status: '未开始' },
-                { module: 'Dashboard', subModule: '概览', feature: '今日交易统计', priority: 'P0', status: '未开始' },
-                { module: 'Dashboard', subModule: '概览', feature: '本月交易统计', priority: 'P0', status: '未开始' },
-                { module: 'Dashboard', subModule: '快捷入口', feature: '快速收款', priority: 'P0', status: '未开始' },
-                { module: 'Dashboard', subModule: '快捷入口', feature: '快速付款', priority: 'P0', status: '未开始' },
-                { module: 'Dashboard', subModule: '快捷入口', feature: '快速换汇', priority: 'P1', status: '未开始' },
-                { module: '资产管理', subModule: '法币账户', feature: '多币种余额查看', priority: 'P0', status: '未开始' },
-                { module: '资产管理', subModule: '法币账户', feature: '可用余额/冻结余额', priority: 'P0', status: '未开始' },
-                { module: '资产管理', subModule: '法币账户', feature: '交易记录查询', priority: 'P0', status: '未开始' },
-                { module: '资产管理', subModule: '加密货币钱包', feature: '加密货币余额查看', priority: 'P1', status: '未开始' },
-                { module: '资产管理', subModule: '加密货币钱包', feature: '充值地址管理', priority: 'P1', status: '未开始' },
-                { module: '转账', subModule: '收款', feature: '创建收款订单', priority: 'P0', status: '未开始' },
-                { module: '转账', subModule: '收款', feature: '收款方式选择', priority: 'P0', status: '未开始' },
-                { module: '转账', subModule: '收款', feature: '收款记录查询', priority: 'P0', status: '未开始' },
-                { module: '转账', subModule: '收款', feature: '收款状态跟踪', priority: 'P0', status: '未开始' },
-                { module: '转账', subModule: '付款', feature: '创建付款订单', priority: 'P0', status: '未开始' },
-                { module: '转账', subModule: '付款', feature: '收款人管理', priority: 'P0', status: '未开始' },
-                { module: '转账', subModule: '付款', feature: '批量付款', priority: 'P1', status: '未开始' },
-                { module: '转账', subModule: '付款', feature: '付款记录查询', priority: 'P0', status: '未开始' },
-                { module: '转账', subModule: '换汇', feature: '实时汇率查询', priority: 'P0', status: '未开始' },
-                { module: '转账', subModule: '换汇', feature: '创建换汇订单', priority: 'P0', status: '未开始' },
-                { module: '转账', subModule: '换汇', feature: '换汇记录查询', priority: 'P0', status: '未开始' },
-                { module: 'Crypto', subModule: '充值', feature: '生成充值地址', priority: 'P1', status: '未开始' },
-                { module: 'Crypto', subModule: '充值', feature: '充值记录查询', priority: 'P1', status: '未开始' },
-                { module: 'Crypto', subModule: '提现', feature: '创建提现订单', priority: 'P1', status: '未开始' },
-                { module: 'Crypto', subModule: '提现', feature: '提现地址管理', priority: 'P1', status: '未开始' },
-                { module: 'Crypto', subModule: '兑换', feature: 'Crypto↔Fiat兑换', priority: 'P1', status: '未开始' },
-                { module: 'Crypto', subModule: 'On/Off Ramp', feature: '法币入金', priority: 'P1', status: '未开始' },
-                { module: 'Crypto', subModule: 'On/Off Ramp', feature: '法币出金', priority: 'P1', status: '未开始' },
-                { module: '卡片', subModule: '虚拟卡', feature: '申请虚拟卡', priority: 'P2', status: '未开始' },
-                { module: '卡片', subModule: '虚拟卡', feature: '卡片列表', priority: 'P2', status: '未开始' },
-                { module: '卡片', subModule: '虚拟卡', feature: '卡片充值', priority: 'P2', status: '未开始' },
-                { module: '收单', subModule: '支付网关', feature: '支付链接生成', priority: 'P1', status: '未开始' },
-                { module: '收单', subModule: '订单管理', feature: '订单列表', priority: 'P1', status: '未开始' },
-                { module: '收单', subModule: '订单管理', feature: '订单退款', priority: 'P1', status: '未开始' },
-                { module: '报表', subModule: '交易报表', feature: '交易汇总报表', priority: 'P1', status: '未开始' },
-                { module: '报表', subModule: '交易报表', feature: '交易明细报表', priority: 'P1', status: '未开始' },
-                { module: '报表', subModule: '财务报表', feature: '收入报表', priority: 'P1', status: '未开始' },
-                { module: '报表', subModule: '财务报表', feature: '手续费报表', priority: 'P1', status: '未开始' },
-                { module: '开发者', subModule: 'API密钥', feature: '生成API Key', priority: 'P0', status: '未开始' },
-                { module: '开发者', subModule: 'API密钥', feature: 'API Key管理', priority: 'P0', status: '未开始' },
-                { module: '开发者', subModule: 'Webhooks', feature: 'Webhook URL配置', priority: 'P0', status: '未开始' },
-                { module: '开发者', subModule: 'Webhooks', feature: 'Webhook日志查询', priority: 'P0', status: '未开始' },
-                { module: '设置', subModule: '账户设置', feature: '公司信息', priority: 'P0', status: '未开始' },
-                { module: '设置', subModule: '账户设置', feature: 'KYB认证', priority: 'P0', status: '未开始' },
-                { module: '设置', subModule: '安全设置', feature: '密码修改', priority: 'P0', status: '未开始' },
-                { module: '设置', subModule: '安全设置', feature: '双因素认证(2FA)', priority: 'P0', status: '未开始' },
-                { module: '设置', subModule: '团队管理', feature: '成员管理', priority: 'P0', status: '未开始' },
-                { module: '设置', subModule: '团队管理', feature: '角色权限', priority: 'P0', status: '未开始' },
-            ],
-            tenant: [
-                { module: '工作台', subModule: '数据概览', feature: '今日交易概览', priority: 'P0', status: '未开始' },
-                { module: '工作台', subModule: '数据概览', feature: '本月业绩统计', priority: 'P0', status: '未开始' },
-                { module: '工作台', subModule: '数据概览', feature: '商户数量统计', priority: 'P0', status: '未开始' },
-                { module: '工作台', subModule: '实时监控', feature: '交易实时监控', priority: 'P1', status: '未开始' },
-                { module: '工作台', subModule: '实时监控', feature: '成功率监控', priority: 'P1', status: '未开始' },
-                { module: '采购中心', subModule: '产品市场', feature: '浏览SP产品', priority: 'P0', status: '未开始' },
-                { module: '采购中心', subModule: '产品市场', feature: '产品搜索/筛选', priority: 'P0', status: '未开始' },
-                { module: '采购中心', subModule: '产品市场', feature: '产品详情查看', priority: 'P0', status: '未开始' },
-                { module: '采购中心', subModule: '我的产品', feature: '已签约产品列表', priority: 'P0', status: '未开始' },
-                { module: '采购中心', subModule: '签约管理', feature: '发起签约申请', priority: 'P0', status: '未开始' },
-                { module: '采购中心', subModule: '签约管理', feature: '签约记录查询', priority: 'P0', status: '未开始' },
-                { module: '供应中心', subModule: '产品管理', feature: '产品列表', priority: 'P0', status: '未开始' },
-                { module: '供应中心', subModule: '产品管理', feature: '产品配置', priority: 'P0', status: '未开始' },
-                { module: '供应中心', subModule: '产品定价', feature: '基础费率配置', priority: 'P0', status: '未开始' },
-                { module: '供应中心', subModule: '产品定价', feature: '汇率加点配置', priority: 'P0', status: '未开始' },
-                { module: '商户中心', subModule: '商户管理', feature: '商户列表', priority: 'P0', status: '未开始' },
-                { module: '商户中心', subModule: '商户管理', feature: '新建商户', priority: 'P0', status: '未开始' },
-                { module: '商户中心', subModule: '商户管理', feature: '商户基本信息管理', priority: 'P0', status: '未开始' },
-                { module: '商户中心', subModule: '商户管理', feature: '商户状态管理', priority: 'P0', status: '未开始' },
-                { module: '商户中心', subModule: '商户签约', feature: '商户签约产品', priority: 'P0', status: '未开始' },
-                { module: '商户中心', subModule: '商户签约', feature: '商户专属报价', priority: 'P0', status: '未开始' },
-                { module: '商户中心', subModule: '商户交易管理', feature: 'VA账户管理', priority: 'P0', status: '未开始' },
-                { module: '商户中心', subModule: '商户交易管理', feature: '收款交易查询', priority: 'P0', status: '未开始' },
-                { module: '商户中心', subModule: '商户交易管理', feature: '付款交易查询', priority: 'P0', status: '未开始' },
-                { module: '商户中心', subModule: '商户交易管理', feature: '换汇交易查询', priority: 'P0', status: '未开始' },
-                { module: '账户中心', subModule: '佣金账户', feature: '佣金余额查询', priority: 'P0', status: '未开始' },
-                { module: '账户中心', subModule: '佣金账户', feature: '可提现金额', priority: 'P0', status: '未开始' },
-                { module: '账户中心', subModule: '佣金账户', feature: '冻结资金', priority: 'P0', status: '未开始' },
-                { module: '账户中心', subModule: '交易数据', feature: '推荐客户列表', priority: 'P0', status: '未开始' },
-                { module: '账户中心', subModule: '交易数据', feature: '客户交易统计', priority: 'P0', status: '未开始' },
-                { module: '账户中心', subModule: '交易数据', feature: '佣金明细', priority: 'P0', status: '未开始' },
-                { module: '账户中心', subModule: '资金操作', feature: '充值', priority: 'P0', status: '未开始' },
-                { module: '账户中心', subModule: '资金操作', feature: '提现', priority: 'P0', status: '未开始' },
-                { module: '账户中心', subModule: '资金操作', feature: '充值提现记录', priority: 'P0', status: '未开始' },
-                { module: '账户中心', subModule: '分佣收益', feature: '分佣账单', priority: 'P0', status: '未开始' },
-                { module: '账户中心', subModule: '分佣收益', feature: '收益统计', priority: 'P0', status: '未开始' },
-                { module: '开发者中心', subModule: 'API接入', feature: 'API文档查看', priority: 'P0', status: '未开始' },
-                { module: '开发者中心', subModule: '密钥管理', feature: 'API密钥管理', priority: 'P0', status: '未开始' },
-                { module: '开发者中心', subModule: '回调配置', feature: 'Webhooks配置', priority: 'P0', status: '未开始' },
-                { module: '开发者中心', subModule: '回调配置', feature: '回调日志查询', priority: 'P0', status: '未开始' },
-                { module: '设置', subModule: '团队管理', feature: '成员管理', priority: 'P0', status: '未开始' },
-                { module: '设置', subModule: '团队管理', feature: '角色管理', priority: 'P0', status: '未开始' },
-                { module: '设置', subModule: '团队管理', feature: '权限配置', priority: 'P0', status: '未开始' },
-            ],
-            provider: [
-                { module: '产品管理', subModule: '产品上架', feature: '产品基本信息配置', priority: 'P0', status: '未开始' },
-                { module: '产品管理', subModule: '产品上架', feature: '产品能力配置', priority: 'P0', status: '未开始' },
-                { module: '产品管理', subModule: '产品上架', feature: '产品定价', priority: 'P0', status: '未开始' },
-                { module: '产品管理', subModule: '产品管理', feature: '产品列表查看', priority: 'P0', status: '未开始' },
-                { module: '产品管理', subModule: '产品管理', feature: '产品编辑/更新', priority: 'P0', status: '未开始' },
-                { module: '产品管理', subModule: '产品管理', feature: '产品上下架管理', priority: 'P0', status: '未开始' },
-                { module: 'TP管理', subModule: 'TP接入管理', feature: 'TP接入申请审核', priority: 'P0', status: '未开始' },
-                { module: 'TP管理', subModule: 'TP接入管理', feature: 'TP资质审核(KYB)', priority: 'P0', status: '未开始' },
-                { module: 'TP管理', subModule: 'TP接入管理', feature: 'TP签约管理', priority: 'P0', status: '未开始' },
-                { module: 'TP管理', subModule: 'TP接入管理', feature: 'TP账号开通', priority: 'P0', status: '未开始' },
-                { module: 'TP管理', subModule: 'TP关系管理', feature: 'TP列表查看', priority: 'P0', status: '未开始' },
-                { module: 'TP管理', subModule: 'TP关系管理', feature: 'TP基本信息管理', priority: 'P0', status: '未开始' },
-                { module: 'TP管理', subModule: 'TP关系管理', feature: 'TP状态管理', priority: 'P0', status: '未开始' },
-                { module: 'TP管理', subModule: 'TP产品授权', feature: '产品授权管理', priority: 'P0', status: '未开始' },
-                { module: 'TP管理', subModule: 'TP产品授权', feature: 'TP专属定价', priority: 'P0', status: '未开始' },
-                { module: '销售中心', subModule: 'TP合作管理', feature: 'TP合作伙伴列表', priority: 'P1', status: '未开始' },
-                { module: '销售中心', subModule: 'TP合作管理', feature: 'TP层级管理', priority: 'P1', status: '未开始' },
-                { module: '销售中心', subModule: '分佣管理', feature: '分佣规则配置', priority: 'P1', status: '未开始' },
-                { module: '销售中心', subModule: '分佣管理', feature: 'TP分佣账单生成', priority: 'P1', status: '未开始' },
-                { module: '销售中心', subModule: '结算管理', feature: 'TP结算单生成', priority: 'P1', status: '未开始' },
-                { module: '销售中心', subModule: '结算管理', feature: 'TP付款单管理', priority: 'P1', status: '未开始' },
-                { module: '订单管理', subModule: '订单管理', feature: '订单列表查看', priority: 'P0', status: '未开始' },
-                { module: '订单管理', subModule: '订单管理', feature: '订单详情查询', priority: 'P0', status: '未开始' },
-                { module: '渠道管理', subModule: '渠道配置', feature: '银行渠道配置', priority: 'P1', status: '未开始' },
-                { module: '渠道管理', subModule: '渠道配置', feature: '卡组织配置', priority: 'P1', status: '未开始' },
-                { module: '渠道管理', subModule: '渠道监控', feature: '渠道成功率监控', priority: 'P1', status: '未开始' },
-                { module: '渠道管理', subModule: '渠道监控', feature: '渠道可用性监控', priority: 'P1', status: '未开始' },
-                { module: '司库中心', subModule: '资金账户', feature: '账户总览', priority: 'P0', status: '未开始' },
-                { module: '司库中心', subModule: '资金账户', feature: '多渠道账户', priority: 'P0', status: '未开始' },
-                { module: '司库中心', subModule: '资金账户', feature: '资金流水', priority: 'P0', status: '未开始' },
-                { module: '司库中心', subModule: '资金账户', feature: '可用余额/冻结余额', priority: 'P0', status: '未开始' },
-                { module: '司库中心', subModule: '资金调拨', feature: '跨账户调拨', priority: 'P1', status: '未开始' },
-                { module: '司库中心', subModule: '资金调拨', feature: '调拨记录', priority: 'P1', status: '未开始' },
-                { module: '司库中心', subModule: '资金调拨', feature: '调拨审核', priority: 'P1', status: '未开始' },
-                { module: '司库中心', subModule: '清结算', feature: '清算管理', priority: 'P1', status: '未开始' },
-                { module: '司库中心', subModule: '清结算', feature: '结算管理', priority: 'P1', status: '未开始' },
-                { module: '司库中心', subModule: '清结算', feature: '对账管理', priority: 'P1', status: '未开始' },
-                { module: '司库中心', subModule: '资金运营', feature: '头寸管理', priority: 'P1', status: '未开始' },
-                { module: '司库中心', subModule: '资金运营', feature: '流动性管理', priority: 'P1', status: '未开始' },
-                { module: '司库中心', subModule: '资金运营', feature: '资金预测', priority: 'P2', status: '未开始' },
-                { module: '司库中心', subModule: '汇率运营', feature: '汇率监控', priority: 'P1', status: '未开始' },
-                { module: '司库中心', subModule: '汇率运营', feature: '套利管理', priority: 'P2', status: '未开始' },
-                { module: '司库中心', subModule: '汇率运营', feature: '对冲管理', priority: 'P2', status: '未开始' },
-                { module: '司库中心', subModule: '分佣结算', feature: 'TP分佣账单', priority: 'P1', status: '未开始' },
-                { module: '司库中心', subModule: '分佣结算', feature: 'TP结算付款', priority: 'P1', status: '未开始' },
-            ],
-            admin: [
-                { module: '产品中心', subModule: '产品管理', feature: '产品属性', priority: 'P0', status: '未开始' },
-                { module: '产品中心', subModule: '产品管理', feature: '产品配置', priority: 'P0', status: '未开始' },
-                { module: '产品中心', subModule: '产品管理', feature: 'EX套餐管理', priority: 'P0', status: '未开始' },
-                { module: '服务商管理', subModule: '服务商管理', feature: '服务商档案', priority: 'P0', status: '未开始' },
-                { module: '服务商管理', subModule: '服务商管理', feature: '服务商产品', priority: 'P0', status: '未开始' },
-                { module: '租户管理', subModule: '租户管理', feature: '租户签约申请', priority: 'P0', status: '未开始' },
-                { module: '租户管理', subModule: '租户管理', feature: '租户基本信息', priority: 'P0', status: '未开始' },
-                { module: '租户管理', subModule: '租户管理', feature: '租户产品签约', priority: 'P0', status: '未开始' },
-                { module: '计费中心', subModule: '业务产品', feature: '业务产品收费', priority: 'P0', status: '未开始' },
-                { module: '计费中心', subModule: 'EX服务', feature: 'EX白牌API收费', priority: 'P0', status: '未开始' },
-                { module: '汇率中心', subModule: '汇率管理', feature: '汇率源管理', priority: 'P0', status: '未开始' },
-                { module: '汇率中心', subModule: '汇率管理', feature: '汇率源币种对', priority: 'P0', status: '未开始' },
-                { module: '汇率中心', subModule: '汇率管理', feature: '汇率查询', priority: 'P0', status: '未开始' },
-                { module: '系统管理', subModule: '系统管理', feature: '租户账号管理', priority: 'P0', status: '未开始' },
-                { module: '系统管理', subModule: '系统管理', feature: '角色权限管理', priority: 'P0', status: '未开始' },
-                { module: '系统管理', subModule: '系统管理', feature: 'API密钥管理', priority: 'P0', status: '未开始' },
-                { module: '系统管理', subModule: '系统管理', feature: '系统参数配置', priority: 'P0', status: '未开始' },
-            ]
-        };
+<script>
+let currentTab = 'all';
+let currentFlow = 'all';
 
-        // 从localStorage加载数据
-        function loadData() {
-            const saved = localStorage.getItem('exFeatureListTabs');
-            if (saved) {
-                const savedData = JSON.parse(saved);
-                Object.keys(features).forEach(role => {
-                    if (savedData[role]) {
-                        features[role].forEach((feature, index) => {
-                            if (savedData[role][index]) {
-                                feature.status = savedData[role][index].status;
-                                feature.completed = savedData[role][index].completed;
-                            }
-                        });
-                    }
-                });
-            }
+// ========== 功能数据 ==========
+// 每条: { flow, role, portal, center, module, menu, page, functions, note, priority }
+const allFeatures = [
+
+    // ===== 第一部分：服务商管理 =====
+    { flow: 'flow1', flowLabel: '一、服务商管理', role: 'EX', portal: 'SA', center: '/', module: '服务商管理', menu: '服务商管理', page: '服务商管理（列表）', functions: ['新增服务商', '查看服务商详情', '编辑服务商信息'], note: 'EX运营在SA后台管理服务商档案', priority: 'P0' },
+
+    // ===== 第二部分：产品上架 =====
+    // SP在PP上架产品
+    { flow: 'flow2', flowLabel: '二、产品上架', role: 'SP', portal: 'PP-SP', center: '产品中心', module: '产品管理', menu: '产品管理', page: '产品管理（列表）', functions: ['上架产品', '查看产品详情', '产品状态变更', '编辑产品'], note: 'SP在PP端管理自有产品', priority: 'P0' },
+    { flow: 'flow2', flowLabel: '二、产品上架', role: 'SP', portal: 'PP-SP', center: '产品中心', module: '产品管理', menu: '产品管理', page: '上架产品', functions: ['填写产品信息', '配置产品能力', '设置产品定价', '提交上架'], note: '产品上架表单页', priority: 'P0' },
+
+    // EX在SA管理套餐和代管理产品
+    { flow: 'flow2', flowLabel: '二、产品上架', role: 'EX', portal: 'SA', center: '/', module: '产品中心', menu: '产品中心 - 套餐管理', page: '套餐管理', functions: ['新增套餐', '查看套餐详情', '编辑套餐'], note: 'EX定义产品套餐组合', priority: 'P0' },
+    { flow: 'flow2', flowLabel: '二、产品上架', role: 'EX', portal: 'SA', center: '/', module: '产品中心', menu: '产品中心 - 套餐管理', page: '新增套餐', functions: ['配置套餐内容', '设置套餐定价', '提交'], note: '新增套餐表单页', priority: 'P0' },
+    { flow: 'flow2', flowLabel: '二、产品上架', role: 'EX', portal: 'SA', center: '/', module: '产品中心', menu: '产品中心 - 业务产品', page: '产品管理（列表）', functions: ['上架产品（代管理）', '查看产品详情', '产品状态变更', '编辑产品'], note: 'EX代SP管理产品上架', priority: 'P0' },
+    { flow: 'flow2', flowLabel: '二、产品上架', role: 'EX', portal: 'SA', center: '/', module: '产品中心', menu: '产品中心 - 业务产品', page: '上架产品', functions: ['填写产品信息', '配置产品能力', '设置产品定价', '提交上架'], note: '代管理上架表单页', priority: 'P0' },
+
+    // ===== 第三部分：租户签约 =====
+    // SP配置分佣模版
+    { flow: 'flow3', flowLabel: '三、租户签约', role: 'SP', portal: 'PP-SP', center: '清结算中心', module: '返点/分佣规则', menu: '分佣模版配置', page: '分佣模版配置（列表）', functions: ['新增模版', '查看模版详情', '编辑模版'], note: 'SP预设分佣模版，签约时引用', priority: 'P0' },
+    { flow: 'flow3', flowLabel: '三、租户签约', role: 'SP', portal: 'PP-SP', center: '清结算中心', module: '返点/分佣规则', menu: '分佣配置', page: '分佣配置', functions: ['配置分佣参数'], note: '分佣全局配置', priority: 'P1' },
+
+    // EX处理租户签约
+    { flow: 'flow3', flowLabel: '三、租户签约', role: 'EX', portal: 'SA', center: '/', module: '租户管理', menu: '租户管理 - 租户签约申请', page: '租户签约申请（列表）', functions: ['租户签约', '审核签约申请', '查看申请详情'], note: 'EX处理租户的签约申请', priority: 'P0' },
+    { flow: 'flow3', flowLabel: '三、租户签约', role: 'EX', portal: 'SA', center: '/', module: '租户管理', menu: '租户管理', page: '租户基本信息', functions: ['查看租户信息', '编辑租户信息'], note: '租户档案管理', priority: 'P0' },
+    { flow: 'flow3', flowLabel: '三、租户签约', role: 'EX', portal: 'SA', center: '/', module: '租户管理', menu: '租户管理', page: '租户签约产品', functions: ['查看签约产品', '管理签约关系'], note: '租户已签约的产品列表', priority: 'P0' },
+
+    // SP处理工单
+    { flow: 'flow3', flowLabel: '三、租户签约', role: 'SP', portal: 'PP-SP', center: '工单中心', module: '工单处理', menu: '待我处理', page: '工单处理（列表）', functions: ['处理工单', '查看详情'], note: 'SP审批租户签约等工单', priority: 'P0' },
+
+    // SP配置分佣规则
+    { flow: 'flow3', flowLabel: '三、租户签约', role: 'SP', portal: 'PP-SP', center: '清结算中心', module: '返点/分佣规则', menu: '分佣规则配置', page: '分佣规则配置（列表）', functions: ['查看详情', '修改分佣规则'], note: '针对具体租户的分佣规则', priority: 'P0' },
+
+    // 租户登录
+    { flow: 'flow3', flowLabel: '三、租户签约', role: '租户', portal: 'PP-TP', center: '设置中心', module: 'User', menu: '/', page: '登录', functions: ['邮箱登录', '手机号登录'], note: '租户首次登录PP', priority: 'P0' },
+    { flow: 'flow3', flowLabel: '三、租户签约', role: '租户', portal: 'PP-TP', center: '设置中心', module: 'User', menu: '/', page: '重置密码', functions: ['重置密码'], note: '', priority: 'P0' },
+    { flow: 'flow3', flowLabel: '三、租户签约', role: '租户', portal: 'PP-TP', center: '设置中心', module: 'User', menu: '/', page: '工作台', functions: ['查看工作台概览'], note: '登录后首页', priority: 'P0' },
+
+    // ===== 第四部分A：租户展业 - 商户登录注册 =====
+    // 商户注册登录
+    { flow: 'flow4a', flowLabel: '四、商户登录注册', role: '商户', portal: 'MP', center: '/', module: '登录注册', menu: '/', page: '注册', functions: ['手机号注册', '邮箱注册', '验证码注册', '密码注册'], note: '商户在MP端自助注册', priority: 'P0' },
+    { flow: 'flow4a', flowLabel: '四、商户登录注册', role: '商户', portal: 'MP', center: '/', module: '登录注册', menu: '/', page: '设置密码', functions: ['设置登录密码'], note: '验证码注册后设置密码', priority: 'P0' },
+    { flow: 'flow4a', flowLabel: '四、商户登录注册', role: '商户', portal: 'MP', center: '/', module: '登录注册', menu: '/', page: '登录', functions: ['手机号登录', '邮箱登录', '验证码登录', '密码登录'], note: '', priority: 'P0' },
+
+    // 商户个人信息
+    { flow: 'flow4a', flowLabel: '四、商户登录注册', role: '商户', portal: 'MP', center: '/', module: 'User', menu: 'Personal Profile', page: '个人信息', functions: ['绑定/修改手机号', '绑定/修改邮箱', '开通/关闭2FA（身份验证器）', '修改昵称'], note: '商户个人账户设置', priority: 'P0' },
+    { flow: 'flow4a', flowLabel: '四、商户登录注册', role: '商户', portal: 'MP', center: '/', module: 'User', menu: 'Personal Profile', page: '关联商户（列表）', functions: ['查看关联商户', '切换商户'], note: '一个用户可关联多个商户', priority: 'P0' },
+
+    // 租户查看商户用户
+    { flow: 'flow4a', flowLabel: '四、商户登录注册', role: '租户', portal: 'PP-TP', center: '客户中心', module: '商户用户', menu: '商户管理', page: '商户用户查询（列表）', functions: ['查询商户用户', '查看用户详情'], note: 'TP查看其下商户的用户信息', priority: 'P0' },
+
+    // ===== 第四部分B：租户展业 - 商户开通产品 =====
+    // 商户开通产品
+    { flow: 'flow4b', flowLabel: '四、商户开通产品', role: '商户', portal: 'MP', center: '/', module: '产品管理', menu: '/', page: '开通产品', functions: ['提交KYC信息', '提交产品开通信息'], note: '商户在MP端申请开通产品', priority: 'P0' },
+    { flow: 'flow4b', flowLabel: '四、商户开通产品', role: '商户', portal: 'MP', center: '/', module: '产品管理', menu: '/', page: '开通后落地页面', functions: ['查看开通结果', '引导下一步操作'], note: '产品开通成功/失败结果页', priority: 'P0' },
+    { flow: 'flow4b', flowLabel: '四、商户开通产品', role: '商户', portal: 'MP', center: '/', module: '产品管理', menu: '/', page: '产品开通列表', functions: ['查看已开通产品', '查看开通状态'], note: '商户已申请/已开通的产品列表', priority: 'P0' },
+
+    // 租户(TP)管理商户产品
+    { flow: 'flow4b', flowLabel: '四、商户开通产品', role: '租户', portal: 'PP-TP', center: '客户中心', module: '商户产品查询', menu: '商户查询', page: '商户查询（列表）', functions: ['查看商户详情'], note: 'TP查看商户基本信息', priority: 'P0' },
+    { flow: 'flow4b', flowLabel: '四、商户开通产品', role: '租户', portal: 'PP-TP', center: '客户中心', module: '商户产品查询', menu: '商户管理', page: '商户管理（列表）', functions: ['商户开通产品', '产品状态变更'], note: 'TP为商户开通/管理产品', priority: 'P0' },
+
+    // 租户(SP)查看商户
+    { flow: 'flow4b', flowLabel: '四、商户开通产品', role: '租户', portal: 'PP-SP', center: '客户中心', module: '商户产品查询', menu: '商户查询', page: '商户查询（列表）', functions: ['查看商户详情'], note: 'SP查看商户信息（只读）', priority: 'P0' },
+
+    // 租户(SP)合规审核 - 略过
+    { flow: 'flow4b', flowLabel: '四、商户开通产品', role: '租户', portal: 'PP-SP', center: '合规风控中心', module: '工单审核', menu: '—', page: '—', functions: ['略过'], note: '合规风控审核流程后续补充', priority: 'P2' },
+];
+
+// ========== 渲染逻辑 ==========
+function getFiltered() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    return allFeatures.filter(f => {
+        if (currentTab !== 'all' && f.portal !== currentTab) return false;
+        if (currentFlow !== 'all' && f.flow !== currentFlow) return false;
+        if (search) {
+            const haystack = [f.page, f.functions.join(' '), f.menu, f.module, f.note, f.role, f.center].join(' ').toLowerCase();
+            if (!haystack.includes(search)) return false;
         }
+        return true;
+    });
+}
 
-        // 保存数据到localStorage
-        function saveData() {
-            const data = {};
-            Object.keys(features).forEach(role => {
-                data[role] = features[role].map(f => ({
-                    status: f.status,
-                    completed: f.completed || false
-                }));
-            });
-            localStorage.setItem('exFeatureListTabs', JSON.stringify(data));
-        }
+function render() {
+    const filtered = getFiltered();
+    const container = document.getElementById('mainContent');
 
-        // 切换标签页
-        function switchTab(tab) {
-            currentTab = tab;
-            
-            // 更新标签按钮状态
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
-            
-            // 更新标签页内容
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            document.getElementById(`${tab}-tab`).classList.add('active');
-            
-            renderCurrentTab();
-        }
+    // Group by flow
+    const flowGroups = {};
+    filtered.forEach(f => {
+        if (!flowGroups[f.flow]) flowGroups[f.flow] = { label: f.flowLabel, items: [] };
+        flowGroups[f.flow].items.push(f);
+    });
 
-        // 渲染当前标签页
-        function renderCurrentTab() {
-            const priorityFilter = document.getElementById('priorityFilter').value;
-            const statusFilter = document.getElementById('statusFilter').value;
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    if (Object.keys(flowGroups).length === 0) {
+        container.innerHTML = '<div class="empty-state"><p>没有找到匹配的功能</p></div>';
+        updateStats(filtered);
+        return;
+    }
 
-            let filtered = features[currentTab].filter(f => {
-                if (priorityFilter !== 'all' && f.priority !== priorityFilter) return false;
-                if (statusFilter !== 'all' && f.status !== statusFilter) return false;
-                if (searchTerm && !f.feature.toLowerCase().includes(searchTerm)) return false;
-                return true;
-            });
+    let html = '';
+    const flowOrder = ['flow1', 'flow2', 'flow3', 'flow4a', 'flow4b'];
+    const flowColors = {
+        flow1: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+        flow2: 'linear-gradient(135deg, #0ea5e9, #6366f1)',
+        flow3: 'linear-gradient(135deg, #10b981, #0ea5e9)',
+        flow4a: 'linear-gradient(135deg, #f59e0b, #ef4444)',
+        flow4b: 'linear-gradient(135deg, #ec4899, #8b5cf6)',
+    };
+    const flowNums = { flow1: '1', flow2: '2', flow3: '3', flow4a: '4A', flow4b: '4B' };
 
-            const container = document.getElementById(`${currentTab}-list`);
-            
-            if (filtered.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="11" cy="11" r="8"/>
-                            <path d="m21 21-4.35-4.35"/>
-                        </svg>
-                        <p>没有找到匹配的功能</p>
-                    </div>
-                `;
-                return;
-            }
+    flowOrder.forEach(flowKey => {
+        const group = flowGroups[flowKey];
+        if (!group) return;
 
-            // 按模块分组
-            const grouped = {};
-            filtered.forEach(f => {
-                if (!grouped[f.module]) grouped[f.module] = [];
-                grouped[f.module].push(f);
-            });
+        html += `<div class="flow-section">`;
+        html += `<div class="flow-header" style="background: ${flowColors[flowKey]}">
+            <div class="flow-number">${flowNums[flowKey]}</div>
+            <h2>${group.label}</h2>
+            <div class="flow-desc">${group.items.length} 个页面/功能点</div>
+        </div>`;
+        html += `<div class="func-table-wrap"><table class="func-table">
+            <thead><tr>
+                <th style="width:70px">角色</th>
+                <th style="width:80px">端</th>
+                <th style="width:90px">中心</th>
+                <th style="width:100px">模块</th>
+                <th style="width:140px">菜单</th>
+                <th style="width:160px">页面</th>
+                <th style="min-width:200px">功能</th>
+                <th style="min-width:160px">说明</th>
+            </tr></thead><tbody>`;
 
-            let html = '';
-            Object.keys(grouped).forEach(module => {
-                const moduleFeatures = grouped[module];
-                const moduleCompleted = moduleFeatures.filter(f => f.completed).length;
-                
-                html += `
-                    <div class="module-section">
-                        <div class="module-header" onclick="toggleModule(this)">
-                            <h3>${module}</h3>
-                            <div class="module-stats">
-                                ${moduleCompleted}/${moduleFeatures.length} 已完成
-                            </div>
-                            <svg class="expand-icon expanded" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="6 9 12 15 18 9"/>
-                            </svg>
-                        </div>
-                        <div class="feature-list">
-                `;
+        group.items.forEach(f => {
+            const roleClass = f.role === 'EX' ? 'tag-role-ex' : f.role === 'SP' ? 'tag-role-sp' : f.role === '租户' ? 'tag-role-tp' : 'tag-role-merchant';
+            const portalClass = f.portal === 'SA' ? 'tag-端-sa' : f.portal.startsWith('PP') ? 'tag-端-pp' : 'tag-端-mp';
+            const funcHtml = f.functions.map(fn => `<li>${fn}</li>`).join('');
 
-                moduleFeatures.forEach((feature) => {
-                    const featureIndex = features[currentTab].indexOf(feature);
-                    html += `
-                        <div class="feature-item ${feature.completed ? 'completed' : ''}" data-index="${featureIndex}">
-                            <input type="checkbox" ${feature.completed ? 'checked' : ''} onchange="toggleFeature('${currentTab}', ${featureIndex})">
-                            <span class="feature-name">${feature.feature}</span>
-                            <span class="priority-badge priority-${feature.priority}">${feature.priority}</span>
-                            <select class="status-select status-${feature.status}" onchange="updateStatus('${currentTab}', ${featureIndex}, this.value)">
-                                <option value="未开始" ${feature.status === '未开始' ? 'selected' : ''}>未开始</option>
-                                <option value="进行中" ${feature.status === '进行中' ? 'selected' : ''}>进行中</option>
-                                <option value="已完成" ${feature.status === '已完成' ? 'selected' : ''}>已完成</option>
-                                <option value="已测试" ${feature.status === '已测试' ? 'selected' : ''}>已测试</option>
-                                <option value="已上线" ${feature.status === '已上线' ? 'selected' : ''}>已上线</option>
-                            </select>
-                        </div>
-                    `;
-                });
+            html += `<tr>
+                <td><span class="tag ${roleClass}">${f.role}</span></td>
+                <td><span class="tag ${portalClass}">${f.portal}</span></td>
+                <td>${f.center === '/' ? '<span style="color:var(--text-muted)">—</span>' : '<span class="tag tag-center">' + f.center + '</span>'}</td>
+                <td style="font-weight:500">${f.module}</td>
+                <td>${f.menu === '/' ? '<span style="color:var(--text-muted)">—</span>' : f.menu}</td>
+                <td style="font-weight:600">${f.page}</td>
+                <td><ul class="func-list">${funcHtml}</ul></td>
+                <td class="note">${f.note}</td>
+            </tr>`;
+        });
 
-                html += `
-                        </div>
-                    </div>
-                `;
-            });
+        html += `</tbody></table></div></div>`;
+    });
 
-            container.innerHTML = html;
-            updateStats();
-            updateTabCounts();
-        }
+    container.innerHTML = html;
+    updateStats(filtered);
+}
 
-        function toggleFeature(role, index) {
-            features[role][index].completed = !features[role][index].completed;
-            if (features[role][index].completed && features[role][index].status === '未开始') {
-                features[role][index].status = '已完成';
-            }
-            saveData();
-            renderCurrentTab();
-        }
+function updateStats(filtered) {
+    if (!filtered) filtered = getFiltered();
+    document.getElementById('totalCount').textContent = filtered.length;
+    document.getElementById('saCount').textContent = filtered.filter(f => f.portal === 'SA').length;
+    document.getElementById('spCount').textContent = filtered.filter(f => f.portal === 'PP-SP').length;
+    document.getElementById('tpCount').textContent = filtered.filter(f => f.portal === 'PP-TP').length;
+    document.getElementById('mpCount').textContent = filtered.filter(f => f.portal === 'MP').length;
 
-        function updateStatus(role, index, status) {
-            features[role][index].status = status;
-            if (status === '已完成' || status === '已测试' || status === '已上线') {
-                features[role][index].completed = true;
-            }
-            saveData();
-            renderCurrentTab();
-        }
+    // Tab badges
+    document.getElementById('all-count').textContent = allFeatures.length;
+    document.getElementById('SA-count').textContent = allFeatures.filter(f => f.portal === 'SA').length;
+    document.getElementById('PP-SP-count').textContent = allFeatures.filter(f => f.portal === 'PP-SP').length;
+    document.getElementById('PP-TP-count').textContent = allFeatures.filter(f => f.portal === 'PP-TP').length;
+    document.getElementById('MP-count').textContent = allFeatures.filter(f => f.portal === 'MP').length;
+}
 
-        function updateStats() {
-            const allFeatures = Object.values(features).flat();
-            const total = allFeatures.length;
-            const completed = allFeatures.filter(f => f.completed).length;
-            const inProgress = allFeatures.filter(f => f.status === '进行中').length;
-            const rate = ((completed / total) * 100).toFixed(1);
+function switchTab(tab) {
+    currentTab = tab;
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+    render();
+}
 
-            document.getElementById('totalFeatures').textContent = total;
-            document.getElementById('completedFeatures').textContent = completed;
-            document.getElementById('inProgressFeatures').textContent = inProgress;
-            document.getElementById('completionRate').textContent = rate + '%';
-            document.getElementById('completedProgress').style.width = rate + '%';
-        }
+function switchFlow(flow) {
+    currentFlow = flow;
+    document.querySelectorAll('.flow-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    render();
+}
 
-        function updateTabCounts() {
-            document.getElementById('merchant-count').textContent = features.merchant.length;
-            document.getElementById('tenant-count').textContent = features.tenant.length;
-            document.getElementById('provider-count').textContent = features.provider.length;
-            document.getElementById('admin-count').textContent = features.admin.length;
-        }
+function expandAll() {
+    // All sections are already expanded in table view
+}
 
-        function toggleModule(header) {
-            const content = header.nextElementSibling;
-            const icon = header.querySelector('.expand-icon');
-            content.classList.toggle('collapsed');
-            icon.classList.toggle('expanded');
-        }
+function exportToCSV() {
+    let csv = '业务流程,角色,端,中心,模块,菜单,页面,功能,说明,优先级\n';
+    allFeatures.forEach(f => {
+        const funcs = f.functions.join('；');
+        csv += `"${f.flowLabel}","${f.role}","${f.portal}","${f.center}","${f.module}","${f.menu}","${f.page}","${funcs}","${f.note}","${f.priority}"\n`;
+    });
+    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'EX功能矩阵_' + new Date().toISOString().split('T')[0] + '.csv';
+    link.click();
+}
 
-        function expandAll() {
-            document.querySelectorAll('.feature-list').forEach(el => {
-                el.classList.remove('collapsed');
-            });
-            document.querySelectorAll('.expand-icon').forEach(icon => {
-                icon.classList.add('expanded');
-            });
-        }
-
-        function exportToCSV() {
-            let csv = '角色,模块,子模块,功能点,优先级,状态,完成\n';
-            Object.keys(features).forEach(role => {
-                const roleName = {merchant: '商户(MP)', tenant: '租户(TP)', provider: '服务商(SP)', admin: '管理后台(SA)'}[role];
-                features[role].forEach(f => {
-                    csv += `${roleName},${f.module},${f.subModule},${f.feature},${f.priority},${f.status},${f.completed ? '是' : '否'}\n`;
-                });
-            });
-            
-            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'EX功能清单_' + new Date().toISOString().split('T')[0] + '.csv';
-            link.click();
-        }
-
-        function clearAllData() {
-            if (confirm('确定要清除所有进度数据吗？此操作不可恢复！')) {
-                localStorage.removeItem('exFeatureListTabs');
-                Object.keys(features).forEach(role => {
-                    features[role].forEach(f => {
-                        f.status = '未开始';
-                        f.completed = false;
-                    });
-                });
-                renderCurrentTab();
-            }
-        }
-
-        // 初始化
-        loadData();
-        renderCurrentTab();
-    </script>
+// Init
+render();
+</script>
 </body>
 </html>

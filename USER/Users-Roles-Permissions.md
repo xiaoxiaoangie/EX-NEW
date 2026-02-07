@@ -346,21 +346,22 @@ graph TD
 
 **权限粒度：模块/中心级**（不细到子菜单）
 
-| 模块/中心    | 说明                         | 权限标识               |
-| ------------ | ---------------------------- | ---------------------- |
-| 会员中心     | 会员查询、会员管理、产品配置 | `module:member`      |
-| 订单中心     | 商户单管理、交易背景         | `module:order`       |
-| 财资中心     | 资金管理                     | `module:treasury`    |
-| 渠道中心     | 渠道管理                     | `module:channel`     |
-| 清结算中心   | 清算结算                     | `module:settlement`  |
-| 数据中心     | 数据报表                     | `module:data`        |
-| 工单中心     | 工单管理                     | `module:ticket`      |
-| 产品中心     | 产品管理                     | `module:product`     |
-| 产品市场     | 产品浏览                     | `module:marketplace` |
-| 销售渠道中心 | 代理商管理                   | `module:sales`       |
-| 用户管理     | 用户和角色管理（Org级）      | `module:user_mgmt`   |
+| 模块/中心      | 说明                                           | 权限标识               | 角色级别 |
+| -------------- | ---------------------------------------------- | ---------------------- | -------- |
+| 客户中心       | 商户管理、商户审核、产品配置、费率配置、返点管理 | `module:client`      | MID      |
+| 交易中心       | VA账户、收付款单、换汇、Ramp、VCC、收单、交易监控、差错处理 | `module:transaction` | MID      |
+| 清结算中心     | 计费管理、汇率配置、对账、清分、结算、商户余额、账务核算 | `module:settlement`  | MID      |
+| 资金中心       | 资金账户、资金调拨、外汇管理、头寸、备付金       | `module:treasury`    | MID      |
+| 渠道中心       | 渠道管理、路由规则、渠道费率、渠道监控           | `module:channel`     | MID      |
+| 合作伙伴中心   | 销售代理、机构代理、代理返点、分佣结算、上游管理 | `module:partner`     | MID      |
+| 开发者中心     | API文档、密钥管理、Webhooks、沙箱环境           | `module:developer`   | MID      |
+| 工单中心       | 工单管理、审批流程、工单模板                     | `module:ticket`      | MID      |
+| 数据中心       | 交易/商户/财务/渠道/代理报表、数据导出           | `module:data`        | MID      |
+| 风控合规中心   | 交易风控、KYC/KYB、AML监控、合规报告、拒付管理   | `module:risk`        | MID      |
+| Settings       | 企业信息、组织管理（部门/成员/角色/权限）、通知、系统配置、审计日志 | `module:settings` | Org      |
+| 用户管理       | 用户和角色管理（Org级，包含在 Settings 中）      | `module:user_mgmt`   | Org      |
 
-> **注意：** 以上模块列表为框架，具体模块待确定后补充。工作台（Dashboard）所有人都有，但内容根据权限动态生成。
+> **注意：** 工作台（Dashboard）所有人都有，但内容根据权限动态生成。Settings 和用户管理属于 Org 级权限，其余模块属于 MID 级权限。
 
 ### 5.3 Layer 2: 操作权限（CRUD级）
 
@@ -380,17 +381,21 @@ graph TD
 **操作权限矩阵示例：**
 
 ```
-模块: 订单中心
+模块: 交易中心
 ┌─────────────────┬──────┬────────┬──────┬────────┬────────┬────────┐
 │ 资源              │ View │ Create │ Edit │ Delete │ Manage │ Export │
 ├─────────────────┼──────┼────────┼──────┼────────┼────────┼────────┤
-│ 收款商户单        │  ☑   │   ☑    │  ☐   │   ☐    │   ☐    │   ☑   │
-│ 付款商户单        │  ☑   │   ☑    │  ☐   │   ☐    │   ☐    │   ☑   │
-│ 换汇商户单        │  ☑   │   ☐    │  ☐   │   ☐    │   ☐    │   ☐   │
-│ VCC商户单         │  ☑   │   ☑    │  ☑   │   ☐    │   ☐    │   ☑   │
 │ VA账户            │  ☑   │   ☐    │  ☐   │   ☐    │   ☐    │   ☐   │
-│ 订单管理          │  ☑   │   ☑    │  ☑   │   ☐    │   ☑    │   ☑   │
-│ 订单文件          │  ☑   │   ☑    │  ☐   │   ☐    │   ☐    │   ☐   │
+│ 收款单            │  ☑   │   ☑    │  ☐   │   ☐    │   ☐    │   ☑   │
+│ 付款单            │  ☑   │   ☑    │  ☐   │   ☐    │   ☐    │   ☑   │
+│ 换汇单            │  ☑   │   ☐    │  ☐   │   ☐    │   ☐    │   ☐   │
+│ Ramp单            │  ☑   │   ☑    │  ☐   │   ☐    │   ☐    │   ☑   │
+│ VCC单             │  ☑   │   ☑    │  ☑   │   ☐    │   ☐    │   ☑   │
+│ 收单单            │  ☑   │   ☐    │  ☐   │   ☐    │   ☐    │   ☑   │
+│ 调单管理          │  ☑   │   ☑    │  ☑   │   ☐    │   ☑    │   ☐   │
+│ 退款管理          │  ☑   │   ☑    │  ☐   │   ☐    │   ☑    │   ☐   │
+│ 拒付管理          │  ☑   │   ☐    │  ☐   │   ☐    │   ☑    │   ☐   │
+│ 订单管理          │  ☑   │   ☑    │  ☑   │   ☐    │   ☐    │   ☑   │
 │ 店铺管理          │  ☑   │   ☑    │  ☑   │   ☑    │   ☐    │   ☐   │
 └─────────────────┴──────┴────────┴──────┴────────┴────────┴────────┘
 ```
@@ -401,10 +406,13 @@ graph TD
 
 ```
 示例:
-mid:order:payin_order:view        — MID级，订单中心，收款商户单，查看
-mid:order:payin_order:create      — MID级，订单中心，收款商户单，创建
-org:user_mgmt:user:manage         — Org级，用户管理，用户，管理
-mid:member:merchant_config:edit   — MID级，会员中心，商户配置，编辑
+mid:transaction:payin_order:view     — MID级，交易中心，收款单，查看
+mid:transaction:payin_order:create   — MID级，交易中心，收款单，创建
+mid:transaction:chargeback:manage    — MID级，交易中心，拒付管理，管理
+org:user_mgmt:user:manage            — Org级，用户管理，用户，管理
+mid:client:merchant_rate:edit        — MID级，客户中心，商户费率，编辑
+mid:settlement:reconciliation:view   — MID级，清结算中心，对账，查看
+mid:partner:agent_rebate:manage      — MID级，合作伙伴中心，代理返点，管理
 ```
 
 ### 5.4 Layer 3: 数据权限（实例级）
@@ -548,16 +556,16 @@ flowchart TD
 │                                                     │
 │  Select which modules this role can access:         │
 │                                                     │
-│  ☑ 会员中心     会员查询、会员管理、产品配置          │
-│  ☑ 订单中心     商户单管理、交易背景                  │
-│  ☐ 财资中心     资金管理                             │
-│  ☐ 渠道中心     渠道管理                             │
-│  ☐ 清结算中心   清算结算                             │
-│  ☑ 数据中心     数据报表                             │
-│  ☐ 工单中心     工单管理                             │
-│  ☐ 产品中心     产品管理                             │
-│  ☐ 产品市场     产品浏览                             │
-│  ☐ 销售渠道中心  代理商管理                           │
+│  ☑ 客户中心       商户管理、产品配置、费率、返点        │
+│  ☑ 交易中心       VA、收付款、换汇、VCC、交易监控       │
+│  ☐ 清结算中心     计费、对账、清分、结算、账务           │
+│  ☐ 资金中心       资金账户、调拨、外汇、头寸             │
+│  ☐ 渠道中心       渠道管理、路由、监控                   │
+│  ☐ 合作伙伴中心   代理商、返点、分佣                     │
+│  ☐ 开发者中心     API、密钥、Webhooks、沙箱              │
+│  ☐ 工单中心       工单管理、审批流程                     │
+│  ☑ 数据中心       交易/商户/财务报表                     │
+│  ☐ 风控合规中心   风控规则、KYC、AML、拒付               │
 │                                                     │
 │                          [Back]  [Continue]          │
 └─────────────────────────────────────────────────────┘
@@ -576,19 +584,20 @@ flowchart TD
 │                                                     │
 │  Configure actions for each selected module:        │
 │                                                     │
-│  ── 会员中心 ──────────────────────────────────      │
-│  会员信息查询     ☑ View  ☐ Edit  ☐ Export          │
-│  会员产品查询     ☑ View  ☐ Edit  ☐ Export          │
-│  商户基本信息管理  ☑ View  ☑ Edit  ☐ Delete          │
-│  商户产品配置     ☑ View  ☑ Edit  ☑ Manage          │
+│  ── 客户中心 ──────────────────────────────────      │
+│  商户列表         ☑ View  ☐ Edit  ☐ Export          │
+│  商户审核         ☑ View  ☐ Manage                  │
+│  商户开通产品     ☑ View  ☑ Edit  ☑ Manage          │
+│  商户费率配置     ☑ View  ☑ Edit  ☑ Manage          │
+│  商户返点规则     ☑ View  ☐ Edit  ☐ Manage          │
 │                                                     │
-│  ── 订单中心 ──────────────────────────────────      │
-│  收款商户单       ☑ View  ☑ Create  ☐ Edit  ☑ Export│
-│  付款商户单       ☑ View  ☑ Create  ☐ Edit  ☑ Export│
-│  换汇商户单       ☑ View  ☐ Create  ☐ Edit  ☐ Export│
-│  VCC商户单        ☑ View  ☑ Create  ☑ Edit  ☑ Export│
+│  ── 交易中心 ──────────────────────────────────      │
 │  VA账户          ☑ View  ☐ Create  ☐ Edit  ☐ Export │
-│  订单管理         ☑ View  ☑ Create  ☑ Edit  ☑ Manage│
+│  收款单           ☑ View  ☑ Create  ☐ Edit  ☑ Export│
+│  付款单           ☑ View  ☑ Create  ☐ Edit  ☑ Export│
+│  换汇单           ☑ View  ☐ Create  ☐ Edit  ☐ Export│
+│  VCC单            ☑ View  ☑ Create  ☑ Edit  ☑ Export│
+│  调单管理         ☑ View  ☑ Create  ☑ Edit  ☑ Manage│
 │                                                     │
 │                          [Back]  [Continue]          │
 └─────────────────────────────────────────────────────┘
@@ -900,16 +909,21 @@ CREATED → SENT → ACCEPTED
 格式: {scope}:{module}:{resource}:{action}
 
 scope:    org | mid
-module:   member | order | treasury | channel | settlement | data | ticket | product | marketplace | sales | user_mgmt
+module:   client | transaction | settlement | treasury | channel | partner | developer | ticket | data | risk | settings | user_mgmt
 resource: 具体资源名（snake_case）
 action:   view | create | edit | delete | manage | export
 
 示例:
-org:user_mgmt:user:view           — 查看用户列表
-org:user_mgmt:role:create         — 创建角色
-mid:order:payin_order:create      — 创建收款商户单
-mid:order:vcc_order:edit          — 编辑VCC商户单
-mid:member:merchant_config:manage — 管理商户配置
+org:user_mgmt:user:view              — 查看用户列表
+org:user_mgmt:role:create            — 创建角色
+org:settings:company_info:edit       — 编辑公司信息
+mid:client:merchant:view             — 查看商户列表
+mid:client:merchant_rate:manage      — 管理商户费率
+mid:transaction:payin_order:create   — 创建收款单
+mid:transaction:vcc_order:edit       — 编辑VCC单
+mid:settlement:rate_template:manage  — 管理费率模板
+mid:partner:agent:view               — 查看代理商
+mid:risk:aml_monitor:view            — 查看AML监控
 ```
 
 ### B. 多角色权限合并规则
@@ -945,5 +959,5 @@ mid:member:merchant_config:manage — 管理商户配置
 ---
 
 *最后更新：2026-02-07*
-*文档版本：v1.0*
+*文档版本：v1.1*
 *作者：EX Product Team*
