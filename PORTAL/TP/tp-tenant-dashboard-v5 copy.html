@@ -815,7 +815,7 @@
                 </div>
             </div>
 
-            <!-- 商户中心 -->
+            <!-- 会员中心 -->
             <div class="center-card success" data-role="both" onclick="enterCenter('merchant')">
                 <div class="center-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -823,8 +823,8 @@
                         <polyline points="9 22 9 12 15 12 15 22"/>
                     </svg>
                 </div>
-                <h3 class="center-name">商户中心</h3>
-                <p class="center-desc">商户管理、交易查询、报价配置</p>
+                <h3 class="center-name">会员中心</h3>
+                <p class="center-desc">会员查询、会员管理、产品配置</p>
                 <div class="center-stats">
                     <div class="center-stat">
                         <span class="center-stat-value">156</span>
@@ -833,6 +833,28 @@
                     <div class="center-stat">
                         <span class="center-stat-value">89</span>
                         <span class="center-stat-label">直客</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 订单中心 -->
+            <div class="center-card teal" data-role="both" onclick="enterCenter('order')">
+                <div class="center-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                    </svg>
+                </div>
+                <h3 class="center-name">订单中心</h3>
+                <p class="center-desc">商户单管理、交易背景、订单查询</p>
+                <div class="center-stats">
+                    <div class="center-stat">
+                        <span class="center-stat-value">1,234</span>
+                        <span class="center-stat-label">今日订单</span>
+                    </div>
+                    <div class="center-stat">
+                        <span class="center-stat-value">98.5%</span>
+                        <span class="center-stat-label">成功率</span>
                     </div>
                 </div>
             </div>
@@ -1172,7 +1194,8 @@
             { id: 'dashboard', name: '工作台', desc: '数据概览', color: 'accent', icon: 'dashboard' },
             { id: 'product', name: '产品市场', desc: 'Product Market', color: 'cyan', icon: 'product' },
             { id: 'supply', name: '产品中心', desc: 'Product Center', color: 'purple', icon: 'supply' },
-            { id: 'merchant', name: '商户中心', desc: '商户管理', color: 'success', icon: 'merchant' },
+            { id: 'merchant', name: '会员中心', desc: '会员管理', color: 'success', icon: 'merchant' },
+            { id: 'order', name: '订单中心', desc: '订单管理', color: 'teal', icon: 'order' },
             { id: 'sales-channel', name: '销售渠道', desc: 'Sales Channel', color: 'warning', icon: 'sales' },
             { id: 'finance', name: '财资中心', desc: 'Finance Center', color: 'pink', icon: 'finance' },
             { id: 'channel', name: '渠道中心', desc: '金融渠道管理', color: 'orange', icon: 'channel' },
@@ -1190,6 +1213,7 @@
             product: '<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>',
             supply: '<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>',
             merchant: '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+            order: '<rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
             sales: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
             finance: '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="M12 8v8"/><path d="M8 12h8"/>',
             channel: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',

@@ -71,16 +71,25 @@ const centerMenus = {
         ]
     },
     merchant: {
-        name: '商户中心',
+        name: '会员中心',
         groups: [
-            { label: '基础信息', items: [
-                { name: '商户基本信息', icon: 'user', active: true },
-                { name: '商户开通产品', icon: 'package' },
-                { name: '商户报价', icon: 'dollar-sign' },
-                { name: '商户汇率', icon: 'trending-up' }
+            { label: '会员查询', items: [
+                { name: '会员信息查询', icon: 'search', active: true },
+                { name: '会员产品查询', icon: 'package' }
             ]},
+            { label: '会员管理', items: [
+                { name: '商户基本信息管理', icon: 'user' },
+                { name: '商户开通产品', icon: 'package' },
+                { name: '商户产品配置', icon: 'settings' },
+                { name: '会员产品配置', icon: 'package' }
+            ]}
+        ]
+    },
+    order: {
+        name: '订单中心',
+        groups: [
             { label: '商户单管理', items: [
-                { name: 'VA账户', icon: 'credit-card' },
+                { name: 'VA账户', icon: 'credit-card', active: true },
                 { name: '收款商户单', icon: 'download' },
                 { name: '付款商户单', icon: 'upload' },
                 { name: '换汇商户单', icon: 'repeat' },
@@ -94,9 +103,6 @@ const centerMenus = {
                 { name: '订单管理', icon: 'clipboard' },
                 { name: '订单文件', icon: 'file' },
                 { name: '店铺管理', icon: 'store' }
-            ]},
-            { label: '分佣', items: [
-                { name: '商户分佣', icon: 'percent' }
             ]}
         ]
     },
