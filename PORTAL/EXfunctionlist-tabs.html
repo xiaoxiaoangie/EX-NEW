@@ -151,7 +151,7 @@
         <button class="flow-btn" onclick="switchFlow('flow2')">二、产品上架</button>
         <button class="flow-btn" onclick="switchFlow('flow3')">三、租户签约</button>
         <button class="flow-btn" onclick="switchFlow('flow4a')">四、商户登录注册</button>
-        <button class="flow-btn" onclick="switchFlow('flow4b')">四、商户开通产品</button>
+        <button class="flow-btn" onclick="switchFlow('flow4b')">五、商户开通产品</button>
     </div>
 
     <div class="stats">
@@ -213,6 +213,13 @@ const allFeatures = [
 
     // SP配置分佣规则
     { flow: 'flow3', flowLabel: '三、租户签约', role: 'SP', portal: 'PP-SP', center: '清结算中心', module: '返点/分佣规则', menu: '分佣规则配置', page: '分佣规则配置（列表）', functions: ['查看详情', '修改分佣规则'], note: '针对具体租户的分佣规则', priority: 'P0' },
+
+    // 租户在产品中心浏览和管理签约产品
+    { flow: 'flow3', flowLabel: '三、租户签约', role: '租户', portal: 'PP-TP', center: '产品中心', module: '产品市场', menu: '产品市场', page: '产品市场', functions: ['产品介绍'], note: '租户浏览可签约的产品', priority: 'P0' },
+    { flow: 'flow3', flowLabel: '三、租户签约', role: '租户', portal: 'PP-TP', center: '产品中心', module: '产品市场', menu: '已签约产品', page: '已签约产品', functions: ['查看产品能力', '配置产品费率', '配置汇率'], note: '根据实际产品配置费率/汇率，或两者都需要', priority: 'P0' },
+
+    // SP查看机构签约产品
+    { flow: 'flow3', flowLabel: '三、租户签约', role: '租户', portal: 'PP-SP', center: '合作伙伴', module: '机构伙伴', menu: '机构签约产品', page: '机构签约产品（列表）', functions: ['查看产品能力', '查看标准费率', '查看标准汇率'], note: 'SP查看机构伙伴的签约产品信息', priority: 'P0' },
 
     // 租户登录
     { flow: 'flow3', flowLabel: '三、租户签约', role: '租户', portal: 'PP-TP', center: '设置中心', module: 'User', menu: '/', page: '登录', functions: ['邮箱登录', '手机号登录'], note: '租户首次登录PP', priority: 'P0' },

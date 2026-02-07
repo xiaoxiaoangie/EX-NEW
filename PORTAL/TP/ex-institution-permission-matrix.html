@@ -3,445 +3,271 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EX 机构权限矩阵</title>
+<title>EX 机构权限矩阵 — 按业务流程</title>
 <style>
 :root{--bg:#0f172a;--bg-card:#1e293b;--bg-row:#1e293b;--bg-row-alt:#172033;--bg-header:#334155;--border:#334155;--text:#e2e8f0;--text-s:#94a3b8;--text-m:#64748b;--accent:#818cf8;--accent-bg:rgba(129,140,248,.12);--green:#34d399;--green-bg:rgba(52,211,153,.12);--red:#f87171;--red-bg:rgba(248,113,113,.1);--yellow:#fbbf24;--yellow-bg:rgba(251,191,36,.12);--cyan:#22d3ee;--cyan-bg:rgba(34,211,238,.1);--orange:#fb923c;--orange-bg:rgba(251,146,60,.12);--purple:#a78bfa;--purple-bg:rgba(167,139,250,.12)}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding:32px;-webkit-font-smoothing:antialiased}
-.hdr{max-width:1400px;margin:0 auto 40px}
-.hdr h1{font-size:28px;font-weight:700;margin-bottom:8px}
-.hdr .sub{color:var(--text-s);font-size:15px}
-.legend{max-width:1400px;margin:0 auto 32px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-.lc{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:20px}
-.lc .tag{display:inline-block;padding:2px 10px;border-radius:6px;font-size:12px;font-weight:600;margin-bottom:8px}
-.ta .tag{background:var(--yellow-bg);color:var(--yellow)}.tb .tag{background:var(--green-bg);color:var(--green)}
-.tc .tag{background:var(--cyan-bg);color:var(--cyan)}.td .tag{background:var(--purple-bg);color:var(--purple)}
-.lc h3{font-size:15px;font-weight:600;margin-bottom:4px}
-.lc .ex{color:var(--text-m);font-size:13px}.lc .ds{color:var(--text-s);font-size:13px;margin-top:6px}
-.lc .roles{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
-.rb{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
-.rb-tp{background:var(--yellow-bg);color:var(--yellow)}.rb-sp{background:var(--green-bg);color:var(--green)}.rb-lic{background:var(--cyan-bg);color:var(--cyan)}
-.sl{max-width:1400px;margin:0 auto 32px;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:20px 24px}
-.sl h3{font-size:14px;font-weight:600;margin-bottom:12px;color:var(--text-s)}
-.si{display:flex;gap:24px;flex-wrap:wrap}.si>div{display:flex;align-items:center;gap:8px;font-size:13px}
-.dot{width:10px;height:10px;border-radius:50%}.dot.g{background:var(--green)}.dot.o{background:var(--yellow)}.dot.s{background:var(--accent)}.dot.l{background:var(--cyan)}.dot.a{background:var(--orange)}
-.p{font-size:14px;text-align:center}.pf{color:var(--green)}.pp{color:var(--yellow)}.pn{color:var(--red);opacity:.6}.pa{color:var(--orange)}
-.pl{font-size:11px;color:var(--text-m);display:block;margin-top:2px;line-height:1.3}
-.cs{max-width:1400px;margin:0 auto 28px;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
-.ch{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;background:var(--bg-header);cursor:pointer;user-select:none}
-.ch:hover{background:#3b4d66}.chl{display:flex;align-items:center;gap:12px}
-.ch h2{font-size:16px;font-weight:600}
-.cr{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
-.cr-sp{background:var(--accent-bg);color:var(--accent)}.cr-all{background:var(--green-bg);color:var(--green)}.cr-lic{background:var(--cyan-bg);color:var(--cyan)}
-.ch .ti{color:var(--text-m);transition:transform .2s;font-size:18px}
-.cs.collapsed .ti{transform:rotate(-90deg)}.cs.collapsed .cb{display:none}
-.cb{padding:0}
-table.pt{width:100%;border-collapse:collapse;font-size:13px}
-.pt thead th{padding:10px 16px;text-align:left;font-weight:600;font-size:12px;color:var(--text-s);border-bottom:1px solid var(--border);background:var(--bg-row-alt);position:sticky;top:0}
-.pt thead th:nth-child(n+4){text-align:center;min-width:130px}
-.pt tbody tr{border-bottom:1px solid rgba(51,65,85,.5)}.pt tbody tr:nth-child(even){background:var(--bg-row-alt)}.pt tbody tr:hover{background:rgba(51,65,85,.4)}
-.pt td{padding:8px 16px;vertical-align:middle}.pt td:nth-child(n+4){text-align:center}
-.gr td{background:rgba(51,65,85,.3)!important;font-weight:600;font-size:12px;color:var(--accent);padding:6px 16px}
-.st{display:inline-block;padding:1px 6px;border-radius:3px;font-size:10px;font-weight:600;margin-left:8px}
-.st.g{background:var(--green-bg);color:var(--green)}.st.o{background:var(--yellow-bg);color:var(--yellow)}.st.s{background:var(--accent-bg);color:var(--accent)}.st.l{background:var(--cyan-bg);color:var(--cyan)}
-.mn{font-weight:500}.pid{font-family:'SF Mono','Fira Code',monospace;font-size:11px;color:var(--text-m)}
-.ss{max-width:1400px;margin:40px auto 28px}.ss h2{font-size:20px;font-weight:700;margin-bottom:16px}
-table.smt{width:100%;border-collapse:collapse;background:var(--bg-card);border-radius:12px;overflow:hidden;border:1px solid var(--border)}
-.smt th,.smt td{padding:12px 16px;border-bottom:1px solid var(--border);font-size:13px}
-.smt th{background:var(--bg-header);font-weight:600;text-align:left}.smt th:nth-child(n+2){text-align:center}.smt td:nth-child(n+2){text-align:center}
-.smt tbody tr:hover{background:rgba(51,65,85,.3)}
-.as{max-width:1400px;margin:40px auto 28px}.as h2{font-size:20px;font-weight:700;margin-bottom:16px}
-.ac-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
-.ac{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:20px}
-.ac h3{font-size:14px;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
-.ac ul{list-style:none;padding:0}.ac li{font-size:13px;color:var(--text-s);padding:3px 0 3px 16px;position:relative}.ac li::before{content:'•';position:absolute;left:0;color:var(--text-m)}
-@media(max-width:1024px){.legend{grid-template-columns:repeat(2,1fr)}.ac-grid{grid-template-columns:1fr}body{padding:16px}}
-@media(max-width:768px){.legend{grid-template-columns:1fr}}
+body{font-family:-apple-system,BlinkMacSystemFont,'Inter','PingFang SC',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding:32px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1500px;margin:0 auto}
+
+/* Header */
+.hdr{margin-bottom:32px}
+.hdr h1{font-size:26px;font-weight:700;margin-bottom:6px}
+.hdr .sub{color:var(--text-s);font-size:14px}
+
+/* Flow nav - primary */
+.flow-nav{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
+.flow-btn{padding:10px 22px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-s);font-size:13px;font-weight:600;border-radius:10px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px}
+.flow-btn:hover{border-color:var(--accent);color:var(--accent)}
+.flow-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.flow-btn .num{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.flow-btn.active .num{background:rgba(255,255,255,.25)}
+
+/* Summary bar */
+.summary{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.sum-card{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:14px 20px;min-width:120px}
+.sum-card .label{font-size:11px;color:var(--text-m);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.sum-card .val{font-size:24px;font-weight:700}
+
+/* Portal section */
+.portal-section{margin-bottom:28px}
+.portal-header{display:flex;align-items:center;gap:12px;padding:14px 20px;border-radius:12px 12px 0 0;cursor:pointer;user-select:none}
+.portal-header:hover{filter:brightness(1.1)}
+.portal-header h2{font-size:15px;font-weight:700;color:#fff}
+.portal-header .badge{background:rgba(255,255,255,.2);padding:2px 10px;border-radius:8px;font-size:11px;font-weight:700;color:#fff}
+.portal-header .arrow{margin-left:auto;font-size:16px;color:rgba(255,255,255,.5);transition:transform .2s}
+.portal-section.collapsed .arrow{transform:rotate(-90deg)}
+.portal-section.collapsed .portal-body{display:none}
+
+.portal-sa .portal-header{background:linear-gradient(135deg,#7c3aed,#6366f1)}
+.portal-sp .portal-header{background:linear-gradient(135deg,#0ea5e9,#6366f1)}
+.portal-tp .portal-header{background:linear-gradient(135deg,#10b981,#0ea5e9)}
+.portal-mp .portal-header{background:linear-gradient(135deg,#f59e0b,#ef4444)}
+
+/* Table */
+.portal-body{background:var(--bg-card);border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px;overflow-x:auto}
+table.ft{width:100%;border-collapse:collapse;font-size:13px}
+.ft thead th{padding:10px 16px;text-align:left;font-weight:600;font-size:11px;color:var(--text-m);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);background:var(--bg-row-alt);position:sticky;top:0;white-space:nowrap}
+.ft tbody tr{border-bottom:1px solid rgba(51,65,85,.4)}
+.ft tbody tr:nth-child(even){background:var(--bg-row-alt)}
+.ft tbody tr:hover{background:rgba(99,102,241,.08)}
+.ft td{padding:9px 16px;vertical-align:top}
+
+/* Tags */
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;white-space:nowrap}
+.tag-role-ex{background:var(--yellow-bg);color:var(--yellow)}
+.tag-role-sp{background:var(--green-bg);color:var(--green)}
+.tag-role-tp{background:var(--cyan-bg);color:var(--cyan)}
+.tag-role-merchant{background:#fce7f3;color:#ec4899}
+.tag-center{background:rgba(148,163,184,.12);color:var(--text-s)}
+
+/* Func list */
+.fn-list{margin:0;padding:0;list-style:none}
+.fn-list li{padding:2px 0;display:flex;align-items:center;gap:6px;font-size:12px}
+.fn-list li::before{content:'•';color:var(--accent);font-weight:bold}
+.note{font-size:11px;color:var(--text-m);line-height:1.4}
+.page-name{font-weight:600;color:var(--text)}
+
+/* Empty */
+.empty{padding:48px;text-align:center;color:var(--text-m);font-size:14px}
+
+/* Responsive */
+@media(max-width:1024px){body{padding:16px}.flow-nav{gap:6px}.flow-btn{padding:8px 14px;font-size:12px}}
 </style>
 </head>
 <body>
-<div class="hdr"><h1>EX 机构权限矩阵</h1><p class="sub">中心 → 菜单分组 → 菜单项 → 四类机构的访问权限与数据授权规则</p></div>
+<div class="wrap">
+    <div class="hdr">
+        <h1>EX 机构权限矩阵 — 按业务流程</h1>
+        <p class="sub">选择业务流程 → 查看各端（SA / PP-SP / PP-TP / MP）的中心、菜单、页面、功能</p>
+    </div>
 
-<div class="legend">
-<div class="lc ta"><span class="tag">A 类</span><h3>非持牌纯代理</h3><p class="ex">例：某代理商</p><p class="ds">纯 Tenant，代理其他机构产品，无自有支付能力，无持牌</p><div class="roles"><span class="rb rb-tp">TP</span></div></div>
-<div class="lc tb"><span class="tag">B 类</span><h3>持牌纯 SP</h3><p class="ex">例：IPL</p><p class="ds">持牌机构，能力集成到 EX 作为服务提供商，不做代理</p><div class="roles"><span class="rb rb-sp">SP</span><span class="rb rb-lic">持牌</span></div></div>
-<div class="lc tc"><span class="tag">C 类</span><h3>持牌 SP + 对接渠道</h3><p class="ex">例：BB</p><p class="ds">持牌，对接了其他SP（如IPL），EX也帮其对接渠道（如Tazapay）</p><div class="roles"><span class="rb rb-tp">TP</span><span class="rb rb-sp">SP</span><span class="rb rb-lic">持牌</span></div></div>
-<div class="lc td"><span class="tag">D 类</span><h3>代理 + SP</h3><p class="ex">例：鲲鹏支付</p><p class="ds">代理IPL/BB等产品，同时自有能力也集成到EX，非持牌</p><div class="roles"><span class="rb rb-tp">TP</span><span class="rb rb-sp">SP</span></div></div>
+    <!-- Flow navigation -->
+    <div class="flow-nav" id="flowNav"></div>
+
+    <!-- Summary -->
+    <div class="summary" id="summary"></div>
+
+    <!-- Content -->
+    <div id="content"></div>
 </div>
 
-<div class="sl"><h3>Scope 与权限标记说明</h3><div class="si">
-<div><span class="dot g"></span><strong>global</strong> — 全局查询，所有TP可见（只读）</div>
-<div><span class="dot o"></span><strong>owned</strong> — 仅会员归属本机构可操作</div>
-<div><span class="dot s"></span><strong>sp</strong> — 仅SP可见/可操作</div>
-<div><span class="dot l"></span><strong>licensed</strong> — 仅持牌机构可见</div>
-<div><span class="dot a"></span><strong>auth</strong> — 需客户授权才可查看敏感数据</div>
-<div><span style="color:var(--green)">✅</span>完全 &nbsp;<span style="color:var(--yellow)">⚠️</span>部分 &nbsp;<span style="color:var(--red)">❌</span>不可用 &nbsp;<span style="color:var(--orange)">🔐</span>需授权</div>
-</div></div>
-
-<!-- 总览 -->
-<div class="ss"><h2>中心级访问总览</h2>
-<table class="smt"><thead><tr><th>中心</th><th>准入</th><th>A 纯代理</th><th>B 持牌SP</th><th>C SP+渠道</th><th>D 代理+SP</th></tr></thead><tbody>
-<tr><td><strong>工作台</strong></td><td>—</td><td class="p pf">✅ widget</td><td class="p pf">✅</td><td class="p pf">✅</td><td class="p pf">✅</td></tr>
-<tr><td><strong>产品中心</strong></td><td>—</td><td class="p pp">⚠️ 仅产品市场</td><td class="p pf">✅</td><td class="p pf">✅</td><td class="p pf">✅</td></tr>
-<tr><td><strong>客户中心</strong></td><td>—</td><td class="p pp">⚠️ 仅查询</td><td class="p pf">✅ 含审核</td><td class="p pf">✅ 自有</td><td class="p pf">✅ 查询+配置</td></tr>
-<tr><td><strong>交易中心</strong></td><td>—</td><td class="p pn">❌</td><td class="p pf">✅</td><td class="p pf">✅ 自有通道</td><td class="p pf">✅ 自有通道</td></tr>
-<tr><td><strong>清结算中心</strong></td><td><span class="cr cr-sp">需SP</span></td><td class="p pn">❌</td><td class="p pf">✅</td><td class="p pp">⚠️ 自有部分</td><td class="p pp">⚠️ 自有部分</td></tr>
-<tr><td><strong>资金中心</strong></td><td><span class="cr cr-sp">需SP</span></td><td class="p pn">❌</td><td class="p pf">✅</td><td class="p pp">⚠️ 自有</td><td class="p pp">⚠️ 自有</td></tr>
-<tr><td><strong>渠道中心</strong></td><td><span class="cr cr-sp">需SP</span></td><td class="p pn">❌</td><td class="p pf">✅</td><td class="p pf">✅</td><td class="p pp">⚠️ 自有渠道</td></tr>
-<tr><td><strong>合作伙伴</strong></td><td>—</td><td class="p pp">⚠️ 仅上游</td><td class="p pp">⚠️ 仅下游</td><td class="p pf">✅ 全部</td><td class="p pf">✅ 全部</td></tr>
-<tr><td><strong>开发者</strong></td><td>—</td><td class="p pn">❌</td><td class="p pf">✅</td><td class="p pf">✅</td><td class="p pf">✅</td></tr>
-<tr><td><strong>工单中心</strong></td><td>—</td><td class="p pf">✅</td><td class="p pf">✅</td><td class="p pf">✅</td><td class="p pf">✅</td></tr>
-<tr><td><strong>数据中心</strong></td><td>—</td><td class="p pp">⚠️ 精简</td><td class="p pf">✅</td><td class="p pf">✅</td><td class="p pf">✅</td></tr>
-<tr><td><strong>风控合规</strong></td><td>—</td><td class="p pp">⚠️ 仅KYC</td><td class="p pf">✅</td><td class="p pf">✅</td><td class="p pf">✅</td></tr>
-<tr><td><strong>下载中心</strong></td><td>—</td><td class="p pf">✅</td><td class="p pf">✅</td><td class="p pf">✅</td><td class="p pf">✅</td></tr>
-<tr><td><strong>Settings</strong></td><td>—</td><td class="p pf">✅</td><td class="p pf">✅</td><td class="p pf">✅</td><td class="p pf">✅</td></tr>
-</tbody></table></div>
-
-<div id="details"></div>
-
-<!-- 数据授权规则 -->
-<div class="as"><h2>🔐 数据授权与敏感数据规则</h2>
-<div class="ac-grid">
-<div class="ac"><h3><span style="color:var(--orange)">🔐</span> 商户敏感数据授权</h3><ul>
-<li><strong>适用场景：</strong>代理机构（A/D代理部分）查看非自有商户敏感数据</li>
-<li><strong>需授权数据：</strong>商户余额、余额变动流水、结算单、对账单、企业信息详情</li>
-<li><strong>授权方式：</strong>商户在SP侧主动授权给代理机构，或SP代为授权</li>
-<li><strong>授权粒度：</strong>按商户×数据类型，可设置有效期</li>
-<li><strong>未授权表现：</strong>列表可见商户名称，但敏感字段显示"***"或"需授权"</li>
-</ul></div>
-<div class="ac"><h3><span style="color:var(--green)">✅</span> SP自有商户免授权</h3><ul>
-<li><strong>适用场景：</strong>SP（B/C/D的SP部分）查看自有会员商户数据</li>
-<li><strong>原则：</strong>会员关系在哪个机构，哪个机构就有完整数据访问权</li>
-<li><strong>包含：</strong>余额、流水、结算单、对账单、企业信息等全部数据</li>
-<li><strong>无需授权：</strong>SP对自有商户天然拥有全部数据权限</li>
-</ul></div>
-<div class="ac"><h3><span style="color:var(--yellow)">⚠️</span> C/D类"自有部分"说明</h3><ul>
-<li><strong>C类（BB）：</strong>自有渠道的交易/清结算/资金可操作，代理IPL的部分由IPL处理</li>
-<li><strong>D类（鲲鹏）：</strong>自有SP能力部分可操作，代理的IPL/BB产品由上游处理</li>
-<li><strong>渠道单管理：</strong>仅能操作自有渠道的单据，上游渠道单不可操作</li>
-<li><strong>手动换渠道：</strong>仅能切换到自有渠道，不能切换到上游渠道</li>
-</ul></div>
-<div class="ac"><h3><span style="color:var(--cyan)">🏛️</span> 持牌 vs 非持牌</h3><ul>
-<li><strong>持牌独有：</strong>商户审核、认证审核、定期复核（风控合规中心 licensed scope）</li>
-<li><strong>D类（鲲鹏）：</strong>虽有SP能力但非持牌，不能做商户审核，需由上游持牌机构审核</li>
-<li><strong>审核流转：</strong>D类提交的商户开户申请，流转到持牌SP（如IPL）审核</li>
-</ul></div>
-</div></div>
-
 <script>
-// 详细权限数据
-const centers = [
-{id:'dashboard',name:'工作台',req:'all',groups:[
-{label:'概览',scope:'',items:[
-{n:'数据概览',pid:'dashboard:overview:view',a:'⚠️仅代理数据',b:'✅',c:'✅',d:'✅'},
-{n:'实时监控',pid:'dashboard:monitor:view',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'业务看板',pid:'dashboard:board:view',a:'⚠️精简版',b:'✅',c:'✅',d:'✅'}]},
-{label:'待办事项',scope:'',items:[
-{n:'待审核工单',pid:'dashboard:todo:ticket',a:'✅',b:'✅',c:'✅',d:'✅'},
-{n:'待处理交易',pid:'dashboard:todo:tx',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'到期提醒',pid:'dashboard:todo:expiry',a:'✅',b:'✅',c:'✅',d:'✅'}]},
-{label:'快捷操作',scope:'',items:[
-{n:'发起付款',pid:'dashboard:quick:pay',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'新建商户',pid:'dashboard:quick:merchant',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'创建订单',pid:'dashboard:quick:order',a:'❌',b:'✅',c:'✅',d:'✅'}]}
-]},
-{id:'product',name:'产品中心',req:'all',groups:[
-{label:'产品管理',scope:'sp',items:[
-{n:'上架产品',pid:'product:manage:publish',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'产品管理',pid:'product:manage:edit',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'产品市场',scope:'',items:[
-{n:'浏览产品',pid:'product:market:browse',a:'✅',b:'✅',c:'✅',d:'✅'},
-{n:'已签约产品',pid:'product:market:signed',a:'✅',b:'✅',c:'✅',d:'✅'}]}
-]},
-{id:'client',name:'客户中心',req:'all',groups:[
-{label:'商户查询',scope:'global',items:[
-{n:'商户查询',pid:'client:merchant:query',a:'⚠️仅代理商户',b:'✅全部',c:'✅全部',d:'✅全部'}]},
-{label:'商户配置',scope:'owned',items:[
-{n:'商户产品配置',pid:'client:config:product',a:'❌',b:'✅自有',c:'✅自有',d:'✅自有'},
-{n:'商户费率配置',pid:'client:config:rate',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'商户汇率配置',pid:'client:config:fx',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'商户余额查询 🔐需授权',scope:'global',items:[
-{n:'余额查询',pid:'client:balance:query',a:'🔐需商户授权',b:'✅自有直接可见',c:'✅',d:'🔐代理需授权'},
-{n:'余额变动流水',pid:'client:balance:flow',a:'🔐需商户授权',b:'✅',c:'✅',d:'🔐代理需授权'}]},
-{label:'商户结算/返点查询',scope:'global',items:[
-{n:'结算单查询',pid:'client:settle:query',a:'🔐需商户授权',b:'✅',c:'✅',d:'✅'},
-{n:'返点/分佣查询',pid:'client:rebate:query',a:'✅自己的返点',b:'✅',c:'✅',d:'✅'},
-{n:'商户对账单下载',pid:'client:recon:download',a:'🔐需商户授权',b:'✅',c:'✅',d:'✅'}]}
-]},
-{id:'transaction',name:'交易中心',req:'',groups:[
-{label:'交易查询',scope:'global',items:[
-{n:'VA账户',pid:'tx:query:va',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'收款单',pid:'tx:query:payin',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'付款单',pid:'tx:query:payout',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'换汇单',pid:'tx:query:fx',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'Ramp单',pid:'tx:query:ramp',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'充提币单',pid:'tx:query:crypto',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'VCC单',pid:'tx:query:vcc',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'收单单',pid:'tx:query:acq',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'交易监控',scope:'sp',items:[
-{n:'实时交易大盘',pid:'tx:monitor:rt',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'异常交易告警',pid:'tx:monitor:alert',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'成功率监控',pid:'tx:monitor:success',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'差错处理',scope:'sp',items:[
-{n:'调单管理',pid:'tx:dispute:cb',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'退款管理',pid:'tx:dispute:refund',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'拒付管理',pid:'tx:dispute:reject',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'交易背景',scope:'global',items:[
-{n:'订单管理',pid:'tx:bg:order',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'订单文件',pid:'tx:bg:file',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'店铺管理',pid:'tx:bg:store',a:'❌',b:'✅',c:'✅',d:'✅'}]}
-]},
-{id:'settlement',name:'清结算中心',req:'sp',groups:[
-{label:'计费管理',scope:'sp',items:[
-{n:'产品基本费率',pid:'stl:billing:base',a:'❌',b:'✅',c:'✅自有产品',d:'✅自有产品'},
-{n:'费率模板管理',pid:'stl:billing:tpl',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'计费规则',pid:'stl:billing:rule',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'返点/分佣规则',scope:'sp',items:[
-{n:'返点规则配置',pid:'stl:rebate:rule',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'分佣规则配置',pid:'stl:comm:rule',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'汇率配置',scope:'sp',items:[
-{n:'汇率MK配置',pid:'stl:fx:mk',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'汇率路由规则',pid:'stl:fx:route',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'汇率查询',pid:'stl:fx:query',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'对账管理',scope:'sp',items:[
-{n:'商户对账',pid:'stl:recon:merchant',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'渠道对账',pid:'stl:recon:channel',a:'❌',b:'✅',c:'✅自有渠道',d:'✅自有渠道'},
-{n:'对账差异',pid:'stl:recon:diff',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'差异处理',pid:'stl:recon:resolve',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'清分管理',scope:'sp',items:[
-{n:'清算报表',pid:'stl:clear:report',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'手续费计算',pid:'stl:clear:fee',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'分润计算',pid:'stl:clear:profit',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'返点计算',pid:'stl:clear:rebate',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'分佣计算',pid:'stl:clear:comm',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'结算管理',scope:'sp',items:[
-{n:'商户结算单',pid:'stl:settle:bill',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'结算执行',pid:'stl:settle:exec',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'结算记录',pid:'stl:settle:log',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'商户余额管理',scope:'sp',items:[
-{n:'商户余额汇总',pid:'stl:bal:summary',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'余额变动流水',pid:'stl:bal:flow',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'余额调账',pid:'stl:bal:adjust',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'余额冻结/解冻',pid:'stl:bal:freeze',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'交易单处理',scope:'sp',items:[
-{n:'商户单管理',pid:'stl:order:merchant',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'交易单管理',pid:'stl:order:tx',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'渠道单管理',pid:'stl:order:channel',a:'❌',b:'✅',c:'✅自有渠道',d:'✅自有渠道'},
-{n:'订单取消',pid:'stl:order:cancel',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'手动换渠道',pid:'stl:order:reroute',a:'❌',b:'✅',c:'✅自有渠道',d:'✅自有渠道'},
-{n:'手动补单',pid:'stl:order:supplement',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'账务核算',scope:'sp',items:[
-{n:'总账校验',pid:'stl:acct:verify',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'日切管理',pid:'stl:acct:daycut',a:'❌',b:'✅',c:'✅',d:'✅'}]}
-]},
-{id:'treasury',name:'资金中心',req:'sp',groups:[
-{label:'资金账户',scope:'sp',items:[
-{n:'账户总览',pid:'fund:acct:overview',a:'❌',b:'✅',c:'⚠️自有账户',d:'⚠️自有账户'},
-{n:'多渠道账户',pid:'fund:acct:multi',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'资金流水',pid:'fund:acct:flow',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'可用/冻结余额',pid:'fund:acct:bal',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'资金调拨',scope:'sp',items:[
-{n:'跨账户调拨',pid:'fund:xfer:cross',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'调拨记录',pid:'fund:xfer:log',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'调拨审核',pid:'fund:xfer:audit',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'外汇管理',scope:'sp',items:[
-{n:'汇率监控',pid:'fund:fx:monitor',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'平盘策略',pid:'fund:fx:hedge',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'锁汇管理',pid:'fund:fx:lock',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'资金运营',scope:'sp',items:[
-{n:'头寸管理',pid:'fund:ops:pos',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'流动性管理',pid:'fund:ops:liq',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'资金预测',pid:'fund:ops:forecast',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'备付金管理',scope:'sp',items:[
-{n:'备付金监控',pid:'fund:reserve:monitor',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'备付金报表',pid:'fund:reserve:report',a:'❌',b:'✅',c:'✅',d:'✅'}]}
-]},
-{id:'channel',name:'渠道中心',req:'sp',groups:[
-{label:'渠道管理',scope:'sp',items:[
-{n:'渠道列表',pid:'ch:manage:list',a:'❌',b:'✅',c:'✅',d:'⚠️自有渠道'},
-{n:'银行渠道',pid:'ch:manage:bank',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'卡组织',pid:'ch:manage:card',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'本地支付',pid:'ch:manage:local',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'渠道配置',scope:'sp',items:[
-{n:'路由规则',pid:'ch:config:route',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'渠道费率',pid:'ch:config:rate',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'渠道限额',pid:'ch:config:limit',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'渠道监控',scope:'sp',items:[
-{n:'成功率监控',pid:'ch:monitor:success',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'延迟监控',pid:'ch:monitor:latency',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'渠道状态',pid:'ch:monitor:status',a:'❌',b:'✅',c:'✅',d:'✅'}]}
-]},
-{id:'partner',name:'合作伙伴中心',req:'all',groups:[
-{label:'我的销售代理（下游）',scope:'owned',items:[
-{n:'销售代理管理',pid:'partner:agent:manage',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'代理产品授权',pid:'partner:agent:product',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'代理商签约',pid:'partner:agent:sign',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'销售代理返点',scope:'owned',items:[
-{n:'返点规则配置',pid:'partner:rebate:rule',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'代理业绩看板',pid:'partner:rebate:board',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'返点明细',pid:'partner:rebate:detail',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'销售代理分佣结算',scope:'owned',items:[
-{n:'分佣账单',pid:'partner:comm:bill',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'分佣明细',pid:'partner:comm:detail',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'代理商结算',pid:'partner:comm:settle',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'代理商付款',pid:'partner:comm:pay',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'机构伙伴（下游）',scope:'owned',items:[
-{n:'机构伙伴查询',pid:'partner:org:query',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'机构签约产品',pid:'partner:org:product',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'机构佣金配置',scope:'owned',items:[
-{n:'模版配置',pid:'partner:orgfee:tpl',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'机构佣金配置',pid:'partner:orgfee:config',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'机构佣金结算',scope:'owned',items:[
-{n:'机构分佣账单',pid:'partner:orgstl:bill',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'机构分佣明细',pid:'partner:orgstl:detail',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'机构结算单',pid:'partner:orgstl:settle',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'我代理的（上游）',scope:'global',items:[
-{n:'上游服务商列表',pid:'partner:up:list',a:'✅',b:'❌ 纯SP无上游',c:'✅',d:'✅'},
-{n:'代理产品查看',pid:'partner:up:product',a:'✅',b:'❌',c:'✅',d:'✅'},
-{n:'我的返点/佣金',pid:'partner:up:rebate',a:'✅',b:'❌',c:'✅',d:'✅'},
-{n:'上游对账',pid:'partner:up:recon',a:'✅',b:'❌',c:'✅',d:'✅'}]}
-]},
-{id:'developer',name:'开发者中心',req:'',groups:[
-{label:'API接入',scope:'',items:[
-{n:'API文档',pid:'dev:api:doc',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'接口列表',pid:'dev:api:list',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'SDK下载',pid:'dev:api:sdk',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'密钥管理',scope:'',items:[
-{n:'API密钥',pid:'dev:key:api',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'证书管理',pid:'dev:key:cert',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'回调配置',scope:'',items:[
-{n:'Webhooks',pid:'dev:cb:webhook',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'回调日志',pid:'dev:cb:log',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'测试工具',scope:'',items:[
-{n:'API调试',pid:'dev:test:debug',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'沙箱环境',pid:'dev:test:sandbox',a:'❌',b:'✅',c:'✅',d:'✅'}]}
-]},
-{id:'ticket',name:'工单中心',req:'all',groups:[
-{label:'工单列表',scope:'',items:[
-{n:'全部工单',pid:'ticket:list:all',a:'✅',b:'✅',c:'✅',d:'✅'},
-{n:'待审核',pid:'ticket:list:pending',a:'✅',b:'✅',c:'✅',d:'✅'},
-{n:'处理中',pid:'ticket:list:proc',a:'✅',b:'✅',c:'✅',d:'✅'},
-{n:'已完成',pid:'ticket:list:done',a:'✅',b:'✅',c:'✅',d:'✅'},
-{n:'已拒绝',pid:'ticket:list:reject',a:'✅',b:'✅',c:'✅',d:'✅'}]},
-{label:'工单类型',scope:'',items:[
-{n:'商户开户',pid:'ticket:type:merchant',a:'✅',b:'✅',c:'✅',d:'✅'},
-{n:'费率变更',pid:'ticket:type:rate',a:'✅',b:'✅',c:'✅',d:'✅'},
-{n:'限额调整',pid:'ticket:type:limit',a:'✅',b:'✅',c:'✅',d:'✅'},
-{n:'产品签约',pid:'ticket:type:product',a:'✅',b:'✅',c:'✅',d:'✅'}]},
-{label:'工单设置',scope:'',items:[
-{n:'审批流程',pid:'ticket:config:flow',a:'✅',b:'✅',c:'✅',d:'✅'},
-{n:'工单模板',pid:'ticket:config:tpl',a:'✅',b:'✅',c:'✅',d:'✅'}]}
-]},
-{id:'data',name:'数据中心',req:'all',groups:[
-{label:'交易报表',scope:'',items:[
-{n:'交易统计',pid:'data:trade:stat',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'交易趋势',pid:'data:trade:trend',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'成功率分析',pid:'data:trade:success',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'商户报表',scope:'',items:[
-{n:'商户分析',pid:'data:merchant:analysis',a:'⚠️仅代理商户',b:'✅',c:'✅',d:'✅'},
-{n:'商户排行',pid:'data:merchant:rank',a:'⚠️仅代理商户',b:'✅',c:'✅',d:'✅'},
-{n:'商户增长',pid:'data:merchant:growth',a:'⚠️仅代理商户',b:'✅',c:'✅',d:'✅'}]},
-{label:'财务报表',scope:'',items:[
-{n:'收入报表',pid:'data:fin:revenue',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'分佣报表',pid:'data:fin:comm',a:'✅自己的分佣',b:'✅',c:'✅',d:'✅'},
-{n:'成本报表',pid:'data:fin:cost',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'渠道报表',scope:'',items:[
-{n:'渠道成功率',pid:'data:ch:success',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'渠道成本对比',pid:'data:ch:cost',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'代理报表',scope:'',items:[
-{n:'代理商业绩',pid:'data:agent:perf',a:'✅自己的',b:'✅',c:'✅',d:'✅'},
-{n:'返点统计',pid:'data:agent:rebate',a:'✅自己的',b:'✅',c:'✅',d:'✅'}]},
-{label:'数据导出',scope:'',items:[
-{n:'报表导出',pid:'data:export:report',a:'✅',b:'✅',c:'✅',d:'✅'},
-{n:'定时报表',pid:'data:export:schedule',a:'✅',b:'✅',c:'✅',d:'✅'}]}
-]},
-{id:'risk',name:'风控合规中心',req:'',groups:[
-{label:'商户审核',scope:'licensed',items:[
-{n:'商户审核',pid:'risk:audit:merchant',a:'❌',b:'✅',c:'✅',d:'❌ 非持牌'},
-{n:'审核记录',pid:'risk:audit:log',a:'❌',b:'✅',c:'✅',d:'❌'}]},
-{label:'KYC/KYB',scope:'licensed',items:[
-{n:'商户认证',pid:'risk:kyc:verify',a:'⚠️提交KYC资料',b:'✅',c:'✅',d:'⚠️提交KYC资料'},
-{n:'认证审核',pid:'risk:kyc:audit',a:'❌',b:'✅',c:'✅',d:'❌'},
-{n:'定期复核',pid:'risk:kyc:review',a:'❌',b:'✅',c:'✅',d:'❌'}]},
-{label:'交易风控',scope:'sp',items:[
-{n:'风控规则',pid:'risk:trade:rule',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'黑白名单',pid:'risk:trade:bl',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'风险预警',pid:'risk:trade:alert',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'拦截记录',pid:'risk:trade:block',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'交易监控',scope:'sp',items:[
-{n:'实时监控',pid:'risk:monitor:rt',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'异常交易',pid:'risk:monitor:abnormal',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'人工复核',pid:'risk:monitor:manual',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'合规管理',scope:'sp',items:[
-{n:'AML监控',pid:'risk:compliance:aml',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'制裁名单',pid:'risk:compliance:sanction',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'合规报告',pid:'risk:compliance:report',a:'❌',b:'✅',c:'✅',d:'✅'}]},
-{label:'拒付管理',scope:'sp',items:[
-{n:'拒付列表',pid:'risk:cb:list',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'拒付率监控',pid:'risk:cb:rate',a:'❌',b:'✅',c:'✅',d:'✅'},
-{n:'差错处理',pid:'risk:cb:resolve',a:'❌',b:'✅',c:'✅',d:'✅'}]}
-]},
-{id:'download',name:'下载中心',req:'all',groups:[
-{label:'下载管理',scope:'',items:[
-{n:'下载记录',pid:'download:manage:list',a:'✅',b:'✅',c:'✅',d:'✅'},
-{n:'导出任务',pid:'download:manage:task',a:'✅',b:'✅',c:'✅',d:'✅'}]}
-]},
-{id:'settings',name:'Settings',req:'all',groups:[
-{label:'企业信息',scope:'',items:[
-{n:'公司信息',pid:'settings:co:info',a:'✅',b:'✅',c:'✅',d:'✅'},
-{n:'营业执照',pid:'settings:co:license',a:'✅',b:'✅',c:'✅',d:'✅'},
-{n:'联系方式',pid:'settings:co:contact',a:'✅',b:'✅',c:'✅',d:'✅'}]},
-{label:'组织管理',scope:'',items:[
-{n:'部门管理',pid:'settings:org:dept',a:'✅',b:'✅',c:'✅',d:'✅'},
-{n:'成员管理',pid:'settings:org:member',a:'✅',b:'✅',c:'✅',d:'✅'},
-{n:'角色管理',pid:'settings:org:role',a:'✅',b:'✅',c:'✅',d:'✅'},
-{n:'权限配置',pid:'settings:org:perm',a:'✅',b:'✅',c:'✅',d:'✅'}]},
-{label:'通知与集成',scope:'',items:[
-{n:'通知设置',pid:'settings:notify:config',a:'✅',b:'✅',c:'✅',d:'✅'},
-{n:'邮件模板',pid:'settings:notify:email',a:'✅',b:'✅',c:'✅',d:'✅'},
-{n:'第三方集成',pid:'settings:notify:integ',a:'✅',b:'✅',c:'✅',d:'✅'}]},
-{label:'系统配置',scope:'',items:[
-{n:'时区/货币/语言',pid:'settings:sys:locale',a:'✅',b:'✅',c:'✅',d:'✅'},
-{n:'业务配置',pid:'settings:sys:biz',a:'✅',b:'✅',c:'✅',d:'✅'}]},
-{label:'审计与日志',scope:'',items:[
-{n:'操作日志',pid:'settings:audit:log',a:'✅',b:'✅',c:'✅',d:'✅'},
-{n:'审计追踪',pid:'settings:audit:trail',a:'✅',b:'✅',c:'✅',d:'✅'}]}
-]}
+// ========== 业务流程数据 ==========
+const flows = [
+    { id: 'flow1', num: '1', label: '一、服务商管理', items: [
+        { role: 'EX', portal: 'SA', center: '/', module: '服务商管理', menu: '服务商管理', page: '服务商管理（列表）', functions: ['新增服务商', '查看服务商详情', '编辑服务商信息'], note: 'EX运营在SA后台管理服务商档案' },
+    ]},
+    { id: 'flow2', num: '2', label: '二、产品上架', items: [
+        // SP在PP上架产品
+        { role: 'SP', portal: 'PP-SP', center: '产品中心', module: '产品管理', menu: '产品管理', page: '产品管理（列表）', functions: ['上架产品', '查看产品详情', '产品状态变更', '编辑产品'], note: 'SP在PP端管理自有产品' },
+        { role: 'SP', portal: 'PP-SP', center: '产品中心', module: '产品管理', menu: '产品管理', page: '上架产品', functions: ['填写产品信息', '配置产品能力', '设置产品定价', '提交上架'], note: '产品上架表单页' },
+        // EX在SA管理套餐和代管理产品
+        { role: 'EX', portal: 'SA', center: '/', module: '产品中心', menu: '产品中心 - 套餐管理', page: '套餐管理', functions: ['新增套餐', '查看套餐详情', '编辑套餐'], note: 'EX定义产品套餐组合' },
+        { role: 'EX', portal: 'SA', center: '/', module: '产品中心', menu: '产品中心 - 套餐管理', page: '新增套餐', functions: ['配置套餐内容', '设置套餐定价', '提交'], note: '新增套餐表单页' },
+        { role: 'EX', portal: 'SA', center: '/', module: '产品中心', menu: '产品中心 - 业务产品', page: '产品管理（列表）', functions: ['上架产品（代管理）', '查看产品详情', '产品状态变更', '编辑产品'], note: 'EX代SP管理产品上架' },
+        { role: 'EX', portal: 'SA', center: '/', module: '产品中心', menu: '产品中心 - 业务产品', page: '上架产品', functions: ['填写产品信息', '配置产品能力', '设置产品定价', '提交上架'], note: '代管理上架表单页' },
+    ]},
+    { id: 'flow3', num: '3', label: '三、租户签约', items: [
+        // SP配置分佣模版
+        { role: 'SP', portal: 'PP-SP', center: '清结算中心', module: '返点/分佣规则', menu: '分佣模版配置', page: '分佣模版配置（列表）', functions: ['新增模版', '查看模版详情', '编辑模版'], note: 'SP预设分佣模版，签约时引用' },
+        { role: 'SP', portal: 'PP-SP', center: '清结算中心', module: '返点/分佣规则', menu: '分佣配置', page: '分佣配置', functions: ['配置分佣参数'], note: '分佣全局配置' },
+        // EX处理租户签约
+        { role: 'EX', portal: 'SA', center: '/', module: '租户管理', menu: '租户管理 - 租户签约申请', page: '租户签约申请（列表）', functions: ['租户签约', '审核签约申请', '查看申请详情'], note: 'EX处理租户的签约申请' },
+        { role: 'EX', portal: 'SA', center: '/', module: '租户管理', menu: '租户管理', page: '租户基本信息', functions: ['查看租户信息', '编辑租户信息'], note: '租户档案管理' },
+        { role: 'EX', portal: 'SA', center: '/', module: '租户管理', menu: '租户管理', page: '租户签约产品', functions: ['查看签约产品', '管理签约关系'], note: '租户已签约的产品列表' },
+        // SP处理工单
+        { role: 'SP', portal: 'PP-SP', center: '工单中心', module: '工单处理', menu: '待我处理', page: '工单处理（列表）', functions: ['处理工单', '查看详情'], note: 'SP审批租户签约等工单' },
+        // SP配置分佣规则
+        { role: 'SP', portal: 'PP-SP', center: '清结算中心', module: '返点/分佣规则', menu: '分佣规则配置', page: '分佣规则配置（列表）', functions: ['查看详情', '修改分佣规则'], note: '针对具体租户的分佣规则' },
+        // 租户在产品中心浏览和管理签约产品
+        { role: '租户', portal: 'PP-TP', center: '产品中心', module: '产品市场', menu: '产品市场', page: '产品市场', functions: ['产品介绍'], note: '租户浏览可签约的产品' },
+        { role: '租户', portal: 'PP-TP', center: '产品中心', module: '产品市场', menu: '已签约产品', page: '已签约产品', functions: ['查看产品能力', '配置产品费率', '配置汇率'], note: '根据实际产品配置费率/汇率' },
+        // SP查看机构签约产品
+        { role: '租户', portal: 'PP-SP', center: '合作伙伴', module: '机构伙伴', menu: '机构签约产品', page: '机构签约产品（列表）', functions: ['查看产品能力', '查看标准费率', '查看标准汇率'], note: 'SP查看机构伙伴的签约产品信息' },
+        // 租户登录
+        { role: '租户', portal: 'PP-TP', center: '设置中心', module: 'User', menu: '/', page: '登录', functions: ['邮箱登录', '手机号登录'], note: '租户首次登录PP' },
+        { role: '租户', portal: 'PP-TP', center: '设置中心', module: 'User', menu: '/', page: '重置密码', functions: ['重置密码'], note: '' },
+        { role: '租户', portal: 'PP-TP', center: '设置中心', module: 'User', menu: '/', page: '工作台', functions: ['查看工作台概览'], note: '登录后首页' },
+    ]},
+    { id: 'flow4a', num: '4', label: '四、商户登录注册', items: [
+        // 商户注册登录
+        { role: '商户', portal: 'MP', center: '/', module: '登录注册', menu: '/', page: '注册', functions: ['手机号注册', '邮箱注册', '验证码注册', '密码注册'], note: '商户在MP端自助注册' },
+        { role: '商户', portal: 'MP', center: '/', module: '登录注册', menu: '/', page: '设置密码', functions: ['设置登录密码'], note: '验证码注册后设置密码' },
+        { role: '商户', portal: 'MP', center: '/', module: '登录注册', menu: '/', page: '登录', functions: ['手机号登录', '邮箱登录', '验证码登录', '密码登录'], note: '' },
+        // 商户个人信息
+        { role: '商户', portal: 'MP', center: '/', module: 'User', menu: 'Personal Profile', page: '个人信息', functions: ['绑定/修改手机号', '绑定/修改邮箱', '开通/关闭2FA（身份验证器）', '修改昵称'], note: '商户个人账户设置' },
+        { role: '商户', portal: 'MP', center: '/', module: 'User', menu: 'Personal Profile', page: '关联商户（列表）', functions: ['查看关联商户', '切换商户'], note: '一个用户可关联多个商户' },
+        // 租户查看商户用户
+        { role: '租户', portal: 'PP-TP', center: '客户中心', module: '商户用户', menu: '商户管理', page: '商户用户查询（列表）', functions: ['查询商户用户', '查看用户详情'], note: 'TP查看其下商户的用户信息' },
+    ]},
+    { id: 'flow5', num: '5', label: '五、商户开通产品', items: [
+        // 商户开通产品
+        { role: '商户', portal: 'MP', center: '/', module: '产品管理', menu: '/', page: '开通产品', functions: ['提交KYC信息', '提交产品开通信息'], note: '商户在MP端申请开通产品' },
+        { role: '商户', portal: 'MP', center: '/', module: '产品管理', menu: '/', page: '开通后落地页面', functions: ['查看开通结果', '引导下一步操作'], note: '产品开通成功/失败结果页' },
+        { role: '商户', portal: 'MP', center: '/', module: '产品管理', menu: '/', page: '产品开通列表', functions: ['查看已开通产品', '查看开通状态'], note: '商户已申请/已开通的产品列表' },
+        // 租户(TP)管理商户产品
+        { role: '租户', portal: 'PP-TP', center: '客户中心', module: '商户产品查询', menu: '商户查询', page: '商户查询（列表）', functions: ['查看商户详情'], note: 'TP查看商户基本信息' },
+        { role: '租户', portal: 'PP-TP', center: '客户中心', module: '商户产品查询', menu: '商户管理', page: '商户管理（列表）', functions: ['商户开通产品', '产品状态变更'], note: 'TP为商户开通/管理产品' },
+        // 租户(SP)查看商户
+        { role: '租户', portal: 'PP-SP', center: '客户中心', module: '商户产品查询', menu: '商户查询', page: '商户查询（列表）', functions: ['查看商户详情'], note: 'SP查看商户信息（只读）' },
+        // 合规审核
+        { role: '租户', portal: 'PP-SP', center: '合规风控中心', module: '工单审核', menu: '—', page: '—', functions: ['略过'], note: '合规风控审核流程后续补充' },
+    ]},
 ];
 
-function permClass(v){
-  if(v.startsWith('✅'))return'p pf';if(v.startsWith('⚠️'))return'p pp';if(v.startsWith('❌'))return'p pn';if(v.startsWith('🔐'))return'p pa';return'p';
-}
-function scopeTag(s){
-  if(!s)return'';
-  const m={global:'g',owned:'o',sp:'s',licensed:'l'};
-  return ` <span class="st ${m[s]||''}">${s}</span>`;
-}
-function reqTag(r){
-  if(r==='sp')return'<span class="cr cr-sp">需SP</span>';if(r==='all')return'<span class="cr cr-all">所有机构</span>';if(r==='licensed')return'<span class="cr cr-lic">持牌</span>';return'';
+// Portal display order & config
+const portalOrder = ['SA', 'PP-SP', 'PP-TP', 'MP'];
+const portalConfig = {
+    'SA':    { label: 'SA 管理后台',  cls: 'portal-sa', icon: '⚙️' },
+    'PP-SP': { label: 'PP（SP端）',   cls: 'portal-sp', icon: '🏦' },
+    'PP-TP': { label: 'PP（TP端）',   cls: 'portal-tp', icon: '🏢' },
+    'MP':    { label: 'MP 商户端',    cls: 'portal-mp', icon: '🏪' },
+};
+
+let currentFlow = 'flow1';
+
+// ========== Render ==========
+function renderFlowNav() {
+    const nav = document.getElementById('flowNav');
+    nav.innerHTML = flows.map(f =>
+        `<button class="flow-btn ${f.id === currentFlow ? 'active' : ''}" onclick="switchFlow('${f.id}')">
+            <span class="num">${f.num}</span>${f.label}
+        </button>`
+    ).join('');
 }
 
-function render(){
-  const el=document.getElementById('details');
-  let html='';
-  centers.forEach(c=>{
-    html+=`<div class="cs" id="center-${c.id}"><div class="ch" onclick="toggleCenter(this)"><div class="chl"><h2>${c.name}</h2>${reqTag(c.req)}</div><span class="ti">▼</span></div><div class="cb"><table class="pt"><thead><tr><th>分组</th><th>菜单项</th><th>权限标识</th><th>A 纯代理</th><th>B 持牌SP</th><th>C SP+渠道</th><th>D 代理+SP</th></tr></thead><tbody>`;
-    c.groups.forEach(g=>{
-      html+=`<tr class="gr"><td colspan="7">${g.label}${scopeTag(g.scope)}</td></tr>`;
-      g.items.forEach(i=>{
-        html+=`<tr><td></td><td class="mn">${i.n}</td><td class="pid">${i.pid}</td><td class="${permClass(i.a)}">${i.a}</td><td class="${permClass(i.b)}">${i.b}</td><td class="${permClass(i.c)}">${i.c}</td><td class="${permClass(i.d)}">${i.d}</td></tr>`;
-      });
+function switchFlow(id) {
+    currentFlow = id;
+    renderFlowNav();
+    renderContent();
+}
+
+function renderContent() {
+    const flow = flows.find(f => f.id === currentFlow);
+    if (!flow) return;
+
+    // Group items by portal
+    const byPortal = {};
+    flow.items.forEach(item => {
+        if (!byPortal[item.portal]) byPortal[item.portal] = [];
+        byPortal[item.portal].push(item);
     });
-    html+=`</tbody></table></div></div>`;
-  });
-  el.innerHTML=html;
+
+    // Summary
+    const summaryEl = document.getElementById('summary');
+    let totalItems = flow.items.length;
+    let portalCounts = {};
+    portalOrder.forEach(p => { portalCounts[p] = (byPortal[p] || []).length; });
+    summaryEl.innerHTML = `
+        <div class="sum-card"><div class="label">当前流程</div><div class="val" style="font-size:16px;color:var(--accent)">${flow.label}</div></div>
+        <div class="sum-card"><div class="label">总页面数</div><div class="val">${totalItems}</div></div>
+        ${portalOrder.map(p => `<div class="sum-card"><div class="label">${portalConfig[p].icon} ${portalConfig[p].label}</div><div class="val">${portalCounts[p]}</div></div>`).join('')}
+    `;
+
+    // Content
+    const contentEl = document.getElementById('content');
+    if (totalItems === 0) {
+        contentEl.innerHTML = '<div class="empty">该流程暂无功能数据</div>';
+        return;
+    }
+
+    let html = '';
+    portalOrder.forEach(portal => {
+        const items = byPortal[portal];
+        if (!items || items.length === 0) return;
+
+        const cfg = portalConfig[portal];
+        html += `<div class="portal-section ${cfg.cls}">
+            <div class="portal-header" onclick="togglePortal(this)">
+                <span style="font-size:18px">${cfg.icon}</span>
+                <h2>${cfg.label}</h2>
+                <span class="badge">${items.length} 个页面</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="portal-body">
+                <table class="ft">
+                    <thead><tr>
+                        <th style="width:60px">角色</th>
+                        <th style="width:100px">中心</th>
+                        <th style="width:110px">模块</th>
+                        <th style="width:140px">菜单</th>
+                        <th style="width:180px">页面</th>
+                        <th style="min-width:200px">功能</th>
+                        <th style="min-width:140px">说明</th>
+                    </tr></thead>
+                    <tbody>`;
+
+        items.forEach(item => {
+            const roleClass = item.role === 'EX' ? 'tag-role-ex' : item.role === 'SP' ? 'tag-role-sp' : item.role === '租户' ? 'tag-role-tp' : 'tag-role-merchant';
+            const centerHtml = item.center === '/' ? '<span style="color:var(--text-m)">—</span>' : `<span class="tag tag-center">${item.center}</span>`;
+            const menuHtml = item.menu === '/' || item.menu === '—' ? '<span style="color:var(--text-m)">—</span>' : item.menu;
+            const funcHtml = item.functions.map(fn => `<li>${fn}</li>`).join('');
+
+            html += `<tr>
+                <td><span class="tag ${roleClass}">${item.role}</span></td>
+                <td>${centerHtml}</td>
+                <td style="font-weight:500">${item.module}</td>
+                <td>${menuHtml}</td>
+                <td class="page-name">${item.page}</td>
+                <td><ul class="fn-list">${funcHtml}</ul></td>
+                <td class="note">${item.note}</td>
+            </tr>`;
+        });
+
+        html += `</tbody></table></div></div>`;
+    });
+
+    contentEl.innerHTML = html;
 }
 
-function toggleCenter(header){
-  header.parentElement.classList.toggle('collapsed');
+function togglePortal(header) {
+    header.parentElement.classList.toggle('collapsed');
 }
 
-render();
+// Init
+renderFlowNav();
+renderContent();
 </script>
 </body>
 </html>
