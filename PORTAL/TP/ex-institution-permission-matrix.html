@@ -97,6 +97,19 @@ table.ft{width:100%;border-collapse:collapse;font-size:13px}
 const flows = [
     { id: 'flow1', num: '1', label: '一、服务商管理', items: [
         { role: 'EX', portal: 'SA', center: '/', module: '服务商管理', menu: '服务商管理', page: '服务商管理（列表）', functions: ['新增服务商', '查看服务商详情', '编辑服务商信息'], note: 'EX运营在SA后台管理服务商档案' },
+        // SP登录（不能注册，无个人中心，不能修改）
+        { role: '服务商', portal: 'PP-SP', center: '设置中心', module: 'User', menu: '/', page: '登录', functions: ['邮箱登录', '手机号登录'], note: 'SP由EX创建账号后登录，不能自助注册' },
+        { role: '服务商', portal: 'PP-SP', center: '设置中心', module: 'User', menu: '/', page: '重置密码', functions: ['重置密码'], note: '' },
+        { role: '服务商', portal: 'PP-SP', center: '设置中心', module: 'User', menu: '/', page: '工作台', functions: ['查看工作台概览'], note: '登录后首页' },
+        // 渠道中心 - 渠道管理
+        { role: '服务商', portal: 'PP-SP', center: '渠道中心', module: '渠道管理', menu: '渠道基本信息', page: '渠道基本信息（列表）', functions: ['新增', '查看详情', '编辑', '状态变更'], note: '' },
+        { role: '服务商', portal: 'PP-SP', center: '渠道中心', module: '渠道管理', menu: '渠道基本信息', page: '新增渠道', functions: ['填写渠道信息', '提交'], note: '' },
+        { role: '服务商', portal: 'PP-SP', center: '渠道中心', module: '渠道管理', menu: '渠道基本信息', page: '查看详情', functions: ['查看渠道详情'], note: '' },
+        { role: '服务商', portal: 'PP-SP', center: '渠道中心', module: '渠道管理', menu: '渠道能力管理', page: '渠道能力（列表）', functions: ['新增', '查看详情', '编辑', '状态变更'], note: '' },
+        { role: '服务商', portal: 'PP-SP', center: '渠道中心', module: '渠道管理', menu: '渠道能力管理', page: '新增渠道能力', functions: ['填写渠道能力信息', '提交'], note: '' },
+        { role: '服务商', portal: 'PP-SP', center: '渠道中心', module: '渠道管理', menu: '渠道能力管理', page: '查看详情', functions: ['查看渠道能力详情'], note: '' },
+        // 资金中心 - 资金管理
+        { role: '服务商', portal: 'PP-SP', center: '资金中心', module: '资金管理', menu: '资金管理', page: '渠道余额查询（列表）', functions: ['待定'], note: '功能待定' },
     ]},
     { id: 'flow2', num: '2', label: '二、产品上架', items: [
         // SP在PP上架产品
@@ -153,6 +166,82 @@ const flows = [
         { role: '租户', portal: 'PP-SP', center: '客户中心', module: '商户产品查询', menu: '商户查询', page: '商户查询（列表）', functions: ['查看商户详情'], note: 'SP查看商户信息（只读）' },
         // 合规审核
         { role: '租户', portal: 'PP-SP', center: '合规风控中心', module: '工单审核', menu: '—', page: '—', functions: ['略过'], note: '合规风控审核流程后续补充' },
+    ]},
+    { id: 'flow6', num: '6', label: '六、商户交易', items: [
+        // ===== 商户（MP）=====
+        // 订单管理
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '对应产品菜单', page: '订单查询（列表）', functions: ['创建订单', '查看详情', '发起退款（如有）', '取消订单（如有）'], note: '不同产品对应不同商户单列表' },
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '对应产品菜单', page: '创建订单', functions: ['填写订单信息', '提交订单'], note: '创建订单表单页' },
+
+        // 收款人管理
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '收款人管理', page: '收款人管理（列表）', functions: ['新增收款人', '查看详情', '编辑', '删除'], note: '' },
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '收款人管理', page: '新增收款人', functions: ['填写收款人信息', '提交'], note: '' },
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '收款人管理', page: '收款人详情', functions: ['查看收款人信息'], note: '' },
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '收款人管理', page: '已删除收款人（列表）', functions: ['恢复'], note: '' },
+
+        // VA管理
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: 'VA管理', page: 'VA列表', functions: ['创建VA', '查看详情', '修改昵称', '删除VA（隐藏）', '下载账户证明信'], note: '' },
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: 'VA管理', page: '创建VA', functions: ['填写VA信息', '提交'], note: '' },
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: 'VA管理', page: 'VA详情', functions: ['查看VA信息'], note: '' },
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: 'VA管理', page: '账户证明信', functions: ['下载证明信'], note: '' },
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: 'VA管理', page: '已删除VA（列表）', functions: ['恢复'], note: '' },
+
+        // 卡管理
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '卡管理', page: '卡列表', functions: ['创建卡', '充值到卡', '卡余额转出', '卡片注销（单个/批量）', '卡片冻结（单个/批量）', '修改3DS验证号码', '删除卡片（单个/批量）', '查看卡信息（单个/批量）', '修改限额', '排序', '展示卡已使用额度', '下载卡账单'], note: '' },
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '卡管理', page: '卡片详情', functions: ['查看卡片信息'], note: '' },
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '卡管理', page: '卡对账单', functions: ['查看对账单'], note: '' },
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '卡管理', page: '修改限额', functions: ['修改卡片限额'], note: '' },
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '卡管理', page: '已删除的卡（列表）', functions: ['恢复'], note: '' },
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '卡管理', page: '共享账户列表', functions: ['充值到共享账户', '账户转出', '修改昵称', '账户统计信息', '查看卡用户'], note: '' },
+
+        // ===== 租户 PP-TP =====
+        // 商户单查询
+        { role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: '商户单查询', page: '订单查询（列表）', functions: ['查看详情'], note: '不同订单不同菜单' },
+
+        // 商户收款人查询
+        { role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: '商户收款人查询', page: '收款人查询（列表）', functions: ['查看详情'], note: '' },
+        { role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: '商户收款人查询', page: '收款人详情', functions: ['查看收款人信息'], note: '' },
+
+        // VA管理
+        { role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: 'VA管理', page: 'VA列表', functions: ['查看详情', '下载账户证明信（帮客户下）'], note: '' },
+        { role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: 'VA管理', page: 'VA详情', functions: ['查看VA信息'], note: '' },
+        { role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: 'VA管理', page: '账户证明信', functions: ['下载证明信'], note: '' },
+
+        // 卡管理
+        { role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: '卡管理', page: '卡列表', functions: ['展示卡已使用额度', '下载卡账单'], note: '' },
+        { role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: '卡管理', page: '共享账户列表', functions: ['账户统计信息', '查看卡用户'], note: '' },
+
+        // ===== 服务商 PP-SP =====
+        // 商户单查询
+        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '商户单查询', page: '订单查询（列表）', functions: ['查看详情'], note: '不同订单不同菜单' },
+
+        // 商户收款人查询
+        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '商户收款人查询', page: '收款人查询（列表）', functions: ['查看详情'], note: '' },
+        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '商户收款人查询', page: '收款人详情', functions: ['查看收款人信息'], note: '' },
+
+        // VA查询
+        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: 'VA查询', page: 'VA列表', functions: ['查看详情', '下载账户证明信（帮客户下）'], note: '' },
+        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: 'VA查询', page: 'VA详情', functions: ['查看VA信息'], note: '' },
+        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: 'VA查询', page: '账户证明信', functions: ['下载证明信'], note: '' },
+
+        // 卡查询
+        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '卡查询', page: '卡列表', functions: ['展示卡已使用额度', '下载卡账单'], note: '' },
+        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '卡查询', page: '共享账户列表', functions: ['账户统计信息', '查看卡用户'], note: '' },
+
+        // 交易单查询
+        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '交易单查询', page: '交易单查询（列表）', functions: ['查看详情'], note: '不同订单不同菜单' },
+
+        // 渠道单查询
+        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '渠道单查询', page: '渠道单管理（列表）', functions: ['查看详情', '切换渠道', '更新渠道单状态', '退票'], note: '不同产品单不同菜单' },
+        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '渠道单查询', page: '退票', functions: ['发起退票'], note: '' },
+        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '渠道单查询', page: '查看详情', functions: ['查看渠道单详情'], note: '' },
+        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '渠道单查询', page: '处理退款', functions: ['处理退款'], note: '' },
+
+        // 清结算中心 - 对账管理
+        { role: '服务商', portal: 'PP-SP', center: '清结算中心', module: '对账管理', menu: '渠道对账', page: '渠道对账', functions: ['待定'], note: '功能待定' },
+
+        // 合规风控
+        { role: '服务商', portal: 'PP-SP', center: '合规风控中心', module: '工单审核', menu: '工单审核', page: '工单审核', functions: ['审核工单'], note: '' },
     ]},
 ];
 
@@ -239,7 +328,7 @@ function renderContent() {
                     <tbody>`;
 
         items.forEach(item => {
-            const roleClass = item.role === 'EX' ? 'tag-role-ex' : item.role === 'SP' ? 'tag-role-sp' : item.role === '租户' ? 'tag-role-tp' : 'tag-role-merchant';
+            const roleClass = item.role === 'EX' ? 'tag-role-ex' : (item.role === 'SP' || item.role === '服务商') ? 'tag-role-sp' : item.role === '租户' ? 'tag-role-tp' : 'tag-role-merchant';
             const centerHtml = item.center === '/' ? '<span style="color:var(--text-m)">—</span>' : `<span class="tag tag-center">${item.center}</span>`;
             const menuHtml = item.menu === '/' || item.menu === '—' ? '<span style="color:var(--text-m)">—</span>' : item.menu;
             const funcHtml = item.functions.map(fn => `<li>${fn}</li>`).join('');

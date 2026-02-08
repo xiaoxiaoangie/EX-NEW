@@ -152,6 +152,7 @@
         <button class="flow-btn" onclick="switchFlow('flow3')">三、租户签约</button>
         <button class="flow-btn" onclick="switchFlow('flow4a')">四、商户登录注册</button>
         <button class="flow-btn" onclick="switchFlow('flow4b')">五、商户开通产品</button>
+        <button class="flow-btn" onclick="switchFlow('flow6')">六、商户交易</button>
     </div>
 
     <div class="stats">
@@ -186,6 +187,19 @@ const allFeatures = [
 
     // ===== 第一部分：服务商管理 =====
     { flow: 'flow1', flowLabel: '一、服务商管理', role: 'EX', portal: 'SA', center: '/', module: '服务商管理', menu: '服务商管理', page: '服务商管理（列表）', functions: ['新增服务商', '查看服务商详情', '编辑服务商信息'], note: 'EX运营在SA后台管理服务商档案', priority: 'P0' },
+    // SP登录（不能注册，无个人中心，不能修改）
+    { flow: 'flow1', flowLabel: '一、服务商管理', role: '服务商', portal: 'PP-SP', center: '设置中心', module: 'User', menu: '/', page: '登录', functions: ['邮箱登录', '手机号登录'], note: 'SP由EX创建账号后登录，不能自助注册', priority: 'P0' },
+    { flow: 'flow1', flowLabel: '一、服务商管理', role: '服务商', portal: 'PP-SP', center: '设置中心', module: 'User', menu: '/', page: '重置密码', functions: ['重置密码'], note: '', priority: 'P0' },
+    { flow: 'flow1', flowLabel: '一、服务商管理', role: '服务商', portal: 'PP-SP', center: '设置中心', module: 'User', menu: '/', page: '工作台', functions: ['查看工作台概览'], note: '登录后首页', priority: 'P0' },
+    // SP渠道中心 - 渠道管理
+    { flow: 'flow1', flowLabel: '一、服务商管理', role: '服务商', portal: 'PP-SP', center: '渠道中心', module: '渠道管理', menu: '渠道基本信息', page: '渠道基本信息（列表）', functions: ['新增', '查看详情', '编辑', '状态变更'], note: '', priority: 'P0' },
+    { flow: 'flow1', flowLabel: '一、服务商管理', role: '服务商', portal: 'PP-SP', center: '渠道中心', module: '渠道管理', menu: '渠道基本信息', page: '新增渠道', functions: ['填写渠道信息', '提交'], note: '', priority: 'P0' },
+    { flow: 'flow1', flowLabel: '一、服务商管理', role: '服务商', portal: 'PP-SP', center: '渠道中心', module: '渠道管理', menu: '渠道基本信息', page: '查看详情', functions: ['查看渠道详情'], note: '', priority: 'P0' },
+    { flow: 'flow1', flowLabel: '一、服务商管理', role: '服务商', portal: 'PP-SP', center: '渠道中心', module: '渠道管理', menu: '渠道能力管理', page: '渠道能力（列表）', functions: ['新增', '查看详情', '编辑', '状态变更'], note: '', priority: 'P0' },
+    { flow: 'flow1', flowLabel: '一、服务商管理', role: '服务商', portal: 'PP-SP', center: '渠道中心', module: '渠道管理', menu: '渠道能力管理', page: '新增渠道能力', functions: ['填写渠道能力信息', '提交'], note: '', priority: 'P0' },
+    { flow: 'flow1', flowLabel: '一、服务商管理', role: '服务商', portal: 'PP-SP', center: '渠道中心', module: '渠道管理', menu: '渠道能力管理', page: '查看详情', functions: ['查看渠道能力详情'], note: '', priority: 'P0' },
+    // SP资金中心 - 资金管理
+    { flow: 'flow1', flowLabel: '一、服务商管理', role: '服务商', portal: 'PP-SP', center: '资金中心', module: '资金管理', menu: '资金管理', page: '渠道余额查询（列表）', functions: ['待定'], note: '功能待定', priority: 'P0' },
 
     // ===== 第二部分：产品上架 =====
     // SP在PP上架产品
@@ -254,6 +268,79 @@ const allFeatures = [
 
     // 租户(SP)合规审核 - 略过
     { flow: 'flow4b', flowLabel: '四、商户开通产品', role: '租户', portal: 'PP-SP', center: '合规风控中心', module: '工单审核', menu: '—', page: '—', functions: ['略过'], note: '合规风控审核流程后续补充', priority: 'P2' },
+
+    // ===== 第六部分：商户交易 =====
+    // 商户（MP）- 订单管理
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '对应产品菜单', page: '订单查询（列表）', functions: ['创建订单', '查看详情', '发起退款（如有）', '取消订单（如有）'], note: '不同产品对应不同商户单列表', priority: 'P0' },
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '对应产品菜单', page: '创建订单', functions: ['填写订单信息', '提交订单'], note: '创建订单表单页', priority: 'P0' },
+
+    // 商户（MP）- 收款人管理
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '收款人管理', page: '收款人管理（列表）', functions: ['新增收款人', '查看详情', '编辑', '删除'], note: '', priority: 'P0' },
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '收款人管理', page: '新增收款人', functions: ['填写收款人信息', '提交'], note: '', priority: 'P0' },
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '收款人管理', page: '收款人详情', functions: ['查看收款人信息'], note: '', priority: 'P0' },
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '收款人管理', page: '已删除收款人（列表）', functions: ['恢复'], note: '', priority: 'P1' },
+
+    // 商户（MP）- VA管理
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: 'VA管理', page: 'VA列表', functions: ['创建VA', '查看详情', '修改昵称', '删除VA（隐藏）', '下载账户证明信'], note: '', priority: 'P0' },
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: 'VA管理', page: '创建VA', functions: ['填写VA信息', '提交'], note: '', priority: 'P0' },
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: 'VA管理', page: 'VA详情', functions: ['查看VA信息'], note: '', priority: 'P0' },
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: 'VA管理', page: '账户证明信', functions: ['下载证明信'], note: '', priority: 'P0' },
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: 'VA管理', page: '已删除VA（列表）', functions: ['恢复'], note: '', priority: 'P1' },
+
+    // 商户（MP）- 卡管理
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '卡管理', page: '卡列表', functions: ['创建卡', '充值到卡', '卡余额转出', '卡片注销（单个/批量）', '卡片冻结（单个/批量）', '修改3DS验证号码', '删除卡片（单个/批量）', '查看卡信息（单个/批量）', '修改限额', '排序', '展示卡已使用额度', '下载卡账单'], note: '', priority: 'P0' },
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '卡管理', page: '卡片详情', functions: ['查看卡片信息'], note: '', priority: 'P0' },
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '卡管理', page: '卡对账单', functions: ['查看对账单'], note: '', priority: 'P0' },
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '卡管理', page: '修改限额', functions: ['修改卡片限额'], note: '', priority: 'P0' },
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '卡管理', page: '已删除的卡（列表）', functions: ['恢复'], note: '', priority: 'P1' },
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '卡管理', page: '共享账户列表', functions: ['充值到共享账户', '账户转出', '修改昵称', '账户统计信息', '查看卡用户'], note: '', priority: 'P0' },
+
+    // 租户（PP-TP）- 商户单查询
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: '商户单查询', page: '订单查询（列表）', functions: ['查看详情'], note: '不同订单不同菜单', priority: 'P0' },
+
+    // 租户（PP-TP）- 商户收款人查询
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: '商户收款人查询', page: '收款人查询（列表）', functions: ['查看详情'], note: '', priority: 'P0' },
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: '商户收款人查询', page: '收款人详情', functions: ['查看收款人信息'], note: '', priority: 'P0' },
+
+    // 租户（PP-TP）- VA管理
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: 'VA管理', page: 'VA列表', functions: ['查看详情', '下载账户证明信（帮客户下）'], note: '', priority: 'P0' },
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: 'VA管理', page: 'VA详情', functions: ['查看VA信息'], note: '', priority: 'P0' },
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: 'VA管理', page: '账户证明信', functions: ['下载证明信'], note: '', priority: 'P0' },
+
+    // 租户（PP-TP）- 卡管理
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: '卡管理', page: '卡列表', functions: ['展示卡已使用额度', '下载卡账单'], note: '', priority: 'P0' },
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: '卡管理', page: '共享账户列表', functions: ['账户统计信息', '查看卡用户'], note: '', priority: 'P0' },
+
+    // 服务商（PP-SP）- 商户单查询
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '商户单查询', page: '订单查询（列表）', functions: ['查看详情'], note: '不同订单不同菜单', priority: 'P0' },
+
+    // 服务商（PP-SP）- 商户收款人查询
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '商户收款人查询', page: '收款人查询（列表）', functions: ['查看详情'], note: '', priority: 'P0' },
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '商户收款人查询', page: '收款人详情', functions: ['查看收款人信息'], note: '', priority: 'P0' },
+
+    // 服务商（PP-SP）- VA查询
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: 'VA查询', page: 'VA列表', functions: ['查看详情', '下载账户证明信（帮客户下）'], note: '', priority: 'P0' },
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: 'VA查询', page: 'VA详情', functions: ['查看VA信息'], note: '', priority: 'P0' },
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: 'VA查询', page: '账户证明信', functions: ['下载证明信'], note: '', priority: 'P0' },
+
+    // 服务商（PP-SP）- 卡查询
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '卡查询', page: '卡列表', functions: ['展示卡已使用额度', '下载卡账单'], note: '', priority: 'P0' },
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '卡查询', page: '共享账户列表', functions: ['账户统计信息', '查看卡用户'], note: '', priority: 'P0' },
+
+    // 服务商（PP-SP）- 交易单查询
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '交易单查询', page: '交易单查询（列表）', functions: ['查看详情'], note: '不同订单不同菜单', priority: 'P0' },
+
+    // 服务商（PP-SP）- 渠道单查询
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '渠道单查询', page: '渠道单管理（列表）', functions: ['查看详情', '切换渠道', '更新渠道单状态', '退票'], note: '不同产品单不同菜单', priority: 'P0' },
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '渠道单查询', page: '退票', functions: ['发起退票'], note: '', priority: 'P0' },
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '渠道单查询', page: '查看详情', functions: ['查看渠道单详情'], note: '', priority: 'P0' },
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '渠道单查询', page: '处理退款', functions: ['处理退款'], note: '', priority: 'P0' },
+
+    // 服务商（PP-SP）- 清结算中心 - 对账管理
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '服务商', portal: 'PP-SP', center: '清结算中心', module: '对账管理', menu: '渠道对账', page: '渠道对账', functions: ['待定'], note: '功能待定', priority: 'P0' },
+
+    // 服务商（PP-SP）- 合规风控
+    { flow: 'flow6', flowLabel: '六、商户交易', role: '服务商', portal: 'PP-SP', center: '合规风控中心', module: '工单审核', menu: '工单审核', page: '工单审核', functions: ['审核工单'], note: '', priority: 'P0' },
 ];
 
 // ========== 渲染逻辑 ==========
@@ -288,15 +375,16 @@ function render() {
     }
 
     let html = '';
-    const flowOrder = ['flow1', 'flow2', 'flow3', 'flow4a', 'flow4b'];
+    const flowOrder = ['flow1', 'flow2', 'flow3', 'flow4a', 'flow4b', 'flow6'];
     const flowColors = {
         flow1: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
         flow2: 'linear-gradient(135deg, #0ea5e9, #6366f1)',
         flow3: 'linear-gradient(135deg, #10b981, #0ea5e9)',
         flow4a: 'linear-gradient(135deg, #f59e0b, #ef4444)',
         flow4b: 'linear-gradient(135deg, #ec4899, #8b5cf6)',
+        flow6: 'linear-gradient(135deg, #14b8a6, #06b6d4)',
     };
-    const flowNums = { flow1: '1', flow2: '2', flow3: '3', flow4a: '4A', flow4b: '4B' };
+    const flowNums = { flow1: '1', flow2: '2', flow3: '3', flow4a: '4A', flow4b: '4B', flow6: '6' };
 
     flowOrder.forEach(flowKey => {
         const group = flowGroups[flowKey];
@@ -321,7 +409,7 @@ function render() {
             </tr></thead><tbody>`;
 
         group.items.forEach(f => {
-            const roleClass = f.role === 'EX' ? 'tag-role-ex' : f.role === 'SP' ? 'tag-role-sp' : f.role === '租户' ? 'tag-role-tp' : 'tag-role-merchant';
+            const roleClass = f.role === 'EX' ? 'tag-role-ex' : (f.role === 'SP' || f.role === '服务商') ? 'tag-role-sp' : f.role === '租户' ? 'tag-role-tp' : 'tag-role-merchant';
             const portalClass = f.portal === 'SA' ? 'tag-端-sa' : f.portal.startsWith('PP') ? 'tag-端-pp' : 'tag-端-mp';
             const funcHtml = f.functions.map(fn => `<li>${fn}</li>`).join('');
 
