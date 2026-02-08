@@ -1,0 +1,2457 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EX 客户各中心职责边界与权限设计</title>
+<style>
+:root {
+    --bg: #f8fafc; --bg-card: #fff; --border: #e2e8f0; --border-light: #f1f5f9;
+    --text: #0f172a; --text-s: #64748b; --text-m: #94a3b8;
+    --accent: #4f46e5; --accent-bg: #eef2ff;
+    --green: #10b981; --green-bg: #ecfdf5;
+    --cyan: #06b6d4; --cyan-bg: #ecfeff;
+    --purple: #7c3aed; --purple-bg: #f5f3ff;
+    --orange: #f59e0b; --orange-bg: #fffbeb;
+    --pink: #ec4899; --pink-bg: #fdf2f8;
+    --red: #ef4444; --red-bg: #fef2f2;
+    --teal: #14b8a6; --teal-bg: #f0fdfa;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+/* Top bar */
+.topbar { background: linear-gradient(135deg, #4f46e5, #7c3aed); padding: 40px 32px 48px; }
+.topbar h1 { font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+.topbar p { font-size: 14px; color: rgba(255,255,255,.7); }
+
+.wrap { max-width: 1200px; margin: -24px auto 0; padding: 0 24px 64px; position: relative; z-index: 1; }
+
+/* Tab nav */
+.tab-nav { display: flex; gap: 6px; margin-bottom: 28px; flex-wrap: wrap; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 6px; }
+.tab-btn { padding: 10px 20px; border: none; background: transparent; font-size: 13px; font-weight: 600; color: var(--text-s); border-radius: 8px; cursor: pointer; transition: all .2s; display: flex; align-items: center; gap: 8px; }
+.tab-btn:hover { background: var(--border-light); color: var(--text); }
+.tab-btn.active { background: var(--accent); color: #fff; box-shadow: 0 2px 8px rgba(79,70,229,.25); }
+.tab-btn .emoji { font-size: 16px; }
+
+/* Concept section */
+.concept-section { margin-bottom: 32px; }
+.concept-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 28px; }
+.concept-card h2 { font-size: 18px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+.concept-card h2 .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+/* Definition blocks */
+.def-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 20px; }
+.def-block { background: var(--border-light); border-radius: 10px; padding: 18px; }
+.def-block h3 { font-size: 14px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+.def-block h3 .icon { width: 28px; height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.def-block p { font-size: 13px; color: var(--text-s); line-height: 1.7; }
+.def-block ul { font-size: 13px; color: var(--text-s); line-height: 1.8; padding-left: 18px; }
+
+/* Callout */
+.callout { background: var(--accent-bg); border: 1px solid rgba(79,70,229,.15); border-radius: 10px; padding: 16px 20px; margin-top: 16px; }
+.callout-title { font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 4px; }
+.callout p { font-size: 13px; color: var(--text-s); line-height: 1.7; }
+
+/* Center detail */
+.center-section { display: none; }
+.center-section.active { display: block; }
+
+/* Menu card */
+.menu-group { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 20px; overflow: hidden; }
+.menu-header { padding: 20px 24px; cursor: pointer; display: flex; align-items: center; gap: 14px; transition: background .15s; user-select: none; }
+.menu-header:hover { background: var(--border-light); }
+.menu-header .menu-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.menu-header h3 { font-size: 16px; font-weight: 700; flex: 1; }
+.menu-header .menu-badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 6px; }
+.menu-header .arrow { font-size: 14px; color: var(--text-m); transition: transform .2s; }
+.menu-group.collapsed .arrow { transform: rotate(-90deg); }
+.menu-group.collapsed .menu-body { display: none; }
+
+.menu-body { border-top: 1px solid var(--border); }
+
+/* Sub menu */
+.sub-menu { padding: 20px 24px; border-bottom: 1px solid var(--border-light); }
+.sub-menu:last-child { border-bottom: none; }
+.sub-menu h4 { font-size: 14px; font-weight: 700; margin-bottom: 12px; color: var(--text); display: flex; align-items: center; gap: 8px; }
+.sub-menu h4 .num { width: 22px; height: 22px; border-radius: 6px; background: var(--accent-bg); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+
+/* Permission table */
+.perm-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+.perm-table th { text-align: left; padding: 8px 12px; font-size: 11px; font-weight: 600; color: var(--text-m); text-transform: uppercase; letter-spacing: .5px; background: var(--border-light); border-bottom: 1px solid var(--border); }
+.perm-table td { padding: 10px 12px; border-bottom: 1px solid var(--border-light); vertical-align: top; }
+.perm-table tr:last-child td { border-bottom: none; }
+.perm-table tr:hover td { background: rgba(79,70,229,.03); }
+
+/* Tags */
+.tag { display: inline-block; padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.tag-tp { background: var(--cyan-bg); color: var(--cyan); }
+.tag-sp { background: var(--green-bg); color: var(--green); }
+.tag-both { background: var(--purple-bg); color: var(--purple); }
+.tag-auth { background: var(--orange-bg); color: var(--orange); }
+.tag-workflow { background: var(--pink-bg); color: var(--pink); }
+.tag-readonly { background: var(--border-light); color: var(--text-m); }
+
+.func-list { margin: 0; padding: 0; list-style: none; }
+.func-list li { padding: 2px 0; display: flex; align-items: flex-start; gap: 6px; font-size: 12px; color: var(--text-s); }
+.func-list li::before { content: '•'; color: var(--accent); font-weight: bold; flex-shrink: 0; margin-top: 1px; }
+
+.note { font-size: 12px; color: var(--text-m); line-height: 1.5; }
+.note-warn { background: var(--orange-bg); border: 1px solid rgba(245,158,11,.15); border-radius: 8px; padding: 10px 14px; margin-top: 10px; font-size: 12px; color: var(--orange); }
+
+/* Boundary */
+.boundary-box { background: var(--red-bg); border: 1px solid rgba(239,68,68,.12); border-radius: 10px; padding: 16px 20px; margin-top: 16px; }
+.boundary-box h4 { font-size: 13px; font-weight: 700; color: var(--red); margin-bottom: 6px; }
+.boundary-box ul { font-size: 13px; color: #b91c1c; line-height: 1.8; padding-left: 18px; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .topbar { padding: 28px 16px 36px; }
+    .topbar h1 { font-size: 22px; }
+    .wrap { padding: 0 12px 48px; }
+    .def-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+    <h1>EX 客户各中心 — 职责边界与权限设计</h1>
+    <p>TP（租户）与 SP（服务商）视角下的中心划分、菜单结构与功能权限</p>
+</div>
+
+<div class="wrap">
+
+    <!-- Tab navigation -->
+    <div class="tab-nav" id="tabNav">
+        <button class="tab-btn active" onclick="switchTab('overview')"><span class="emoji">📋</span>概览与定义</button>
+        <button class="tab-btn" onclick="switchTab('product')"><span class="emoji">📦</span>产品中心</button>
+        <button class="tab-btn" onclick="switchTab('client')"><span class="emoji">👥</span>客户中心</button>
+        <button class="tab-btn" onclick="switchTab('clearing')"><span class="emoji">⚙️</span>清算中心</button>
+        <button class="tab-btn" onclick="switchTab('compliance')"><span class="emoji">🛡️</span>合规风控中心</button>
+        <button class="tab-btn" onclick="switchTab('workflow')"><span class="emoji">🔄</span>工作流中心</button>
+    </div>
+
+    <!-- ==================== 概览与定义 ==================== -->
+    <div class="center-section active" id="sec-overview">
+
+        <!-- 会员定义 -->
+        <div class="concept-section">
+            <div class="concept-card">
+                <h2><span class="dot" style="background:var(--accent)"></span>核心概念：会员 vs 商户</h2>
+                <div class="def-grid">
+                    <div class="def-block">
+                        <h3><span class="icon" style="background:var(--cyan-bg);color:var(--cyan)">👤</span>会员（Member）</h3>
+                        <p><strong>会员是一种关系维护。</strong>指由机构作为 TP 直接获客并维护的客户关系。</p>
+                        <ul>
+                            <li>机构作为 <strong>TP</strong> 获取的客户 = 该机构的会员</li>
+                            <li>会员关系归属于获客方（TP 身份）</li>
+                            <li>会员管理菜单仅在 <strong>TP 身份</strong>下可见</li>
+                        </ul>
+                    </div>
+                    <div class="def-block">
+                        <h3><span class="icon" style="background:var(--green-bg);color:var(--green)">🏪</span>商户（Merchant）</h3>
+                        <p><strong>商户是业务实体。</strong>机构作为 SP 时，所有名下客户统一称为商户：</p>
+                        <ul>
+                            <li>自己作为 TP 获客的会员（同时也是自己 SP 的商户）</li>
+                            <li>其他 TP 推送过来的客户</li>
+                            <li>商户查询菜单在 <strong>SP 身份</strong>下可见</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="callout">
+                    <div class="callout-title">💡 关键区别（同时是 TP + SP 的机构）</div>
+                    <p>会员 = 关系归属（作为 TP 获客）；商户 = 业务实体（作为 SP 提供服务）。<br>
+                    <strong>同一个客户，同一波运营人员</strong>：从 TP 角度看是“会员”（管关系、发起配置申请），从 SP 角度看是“商户”（管订单、余额、清算）。<br>
+                    系统不需要切换视角，两个菜单同时存在，运营按业务场景自然进入对应菜单即可。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 各中心职责 -->
+        <div class="concept-section">
+            <div class="concept-card">
+                <h2><span class="dot" style="background:var(--purple)"></span>各中心职责与边界</h2>
+                <div class="def-grid">
+                    <div class="def-block">
+                        <h3><span class="icon" style="background:var(--purple-bg);color:var(--purple)">📦</span>产品中心</h3>
+                        <p><strong>职责：</strong>管理产品的上架、展示与签约。</p>
+                        <ul>
+                            <li><strong>SP 视角</strong>：上架自有产品、管理产品状态与定价</li>
+                            <li><strong>TP 视角</strong>：浏览产品市场、查看已代理的产品</li>
+                        </ul>
+                        <div style="margin-top:8px;font-size:12px;color:var(--red)">⛔ 边界：产品中心不涉及商户级别的产品开通，商户产品开通在客户中心</div>
+                    </div>
+                    <div class="def-block">
+                        <h3><span class="icon" style="background:var(--cyan-bg);color:var(--cyan)">👥</span>客户中心</h3>
+                        <p><strong>职责：</strong>管理所有商户信息与商户级别的业务配置。</p>
+                        <ul>
+                            <li><strong>商户查询</strong>：查看名下所有商户的信息、产品、余额、费率/汇率/返点、收款工具、卡片、收款人、支付订单、贸易背景资料</li>
+                            <li><strong>会员管理</strong>：产品开通、收费/汇率/分佣申请、用户权限管理、返点分佣查询</li>
+                        </ul>
+                        <div style="margin-top:8px;font-size:12px;color:var(--red)">⛔ 边界：客户中心不管产品上架，只管商户维度的产品开通与配置；返点分佣查询已纳入会员管理</div>
+                    </div>
+                    <div class="def-block">
+                        <h3><span class="icon" style="background:var(--accent-bg);color:var(--accent)">⚙️</span>清算中心</h3>
+                        <p><strong>职责：</strong>SP 视角的订单处理、商户账户管理、对账、费率/汇率/返点配置与汇率源管理。</p>
+                        <ul>
+                            <li>商户订单管理（收款/付款/承兑订单 + 交易单 + 渠道单）</li>
+                            <li>商户账户与钱包（余额查询/流水/管理/冻结解冻）</li>
+                            <li>对账管理（商户对账/渠道对账/差错处理）</li>
+                            <li>产品费率/汇率/返点配置</li>
+                            <li>汇率源管理</li>
+                        </ul>
+                        <div style="margin-top:8px;font-size:12px;color:var(--red)">⛔ 边界：清算中心整体 requireSP=true，纯 TP 无此中心；余额管理/对账/费率汇率配置等操作仅限 SP</div>
+                    </div>
+                    <div class="def-block">
+                        <h3><span class="icon" style="background:var(--teal-bg);color:var(--teal)">🛡️</span>合规风控中心</h3>
+                        <p><strong>职责：</strong>作为 SP，基于风险处置对所有商户进行合规运营管理。</p>
+                        <ul>
+                            <li>商户基本信息管理（风险处置 + RFI）</li>
+                            <li>商户余额管理（冻结/止入止出/监控）</li>
+                            <li>商户产品管理（关闭/限制产品能力）</li>
+                            <li>商户支付订单管理（收款工具/卡片/店铺/收款人）</li>
+                            <li>贸易背景资料管理（贸易订单/文件/店铺/持有人）</li>
+                            <li>RFI 管理（商户信息/VA/支付订单/收款人/发卡）</li>
+                            <li>渠道运营（渠道订单查询 + 渠道调单管理）</li>
+                        </ul>
+                        <div style="margin-top:8px;font-size:12px;color:var(--red)">⛔ 边界：合规风控中心整体 requireSP=true，纯 TP 无此中心；合规侧余额管理与清算中心独立</div>
+                    </div>
+                    <div class="def-block">
+                        <h3><span class="icon" style="background:var(--pink-bg);color:var(--pink)">🔄</span>工作流中心（Workflow）</h3>
+                        <p><strong>职责：</strong>定义和管理审批流程模板。<strong>不存在统一的工单中心</strong>，审批工单分散在各业务领域中心处理。</p>
+                        <ul>
+                            <li><strong>流程定义</strong>：制定审批流程模板（如费率变更审批流、产品开通审批流、合规审核流）</li>
+                            <li><strong>节点配置</strong>：配置每个节点的审批人、条件、超时策略</li>
+                            <li><strong>触发规则</strong>：业务操作触发流程 → 生成 Ticket（工单）→ 当前节点生成 Task（待办）→ 推送到对应领域</li>
+                            <li><strong>流转机制</strong>：Task 完成 → Workflow Engine 推进下一节点 → 生成新 Task → 直到流程结束</li>
+                        </ul>
+                        <div class="callout" style="margin-top:12px;padding:12px 16px">
+                            <div class="callout-title">📌 Workflow / Ticket / Task 关系</div>
+                            <p><strong>Workflow（工作流）</strong>= 流程定义（剧本），决定怎么走<br>
+                            <strong>Ticket（工单）</strong>= 业务单据（载体），从发起到结束是同一张单<br>
+                            <strong>Task（待办）</strong>= 节点任务（通知），某人要做的事，做完即消失</p>
+                        </div>
+                        <div style="margin-top:8px;font-size:12px;color:var(--red)">⛔ 边界：工作流中心只负责定义流程，不处理具体业务；审批工单在各领域中心内处理（清算中心有审批工单，合规风控中心有审批工单）</div>
+                    </div>
+                </div>
+
+                <div class="boundary-box">
+                    <h4>🚫 中心间边界红线</h4>
+                    <ul>
+                        <li><strong>产品中心 vs 客户中心</strong>：产品中心管“产品上架与市场”，客户中心管“商户的产品开通与配置”</li>
+                        <li><strong>客户中心内部分工</strong>：商户查询管“只读查询（含订单/贸易背景）”，会员管理管“配置申请 + 返点分佣查询”</li>
+                        <li><strong>工作流中心 vs 各领域</strong>：工作流中心只定义流程模板；审批工单在各领域中心内处理（清算审批在清算中心，合规审批在合规中心）</li>
+                        <li><strong>会员管理仅限 TP</strong>：SP 不维护会员关系，SP 侧只有商户查询（只读 + 授权数据）</li>
+                        <li><strong>客户中心 vs 清算中心</strong>：客户中心管“只读查询 + 配置申请”，清算中心管“订单管理 + 余额操作 + 对账 + 费率汇率配置”</li>
+                        <li><strong>清算中心 requireSP</strong>：清算中心整体仅 SP 可见，纯 TP 无此中心</li>
+                        <li><strong>客户中心 vs 清算中心费率/汇率</strong>：客户中心管“会员级别配置”（TP 视角），清算中心管“产品标准配置 + SP 视角的会员配置”</li>
+                        <li><strong>合规风控中心 requireSP</strong>：合规风控中心整体仅 SP 可见，基于风险处置商户信息/余额/产品/订单/贸易背景 + RFI</li>
+                        <li><strong>合规风控 vs 清算中心</strong>：合规侧余额管理与清算侧独立，合规侧基于风险处置，清算侧基于业务运营</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 产品中心 ==================== -->
+    <div class="center-section" id="sec-product">
+
+        <!-- SP 视角 -->
+        <div class="menu-group">
+            <div class="menu-header" onclick="toggleMenu(this)">
+                <div class="menu-icon" style="background:var(--green-bg)">🏦</div>
+                <h3>SP 视角 — 产品中心</h3>
+                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="menu-body">
+                <div class="sub-menu">
+                    <h4><span class="num">1</span>产品管理（一级菜单）</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td style="font-weight:600">产品管理（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>上架产品</li>
+                                        <li>查看产品详情</li>
+                                        <li>产品状态变更（上架/下架）</li>
+                                        <li>编辑产品</li>
+                                    </ul>
+                                </td>
+                                <td class="note">SP 管理自有产品的完整生命周期</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:600">上架产品</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>填写产品信息</li>
+                                        <li>配置产品能力</li>
+                                        <li>设置产品定价</li>
+                                        <li>提交上架</li>
+                                    </ul>
+                                </td>
+                                <td class="note">产品上架表单页</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:600">产品详情</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看产品完整信息</li>
+                                        <li>查看签约租户列表</li>
+                                    </ul>
+                                </td>
+                                <td class="note">查看产品详细信息及签约情况</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TP 视角 -->
+        <div class="menu-group">
+            <div class="menu-header" onclick="toggleMenu(this)">
+                <div class="menu-icon" style="background:var(--cyan-bg)">🏢</div>
+                <h3>TP 视角 — 产品中心</h3>
+                <span class="menu-badge tag-tp">TP 租户</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="menu-body">
+                <div class="sub-menu">
+                    <h4><span class="num">1</span>产品市场（一级菜单）</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td style="font-weight:600">产品市场</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>浏览可签约产品</li>
+                                        <li>查看产品介绍</li>
+                                        <li>查看产品能力与定价</li>
+                                    </ul>
+                                </td>
+                                <td class="note">TP 浏览所有可签约的 SP 产品</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="sub-menu">
+                    <h4><span class="num">2</span>已代理产品（一级菜单）</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td style="font-weight:600">已签约产品（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看产品能力</li>
+                                        <li>查看产品费率</li>
+                                        <li>查看产品汇率</li>
+                                    </ul>
+                                </td>
+                                <td class="note">TP 已签约的产品列表，可查看但不可直接修改费率（费率配置在客户中心）</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 客户中心 ==================== -->
+    <div class="center-section" id="sec-client">
+
+        <!-- ===== 商户查询 ===== -->
+        <div class="menu-group">
+            <div class="menu-header" onclick="toggleMenu(this)">
+                <div class="menu-icon" style="background:var(--accent-bg)">🔍</div>
+                <h3>商户查询（一级菜单）</h3>
+                <span class="menu-badge tag-both">TP + SP</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="menu-body">
+                <div class="callout" style="margin:16px 24px 0">
+                    <div class="callout-title">📌 商户查询范围</div>
+                    <p><strong>TP 视角</strong>：作为 TP，推送到 SP（包括自己作为 SP）的会员<br><strong>SP 视角</strong>：自己的直客（会员）+ 其他 TP 推送过来的商户</p>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">1</span>商户基本信息</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-both">TP / SP</span></td>
+                                <td style="font-weight:600">商户查询（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看商户列表</li>
+                                        <li>搜索/筛选商户</li>
+                                        <li>查看商户详情</li>
+                                    </ul>
+                                </td>
+                                <td class="note">商户的注册信息、基本资料</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">2</span>商户产品查询</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>权限控制</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-tp">TP</span></td>
+                                <td style="font-weight:600">商户产品信息</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看商户开通的所有产品</li>
+                                        <li>查看每个产品的企业信息</li>
+                                    </ul>
+                                </td>
+                                <td><span class="tag tag-readonly">会员可见</span></td>
+                                <td class="note">TP 可查看自己会员的完整产品信息</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tag tag-tp">TP</span></td>
+                                <td style="font-weight:600">商户产品信息</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看商户开通的本 SP 产品</li>
+                                        <li>查看每个产品推送的企业信息</li>
+                                    </ul>
+                                </td>
+                                <td><span class="tag tag-auth">🔐 需会员授权</span></td>
+                                <td class="note">涉及客户隐私信息，需获得会员额外授权后才开放查看</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">3</span>商户余额与流水</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>权限控制</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-tp">TP</span></td>
+                                <td style="font-weight:600">商户余额/流水</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看会员的汇总余额</li>
+                                        <li>查看会员的交易流水</li>
+                                    </ul>
+                                </td>
+                                <td><span class="tag tag-readonly">会员可见</span></td>
+                                <td class="note">TP 可查看自己会员的余额与流水</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tag tag-tp">TP</span></td>
+                                <td style="font-weight:600">商户余额/流水</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看商户在本 SP 的余额</li>
+                                        <li>查看商户在本 SP 的流水</li>
+                                    </ul>
+                                </td>
+                                <td><span class="tag tag-auth">🔐 需会员授权</span></td>
+                                <td class="note">涉及客户隐私信息，需获得会员额外授权后才开放查看</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">4</span>商户费率查询</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-both">TP / SP</span></td>
+                                <td style="font-weight:600">商户费率查询（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看商户实际生效费率</li>
+                                        <li>搜索/筛选商户</li>
+                                    </ul>
+                                </td>
+                                <td class="note">查询所有商户的实际生效费率（只读）</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">5</span>商户汇率查询</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-both">TP / SP</span></td>
+                                <td style="font-weight:600">商户汇率查询（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看商户实际生效汇率</li>
+                                        <li>搜索/筛选商户</li>
+                                    </ul>
+                                </td>
+                                <td class="note">查询所有商户的实际生效汇率（只读）</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">6</span>商户返点查询</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-both">TP / SP</span></td>
+                                <td style="font-weight:600">商户返点查询（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看商户实际生效返点</li>
+                                        <li>搜索/筛选商户</li>
+                                    </ul>
+                                </td>
+                                <td class="note">查询所有商户的实际生效返点（只读）</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="callout" style="margin:16px 24px 0">
+                    <div class="callout-title">📌 以下为商户订单与业务数据查询（原订单中心内容）</div>
+                    <p>查询所有商户的订单数据：包含自己作为 <strong>TP</strong> 的会员订单，以及自己作为 <strong>SP</strong> 时其他 TP 推送的商户订单。</p>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">7</span>商户收款工具查询</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-both">TP / SP</span></td>
+                                <td style="font-weight:600">VA 列表</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看商户 VA 列表</li>
+                                        <li>查看 VA 详情</li>
+                                        <li>下载账户证明信</li>
+                                    </ul>
+                                </td>
+                                <td class="note">商户的虚拟账户（Virtual Account）查询</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tag tag-both">TP / SP</span></td>
+                                <td style="font-weight:600">Web3 收款地址列表</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看商户 Web3 收款地址</li>
+                                        <li>查看地址详情</li>
+                                    </ul>
+                                </td>
+                                <td class="note">商户的加密货币收款地址查询</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">8</span>商户卡片查询</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-both">TP / SP</span></td>
+                                <td style="font-weight:600">卡列表</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看商户卡片列表</li>
+                                        <li>查看卡片详情</li>
+                                        <li>查看卡已使用额度</li>
+                                        <li>下载卡账单</li>
+                                    </ul>
+                                </td>
+                                <td class="note">商户发卡信息查询</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tag tag-both">TP / SP</span></td>
+                                <td style="font-weight:600">共享账户列表</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看共享账户统计信息</li>
+                                        <li>查看卡用户</li>
+                                    </ul>
+                                </td>
+                                <td class="note">共享账户维度的卡片查询</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">9</span>商户收款人查询</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-both">TP / SP</span></td>
+                                <td style="font-weight:600">收款人查询（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看商户收款人列表</li>
+                                        <li>搜索/筛选收款人</li>
+                                        <li>查看收款人详情</li>
+                                    </ul>
+                                </td>
+                                <td class="note">商户配置的收款人（Beneficiary）信息查询</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">10</span>商户支付订单查询</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-both">TP / SP</span></td>
+                                <td style="font-weight:600">商户收款订单</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看 Payins 订单列表</li>
+                                        <li>查看 Crypto Receive 订单列表</li>
+                                        <li>查看订单详情</li>
+                                        <li>搜索/筛选订单</li>
+                                    </ul>
+                                </td>
+                                <td class="note">Payins + Crypto Receive 收款类订单</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tag tag-both">TP / SP</span></td>
+                                <td style="font-weight:600">商户付款订单</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看 Payouts 订单列表</li>
+                                        <li>查看 Crypto Payout 订单列表</li>
+                                        <li>查看订单详情</li>
+                                        <li>搜索/筛选订单</li>
+                                    </ul>
+                                </td>
+                                <td class="note">Payouts + Crypto Payout 付款类订单</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tag tag-both">TP / SP</span></td>
+                                <td style="font-weight:600">商户承兑订单</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看法币换汇订单</li>
+                                        <li>查看委托订单</li>
+                                        <li>查看 Ramp 订单（On-Ramp / Off-Ramp）</li>
+                                        <li>查看订单详情</li>
+                                        <li>搜索/筛选订单</li>
+                                    </ul>
+                                </td>
+                                <td class="note">法币换汇 + 委托 + Ramp 承兑类订单</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">11</span>商户贸易背景资料</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-both">TP / SP</span></td>
+                                <td style="font-weight:600">贸易订单（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看贸易订单列表</li>
+                                        <li>查看订单详情</li>
+                                        <li>搜索/筛选订单</li>
+                                    </ul>
+                                </td>
+                                <td class="note">商户的贸易背景订单</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tag tag-both">TP / SP</span></td>
+                                <td style="font-weight:600">订单文件</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看订单关联文件</li>
+                                        <li>下载文件</li>
+                                    </ul>
+                                </td>
+                                <td class="note">贸易订单的附件与证明文件</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tag tag-both">TP / SP</span></td>
+                                <td style="font-weight:600">店铺管理</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看普通店铺列表</li>
+                                        <li>查看授权店铺列表</li>
+                                        <li>查看店铺详情</li>
+                                    </ul>
+                                </td>
+                                <td class="note">普通店铺（商户自建）与授权店铺（平台授权接入）</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 会员管理 ===== -->
+        <div class="menu-group">
+            <div class="menu-header" onclick="toggleMenu(this)">
+                <div class="menu-icon" style="background:var(--cyan-bg)">⚙️</div>
+                <h3>会员管理（一级菜单）</h3>
+                <span class="menu-badge tag-tp">仅 TP</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="menu-body">
+                <div class="callout" style="margin:16px 24px 0">
+                    <div class="callout-title">📌 会员管理说明</div>
+                    <p>会员管理仅面向 TP，对自己的会员进行产品开通、收费/汇率/分佣申请等管理。<strong>SP 不维护会员关系，因此没有此菜单。</strong></p>
+                    <p style="margin-top:6px;color:var(--orange)">⚠️ 收费/汇率/分佣的配置项更多是<strong>发起申请</strong>，实际配置在清结算中心完成；查询部分已放到商户查询中。</p>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">1</span>产品配置</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>页面</th><th>功能</th><th>审核流程</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td style="font-weight:600">会员产品配置</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>为会员开通 SP 产品（含自己作为 SP 的产品）</li>
+                                        <li>查看会员已开通产品</li>
+                                        <li>产品状态变更</li>
+                                    </ul>
+                                </td>
+                                <td><span class="tag tag-workflow">🔄 推送到对应 SP 审核</span></td>
+                                <td class="note">开通产品后需推送到对应 SP 进行审核确认</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">2</span>收费配置申请</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>页面</th><th>功能</th><th>审核流程</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td style="font-weight:600">标准收费配置</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>发起名下所有会员的标准收费申请</li>
+                                        <li>查看当前标准收费</li>
+                                        <li>发起修改标准收费申请</li>
+                                    </ul>
+                                </td>
+                                <td><span class="tag tag-workflow">🎫 体系内工单审核</span></td>
+                                <td class="note">发起申请后在工单中心生成审核工单，实际配置在清算中心完成</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:600">特殊会员收费</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>发起特定会员特殊收费申请</li>
+                                        <li>查看特殊收费列表</li>
+                                        <li>发起修改特殊收费申请</li>
+                                    </ul>
+                                </td>
+                                <td><span class="tag tag-workflow">🎫 体系内工单审核</span></td>
+                                <td class="note">特殊收费覆盖标准收费，发起申请后生成审核工单</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">3</span>汇率配置申请</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>页面</th><th>功能</th><th>审核流程</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td style="font-weight:600">标准汇率 Markup</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>发起名下所有会员的标准汇率 Markup 申请</li>
+                                        <li>查看当前标准汇率配置</li>
+                                        <li>发起修改标准汇率 Markup 申请</li>
+                                    </ul>
+                                </td>
+                                <td><span class="tag tag-workflow">🎫 工单审核</span></td>
+                                <td class="note">发起申请后生成审核工单，实际配置在清算中心完成</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:600">特殊会员汇率 Markup</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>发起特定会员特殊汇率 Markup 申请</li>
+                                        <li>查看特殊汇率列表</li>
+                                        <li>发起修改特殊汇率 Markup 申请</li>
+                                    </ul>
+                                </td>
+                                <td><span class="tag tag-workflow">🎫 工单审核</span></td>
+                                <td class="note">特殊汇率覆盖标准汇率，发起申请后生成审核工单</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">4</span>分佣/返点配置申请</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>页面</th><th>功能</th><th>审核流程</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td style="font-weight:600">标准分佣/返点</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>发起名下所有会员的标准分佣/返点申请</li>
+                                        <li>查看当前标准配置</li>
+                                        <li>发起修改标准分佣/返点申请</li>
+                                    </ul>
+                                </td>
+                                <td><span class="tag tag-workflow">🎫 体系内工单审核</span></td>
+                                <td class="note">仅在产品需要分佣/返点时才显示；发起申请后生成审核工单，实际配置在清算中心完成</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:600">特殊会员分佣/返点</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>发起特定会员特殊分佣/返点申请</li>
+                                        <li>查看特殊配置列表</li>
+                                        <li>发起修改特殊分佣/返点申请</li>
+                                    </ul>
+                                </td>
+                                <td><span class="tag tag-workflow">🎫 体系内工单审核</span></td>
+                                <td class="note">特殊配置覆盖标准配置，发起申请后生成审核工单</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="note-warn" style="margin:12px 0 0">
+                        ⚠️ 分佣/返点配置项是否显示取决于产品本身是否需要。如果产品不涉及分佣/返点，则此配置项不展示。
+                    </div>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">5</span>会员用户与权限管理</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td style="font-weight:600">会员登录方式</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看会员已配置的登录方式</li>
+                                        <li>配置/修改登录方式（邮箱、手机、SSO 等）</li>
+                                        <li>启用/停用登录方式</li>
+                                    </ul>
+                                </td>
+                                <td class="note">管理会员可使用的登录认证方式</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:600">会员角色管理</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看会员角色列表</li>
+                                        <li>创建/编辑角色</li>
+                                        <li>为角色分配权限</li>
+                                    </ul>
+                                </td>
+                                <td class="note">管理会员下的角色定义与权限分配</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:600">会员权限管理</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看会员用户列表</li>
+                                        <li>为用户分配角色</li>
+                                        <li>查看用户权限详情</li>
+                                    </ul>
+                                </td>
+                                <td class="note">管理会员下各用户的角色与权限</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">6</span>返点分佣查询</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td style="font-weight:600">分佣账单（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看分佣账单列表</li>
+                                        <li>搜索/筛选账单</li>
+                                        <li>查看账单详情</li>
+                                    </ul>
+                                </td>
+                                <td class="note">按周期生成的分佣账单汇总</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:600">分佣账单明细</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看账单对应的分佣明细</li>
+                                        <li>导出明细</li>
+                                    </ul>
+                                </td>
+                                <td class="note">每笔分佣的详细记录</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:600">结算单（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看结算单列表</li>
+                                        <li>搜索/筛选结算单</li>
+                                        <li>查看结算单详情</li>
+                                        <li>导出结算单</li>
+                                    </ul>
+                                </td>
+                                <td class="note">商户的结算单据</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ==================== 清算中心 ==================== -->
+    <div class="center-section" id="sec-clearing">
+
+        <div class="callout" style="margin:0 0 20px">
+            <div class="callout-title">⚙️ 清算中心整体说明</div>
+            <p>清算中心 <strong>requireSP = true</strong>，仅 SP（服务商）可见。纯 TP（租户）无此中心。<br>
+            清算中心涵盖：商户订单管理（含交易单/渠道单）、商户账户与钱包、对账管理、费率/汇率/返点配置、汇率源管理。</p>
+        </div>
+
+        <!-- 1. 商户订单管理 -->
+        <div class="menu-group">
+            <div class="menu-header" onclick="toggleMenu(this)">
+                <div class="menu-icon" style="background:var(--accent-bg)">📑</div>
+                <h3>1. 商户订单管理（一级菜单）</h3>
+                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="menu-body">
+
+                <div class="sub-menu">
+                    <h4><span class="num">1</span>商户收款工具查询</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">VA 列表</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看商户 VA 列表</li>
+                                        <li>查看 VA 详情</li>
+                                        <li>下载账户证明信</li>
+                                    </ul>
+                                </td>
+                                <td class="note">商户虚拟账户（Virtual Account）查询</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">Web3 收款地址列表</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看商户 Web3 收款地址</li>
+                                        <li>查看地址详情</li>
+                                    </ul>
+                                </td>
+                                <td class="note">商户加密货币收款地址查询</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">2</span>商户卡片查询</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">卡列表</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看商户卡片列表</li>
+                                        <li>查看卡片详情</li>
+                                        <li>查看卡已使用额度</li>
+                                        <li>下载卡账单</li>
+                                    </ul>
+                                </td>
+                                <td class="note">商户发卡信息查询</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">共享账户列表</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看共享账户统计信息</li>
+                                        <li>查看卡用户</li>
+                                    </ul>
+                                </td>
+                                <td class="note">共享账户维度的卡片查询</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">3</span>商户收款人查询</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">收款人查询（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看商户收款人列表</li>
+                                        <li>搜索/筛选收款人</li>
+                                        <li>查看收款人详情</li>
+                                    </ul>
+                                </td>
+                                <td class="note">商户配置的收款人（Beneficiary）信息查询</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">4</span>商户支付订单管理</h4>
+
+                    <div style="margin:12px 0 6px;font-size:13px;font-weight:700;color:var(--accent)">1）收款订单</div>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">商户收款订单</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看 Payins 订单列表</li>
+                                        <li>查看 Crypto Receive 订单列表</li>
+                                        <li>查看订单详情</li>
+                                        <li>搜索/筛选订单</li>
+                                    </ul>
+                                </td>
+                                <td class="note">Payins + Crypto Receive 收款类订单</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">商户收款交易单</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看收款交易单列表</li>
+                                        <li>查看交易单详情</li>
+                                        <li>搜索/筛选交易单</li>
+                                    </ul>
+                                </td>
+                                <td class="note">收款订单拆分后的交易执行记录</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">收款渠道单</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看渠道单列表</li>
+                                        <li>查看渠道单详情</li>
+                                        <li>换渠道等操作</li>
+                                    </ul>
+                                </td>
+                                <td class="note">收款交易对应的渠道执行记录</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div style="margin:16px 0 6px;font-size:13px;font-weight:700;color:var(--accent)">2）付款订单</div>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">商户付款订单</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看 Payouts 订单列表</li>
+                                        <li>查看 Crypto Payout 订单列表</li>
+                                        <li>查看订单详情</li>
+                                        <li>搜索/筛选订单</li>
+                                    </ul>
+                                </td>
+                                <td class="note">Payouts + Crypto Payout 付款类订单</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">付款交易单</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看付款交易单列表</li>
+                                        <li>查看交易单详情</li>
+                                        <li>搜索/筛选交易单</li>
+                                    </ul>
+                                </td>
+                                <td class="note">付款订单拆分后的交易执行记录</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">付款渠道单</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看渠道单列表</li>
+                                        <li>查看渠道单详情</li>
+                                        <li>换渠道等操作</li>
+                                    </ul>
+                                </td>
+                                <td class="note">付款交易对应的渠道执行记录</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div style="margin:16px 0 6px;font-size:13px;font-weight:700;color:var(--accent)">3）承兑订单</div>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">商户承兑订单</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看法币换汇订单</li>
+                                        <li>查看委托订单</li>
+                                        <li>查看 Ramp 订单（On-Ramp / Off-Ramp）</li>
+                                        <li>查看订单详情</li>
+                                        <li>搜索/筛选订单</li>
+                                    </ul>
+                                </td>
+                                <td class="note">法币换汇 + 委托 + Ramp 承兑类订单</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">承兑交易单</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看承兑交易单列表</li>
+                                        <li>查看交易单详情</li>
+                                        <li>搜索/筛选交易单</li>
+                                    </ul>
+                                </td>
+                                <td class="note">承兑订单拆分后的交易执行记录</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">承兑渠道单</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看渠道单列表</li>
+                                        <li>查看渠道单详情</li>
+                                        <li>换渠道等操作</li>
+                                    </ul>
+                                </td>
+                                <td class="note">承兑交易对应的渠道执行记录</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. 商户账户与钱包 -->
+        <div class="menu-group">
+            <div class="menu-header" onclick="toggleMenu(this)">
+                <div class="menu-icon" style="background:var(--green-bg)">💳</div>
+                <h3>2. 商户账户与钱包（一级菜单）</h3>
+                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="menu-body">
+                <div class="sub-menu">
+                    <h4><span class="num">1</span>商户余额查询</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>数据范围</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">商户余额（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看商户余额列表</li>
+                                        <li>搜索/筛选商户</li>
+                                        <li>查看余额详情</li>
+                                    </ul>
+                                </td>
+                                <td class="note">所有商户：自己的会员 + 其他 TP 推送过来的商户</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">2</span>商户余额流水</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>数据范围</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">余额流水（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看余额流水列表</li>
+                                        <li>搜索/筛选流水</li>
+                                        <li>查看流水详情</li>
+                                        <li>导出流水</li>
+                                    </ul>
+                                </td>
+                                <td class="note">所有商户：自己的会员 + 其他 TP 推送过来的商户</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">3</span>商户余额管理</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>数据范围</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">余额管理</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>冻结余额</li>
+                                        <li>止入 / 解除止入</li>
+                                        <li>止出 / 解除止出</li>
+                                        <li>监控（解除监控）</li>
+                                    </ul>
+                                </td>
+                                <td class="note">仅自己作为 SP 的商户余额，可执行管控操作</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="note-warn" style="margin:12px 0 0">
+                        ⚠️ 余额管理仅限 SP 自己名下的商户余额，其他 TP 推送的商户余额只能查询不能管理。
+                    </div>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">4</span>商户历史余额查询</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>数据范围</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">历史余额（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看历史余额快照</li>
+                                        <li>按日期筛选</li>
+                                        <li>导出历史余额</li>
+                                    </ul>
+                                </td>
+                                <td class="note">自己作为 SP 的商户历史余额</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">5</span>商户余额冻结解冻记录</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>数据范围</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">冻结解冻记录（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看冻结/解冻记录列表</li>
+                                        <li>在已冻结的记录上执行解冻</li>
+                                        <li>搜索/筛选记录</li>
+                                    </ul>
+                                </td>
+                                <td class="note">自己作为 SP 的商户余额冻结解冻操作记录</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. 对账管理 -->
+        <div class="menu-group">
+            <div class="menu-header" onclick="toggleMenu(this)">
+                <div class="menu-icon" style="background:var(--cyan-bg)">📊</div>
+                <h3>3. 对账管理（一级菜单）</h3>
+                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="menu-body">
+                <div class="sub-menu">
+                    <h4><span class="num">1</span>商户对账</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">商户对账（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看商户对账记录</li>
+                                        <li>搜索/筛选对账单</li>
+                                        <li>查看对账详情</li>
+                                        <li>导出对账单</li>
+                                    </ul>
+                                </td>
+                                <td class="note">SP 与商户之间的对账</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">2</span>渠道对账</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">渠道对账（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看渠道对账记录</li>
+                                        <li>搜索/筛选对账单</li>
+                                        <li>查看对账详情</li>
+                                        <li>导出对账单</li>
+                                    </ul>
+                                </td>
+                                <td class="note">SP 与渠道之间的对账</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">3</span>差错处理</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">差错处理（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看差错记录列表</li>
+                                        <li>处理差错（补单/退款/调账等）</li>
+                                        <li>查看差错详情</li>
+                                    </ul>
+                                </td>
+                                <td class="note">对账产生的差异记录处理</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. 产品费率配置 -->
+        <div class="menu-group">
+            <div class="menu-header" onclick="toggleMenu(this)">
+                <div class="menu-icon" style="background:var(--purple-bg)">💲</div>
+                <h3>4. 产品费率配置（一级菜单）</h3>
+                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="menu-body">
+                <div class="sub-menu">
+                    <h4><span class="num">1</span>产品费率配置</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">产品费率配置</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看产品标准费率</li>
+                                        <li>配置/修改产品标准费率</li>
+                                    </ul>
+                                </td>
+                                <td class="note">作为 SP 产品的标准报价费率</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">2</span>会员费率配置</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">会员费率配置</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看会员特殊费率</li>
+                                        <li>配置/修改会员费率</li>
+                                    </ul>
+                                </td>
+                                <td class="note">仅支持自己会员的商户，非自己会员的商户不支持</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="note-warn" style="margin:12px 0 0">
+                        ⚠️ 会员费率配置仅支持自己的会员商户。非自己会员的商户（其他 TP 推送的）不支持配置。
+                    </div>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">3</span>商户费率查询</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>数据范围</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">商户费率查询（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看商户实际生效费率</li>
+                                        <li>搜索/筛选商户</li>
+                                    </ul>
+                                </td>
+                                <td class="note">所有商户：自己的会员 + 其他 TP 推送过来的商户</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. 产品汇率配置 -->
+        <div class="menu-group">
+            <div class="menu-header" onclick="toggleMenu(this)">
+                <div class="menu-icon" style="background:var(--orange-bg)">💱</div>
+                <h3>5. 产品汇率配置（一级菜单）</h3>
+                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="menu-body">
+                <div class="sub-menu">
+                    <h4><span class="num">1</span>产品汇率路由</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">产品汇率路由配置</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看产品标准汇率路由</li>
+                                        <li>配置/修改汇率路由</li>
+                                    </ul>
+                                </td>
+                                <td class="note">作为 SP 产品的标准汇率路由配置</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">2</span>会员汇率路由</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">会员汇率路由配置</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看会员特殊汇率路由</li>
+                                        <li>配置/修改会员汇率路由</li>
+                                    </ul>
+                                </td>
+                                <td class="note">仅支持自己会员的商户，非自己会员的商户不支持</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="note-warn" style="margin:12px 0 0">
+                        ⚠️ 会员汇率路由仅支持自己的会员商户。非自己会员的商户（其他 TP 推送的）不支持配置。
+                    </div>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">3</span>产品汇率 Markup</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">产品汇率 MK 配置</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看产品标准汇率 Markup</li>
+                                        <li>配置/修改汇率 Markup</li>
+                                    </ul>
+                                </td>
+                                <td class="note">作为 SP 产品的标准汇率加点配置</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">4</span>会员汇率 Markup</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">会员汇率 MK 配置</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看会员特殊汇率 Markup</li>
+                                        <li>配置/修改会员汇率 Markup</li>
+                                    </ul>
+                                </td>
+                                <td class="note">仅支持自己会员的商户，非自己会员的商户不支持</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="note-warn" style="margin:12px 0 0">
+                        ⚠️ 会员汇率 MK 仅支持自己的会员商户。非自己会员的商户（其他 TP 推送的）不支持配置。
+                    </div>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">5</span>商户汇率查询</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>数据范围</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">商户汇率查询（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看商户实际生效汇率</li>
+                                        <li>搜索/筛选商户</li>
+                                    </ul>
+                                </td>
+                                <td class="note">所有商户：自己的会员 + 其他 TP 推送过来的商户</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. 产品返点配置 -->
+        <div class="menu-group">
+            <div class="menu-header" onclick="toggleMenu(this)">
+                <div class="menu-icon" style="background:var(--pink-bg)">🎁</div>
+                <h3>6. 产品返点配置（一级菜单）</h3>
+                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="menu-body">
+                <div class="sub-menu">
+                    <h4><span class="num">1</span>产品标准返点配置</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">产品标准返点配置</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看产品标准返点规则</li>
+                                        <li>配置/修改标准返点</li>
+                                    </ul>
+                                </td>
+                                <td class="note">作为 SP 产品的标准返点配置</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">2</span>会员返点配置</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">会员返点配置</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看会员特殊返点规则</li>
+                                        <li>配置/修改会员返点</li>
+                                    </ul>
+                                </td>
+                                <td class="note">仅支持自己会员的商户，非自己会员的商户不支持</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="note-warn" style="margin:12px 0 0">
+                        ⚠️ 会员返点配置仅支持自己的会员商户。非自己会员的商户（其他 TP 推送的）不支持配置。
+                    </div>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">3</span>商户返点查询</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>数据范围</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">商户返点查询（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看商户实际生效返点</li>
+                                        <li>搜索/筛选商户</li>
+                                    </ul>
+                                </td>
+                                <td class="note">所有商户：自己的会员 + 其他 TP 推送过来的商户</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. 汇率源 -->
+        <div class="menu-group">
+            <div class="menu-header" onclick="toggleMenu(this)">
+                <div class="menu-icon" style="background:var(--teal-bg)">🌐</div>
+                <h3>7. 汇率源（一级菜单）</h3>
+                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="menu-body">
+                <div class="sub-menu">
+                    <h4><span class="num">1</span>汇率源配置</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">汇率源配置</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看汇率源列表</li>
+                                        <li>配置/修改汇率源</li>
+                                        <li>启用/停用汇率源</li>
+                                    </ul>
+                                </td>
+                                <td class="note">SP 可用的汇率数据源管理</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">2</span>汇率源支持币种对配置</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">币种对配置</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看汇率源支持的币种对</li>
+                                        <li>配置/修改支持的币种对</li>
+                                    </ul>
+                                </td>
+                                <td class="note">每个汇率源支持哪些币种对的映射配置</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 审批工单 -->
+        <div class="menu-group">
+            <div class="menu-header" onclick="toggleMenu(this)">
+                <div class="menu-icon" style="background:var(--pink-bg)">📋</div>
+                <h3>审批工单（一级菜单）</h3>
+                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="menu-body">
+                <div class="callout" style="margin:16px 24px 0">
+                    <div class="callout-title">📌 说明</div>
+                    <p>清算领域的审批工单。由 Workflow Engine 根据流程定义自动生成，清算人员在此处理。<br>
+                    <strong>模式</strong>：一人发起 → 一人审批（如费率变更、汇率变更、返点变更等）。<br>
+                    待办推送到工作台，点击进入此处处理。</p>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">1</span>待审批工单</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">待审批工单（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看待审批工单列表</li>
+                                        <li>筛选工单类型（费率/汇率/返点/产品开通等）</li>
+                                        <li>查看工单详情（Ticket 信息 + 流程进度）</li>
+                                        <li>审批通过</li>
+                                        <li>审批驳回（退回发起人）</li>
+                                    </ul>
+                                </td>
+                                <td class="note">清算审批人处理待办，完成后 Workflow 自动推进下一节点</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">2</span>已处理工单</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">已处理工单（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看已处理工单列表</li>
+                                        <li>查看工单详情与审批记录</li>
+                                        <li>查看流程完整轨迹</li>
+                                    </ul>
+                                </td>
+                                <td class="note">历史审批记录查询</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ==================== 合规风控中心 ==================== -->
+    <div class="center-section" id="sec-compliance">
+
+        <div class="callout" style="margin:0 0 20px">
+            <div class="callout-title">🛡️ 合规风控中心整体说明</div>
+            <p>合规风控中心面向 <strong>SP（服务商）</strong>，基于风险处置对所有商户进行合规运营管理。<br>
+            包含：商户信息管理、余额管理、产品管理、支付订单管理、贸易背景资料管理、RFI 管理。</p>
+        </div>
+
+        <!-- 1. 商户基本信息管理 -->
+        <div class="menu-group">
+            <div class="menu-header" onclick="toggleMenu(this)">
+                <div class="menu-icon" style="background:var(--cyan-bg)">👤</div>
+                <h3>1. 商户基本信息管理（一级菜单）</h3>
+                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="menu-body">
+                <div class="callout" style="margin:16px 24px 0">
+                    <div class="callout-title">📌 说明</div>
+                    <p>作为 SP，根据风险处置对所有商户进行信息管理和发起 RFI。</p>
+                </div>
+                <div class="sub-menu">
+                    <h4><span class="num">1</span>商户信息查询与管理</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">商户列表</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看商户列表</li>
+                                        <li>搜索/筛选商户</li>
+                                        <li>查看商户详情</li>
+                                        <li>风险标记/处置</li>
+                                        <li>发起商户信息 RFI</li>
+                                    </ul>
+                                </td>
+                                <td class="note">基于风险处置管理所有商户基本信息</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. 商户余额管理 -->
+        <div class="menu-group">
+            <div class="menu-header" onclick="toggleMenu(this)">
+                <div class="menu-icon" style="background:var(--green-bg)">💳</div>
+                <h3>2. 商户余额管理（一级菜单）</h3>
+                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="menu-body">
+                <div class="callout" style="margin:16px 24px 0">
+                    <div class="callout-title">📌 说明</div>
+                    <p>合规侧独立的余额管理能力（参考清算中心），可根据风险做处置操作。</p>
+                </div>
+                <div class="sub-menu">
+                    <h4><span class="num">1</span>商户余额查询与处置</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">商户余额管理</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看商户余额</li>
+                                        <li>冻结余额</li>
+                                        <li>止入 / 解除止入</li>
+                                        <li>止出 / 解除止出</li>
+                                        <li>监控 / 解除监控</li>
+                                    </ul>
+                                </td>
+                                <td class="note">合规侧基于风险对商户余额进行处置</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. 商户产品管理 -->
+        <div class="menu-group">
+            <div class="menu-header" onclick="toggleMenu(this)">
+                <div class="menu-icon" style="background:var(--purple-bg)">📦</div>
+                <h3>3. 商户产品管理（一级菜单）</h3>
+                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="menu-body">
+                <div class="callout" style="margin:16px 24px 0">
+                    <div class="callout-title">📌 说明</div>
+                    <p>作为 SP，根据风险对商户的产品配置进行管理（如关闭某产品能力）。</p>
+                </div>
+                <div class="sub-menu">
+                    <h4><span class="num">1</span>商户产品配置管理</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">商户产品管理</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看商户已开通产品</li>
+                                        <li>关闭/限制产品能力</li>
+                                        <li>恢复产品能力</li>
+                                    </ul>
+                                </td>
+                                <td class="note">基于风险对商户产品进行管控</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. 商户支付订单管理 -->
+        <div class="menu-group">
+            <div class="menu-header" onclick="toggleMenu(this)">
+                <div class="menu-icon" style="background:var(--accent-bg)">📑</div>
+                <h3>4. 商户支付订单管理（一级菜单）</h3>
+                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="menu-body">
+                <div class="callout" style="margin:16px 24px 0">
+                    <div class="callout-title">📌 说明</div>
+                    <p>作为 SP，根据风险对商户订单进行查询和发起 RFI。</p>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">1</span>商户收款工具管理</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">收款工具列表</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看商户 VA / Web3 收款地址</li>
+                                        <li>查看详情</li>
+                                        <li>风险标记/处置</li>
+                                        <li>发起 VA RFI</li>
+                                    </ul>
+                                </td>
+                                <td class="note">基于风险管理商户收款工具</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">2</span>商户卡片管理</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">卡片列表</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看商户卡片列表</li>
+                                        <li>查看卡片详情</li>
+                                        <li>风险标记/处置</li>
+                                        <li>发起发卡 RFI</li>
+                                    </ul>
+                                </td>
+                                <td class="note">基于风险管理商户卡片</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">3</span>商户收单店铺管理</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">收单店铺列表</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看商户收单店铺</li>
+                                        <li>查看店铺详情</li>
+                                        <li>风险标记/处置</li>
+                                    </ul>
+                                </td>
+                                <td class="note">基于风险管理商户收单店铺</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">4</span>商户收款人管理</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">收款人列表</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看商户收款人列表</li>
+                                        <li>查看收款人详情</li>
+                                        <li>风险标记/处置</li>
+                                        <li>发起收款人 RFI</li>
+                                    </ul>
+                                </td>
+                                <td class="note">基于风险管理商户收款人</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. 贸易背景资料管理 -->
+        <div class="menu-group">
+            <div class="menu-header" onclick="toggleMenu(this)">
+                <div class="menu-icon" style="background:var(--orange-bg)">📄</div>
+                <h3>5. 贸易背景资料管理（一级菜单）</h3>
+                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="menu-body">
+                <div class="callout" style="margin:16px 24px 0">
+                    <div class="callout-title">📌 说明</div>
+                    <p>作为 SP，根据风险对商户贸易背景资料进行查询和发起 RFI。</p>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">1</span>贸易订单</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">贸易订单（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看贸易订单列表</li>
+                                        <li>查看订单详情</li>
+                                        <li>搜索/筛选订单</li>
+                                        <li>风险标记/处置</li>
+                                    </ul>
+                                </td>
+                                <td class="note">商户的贸易背景订单</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">2</span>订单文件</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">订单文件</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看订单关联文件</li>
+                                        <li>下载文件</li>
+                                        <li>审核文件</li>
+                                    </ul>
+                                </td>
+                                <td class="note">贸易订单的附件与证明文件</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">3</span>店铺管理</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">店铺列表</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看普通店铺列表</li>
+                                        <li>查看授权店铺列表</li>
+                                        <li>查看店铺详情</li>
+                                        <li>风险标记/处置</li>
+                                    </ul>
+                                </td>
+                                <td class="note">普通店铺（商户自建）与授权店铺（平台授权接入）</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">4</span>店铺持有人管理</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">店铺持有人列表</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看店铺持有人列表</li>
+                                        <li>查看持有人详情</li>
+                                        <li>风险标记/处置</li>
+                                    </ul>
+                                </td>
+                                <td class="note">店铺持有人信息管理</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. RFI 管理 -->
+        <div class="menu-group">
+            <div class="menu-header" onclick="toggleMenu(this)">
+                <div class="menu-icon" style="background:var(--pink-bg)">📨</div>
+                <h3>6. RFI 管理（一级菜单）</h3>
+                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="menu-body">
+                <div class="callout" style="margin:16px 24px 0">
+                    <div class="callout-title">📌 说明</div>
+                    <p>RFI（Request for Information）统一管理入口，按业务类型分类查看和管理所有 RFI 请求。</p>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">1</span>商户信息 RFI</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">商户信息 RFI（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看商户信息 RFI 列表</li>
+                                        <li>发起 RFI</li>
+                                        <li>查看 RFI 详情与回复</li>
+                                        <li>关闭/完成 RFI</li>
+                                    </ul>
+                                </td>
+                                <td class="note">针对商户基本信息的补充资料请求</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">2</span>商户 VA RFI</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">VA RFI（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看 VA RFI 列表</li>
+                                        <li>发起 RFI</li>
+                                        <li>查看 RFI 详情与回复</li>
+                                        <li>关闭/完成 RFI</li>
+                                    </ul>
+                                </td>
+                                <td class="note">针对商户虚拟账户的补充资料请求</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">3</span>商户支付订单 RFI</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">支付订单 RFI（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看支付订单 RFI 列表</li>
+                                        <li>发起 RFI（出入金/币、承兑、Remittance 等）</li>
+                                        <li>查看 RFI 详情与回复</li>
+                                        <li>关闭/完成 RFI</li>
+                                    </ul>
+                                </td>
+                                <td class="note">针对商户支付订单的补充资料请求</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">4</span>商户收款人 RFI</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">收款人 RFI（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看收款人 RFI 列表</li>
+                                        <li>发起 RFI</li>
+                                        <li>查看 RFI 详情与回复</li>
+                                        <li>关闭/完成 RFI</li>
+                                    </ul>
+                                </td>
+                                <td class="note">针对商户收款人的补充资料请求</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">5</span>商户发卡 RFI</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">发卡 RFI（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看发卡 RFI 列表</li>
+                                        <li>发起 RFI</li>
+                                        <li>查看 RFI 详情与回复</li>
+                                        <li>关闭/完成 RFI</li>
+                                    </ul>
+                                </td>
+                                <td class="note">针对商户发卡业务的补充资料请求</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. 渠道运营 -->
+        <div class="menu-group">
+            <div class="menu-header" onclick="toggleMenu(this)">
+                <div class="menu-icon" style="background:var(--teal-bg)">🔗</div>
+                <h3>7. 渠道运营（一级菜单）</h3>
+                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="menu-body">
+                <div class="callout" style="margin:16px 24px 0">
+                    <div class="callout-title">📌 说明</div>
+                    <p>作为 SP，管理渠道侧的订单查询与调单处理（处理来自 Channel / 其他 SP 的调单）。</p>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">1</span>渠道订单查询</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">渠道订单（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看渠道订单列表</li>
+                                        <li>搜索/筛选订单</li>
+                                        <li>查看订单详情</li>
+                                        <li>查看关联商户订单</li>
+                                    </ul>
+                                </td>
+                                <td class="note">查询渠道侧的订单数据</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">2</span>渠道调单管理</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">调单列表</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看调单列表</li>
+                                        <li>搜索/筛选调单</li>
+                                        <li>查看调单详情</li>
+                                        <li>处理调单（回复/提交材料）</li>
+                                        <li>关闭/完成调单</li>
+                                    </ul>
+                                </td>
+                                <td class="note">处理来自 Channel / 其他 SP 发起的调单请求</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 8. 审批工单 -->
+        <div class="menu-group">
+            <div class="menu-header" onclick="toggleMenu(this)">
+                <div class="menu-icon" style="background:var(--pink-bg)">📋</div>
+                <h3>8. 审批工单（一级菜单）</h3>
+                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="menu-body">
+                <div class="callout" style="margin:16px 24px 0">
+                    <div class="callout-title">📌 说明</div>
+                    <p>合规风控领域的审批工单。由 Workflow Engine 根据流程定义自动生成，合规人员在此处理。<br>
+                    <strong>模式</strong>：商户发起 → 合规初审 → 合规复审（如 KYC 审核、产品开通合规审核等）。<br>
+                    待办推送到工作台，点击进入此处处理。</p>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">1</span>待审批工单</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">待审批工单（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看待审批工单列表</li>
+                                        <li>筛选工单类型（KYC/产品开通/风险处置等）</li>
+                                        <li>查看工单详情（Ticket 信息 + 流程进度）</li>
+                                        <li>初审通过 / 初审驳回</li>
+                                        <li>复审通过 / 复审驳回</li>
+                                        <li>发起 RFI（要求补充材料）</li>
+                                    </ul>
+                                </td>
+                                <td class="note">合规初审人/复审人处理待办，完成后 Workflow 自动推进下一节点</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">2</span>已处理工单</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag tag-sp">SP</span></td>
+                                <td style="font-weight:600">已处理工单（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看已处理工单列表</li>
+                                        <li>查看工单详情与审批记录</li>
+                                        <li>查看流程完整轨迹（初审→复审→结果）</li>
+                                    </ul>
+                                </td>
+                                <td class="note">历史审批记录查询</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ==================== 工作流中心 ==================== -->
+    <div class="center-section" id="sec-workflow">
+
+        <div class="callout" style="margin:0 0 20px">
+            <div class="callout-title">🔄 工作流中心整体说明</div>
+            <p>工作流中心负责<strong>定义和管理审批流程模板</strong>，不处理具体业务。<br>
+            审批工单（Ticket）由各业务操作触发后自动生成，待办（Task）推送到对应领域中心处理。<br>
+            <strong>工作台</strong>汇总所有待办（有的自动完成，有的需手动点击完成）。<br>
+            本中心目前仅在 <strong>SA（管理后台）</strong> 配置，SP/TP/MP 端不直接操作流程定义。</p>
+        </div>
+
+        <!-- 1. 流程模板管理 -->
+        <div class="menu-group">
+            <div class="menu-header" onclick="toggleMenu(this)">
+                <div class="menu-icon" style="background:var(--pink-bg)">📐</div>
+                <h3>1. 流程模板管理（一级菜单）</h3>
+                <span class="menu-badge" style="background:var(--yellow-bg);color:var(--yellow)">SA 管理后台</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="menu-body">
+                <div class="callout" style="margin:16px 24px 0">
+                    <div class="callout-title">📌 说明</div>
+                    <p>定义各类业务审批流程的模板，配置节点、审批人、条件、超时策略等。</p>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">1</span>流程模板列表</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag" style="background:var(--yellow-bg);color:var(--yellow)">EX</span></td>
+                                <td style="font-weight:600">流程模板（列表）</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>查看所有流程模板</li>
+                                        <li>新增流程模板</li>
+                                        <li>编辑流程模板</li>
+                                        <li>启用/停用流程模板</li>
+                                        <li>复制模板</li>
+                                    </ul>
+                                </td>
+                                <td class="note">EX 运营在 SA 后台管理流程定义</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sub-menu">
+                    <h4><span class="num">2</span>流程设计器</h4>
+                    <table class="perm-table">
+                        <thead><tr><th>角色</th><th>页面</th><th>功能</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag" style="background:var(--yellow-bg);color:var(--yellow)">EX</span></td>
+                                <td style="font-weight:600">流程设计器</td>
+                                <td>
+                                    <ul class="func-list">
+                                        <li>拖拽配置流程节点</li>
+                                        <li>配置节点审批人（角色/指定人）</li>
+                                        <li>配置节点条件（金额阈值、产品类型等）</li>
+                                        <li>配置超时策略（自动通过/自动驳回/升级）</li>
+                                        <li>配置并行/串行节点</li>
+                                        <li>预览流程图</li>
+                                    </ul>
+                                </td>
+                                <td class="note">可视化流程编排</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. 典型流程示例 -->
+        <div class="menu-group">
+            <div class="menu-header" onclick="toggleMenu(this)">
+                <div class="menu-icon" style="background:var(--accent-bg)">📖</div>
+                <h3>典型流程示例（参考）</h3>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="menu-body">
+                <div class="callout" style="margin:16px 24px 0">
+                    <div class="callout-title">📌 典型审批流程</div>
+                    <p><strong>清算 — 费率变更</strong>：清算 A 发起 → 清算 B 审批 → 完成（一人发起，一人审批）<br>
+                    <strong>清算 — 汇率变更</strong>：清算 A 发起 → 清算 B 审批 → 完成<br>
+                    <strong>清算 — 返点变更</strong>：清算 A 发起 → 清算 B 审批 → 完成<br>
+                    <strong>合规 — KYC 审核</strong>：商户提交 → 合规初审 → 合规复审 → 完成<br>
+                    <strong>合规 — 产品开通</strong>：商户/TP 申请 → 合规初审 → 合规复审 → 完成<br>
+                    <strong>合规 — 风险处置</strong>：合规发起 → 合规复审 → 完成</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</div>
+
+<script>
+function switchTab(id) {
+    // Update buttons
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+
+    // Update sections
+    document.querySelectorAll('.center-section').forEach(sec => sec.classList.remove('active'));
+    const target = document.getElementById('sec-' + id);
+    if (target) target.classList.add('active');
+}
+
+function toggleMenu(header) {
+    header.closest('.menu-group').classList.toggle('collapsed');
+}
+</script>
+</body>
+</html>
