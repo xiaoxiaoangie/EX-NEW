@@ -16,8 +16,8 @@
             --primary: #4f46e5;
             --primary-light: #eef2ff;
             --group-assets: #10b981;
-            --group-receive: #3b82f6;
-            --group-pay: #f59e0b;
+            --group-payin: #3b82f6;
+            --group-payout: #f59e0b;
             --group-cards: #8b5cf6;
             --group-acquiring: #ec4899;
             --group-reports: #06b6d4;
@@ -313,7 +313,7 @@
         </div>
     </div>
 
-    <!-- Receive -->
+    <!-- payin -->
     <div class="menu-group">
         <div class="menu-group-label" style="color: var(--group-receive)">
             <span class="dot" style="background: var(--group-receive)"></span> RECEIVE
@@ -329,7 +329,7 @@
         </div>
     </div>
 
-    <!-- Pay -->
+    <!-- Payout-->
     <div class="menu-group">
         <div class="menu-group-label" style="color: var(--group-pay)">
             <span class="dot" style="background: var(--group-pay)"></span> PAY
@@ -450,8 +450,8 @@
             <div class="note-box">
                 <strong>菜单设计原则：</strong><br>
                 1. <strong>Assets（资产）</strong>= 同名充提 + 兑换（自己的钱左手倒右手）<br>
-                2. <strong>Receive（收款）</strong>= 别人 → 我（有交易对手的收款）<br>
-                3. <strong>Pay（付款）</strong>= 我 → 别人（有交易对手的付款）<br>
+                2. <strong>Payin（收款）</strong>= 别人 → 我（有交易对手的收款）<br>
+                3. <strong>Payout（付款）</strong>= 我 → 别人（有交易对手的付款）<br>
                 4. 付款时可选资金来源（法币余额/加密钱包），选加密钱包则系统自动 Off-Ramp<br>
                 5. 收款时可选入账目标（法币账户/加密钱包），选加密钱包则系统自动 On-Ramp<br>
                 6. 所有SP的记录混合展示，SP作为筛选条件
@@ -466,10 +466,10 @@
                     <tr><td rowspan="3"><strong>ASSETS</strong></td><td>Fiat Accounts</td><td>余额、同名充值、同名提现</td><td><span class="tag tag-same">同名</span></td></tr>
                     <tr><td>Crypto Wallet</td><td>余额、同名充币、同名提币</td><td><span class="tag tag-same">同名</span></td></tr>
                     <tr><td>Exchange</td><td>法币换汇、法转数、数转法</td><td><span class="tag tag-same">同名</span></td></tr>
-                    <tr><td rowspan="3"><strong>RECEIVE</strong></td><td>Global Accounts</td><td>VA申请、VA管理</td><td><span class="tag tag-other">他人→我</span></td></tr>
+                    <tr><td rowspan="3"><strong>PAYIN</strong></td><td>Global Accounts</td><td>VA申请、VA管理</td><td><span class="tag tag-other">他人→我</span></td></tr>
                     <tr><td>Payins</td><td>法币收款记录</td><td><span class="tag tag-other">他人→我</span></td></tr>
                     <tr><td>Crypto Receive</td><td>加密收款地址、收款记录</td><td><span class="tag tag-other">他人→我</span></td></tr>
-                    <tr><td rowspan="3"><strong>PAY</strong></td><td>Beneficiary</td><td>收款人管理</td><td><span class="tag tag-other">我→他人</span></td></tr>
+                    <tr><td rowspan="3"><strong>PAYOUT</strong></td><td>Beneficiary</td><td>收款人管理</td><td><span class="tag tag-other">我→他人</span></td></tr>
                     <tr><td>Payouts</td><td>法币付款</td><td><span class="tag tag-other">我→他人</span></td></tr>
                     <tr><td>Crypto Send</td><td>加密转账</td><td><span class="tag tag-other">我→他人</span></td></tr>
                     <tr><td rowspan="2"><strong>CARDS</strong></td><td>Cards Management</td><td>开卡、充值、冻结、注销</td><td>—</td></tr>
