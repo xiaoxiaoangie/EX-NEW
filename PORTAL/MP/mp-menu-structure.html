@@ -19,6 +19,7 @@
             --group-transferin: #3b82f6;
             --group-checkout: #ec4899;
             --group-transferout: #f59e0b;
+            --group-remittance: #ef4444;
             --group-cards: #8b5cf6;
             --group-reports: #06b6d4;
             --group-developer: #64748b;
@@ -361,6 +362,16 @@
         </div>
     </div>
 
+    <!-- Remittance -->
+    <div class="menu-group">
+        <div class="menu-group-label" style="color: var(--group-remittance)">
+            <span class="dot" style="background: var(--group-remittance)"></span> REMITTANCE
+        </div>
+        <div class="menu-item" data-page="remittance-orders">
+            <span class="icon">🔀</span> Remittance Orders
+        </div>
+    </div>
+
     <!-- Cards -->
     <div class="menu-group">
         <div class="menu-group-label" style="color: var(--group-cards)">
@@ -454,11 +465,12 @@
                 2. <strong>Transfer In（转账收款）</strong>= 商户主动管理收款工具（VA/地址），通过银行转账或链上转账收款<br>
                 3. <strong>Checkout（收单）</strong>= 商户管理收款订单，底层收款方式（VA/地址/在线支付）由系统自动选择<br>
                 4. <strong>Transfer Out（转账付款）</strong>= 通过银行转账或链上转账付款给他人<br>
-                5. <strong>Cards（发卡）</strong>= 通过卡消费方式付款<br>
-                6. 付款时可选资金来源（法币余额/加密钱包），选加密钱包则系统自动 Off-Ramp<br>
-                7. 收款时可选入账目标（法币账户/加密钱包），选加密钱包则系统自动 On-Ramp<br>
-                8. 所有SP的记录混合展示，SP作为筛选条件<br>
-                9. <strong>Transfer In vs Checkout：</strong>Transfer In 管收款工具（商户主动申请的VA/地址），Checkout 管收款订单（底层工具由系统分配，对商户透明）
+                5. <strong>Remittance（汇款）</strong>= 一单到底的完整资金链路：收款→换汇/承兑→付款，系统自动编排<br>
+                6. <strong>Cards（发卡）</strong>= 通过卡消费方式付款<br>
+                7. 付款时可选资金来源（法币余额/加密钱包），选加密钱包则系统自动 Off-Ramp<br>
+                8. 收款时可选入账目标（法币账户/加密钱包），选加密钱包则系统自动 On-Ramp<br>
+                9. 所有SP的记录混合展示，SP作为筛选条件<br>
+                10. <strong>Transfer In vs Checkout：</strong>Transfer In 管收款工具（商户主动申请的VA/地址），Checkout 管收款订单（底层工具由系统分配，对商户透明）
             </div>
             <div class="divider"></div>
             <h3>菜单与页面汇总</h3>
@@ -479,6 +491,7 @@
                     <tr><td rowspan="3"><strong>TRANSFER OUT</strong></td><td>Beneficiary</td><td>收款人管理</td><td><span class="tag tag-other">我→他人（转账）</span></td></tr>
                     <tr><td>Payouts</td><td>法币付款</td><td><span class="tag tag-other">我→他人（转账）</span></td></tr>
                     <tr><td>Crypto Send</td><td>加密转账</td><td><span class="tag tag-other">我→他人（转账）</span></td></tr>
+                    <tr><td><strong>REMITTANCE</strong></td><td>Remittance Orders</td><td>收→换→付一单到底，系统自动编排全链路</td><td><span class="tag tag-other">收→换→付</span></td></tr>
                     <tr><td rowspan="2"><strong>CARDS</strong></td><td>Cards Management</td><td>开卡、充值、冻结、注销</td><td><span class="tag tag-other">我→他人（卡）</span></td></tr>
                     <tr><td>Card Transactions</td><td>卡交易记录</td><td><span class="tag tag-other">我→他人（卡）</span></td></tr>
                     <tr><td rowspan="2"><strong>REPORTS</strong></td><td>Reports</td><td>报表</td><td>—</td></tr>
@@ -781,6 +794,59 @@
             </div>
             <div class="note-box">
                 <strong>跨场景操作：</strong>选择"从法币余额付款"时，系统自动执行 On-Ramp（法转数）+ Crypto Send，商户无需手动兑换。
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== REMITTANCE: Remittance Orders ===== -->
+    <div class="page" id="page-remittance-orders">
+        <div class="page-header">
+            <div class="breadcrumb">Remittance / <span>Remittance Orders</span></div>
+            <h1>Remittance Orders（汇款订单）</h1>
+            <p>一单到底：收款→换汇/承兑→付款，系统自动编排全链路 <span class="tag tag-other">收→换→付</span></p>
+        </div>
+        <div class="content-section">
+            <h3>页面功能</h3>
+            <div class="func-list">
+                <div class="func-item">
+                    <div class="func-name">创建汇款订单</div>
+                    <div class="func-desc">选择收款人 → 输入付款金额/币种 → 系统自动编排：充值→换汇/承兑→付款，一个订单完成全流程</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">订单列表</div>
+                    <div class="func-desc">所有汇款订单，支持按状态/金额/时间/收款人筛选</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">订单详情 — 全链路视图</div>
+                    <div class="func-desc">展示完整资金链路：收款（来源）→ 换汇/承兑（中间步骤）→ 付款（目标），每步状态实时更新</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">子步骤追踪</div>
+                    <div class="func-desc">每个子步骤（充值/换汇/承兑/付款）的独立状态、时间、金额、汇率、手续费</div>
+                </div>
+            </div>
+        </div>
+        <div class="content-section">
+            <h3>典型场景</h3>
+            <div class="func-list">
+                <div class="func-item">
+                    <div class="func-name">场景1：法币→法币跨币种汇款</div>
+                    <div class="func-desc">充值USD → 换汇USD→EUR → 付款EUR给收款人银行账户</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">场景2：法币→加密付款</div>
+                    <div class="func-desc">充值USD → On-Ramp（法转数）→ Crypto Send到收款人地址</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">场景3：加密→法币付款</div>
+                    <div class="func-desc">充币USDT → Off-Ramp（数转法）→ 付款USD给收款人银行账户</div>
+                </div>
+            </div>
+            <div class="note-box">
+                <strong>与其他菜单的关系：</strong><br>
+                • Remittance 是"编排层"，底层复用 Assets（充值/兑换）和 Transfer Out（付款）的能力<br>
+                • 商户在 Remittance 看到完整链路，在 Assets/Transfer Out 也能看到对应的子订单记录<br>
+                • 通过关联订单号串联，各菜单都能追溯
             </div>
         </div>
     </div>
