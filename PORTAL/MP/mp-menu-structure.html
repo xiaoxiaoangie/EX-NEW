@@ -16,10 +16,10 @@
             --primary: #4f46e5;
             --primary-light: #eef2ff;
             --group-assets: #10b981;
-            --group-payin: #3b82f6;
-            --group-payout: #f59e0b;
+            --group-transferin: #3b82f6;
+            --group-checkout: #ec4899;
+            --group-transferout: #f59e0b;
             --group-cards: #8b5cf6;
-            --group-acquiring: #ec4899;
             --group-reports: #06b6d4;
             --group-developer: #64748b;
             --group-settings: #78716c;
@@ -313,10 +313,10 @@
         </div>
     </div>
 
-    <!-- payin -->
+    <!-- Transfer In -->
     <div class="menu-group">
-        <div class="menu-group-label" style="color: var(--group-payin)">
-            <span class="dot" style="background: var(--group-payin)"></span> PAYIN
+        <div class="menu-group-label" style="color: var(--group-transferin)">
+            <span class="dot" style="background: var(--group-transferin)"></span> TRANSFER IN
         </div>
         <div class="menu-item" data-page="global-accounts">
             <span class="icon">🌐</span> Global Accounts
@@ -329,16 +329,32 @@
         </div>
     </div>
 
-    <!-- Payout-->
+    <!-- Checkout -->
     <div class="menu-group">
-        <div class="menu-group-label" style="color: var(--group-payout)">
-            <span class="dot" style="background: var(--group-payout)"></span> PAYOUT
+        <div class="menu-group-label" style="color: var(--group-checkout)">
+            <span class="dot" style="background: var(--group-checkout)"></span> CHECKOUT
+        </div>
+        <div class="menu-item" data-page="online-payment">
+            <span class="icon">�</span> Online Payment
+        </div>
+        <div class="menu-item" data-page="invoice">
+            <span class="icon">�</span> Invoice
+        </div>
+        <div class="menu-item" data-page="subscription">
+            <span class="icon">🔁</span> Subscription
+        </div>
+    </div>
+
+    <!-- Transfer Out -->
+    <div class="menu-group">
+        <div class="menu-group-label" style="color: var(--group-transferout)">
+            <span class="dot" style="background: var(--group-transferout)"></span> TRANSFER OUT
         </div>
         <div class="menu-item" data-page="beneficiary">
             <span class="icon">👤</span> Beneficiary
         </div>
         <div class="menu-item" data-page="payouts">
-            <span class="icon">📤</span> Payouts
+            <span class="icon">�</span> Payouts
         </div>
         <div class="menu-item" data-page="crypto-send">
             <span class="icon">⬆️</span> Crypto Send
@@ -351,28 +367,13 @@
             <span class="dot" style="background: var(--group-cards)"></span> CARDS
         </div>
         <div class="menu-item" data-page="cards-management">
-            <span class="icon">💳</span> Cards Management
+            <span class="icon">�</span> Cards Management
         </div>
         <div class="menu-item" data-page="card-transactions">
             <span class="icon">📋</span> Card Transactions
         </div>
     </div>
 
-    <!-- Acquiring -->
-    <div class="menu-group">
-        <div class="menu-group-label" style="color: var(--group-acquiring)">
-            <span class="dot" style="background: var(--group-acquiring)"></span> ACQUIRING
-        </div>
-        <div class="menu-item" data-page="merchant-orders">
-            <span class="icon">🛒</span> Merchant Orders
-        </div>
-        <div class="menu-item" data-page="channel-orders">
-            <span class="icon">🔗</span> Channel Orders
-        </div>
-        <div class="menu-item" data-page="payment-settings">
-            <span class="icon">⚙️</span> Payment Settings
-        </div>
-    </div>
 
     <!-- Reports -->
     <div class="menu-group">
@@ -450,11 +451,14 @@
             <div class="note-box">
                 <strong>菜单设计原则：</strong><br>
                 1. <strong>Assets（资产）</strong>= 同名充提 + 兑换（自己的钱左手倒右手）<br>
-                2. <strong>Payin（收款）</strong>= 别人 → 我（有交易对手的收款）<br>
-                3. <strong>Payout（付款）</strong>= 我 → 别人（有交易对手的付款）<br>
-                4. 付款时可选资金来源（法币余额/加密钱包），选加密钱包则系统自动 Off-Ramp<br>
-                5. 收款时可选入账目标（法币账户/加密钱包），选加密钱包则系统自动 On-Ramp<br>
-                6. 所有SP的记录混合展示，SP作为筛选条件
+                2. <strong>Transfer In（转账收款）</strong>= 商户主动管理收款工具（VA/地址），通过银行转账或链上转账收款<br>
+                3. <strong>Checkout（收单）</strong>= 商户管理收款订单，底层收款方式（VA/地址/在线支付）由系统自动选择<br>
+                4. <strong>Transfer Out（转账付款）</strong>= 通过银行转账或链上转账付款给他人<br>
+                5. <strong>Cards（发卡）</strong>= 通过卡消费方式付款<br>
+                6. 付款时可选资金来源（法币余额/加密钱包），选加密钱包则系统自动 Off-Ramp<br>
+                7. 收款时可选入账目标（法币账户/加密钱包），选加密钱包则系统自动 On-Ramp<br>
+                8. 所有SP的记录混合展示，SP作为筛选条件<br>
+                9. <strong>Transfer In vs Checkout：</strong>Transfer In 管收款工具（商户主动申请的VA/地址），Checkout 管收款订单（底层工具由系统分配，对商户透明）
             </div>
             <div class="divider"></div>
             <h3>菜单与页面汇总</h3>
@@ -466,17 +470,17 @@
                     <tr><td rowspan="3"><strong>ASSETS</strong></td><td>Fiat Accounts</td><td>余额、同名充值、同名提现</td><td><span class="tag tag-same">同名</span></td></tr>
                     <tr><td>Crypto Wallet</td><td>余额、同名充币、同名提币</td><td><span class="tag tag-same">同名</span></td></tr>
                     <tr><td>Exchange</td><td>法币换汇、法转数、数转法</td><td><span class="tag tag-same">同名</span></td></tr>
-                    <tr><td rowspan="3"><strong>PAYIN</strong></td><td>Global Accounts</td><td>VA申请、VA管理</td><td><span class="tag tag-other">他人→我</span></td></tr>
-                    <tr><td>Payins</td><td>法币收款记录</td><td><span class="tag tag-other">他人→我</span></td></tr>
-                    <tr><td>Crypto Receive</td><td>加密收款地址、收款记录</td><td><span class="tag tag-other">他人→我</span></td></tr>
-                    <tr><td rowspan="3"><strong>PAYOUT</strong></td><td>Beneficiary</td><td>收款人管理</td><td><span class="tag tag-other">我→他人</span></td></tr>
-                    <tr><td>Payouts</td><td>法币付款</td><td><span class="tag tag-other">我→他人</span></td></tr>
-                    <tr><td>Crypto Send</td><td>加密转账</td><td><span class="tag tag-other">我→他人</span></td></tr>
-                    <tr><td rowspan="2"><strong>CARDS</strong></td><td>Cards Management</td><td>开卡、充值、冻结、注销</td><td>—</td></tr>
-                    <tr><td>Card Transactions</td><td>卡交易记录</td><td>—</td></tr>
-                    <tr><td rowspan="3"><strong>ACQUIRING</strong></td><td>Merchant Orders</td><td>商户订单</td><td>—</td></tr>
-                    <tr><td>Channel Orders</td><td>渠道订单</td><td>—</td></tr>
-                    <tr><td>Payment Settings</td><td>支付设置</td><td>—</td></tr>
+                    <tr><td rowspan="3"><strong>TRANSFER IN</strong></td><td>Global Accounts</td><td>VA申请、VA管理（商户主动管理）</td><td><span class="tag tag-other">他人→我（转账）</span></td></tr>
+                    <tr><td>Payins</td><td>法币收款记录</td><td><span class="tag tag-other">他人→我（转账）</span></td></tr>
+                    <tr><td>Crypto Receive</td><td>加密收款地址、收款记录</td><td><span class="tag tag-other">他人→我（转账）</span></td></tr>
+                    <tr><td rowspan="3"><strong>CHECKOUT</strong></td><td>Online Payment</td><td>在线支付订单</td><td><span class="tag tag-other">他人→我（收单）</span></td></tr>
+                    <tr><td>Invoice</td><td>账单支付</td><td><span class="tag tag-other">他人→我（收单）</span></td></tr>
+                    <tr><td>Subscription</td><td>订阅支付</td><td><span class="tag tag-other">他人→我（收单）</span></td></tr>
+                    <tr><td rowspan="3"><strong>TRANSFER OUT</strong></td><td>Beneficiary</td><td>收款人管理</td><td><span class="tag tag-other">我→他人（转账）</span></td></tr>
+                    <tr><td>Payouts</td><td>法币付款</td><td><span class="tag tag-other">我→他人（转账）</span></td></tr>
+                    <tr><td>Crypto Send</td><td>加密转账</td><td><span class="tag tag-other">我→他人（转账）</span></td></tr>
+                    <tr><td rowspan="2"><strong>CARDS</strong></td><td>Cards Management</td><td>开卡、充值、冻结、注销</td><td><span class="tag tag-other">我→他人（卡）</span></td></tr>
+                    <tr><td>Card Transactions</td><td>卡交易记录</td><td><span class="tag tag-other">我→他人（卡）</span></td></tr>
                     <tr><td rowspan="2"><strong>REPORTS</strong></td><td>Reports</td><td>报表</td><td>—</td></tr>
                     <tr><td>Downloads</td><td>下载中心</td><td>—</td></tr>
                     <tr><td rowspan="2"><strong>DEVELOPER</strong></td><td>API Keys</td><td>API密钥管理</td><td>—</td></tr>
@@ -604,10 +608,10 @@
         </div>
     </div>
 
-    <!-- ===== PAYIN: Global Accounts ===== -->
+    <!-- ===== TRANSFER IN: Global Accounts ===== -->
     <div class="page" id="page-global-accounts">
         <div class="page-header">
-            <div class="breadcrumb">Payin / <span>Global Accounts</span></div>
+            <div class="breadcrumb">Transfer In / <span>Global Accounts</span></div>
             <h1>Global Accounts / VA（虚拟账户）</h1>
             <p>管理收款用虚拟账户，买家/客户付款到此VA <span class="tag tag-other">他人→我</span></p>
         </div>
@@ -634,10 +638,10 @@
         </div>
     </div>
 
-    <!-- =====PAYIN: Payins ===== -->
+    <!-- ===== TRANSFER IN: Payins ===== -->
     <div class="page" id="page-payins">
         <div class="page-header">
-            <div class="breadcrumb">Payin / <span>Payins</span></div>
+            <div class="breadcrumb">Transfer In / <span>Payins</span></div>
             <h1>Payins（法币收款记录）</h1>
             <p>所有法币收款/入金订单 <span class="tag tag-other">他人→我</span></p>
         </div>
@@ -663,10 +667,10 @@
         </div>
     </div>
 
-    <!-- ===== PAYIN: Crypto Receive ===== -->
+    <!-- ===== TRANSFER IN: Crypto Receive ===== -->
     <div class="page" id="page-crypto-receive">
         <div class="page-header">
-            <div class="breadcrumb">Payin / <span>Crypto Receive</span></div>
+            <div class="breadcrumb">Transfer In / <span>Crypto Receive</span></div>
             <h1>Crypto Receive（加密收款）</h1>
             <p>接收他人加密资产转账 <span class="tag tag-other">他人→我</span></p>
         </div>
@@ -689,10 +693,10 @@
         </div>
     </div>
 
-    <!-- ===== PAYOUT: Beneficiary ===== -->
+    <!-- ===== TRANSFER OUT: Beneficiary ===== -->
     <div class="page" id="page-beneficiary">
         <div class="page-header">
-            <div class="breadcrumb">Payout / <span>Beneficiary</span></div>
+            <div class="breadcrumb">Transfer Out / <span>Beneficiary</span></div>
             <h1>Beneficiary（收款人管理）</h1>
             <p>管理付款对象的银行账户和加密地址 <span class="tag tag-other">我→他人</span></p>
         </div>
@@ -723,10 +727,10 @@
         </div>
     </div>
 
-    <!-- ===== PAYOUT: Payouts ===== -->
+    <!-- ===== TRANSFER OUT: Payouts ===== -->
     <div class="page" id="page-payouts">
         <div class="page-header">
-            <div class="breadcrumb">Payout / <span>Payouts</span></div>
+            <div class="breadcrumb">Transfer Out / <span>Payouts</span></div>
             <h1>Payouts（法币付款）</h1>
             <p>向收款人发起法币付款 <span class="tag tag-other">我→他人</span></p>
         </div>
@@ -752,10 +756,10 @@
         </div>
     </div>
 
-    <!-- ===== PAYOUT: Crypto Send ===== -->
+    <!-- ===== TRANSFER OUT: Crypto Send ===== -->
     <div class="page" id="page-crypto-send">
         <div class="page-header">
-            <div class="breadcrumb">Payout / <span>Crypto Send</span></div>
+            <div class="breadcrumb">Transfer Out / <span>Crypto Send</span></div>
             <h1>Crypto Send（加密转账）</h1>
             <p>向他人加密地址转账 <span class="tag tag-other">我→他人</span></p>
         </div>
@@ -837,19 +841,19 @@
         </div>
     </div>
 
-    <!-- ===== ACQUIRING: Merchant Orders ===== -->
-    <div class="page" id="page-merchant-orders">
+    <!-- ===== CHECKOUT: Online Payment ===== -->
+    <div class="page" id="page-online-payment">
         <div class="page-header">
-            <div class="breadcrumb">Acquiring / <span>Merchant Orders</span></div>
-            <h1>Merchant Orders（商户订单）</h1>
-            <p>收单业务的商户侧订单管理</p>
+            <div class="breadcrumb">Checkout / <span>Online Payment</span></div>
+            <h1>Online Payment（在线支付）</h1>
+            <p>客户通过在线支付方式完成付款 <span class="tag tag-other">他人→我（收单）</span></p>
         </div>
         <div class="content-section">
             <h3>页面功能</h3>
             <div class="func-list">
                 <div class="func-item">
                     <div class="func-name">订单列表</div>
-                    <div class="func-desc">所有收单订单，支持按状态/金额/时间/支付方式筛选</div>
+                    <div class="func-desc">所有在线支付订单，支持按状态/金额/时间/支付方式筛选</div>
                 </div>
                 <div class="func-item">
                     <div class="func-name">订单详情</div>
@@ -859,49 +863,72 @@
                     <div class="func-name">退款管理</div>
                     <div class="func-desc">发起退款、查看退款状态</div>
                 </div>
+                <div class="func-item">
+                    <div class="func-name">支付设置</div>
+                    <div class="func-desc">启用/禁用支付方式、配置结算周期和结算账户</div>
+                </div>
+            </div>
+            <div class="note-box">
+                <strong>底层实现对商户透明：</strong>系统可能自动分配VA或加密地址给客户完成转账，商户只需关注订单状态，无需在 Transfer In 中管理这些临时VA/地址。
             </div>
         </div>
     </div>
 
-    <!-- ===== ACQUIRING: Channel Orders ===== -->
-    <div class="page" id="page-channel-orders">
+    <!-- ===== CHECKOUT: Invoice ===== -->
+    <div class="page" id="page-invoice">
         <div class="page-header">
-            <div class="breadcrumb">Acquiring / <span>Channel Orders</span></div>
-            <h1>Channel Orders（渠道订单）</h1>
-            <p>收单业务的渠道侧订单查询</p>
+            <div class="breadcrumb">Checkout / <span>Invoice</span></div>
+            <h1>Invoice（账单支付）</h1>
+            <p>向客户发送账单，客户按账单付款 <span class="tag tag-other">他人→我（收单）</span></p>
         </div>
         <div class="content-section">
             <h3>页面功能</h3>
             <div class="func-list">
                 <div class="func-item">
-                    <div class="func-name">渠道订单列表</div>
-                    <div class="func-desc">查看渠道侧的订单记录，含渠道单号、状态</div>
+                    <div class="func-name">创建账单</div>
+                    <div class="func-desc">填写账单信息（金额/币种/到期日/客户信息）→ 生成账单链接</div>
                 </div>
                 <div class="func-item">
-                    <div class="func-name">订单详情</div>
-                    <div class="func-desc">渠道单详情，关联商户单号</div>
+                    <div class="func-name">账单列表</div>
+                    <div class="func-desc">所有账单，支持按状态（待付/已付/逾期/取消）筛选</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">账单详情</div>
+                    <div class="func-desc">账单金额、客户信息、付款状态、付款时间</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">账单设置</div>
+                    <div class="func-desc">账单模板、自动提醒、逾期策略</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ===== ACQUIRING: Payment Settings ===== -->
-    <div class="page" id="page-payment-settings">
+    <!-- ===== CHECKOUT: Subscription ===== -->
+    <div class="page" id="page-subscription">
         <div class="page-header">
-            <div class="breadcrumb">Acquiring / <span>Payment Settings</span></div>
-            <h1>Payment Settings（支付设置）</h1>
-            <p>收单业务的支付参数配置</p>
+            <div class="breadcrumb">Checkout / <span>Subscription</span></div>
+            <h1>Subscription（订阅支付）</h1>
+            <p>周期性自动扣款 <span class="tag tag-other">他人→我（收单）</span></p>
         </div>
         <div class="content-section">
             <h3>页面功能</h3>
             <div class="func-list">
                 <div class="func-item">
-                    <div class="func-name">支付方式配置</div>
-                    <div class="func-desc">启用/禁用支付方式，配置支付参数</div>
+                    <div class="func-name">创建订阅计划</div>
+                    <div class="func-desc">设置订阅金额、周期（月/季/年）、试用期、自动续费规则</div>
                 </div>
                 <div class="func-item">
-                    <div class="func-name">结算设置</div>
-                    <div class="func-desc">结算周期、结算币种、结算账户配置</div>
+                    <div class="func-name">订阅列表</div>
+                    <div class="func-desc">所有订阅记录，支持按状态（活跃/暂停/取消/过期）筛选</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">订阅详情</div>
+                    <div class="func-desc">订阅计划、客户信息、扣款历史、下次扣款时间</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">扣款记录</div>
+                    <div class="func-desc">每次自动扣款的记录，含成功/失败/重试状态</div>
                 </div>
             </div>
         </div>
