@@ -205,6 +205,8 @@ const allFeatures = [
     // SP在PP上架产品
     { flow: 'flow2', flowLabel: '二、产品上架', role: 'SP', portal: 'PP-SP', center: '产品中心', module: '产品管理', menu: '产品管理', page: '产品管理（列表）', functions: ['上架产品', '查看产品详情', '产品状态变更', '编辑产品'], note: 'SP在PP端管理自有产品', priority: 'P0' },
     { flow: 'flow2', flowLabel: '二、产品上架', role: 'SP', portal: 'PP-SP', center: '产品中心', module: '产品管理', menu: '产品管理', page: '上架产品', functions: ['填写产品信息', '配置产品能力', '设置产品定价', '提交上架'], note: '产品上架表单页', priority: 'P0' },
+    // SP工单中心 - 工单审核
+    { flow: 'flow2', flowLabel: '二、产品上架', role: 'SP', portal: 'PP-SP', center: '工单中心', module: '工单审核', menu: '工单审核', page: '审核页面', functions: ['审核产品上架工单'], note: '产品上架审核', priority: 'P0' },
 
     // EX在SA管理套餐和代管理产品
     { flow: 'flow2', flowLabel: '二、产品上架', role: 'EX', portal: 'SA', center: '/', module: '产品中心', menu: '产品中心 - 套餐管理', page: '套餐管理', functions: ['新增套餐', '查看套餐详情', '编辑套餐'], note: 'EX定义产品套餐组合', priority: 'P0' },
@@ -213,32 +215,35 @@ const allFeatures = [
     { flow: 'flow2', flowLabel: '二、产品上架', role: 'EX', portal: 'SA', center: '/', module: '产品中心', menu: '产品中心 - 业务产品', page: '上架产品', functions: ['填写产品信息', '配置产品能力', '设置产品定价', '提交上架'], note: '代管理上架表单页', priority: 'P0' },
 
     // ===== 第三部分：租户签约 =====
-    // SP配置分佣模版
-    { flow: 'flow3', flowLabel: '三、租户签约', role: 'SP', portal: 'PP-SP', center: '清结算中心', module: '返点/分佣规则', menu: '分佣模版配置', page: '分佣模版配置（列表）', functions: ['新增模版', '查看模版详情', '编辑模版'], note: 'SP预设分佣模版，签约时引用', priority: 'P0' },
-    { flow: 'flow3', flowLabel: '三、租户签约', role: 'SP', portal: 'PP-SP', center: '清结算中心', module: '返点/分佣规则', menu: '分佣配置', page: '分佣配置', functions: ['配置分佣参数'], note: '分佣全局配置', priority: 'P1' },
-
-    // EX处理租户签约
-    { flow: 'flow3', flowLabel: '三、租户签约', role: 'EX', portal: 'SA', center: '/', module: '租户管理', menu: '租户管理 - 租户签约申请', page: '租户签约申请（列表）', functions: ['租户签约', '审核签约申请', '查看申请详情'], note: 'EX处理租户的签约申请', priority: 'P0' },
-    { flow: 'flow3', flowLabel: '三、租户签约', role: 'EX', portal: 'SA', center: '/', module: '租户管理', menu: '租户管理', page: '租户基本信息', functions: ['查看租户信息', '编辑租户信息'], note: '租户档案管理', priority: 'P0' },
-    { flow: 'flow3', flowLabel: '三、租户签约', role: 'EX', portal: 'SA', center: '/', module: '租户管理', menu: '租户管理', page: '租户签约产品', functions: ['查看签约产品', '管理签约关系'], note: '租户已签约的产品列表', priority: 'P0' },
-
-    // SP处理工单
-    { flow: 'flow3', flowLabel: '三、租户签约', role: 'SP', portal: 'PP-SP', center: '工单中心', module: '工单处理', menu: '待我处理', page: '工单处理（列表）', functions: ['处理工单', '查看详情'], note: 'SP审批租户签约等工单', priority: 'P0' },
-
-    // SP配置分佣规则
-    { flow: 'flow3', flowLabel: '三、租户签约', role: 'SP', portal: 'PP-SP', center: '清结算中心', module: '返点/分佣规则', menu: '分佣规则配置', page: '分佣规则配置（列表）', functions: ['查看详情', '修改分佣规则'], note: '针对具体租户的分佣规则', priority: 'P0' },
-
-    // 租户在产品中心浏览和管理签约产品
-    { flow: 'flow3', flowLabel: '三、租户签约', role: '租户', portal: 'PP-TP', center: '产品中心', module: '产品市场', menu: '产品市场', page: '产品市场', functions: ['产品介绍'], note: '租户浏览可签约的产品', priority: 'P0' },
-    { flow: 'flow3', flowLabel: '三、租户签约', role: '租户', portal: 'PP-TP', center: '产品中心', module: '产品市场', menu: '已签约产品', page: '已签约产品', functions: ['查看产品能力', '配置产品费率', '配置汇率'], note: '根据实际产品配置费率/汇率，或两者都需要', priority: 'P0' },
-
-    // SP查看机构签约产品
-    { flow: 'flow3', flowLabel: '三、租户签约', role: '租户', portal: 'PP-SP', center: '合作伙伴', module: '机构伙伴', menu: '机构签约产品', page: '机构签约产品（列表）', functions: ['查看产品能力', '查看标准费率', '查看标准汇率'], note: 'SP查看机构伙伴的签约产品信息', priority: 'P0' },
-
+    // ===== 租户 PP-TP =====
     // 租户登录
     { flow: 'flow3', flowLabel: '三、租户签约', role: '租户', portal: 'PP-TP', center: '设置中心', module: 'User', menu: '/', page: '登录', functions: ['邮箱登录', '手机号登录'], note: '租户首次登录PP', priority: 'P0' },
     { flow: 'flow3', flowLabel: '三、租户签约', role: '租户', portal: 'PP-TP', center: '设置中心', module: 'User', menu: '/', page: '重置密码', functions: ['重置密码'], note: '', priority: 'P0' },
     { flow: 'flow3', flowLabel: '三、租户签约', role: '租户', portal: 'PP-TP', center: '设置中心', module: 'User', menu: '/', page: '工作台', functions: ['查看工作台概览'], note: '登录后首页', priority: 'P0' },
+    // 租户在产品中心浏览和管理签约产品
+    { flow: 'flow3', flowLabel: '三、租户签约', role: '租户', portal: 'PP-TP', center: '产品中心', module: '产品市场', menu: '产品市场', page: '产品市场', functions: ['产品介绍'], note: '租户浏览可签约的产品', priority: 'P0' },
+    { flow: 'flow3', flowLabel: '三、租户签约', role: '租户', portal: 'PP-TP', center: '产品中心', module: '产品市场', menu: '已签约产品', page: '已签约产品', functions: ['查看产品能力', '配置产品费率', '配置汇率'], note: '根据实际产品配置费率/汇率，或两者都需要', priority: 'P0' },
+    // 租户用户权限
+    { flow: 'flow3', flowLabel: '三、租户签约', role: '租户', portal: 'PP-TP', center: '设置中心', module: '用户权限', menu: '用户管理', page: '用户管理（列表）', functions: ['新增用户', '编辑用户', '禁用/启用用户', '重置密码'], note: '', priority: 'P0' },
+    { flow: 'flow3', flowLabel: '三、租户签约', role: '租户', portal: 'PP-TP', center: '设置中心', module: '用户权限', menu: '角色管理', page: '角色管理（列表）', functions: ['新增角色', '编辑角色', '删除角色', '配置权限'], note: '', priority: 'P0' },
+    // 租户开发者中心
+    { flow: 'flow3', flowLabel: '三、租户签约', role: '租户', portal: 'PP-TP', center: '设置中心', module: '开发者中心', menu: '开发者中心', page: '开发者中心', functions: ['生成/查看 API Key', '生成/查看 Secret', '配置 Webhook', '文档入口'], note: '', priority: 'P0' },
+
+    // ===== EX SA =====
+    { flow: 'flow3', flowLabel: '三、租户签约', role: 'EX', portal: 'SA', center: '/', module: '租户管理', menu: '租户管理 - 租户签约申请', page: '租户签约申请（列表）', functions: ['租户签约', '审核签约申请', '查看申请详情'], note: 'EX处理租户的签约申请', priority: 'P0' },
+    { flow: 'flow3', flowLabel: '三、租户签约', role: 'EX', portal: 'SA', center: '/', module: '租户管理', menu: '租户管理', page: '租户基本信息', functions: ['查看租户信息', '编辑租户信息'], note: '租户档案管理', priority: 'P0' },
+    { flow: 'flow3', flowLabel: '三、租户签约', role: 'EX', portal: 'SA', center: '/', module: '租户管理', menu: '租户管理', page: '租户签约产品', functions: ['查看签约产品', '管理签约关系'], note: '租户已签约的产品列表', priority: 'P0' },
+
+    // ===== SP PP-SP =====
+    // SP配置分佣模版
+    { flow: 'flow3', flowLabel: '三、租户签约', role: 'SP', portal: 'PP-SP', center: '清结算中心', module: '返点/分佣规则', menu: '分佣模版配置', page: '分佣模版配置（列表）', functions: ['新增模版', '查看模版详情', '编辑模版'], note: 'SP预设分佣模版，签约时引用', priority: 'P0' },
+    { flow: 'flow3', flowLabel: '三、租户签约', role: 'SP', portal: 'PP-SP', center: '清结算中心', module: '返点/分佣规则', menu: '分佣配置', page: '分佣配置', functions: ['配置分佣参数'], note: '分佣全局配置', priority: 'P1' },
+    // SP处理工单
+    { flow: 'flow3', flowLabel: '三、租户签约', role: 'SP', portal: 'PP-SP', center: '工单中心', module: '工单处理', menu: '待我处理', page: '工单处理（列表）', functions: ['处理工单', '查看详情'], note: 'SP审批租户签约等工单', priority: 'P0' },
+    // SP配置分佣规则
+    { flow: 'flow3', flowLabel: '三、租户签约', role: 'SP', portal: 'PP-SP', center: '清结算中心', module: '返点/分佣规则', menu: '分佣规则配置', page: '分佣规则配置（列表）', functions: ['查看详情', '修改分佣规则'], note: '针对具体租户的分佣规则', priority: 'P0' },
+    // SP查看机构签约产品
+    { flow: 'flow3', flowLabel: '三、租户签约', role: '租户', portal: 'PP-SP', center: '合作伙伴', module: '机构伙伴', menu: '机构签约产品', page: '机构签约产品（列表）', functions: ['查看产品能力', '查看标准费率', '查看标准汇率'], note: 'SP查看机构伙伴的签约产品信息', priority: 'P0' },
 
     // ===== 第四部分A：租户展业 - 商户登录注册 =====
     // 商户注册登录
@@ -249,6 +254,9 @@ const allFeatures = [
     // 商户个人信息
     { flow: 'flow4a', flowLabel: '四、商户登录注册', role: '商户', portal: 'MP', center: '/', module: 'User', menu: 'Personal Profile', page: '个人信息', functions: ['绑定/修改手机号', '绑定/修改邮箱', '开通/关闭2FA（身份验证器）', '修改昵称'], note: '商户个人账户设置', priority: 'P0' },
     { flow: 'flow4a', flowLabel: '四、商户登录注册', role: '商户', portal: 'MP', center: '/', module: 'User', menu: 'Personal Profile', page: '关联商户（列表）', functions: ['查看关联商户', '切换商户'], note: '一个用户可关联多个商户', priority: 'P0' },
+    // 商户用户权限
+    { flow: 'flow4a', flowLabel: '四、商户登录注册', role: '商户', portal: 'MP', center: '设置中心', module: '用户权限', menu: '用户管理', page: '用户管理（列表）', functions: ['新增用户', '编辑用户', '禁用/启用用户', '重置密码'], note: '', priority: 'P0' },
+    { flow: 'flow4a', flowLabel: '四、商户登录注册', role: '商户', portal: 'MP', center: '设置中心', module: '用户权限', menu: '角色管理', page: '角色管理（列表）', functions: ['新增角色', '编辑角色', '删除角色', '配置权限'], note: '', priority: 'P0' },
 
     // 租户查看商户用户
     { flow: 'flow4a', flowLabel: '四、商户登录注册', role: '租户', portal: 'PP-TP', center: '客户中心', module: '商户用户', menu: '商户管理', page: '商户用户查询（列表）', functions: ['查询商户用户', '查看用户详情'], note: 'TP查看其下商户的用户信息', priority: 'P0' },
