@@ -83,12 +83,27 @@
         .badge {
             display: inline-block;
             padding: 4px 12px;
-            background: #eef2ff;
-            color: #4f46e5;
             border-radius: 12px;
             font-size: 12px;
             font-weight: 600;
             margin-top: 10px;
+            background: #eef2ff;
+            color: #4f46e5;
+        }
+
+        .badge-green { background: #dcfce7; color: #166534; }
+        .badge-amber { background: #fef3c7; color: #92400e; }
+        .badge-purple { background: #f3e8ff; color: #6b21a8; }
+
+        .section-title {
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin: 28px 0 12px;
+            padding-left: 4px;
+            opacity: 0.85;
         }
     </style>
 </head>
@@ -99,26 +114,78 @@
             <p>项目文档与工具导航</p>
         </div>
         
+        <div class="section-title">📋 功能矩阵</div>
         <div class="cards">
-            <a href="PORTAL/EXfunctionlist.html" class="card">
+            <a href="PORTAL/EXfunctionlist-tabs.html" class="card">
                 <div class="card-icon">📋</div>
-                <h2>功能清单管理工具</h2>
-                <p>实时跟踪项目进度，管理功能开发状态。支持多维度筛选、进度统计、数据导出等功能。</p>
+                <h2>功能矩阵（按端分Tab）</h2>
+                <p>按业务流程梳理各端功能清单 — 角色/端/中心/模块/菜单/页面/功能</p>
                 <span class="badge">项目管理</span>
             </a>
-            
+        </div>
+
+        <div class="section-title">🖥️ Portal 各端</div>
+        <div class="cards">
             <a href="PORTAL/SA/sa-admin-portal.html" class="card">
-                <div class="card-icon">🔧</div>
-                <h2>SA管理后台</h2>
-                <p>EX平台超级管理员后台，包含产品中心、服务商管理、租户管理等13个核心模块。</p>
-                <span class="badge">管理后台</span>
+                <div class="card-icon">⚙️</div>
+                <h2>SA 管理后台</h2>
+                <p>EX平台超级管理员后台，包含产品中心、服务商管理、租户管理等核心模块</p>
+                <span class="badge">SA</span>
             </a>
-            
-            <a href="PORTAL/EX平台业务流程与功能清单.md" class="card">
-                <div class="card-icon">📖</div>
-                <h2>业务流程文档</h2>
-                <p>完整的业务流程梳理，包含SP、TP、Merchant三个角色的详细功能清单。</p>
-                <span class="badge">产品文档</span>
+
+            <a href="PORTAL/TP/ex-institution-permission-matrix.html" class="card">
+                <div class="card-icon">🏢</div>
+                <h2>机构权限矩阵</h2>
+                <p>TP/SP 机构权限模型，按业务流程展示各端权限分配</p>
+                <span class="badge badge-purple">PP-TP / PP-SP</span>
+            </a>
+
+            <a href="PORTAL/TP/tp-tenant-dashboard-v6.html" class="card">
+                <div class="card-icon">🏢</div>
+                <h2>TP 租户后台</h2>
+                <p>租户端管理后台界面</p>
+                <span class="badge badge-purple">PP-TP</span>
+            </a>
+
+            <a href="PORTAL/MP/mp-menu-structure.html" class="card">
+                <div class="card-icon">🏪</div>
+                <h2>MP 商户端菜单结构</h2>
+                <p>商户端完整菜单设计 — Assets/Receive/Pay/Cards/Acquiring/Reports/Developer/Settings</p>
+                <span class="badge badge-green">MP 商户端</span>
+            </a>
+        </div>
+
+        <div class="section-title">🔄 业务流程</div>
+        <div class="cards">
+            <a href="PORTAL/MP/onofframp-functions.html" class="card">
+                <div class="card-icon">�</div>
+                <h2>EX平台完整业务流程</h2>
+                <p>从前置准备到分佣返点的全流程管理，含收款/承兑/退款/余额等</p>
+                <span class="badge badge-amber">业务流程</span>
+            </a>
+
+            <a href="PORTAL/MP/user-system-interactive-v2.html" class="card">
+                <div class="card-icon">👤</div>
+                <h2>用户系统交互流程</h2>
+                <p>商户端用户注册、登录、权限等交互流程</p>
+                <span class="badge badge-amber">交互设计</span>
+            </a>
+        </div>
+
+        <div class="section-title">🎨 Demo 演示</div>
+        <div class="cards">
+            <a href="demo/merchant-dashboard-en-complete.html" class="card">
+                <div class="card-icon">🎨</div>
+                <h2>Merchant Dashboard Demo</h2>
+                <p>商户端 Dashboard 完整演示页面</p>
+                <span class="badge">Demo</span>
+            </a>
+
+            <a href="demo/merchant-onboarding-interactive.html" class="card">
+                <div class="card-icon">📝</div>
+                <h2>Merchant Onboarding Demo</h2>
+                <p>商户入网交互流程演示</p>
+                <span class="badge">Demo</span>
             </a>
         </div>
     </div>
