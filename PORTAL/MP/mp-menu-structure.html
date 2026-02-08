@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MP 商户端 — 菜单结构</title>
+    <style>
+        :root {
+            --sidebar-w: 260px;
+            --bg: #f0f2f5;
+            --sidebar-bg: #ffffff;
+            --sidebar-border: #e8ecf1;
+            --text: #1a1f36;
+            --text-secondary: #6b7294;
+            --text-muted: #a5aac4;
+            --primary: #4f46e5;
+            --primary-light: #eef2ff;
+            --group-assets: #10b981;
+            --group-receive: #3b82f6;
+            --group-pay: #f59e0b;
+            --group-cards: #8b5cf6;
+            --group-acquiring: #ec4899;
+            --group-reports: #06b6d4;
+            --group-developer: #64748b;
+            --group-settings: #78716c;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ===== Sidebar ===== */
+        .sidebar {
+            width: var(--sidebar-w);
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--sidebar-border);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .sidebar-logo {
+            padding: 24px 20px 16px;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            border-bottom: 1px solid var(--sidebar-border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-logo .logo-icon {
+            width: 32px; height: 32px;
+            background: linear-gradient(135deg, var(--primary), #6366f1);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 14px; font-weight: 700;
+        }
+
+        .menu-group {
+            padding: 16px 12px 4px;
+        }
+
+        .menu-group-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            padding: 0 8px 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .menu-group-label .dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--text-secondary);
+            transition: all 0.15s;
+            user-select: none;
+        }
+
+        .menu-item:hover {
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .menu-item.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .menu-item .icon {
+            width: 20px; height: 20px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-user {
+            margin-top: auto;
+            padding: 16px 20px;
+            border-top: 1px solid var(--sidebar-border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-user .avatar {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, #6366f1, #a78bfa);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 14px; font-weight: 600;
+        }
+
+        .sidebar-user .user-info { font-size: 13px; }
+        .sidebar-user .user-name { font-weight: 600; color: var(--text); }
+        .sidebar-user .user-role { color: var(--text-muted); font-size: 12px; }
+
+        /* ===== Main Content ===== */
+        .main {
+            flex: 1;
+            overflow-y: auto;
+            padding: 32px 40px;
+        }
+
+        .page-header {
+            margin-bottom: 28px;
+        }
+
+        .page-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .page-header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .breadcrumb {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .breadcrumb span { color: var(--primary); font-weight: 500; }
+
+        /* Content cards */
+        .content-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 28px;
+            margin-bottom: 20px;
+        }
+
+        .content-section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .content-section h3 .badge {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .func-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 12px;
+        }
+
+        .func-item {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 14px 16px;
+            border-left: 3px solid var(--primary);
+            font-size: 13px;
+        }
+
+        .func-item .func-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        .func-item .func-desc {
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .tag-same { background: #dcfce7; color: #166534; }
+        .tag-other { background: #dbeafe; color: #1e40af; }
+        .tag-cross { background: #fef3c7; color: #92400e; }
+
+        .note-box {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            border-radius: 8px;
+            padding: 14px 16px;
+            font-size: 13px;
+            color: #92400e;
+            margin-top: 16px;
+            line-height: 1.6;
+        }
+
+        .note-box strong { color: #78350f; }
+
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 20px 0;
+        }
+
+        /* Summary table */
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .summary-table th {
+            text-align: left;
+            padding: 10px 12px;
+            background: #f8fafc;
+            font-weight: 600;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .summary-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .summary-table tr:hover td {
+            background: #f8fafc;
+        }
+
+        /* hide all pages by default */
+        .page { display: none; }
+        .page.active { display: block; }
+    </style>
+</head>
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<div class="sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-icon">MP</div>
+        Merchant Portal
+    </div>
+
+    <!-- Dashboard -->
+    <div class="menu-group">
+        <div class="menu-item active" data-page="dashboard">
+            <span class="icon">📊</span> Dashboard
+        </div>
+    </div>
+
+    <!-- Assets -->
+    <div class="menu-group">
+        <div class="menu-group-label" style="color: var(--group-assets)">
+            <span class="dot" style="background: var(--group-assets)"></span> ASSETS
+        </div>
+        <div class="menu-item" data-page="fiat-accounts">
+            <span class="icon">🏦</span> Fiat Accounts
+        </div>
+        <div class="menu-item" data-page="crypto-wallet">
+            <span class="icon">💎</span> Crypto Wallet
+        </div>
+        <div class="menu-item" data-page="exchange">
+            <span class="icon">🔄</span> Exchange
+        </div>
+    </div>
+
+    <!-- Receive -->
+    <div class="menu-group">
+        <div class="menu-group-label" style="color: var(--group-receive)">
+            <span class="dot" style="background: var(--group-receive)"></span> RECEIVE
+        </div>
+        <div class="menu-item" data-page="global-accounts">
+            <span class="icon">🌐</span> Global Accounts
+        </div>
+        <div class="menu-item" data-page="payins">
+            <span class="icon">📥</span> Payins
+        </div>
+        <div class="menu-item" data-page="crypto-receive">
+            <span class="icon">⬇️</span> Crypto Receive
+        </div>
+    </div>
+
+    <!-- Pay -->
+    <div class="menu-group">
+        <div class="menu-group-label" style="color: var(--group-pay)">
+            <span class="dot" style="background: var(--group-pay)"></span> PAY
+        </div>
+        <div class="menu-item" data-page="beneficiary">
+            <span class="icon">👤</span> Beneficiary
+        </div>
+        <div class="menu-item" data-page="payouts">
+            <span class="icon">📤</span> Payouts
+        </div>
+        <div class="menu-item" data-page="crypto-send">
+            <span class="icon">⬆️</span> Crypto Send
+        </div>
+    </div>
+
+    <!-- Cards -->
+    <div class="menu-group">
+        <div class="menu-group-label" style="color: var(--group-cards)">
+            <span class="dot" style="background: var(--group-cards)"></span> CARDS
+        </div>
+        <div class="menu-item" data-page="cards-management">
+            <span class="icon">💳</span> Cards Management
+        </div>
+        <div class="menu-item" data-page="card-transactions">
+            <span class="icon">📋</span> Card Transactions
+        </div>
+    </div>
+
+    <!-- Acquiring -->
+    <div class="menu-group">
+        <div class="menu-group-label" style="color: var(--group-acquiring)">
+            <span class="dot" style="background: var(--group-acquiring)"></span> ACQUIRING
+        </div>
+        <div class="menu-item" data-page="merchant-orders">
+            <span class="icon">🛒</span> Merchant Orders
+        </div>
+        <div class="menu-item" data-page="channel-orders">
+            <span class="icon">🔗</span> Channel Orders
+        </div>
+        <div class="menu-item" data-page="payment-settings">
+            <span class="icon">⚙️</span> Payment Settings
+        </div>
+    </div>
+
+    <!-- Reports -->
+    <div class="menu-group">
+        <div class="menu-group-label" style="color: var(--group-reports)">
+            <span class="dot" style="background: var(--group-reports)"></span> REPORTS
+        </div>
+        <div class="menu-item" data-page="reports">
+            <span class="icon">📈</span> Reports
+        </div>
+        <div class="menu-item" data-page="downloads">
+            <span class="icon">⬇️</span> Downloads
+        </div>
+    </div>
+
+    <!-- Developer -->
+    <div class="menu-group">
+        <div class="menu-group-label" style="color: var(--group-developer)">
+            <span class="dot" style="background: var(--group-developer)"></span> DEVELOPER
+        </div>
+        <div class="menu-item" data-page="api-keys">
+            <span class="icon">🔑</span> API Keys
+        </div>
+        <div class="menu-item" data-page="webhooks">
+            <span class="icon">🔔</span> Webhooks
+        </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="menu-group">
+        <div class="menu-group-label" style="color: var(--group-settings)">
+            <span class="dot" style="background: var(--group-settings)"></span> SETTINGS
+        </div>
+        <div class="menu-item" data-page="company-profile">
+            <span class="icon">🏢</span> Company Profile
+        </div>
+        <div class="menu-item" data-page="roles-permissions">
+            <span class="icon">🔐</span> Roles & Permissions
+        </div>
+        <div class="menu-item" data-page="notifications">
+            <span class="icon">🔔</span> Notifications
+        </div>
+    </div>
+
+    <!-- Trade Documents (standalone) -->
+    <div class="menu-group">
+        <div class="menu-group-label" style="color: #0ea5e9">
+            <span class="dot" style="background: #0ea5e9"></span> TRADE DOCUMENTS
+        </div>
+        <div class="menu-item" data-page="trade-documents">
+            <span class="icon">📄</span> Trade Documents
+        </div>
+    </div>
+
+    <div class="sidebar-user">
+        <div class="avatar">JD</div>
+        <div class="user-info">
+            <div class="user-name">John Doe</div>
+            <div class="user-role">Merchant Admin</div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MAIN CONTENT ===== -->
+<div class="main">
+
+    <!-- Dashboard -->
+    <div class="page active" id="page-dashboard">
+        <div class="page-header">
+            <div class="breadcrumb">MP / <span>Dashboard</span></div>
+            <h1>Dashboard（工作台）</h1>
+            <p>商户总览 — 余额概览、近期交易、待办事项</p>
+        </div>
+        <div class="content-section">
+            <h3>📊 MP 菜单设计总览</h3>
+            <div class="note-box">
+                <strong>菜单设计原则：</strong><br>
+                1. <strong>Assets（资产）</strong>= 同名充提 + 兑换（自己的钱左手倒右手）<br>
+                2. <strong>Receive（收款）</strong>= 别人 → 我（有交易对手的收款）<br>
+                3. <strong>Pay（付款）</strong>= 我 → 别人（有交易对手的付款）<br>
+                4. 付款时可选资金来源（法币余额/加密钱包），选加密钱包则系统自动 Off-Ramp<br>
+                5. 收款时可选入账目标（法币账户/加密钱包），选加密钱包则系统自动 On-Ramp<br>
+                6. 所有SP的记录混合展示，SP作为筛选条件
+            </div>
+            <div class="divider"></div>
+            <h3>菜单与页面汇总</h3>
+            <table class="summary-table">
+                <thead>
+                    <tr><th>菜单分组</th><th>子菜单</th><th>核心功能</th><th>分类规则</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td rowspan="3"><strong>ASSETS</strong></td><td>Fiat Accounts</td><td>余额、同名充值、同名提现</td><td><span class="tag tag-same">同名</span></td></tr>
+                    <tr><td>Crypto Wallet</td><td>余额、同名充币、同名提币</td><td><span class="tag tag-same">同名</span></td></tr>
+                    <tr><td>Exchange</td><td>法币换汇、法转数、数转法</td><td><span class="tag tag-same">同名</span></td></tr>
+                    <tr><td rowspan="3"><strong>RECEIVE</strong></td><td>Global Accounts</td><td>VA申请、VA管理</td><td><span class="tag tag-other">他人→我</span></td></tr>
+                    <tr><td>Payins</td><td>法币收款记录</td><td><span class="tag tag-other">他人→我</span></td></tr>
+                    <tr><td>Crypto Receive</td><td>加密收款地址、收款记录</td><td><span class="tag tag-other">他人→我</span></td></tr>
+                    <tr><td rowspan="3"><strong>PAY</strong></td><td>Beneficiary</td><td>收款人管理</td><td><span class="tag tag-other">我→他人</span></td></tr>
+                    <tr><td>Payouts</td><td>法币付款</td><td><span class="tag tag-other">我→他人</span></td></tr>
+                    <tr><td>Crypto Send</td><td>加密转账</td><td><span class="tag tag-other">我→他人</span></td></tr>
+                    <tr><td rowspan="2"><strong>CARDS</strong></td><td>Cards Management</td><td>开卡、充值、冻结、注销</td><td>—</td></tr>
+                    <tr><td>Card Transactions</td><td>卡交易记录</td><td>—</td></tr>
+                    <tr><td rowspan="3"><strong>ACQUIRING</strong></td><td>Merchant Orders</td><td>商户订单</td><td>—</td></tr>
+                    <tr><td>Channel Orders</td><td>渠道订单</td><td>—</td></tr>
+                    <tr><td>Payment Settings</td><td>支付设置</td><td>—</td></tr>
+                    <tr><td rowspan="2"><strong>REPORTS</strong></td><td>Reports</td><td>报表</td><td>—</td></tr>
+                    <tr><td>Downloads</td><td>下载中心</td><td>—</td></tr>
+                    <tr><td rowspan="2"><strong>DEVELOPER</strong></td><td>API Keys</td><td>API密钥管理</td><td>—</td></tr>
+                    <tr><td>Webhooks</td><td>Webhook配置</td><td>—</td></tr>
+                    <tr><td rowspan="3"><strong>SETTINGS</strong></td><td>Company Profile</td><td>企业信息</td><td>—</td></tr>
+                    <tr><td>Roles & Permissions</td><td>角色权限</td><td>—</td></tr>
+                    <tr><td>Notifications</td><td>通知设置</td><td>—</td></tr>
+                    <tr><td><strong>TRADE DOCS</strong></td><td>Trade Documents</td><td>贸易单据管理</td><td>—</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ===== ASSETS: Fiat Accounts ===== -->
+    <div class="page" id="page-fiat-accounts">
+        <div class="page-header">
+            <div class="breadcrumb">Assets / <span>Fiat Accounts</span></div>
+            <h1>Fiat Accounts（法币账户）</h1>
+            <p>管理法币账户余额，同名充值与提现 <span class="tag tag-same">同名操作</span></p>
+        </div>
+        <div class="content-section">
+            <h3>页面功能</h3>
+            <div class="func-list">
+                <div class="func-item">
+                    <div class="func-name">账户余额总览</div>
+                    <div class="func-desc">按币种查看法币账户余额（可用余额/冻结余额/总余额）</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">同名充值（Deposit）</div>
+                    <div class="func-desc">从自己的银行账户转入法币到平台法币账户，同名转账</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">同名提现（Withdraw）</div>
+                    <div class="func-desc">从平台法币账户提现到自己的银行账户，同名转账</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">交易记录</div>
+                    <div class="func-desc">法币账户的充值/提现/入账/扣款等所有变动记录</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== ASSETS: Crypto Wallet ===== -->
+    <div class="page" id="page-crypto-wallet">
+        <div class="page-header">
+            <div class="breadcrumb">Assets / <span>Crypto Wallet</span></div>
+            <h1>Crypto Wallet（加密钱包）</h1>
+            <p>管理加密资产，同名充币与提币 <span class="tag tag-same">同名操作</span></p>
+        </div>
+        <div class="content-section">
+            <h3>页面功能</h3>
+            <div class="func-list">
+                <div class="func-item">
+                    <div class="func-name">钱包余额总览</div>
+                    <div class="func-desc">按币种/链查看加密资产余额（BTC/ETH/USDT等）</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">同名充币（Deposit）</div>
+                    <div class="func-desc">从自己的外部钱包地址转入加密资产，显示充值地址和二维码</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">同名提币（Withdraw）</div>
+                    <div class="func-desc">从平台钱包提币到自己的外部钱包地址</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">交易记录</div>
+                    <div class="func-desc">加密钱包的充币/提币/转入/转出等所有变动记录，含链上TxHash</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== ASSETS: Exchange ===== -->
+    <div class="page" id="page-exchange">
+        <div class="page-header">
+            <div class="breadcrumb">Assets / <span>Exchange</span></div>
+            <h1>Exchange（兑换）</h1>
+            <p>自己账户间的资产形态转换 <span class="tag tag-same">同名操作</span></p>
+        </div>
+        <div class="content-section">
+            <h3>法币换汇（FX）</h3>
+            <div class="func-list">
+                <div class="func-item">
+                    <div class="func-name">即时换汇</div>
+                    <div class="func-desc">自己法币账户间换汇，如 USD → EUR、HKD → USD 等</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">换汇记录</div>
+                    <div class="func-desc">历史换汇记录、汇率、手续费详情</div>
+                </div>
+            </div>
+        </div>
+        <div class="content-section">
+            <h3>法转数（On-Ramp）</h3>
+            <div class="func-list">
+                <div class="func-item">
+                    <div class="func-name">法币 → 加密</div>
+                    <div class="func-desc">从自己法币账户余额兑换为加密资产，存入自己的加密钱包</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">On-Ramp 记录</div>
+                    <div class="func-desc">法转数历史记录、兑换汇率、到账数量</div>
+                </div>
+            </div>
+        </div>
+        <div class="content-section">
+            <h3>数转法（Off-Ramp）</h3>
+            <div class="func-list">
+                <div class="func-item">
+                    <div class="func-name">加密 → 法币</div>
+                    <div class="func-desc">从自己加密钱包余额兑换为法币，存入自己的法币账户</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">Off-Ramp 记录</div>
+                    <div class="func-desc">数转法历史记录、兑换汇率、到账金额</div>
+                </div>
+            </div>
+        </div>
+        <div class="note-box">
+            <strong>跨场景操作说明：</strong><br>
+            • 付款时选择"从加密钱包付款" → 系统自动执行 Off-Ramp + Payout，记录同时出现在 Exchange 和 Payouts<br>
+            • 收款时选择"入账到加密钱包" → 系统自动执行 Payin + On-Ramp，记录同时出现在 Exchange 和 Payins<br>
+            • 跨场景操作通过关联订单号串联，两边都能查到
+        </div>
+    </div>
+
+    <!-- ===== RECEIVE: Global Accounts ===== -->
+    <div class="page" id="page-global-accounts">
+        <div class="page-header">
+            <div class="breadcrumb">Receive / <span>Global Accounts</span></div>
+            <h1>Global Accounts / VA（虚拟账户）</h1>
+            <p>管理收款用虚拟账户，买家/客户付款到此VA <span class="tag tag-other">他人→我</span></p>
+        </div>
+        <div class="content-section">
+            <h3>页面功能</h3>
+            <div class="func-list">
+                <div class="func-item">
+                    <div class="func-name">申请VA</div>
+                    <div class="func-desc">申请新的虚拟账户，选择币种和用途</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">VA列表</div>
+                    <div class="func-desc">查看所有VA，含账户号、币种、状态、关联SP</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">VA详情</div>
+                    <div class="func-desc">查看VA详细信息、收款记录、入账历史</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">VA状态管理</div>
+                    <div class="func-desc">启用/禁用VA</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== RECEIVE: Payins ===== -->
+    <div class="page" id="page-payins">
+        <div class="page-header">
+            <div class="breadcrumb">Receive / <span>Payins</span></div>
+            <h1>Payins（法币收款记录）</h1>
+            <p>所有法币收款/入金订单 <span class="tag tag-other">他人→我</span></p>
+        </div>
+        <div class="content-section">
+            <h3>页面功能</h3>
+            <div class="func-list">
+                <div class="func-item">
+                    <div class="func-name">收款订单列表</div>
+                    <div class="func-desc">所有SP的法币收款记录混合展示，支持按SP/币种/时间/状态筛选</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">订单详情</div>
+                    <div class="func-desc">收款金额、付款方信息、入账时间、关联VA、SP信息</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">退款</div>
+                    <div class="func-desc">对已入账的收款发起退款申请</div>
+                </div>
+            </div>
+            <div class="note-box">
+                <strong>筛选条件：</strong>服务商（SP）、币种、金额范围、时间范围、订单状态、付款方名称
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== RECEIVE: Crypto Receive ===== -->
+    <div class="page" id="page-crypto-receive">
+        <div class="page-header">
+            <div class="breadcrumb">Receive / <span>Crypto Receive</span></div>
+            <h1>Crypto Receive（加密收款）</h1>
+            <p>接收他人加密资产转账 <span class="tag tag-other">他人→我</span></p>
+        </div>
+        <div class="content-section">
+            <h3>页面功能</h3>
+            <div class="func-list">
+                <div class="func-item">
+                    <div class="func-name">收款地址管理</div>
+                    <div class="func-desc">查看/生成用于接收他人转账的加密收款地址，按链/币种分类</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">收款记录</div>
+                    <div class="func-desc">他人转入的加密资产记录，含发送方地址、TxHash、确认数</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">收款详情</div>
+                    <div class="func-desc">单笔收款详情，链上信息、入账状态、关联SP</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== PAY: Beneficiary ===== -->
+    <div class="page" id="page-beneficiary">
+        <div class="page-header">
+            <div class="breadcrumb">Pay / <span>Beneficiary</span></div>
+            <h1>Beneficiary（收款人管理）</h1>
+            <p>管理付款对象的银行账户和加密地址 <span class="tag tag-other">我→他人</span></p>
+        </div>
+        <div class="content-section">
+            <h3>页面功能</h3>
+            <div class="func-list">
+                <div class="func-item">
+                    <div class="func-name">收款人列表</div>
+                    <div class="func-desc">查看所有已添加的收款人，支持按类型（银行/加密）筛选</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">新增银行账户收款人</div>
+                    <div class="func-desc">添加银行账户信息（账户名、银行名、SWIFT/IBAN等）</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">新增加密地址收款人</div>
+                    <div class="func-desc">添加加密钱包地址（地址、链、币种），地址格式验证</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">编辑/删除收款人</div>
+                    <div class="func-desc">修改收款人信息、删除、恢复已删除收款人</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">审核状态</div>
+                    <div class="func-desc">查看收款人的风控审核状态（待审核/已通过/已拒绝/RFI）</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== PAY: Payouts ===== -->
+    <div class="page" id="page-payouts">
+        <div class="page-header">
+            <div class="breadcrumb">Pay / <span>Payouts</span></div>
+            <h1>Payouts（法币付款）</h1>
+            <p>向收款人发起法币付款 <span class="tag tag-other">我→他人</span></p>
+        </div>
+        <div class="content-section">
+            <h3>页面功能</h3>
+            <div class="func-list">
+                <div class="func-item">
+                    <div class="func-name">创建付款</div>
+                    <div class="func-desc">选择收款人 → 输入金额/币种 → 选择资金来源（法币余额/加密钱包）→ 确认付款</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">付款记录</div>
+                    <div class="func-desc">所有SP的法币付款记录混合展示，支持按SP/币种/时间/状态筛选</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">付款详情</div>
+                    <div class="func-desc">付款金额、收款人信息、扣款账户、到账时间、SP信息</div>
+                </div>
+            </div>
+            <div class="note-box">
+                <strong>跨场景操作：</strong>选择"从加密钱包付款"时，系统自动执行 Off-Ramp（数转法）+ Payout，商户无需手动兑换。关联的 Off-Ramp 记录可在 Exchange 页面查看。
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== PAY: Crypto Send ===== -->
+    <div class="page" id="page-crypto-send">
+        <div class="page-header">
+            <div class="breadcrumb">Pay / <span>Crypto Send</span></div>
+            <h1>Crypto Send（加密转账）</h1>
+            <p>向他人加密地址转账 <span class="tag tag-other">我→他人</span></p>
+        </div>
+        <div class="content-section">
+            <h3>页面功能</h3>
+            <div class="func-list">
+                <div class="func-item">
+                    <div class="func-name">创建转账</div>
+                    <div class="func-desc">选择收款人（加密地址）→ 输入数量/币种 → 选择资金来源（加密钱包/法币余额）→ 确认</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">转账记录</div>
+                    <div class="func-desc">所有加密转出记录，含目标地址、TxHash、确认状态、SP信息</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">转账详情</div>
+                    <div class="func-desc">单笔转账详情，链上信息、手续费、到账确认</div>
+                </div>
+            </div>
+            <div class="note-box">
+                <strong>跨场景操作：</strong>选择"从法币余额付款"时，系统自动执行 On-Ramp（法转数）+ Crypto Send，商户无需手动兑换。
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== CARDS: Cards Management ===== -->
+    <div class="page" id="page-cards-management">
+        <div class="page-header">
+            <div class="breadcrumb">Cards / <span>Cards Management</span></div>
+            <h1>Cards Management（卡管理）</h1>
+            <p>管理虚拟卡/实体卡的全生命周期</p>
+        </div>
+        <div class="content-section">
+            <h3>页面功能</h3>
+            <div class="func-list">
+                <div class="func-item">
+                    <div class="func-name">开卡</div>
+                    <div class="func-desc">选择卡BIN（= 选择SP）→ 填写持卡人信息 → 提交开卡申请</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">卡列表</div>
+                    <div class="func-desc">查看所有卡片，含卡号、BIN、SP、状态、余额</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">卡充值</div>
+                    <div class="func-desc">向卡片充值，选择资金来源</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">卡操作</div>
+                    <div class="func-desc">冻结/解冻、注销、设置限额</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== CARDS: Card Transactions ===== -->
+    <div class="page" id="page-card-transactions">
+        <div class="page-header">
+            <div class="breadcrumb">Cards / <span>Card Transactions</span></div>
+            <h1>Card Transactions（卡交易）</h1>
+            <p>查看卡片的所有交易记录</p>
+        </div>
+        <div class="content-section">
+            <h3>页面功能</h3>
+            <div class="func-list">
+                <div class="func-item">
+                    <div class="func-name">交易记录列表</div>
+                    <div class="func-desc">所有卡交易记录，含消费、退款、充值、提现等</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">交易详情</div>
+                    <div class="func-desc">单笔交易详情，商户名、金额、时间、授权状态</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">对账单</div>
+                    <div class="func-desc">按月/按卡生成对账单，支持下载</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== ACQUIRING: Merchant Orders ===== -->
+    <div class="page" id="page-merchant-orders">
+        <div class="page-header">
+            <div class="breadcrumb">Acquiring / <span>Merchant Orders</span></div>
+            <h1>Merchant Orders（商户订单）</h1>
+            <p>收单业务的商户侧订单管理</p>
+        </div>
+        <div class="content-section">
+            <h3>页面功能</h3>
+            <div class="func-list">
+                <div class="func-item">
+                    <div class="func-name">订单列表</div>
+                    <div class="func-desc">所有收单订单，支持按状态/金额/时间/支付方式筛选</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">订单详情</div>
+                    <div class="func-desc">订单金额、支付方式、买家信息、结算状态</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">退款管理</div>
+                    <div class="func-desc">发起退款、查看退款状态</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== ACQUIRING: Channel Orders ===== -->
+    <div class="page" id="page-channel-orders">
+        <div class="page-header">
+            <div class="breadcrumb">Acquiring / <span>Channel Orders</span></div>
+            <h1>Channel Orders（渠道订单）</h1>
+            <p>收单业务的渠道侧订单查询</p>
+        </div>
+        <div class="content-section">
+            <h3>页面功能</h3>
+            <div class="func-list">
+                <div class="func-item">
+                    <div class="func-name">渠道订单列表</div>
+                    <div class="func-desc">查看渠道侧的订单记录，含渠道单号、状态</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">订单详情</div>
+                    <div class="func-desc">渠道单详情，关联商户单号</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== ACQUIRING: Payment Settings ===== -->
+    <div class="page" id="page-payment-settings">
+        <div class="page-header">
+            <div class="breadcrumb">Acquiring / <span>Payment Settings</span></div>
+            <h1>Payment Settings（支付设置）</h1>
+            <p>收单业务的支付参数配置</p>
+        </div>
+        <div class="content-section">
+            <h3>页面功能</h3>
+            <div class="func-list">
+                <div class="func-item">
+                    <div class="func-name">支付方式配置</div>
+                    <div class="func-desc">启用/禁用支付方式，配置支付参数</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">结算设置</div>
+                    <div class="func-desc">结算周期、结算币种、结算账户配置</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== REPORTS ===== -->
+    <div class="page" id="page-reports">
+        <div class="page-header">
+            <div class="breadcrumb">Reports / <span>Reports</span></div>
+            <h1>Reports（报表）</h1>
+            <p>业务数据报表与统计分析</p>
+        </div>
+        <div class="content-section">
+            <h3>页面功能</h3>
+            <div class="func-list">
+                <div class="func-item">
+                    <div class="func-name">交易报表</div>
+                    <div class="func-desc">按时间/币种/SP维度的交易汇总报表</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">结算报表</div>
+                    <div class="func-desc">结算周期汇总、手续费统计</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">余额报表</div>
+                    <div class="func-desc">账户余额变动趋势</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page" id="page-downloads">
+        <div class="page-header">
+            <div class="breadcrumb">Reports / <span>Downloads</span></div>
+            <h1>Downloads（下载中心）</h1>
+            <p>导出和下载各类报表文件</p>
+        </div>
+        <div class="content-section">
+            <h3>页面功能</h3>
+            <div class="func-list">
+                <div class="func-item">
+                    <div class="func-name">下载列表</div>
+                    <div class="func-desc">查看已生成的导出文件，支持下载</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">导出任务</div>
+                    <div class="func-desc">创建新的数据导出任务，选择数据范围和格式</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== DEVELOPER ===== -->
+    <div class="page" id="page-api-keys">
+        <div class="page-header">
+            <div class="breadcrumb">Developer / <span>API Keys</span></div>
+            <h1>API Keys（API密钥）</h1>
+            <p>管理API访问密钥</p>
+        </div>
+        <div class="content-section">
+            <h3>页面功能</h3>
+            <div class="func-list">
+                <div class="func-item">
+                    <div class="func-name">API Key 管理</div>
+                    <div class="func-desc">生成/查看/删除 API Key，配置权限范围</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">API Secret</div>
+                    <div class="func-desc">生成/重置 API Secret</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">IP白名单</div>
+                    <div class="func-desc">配置API调用的IP白名单</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page" id="page-webhooks">
+        <div class="page-header">
+            <div class="breadcrumb">Developer / <span>Webhooks</span></div>
+            <h1>Webhooks</h1>
+            <p>配置事件通知回调</p>
+        </div>
+        <div class="content-section">
+            <h3>页面功能</h3>
+            <div class="func-list">
+                <div class="func-item">
+                    <div class="func-name">Webhook 配置</div>
+                    <div class="func-desc">配置回调URL、选择订阅事件类型</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">Webhook 日志</div>
+                    <div class="func-desc">查看回调发送记录、响应状态、重试</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SETTINGS ===== -->
+    <div class="page" id="page-company-profile">
+        <div class="page-header">
+            <div class="breadcrumb">Settings / <span>Company Profile</span></div>
+            <h1>Company Profile（企业信息）</h1>
+            <p>商户企业基本信息管理</p>
+        </div>
+        <div class="content-section">
+            <h3>页面功能</h3>
+            <div class="func-list">
+                <div class="func-item">
+                    <div class="func-name">企业信息</div>
+                    <div class="func-desc">公司名称、注册号、地址、联系方式等基本信息</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">KYB资料</div>
+                    <div class="func-desc">企业认证资料查看/更新</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page" id="page-roles-permissions">
+        <div class="page-header">
+            <div class="breadcrumb">Settings / <span>Roles & Permissions</span></div>
+            <h1>Roles & Permissions（角色权限）</h1>
+            <p>用户管理与角色权限配置</p>
+        </div>
+        <div class="content-section">
+            <h3>用户管理</h3>
+            <div class="func-list">
+                <div class="func-item">
+                    <div class="func-name">用户列表</div>
+                    <div class="func-desc">查看所有用户，新增/编辑/禁用/启用/重置密码</div>
+                </div>
+            </div>
+        </div>
+        <div class="content-section">
+            <h3>角色管理</h3>
+            <div class="func-list">
+                <div class="func-item">
+                    <div class="func-name">角色列表</div>
+                    <div class="func-desc">新增/编辑/删除角色，配置菜单和功能权限</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page" id="page-notifications">
+        <div class="page-header">
+            <div class="breadcrumb">Settings / <span>Notifications</span></div>
+            <h1>Notifications（通知设置）</h1>
+            <p>配置系统通知和告警</p>
+        </div>
+        <div class="content-section">
+            <h3>页面功能</h3>
+            <div class="func-list">
+                <div class="func-item">
+                    <div class="func-name">通知偏好</div>
+                    <div class="func-desc">配置邮件/短信/站内信通知开关</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">告警设置</div>
+                    <div class="func-desc">余额告警、大额交易告警、异常登录告警等</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== TRADE DOCUMENTS ===== -->
+    <div class="page" id="page-trade-documents">
+        <div class="page-header">
+            <div class="breadcrumb"><span>Trade Documents</span></div>
+            <h1>Trade Documents（贸易单据）</h1>
+            <p>贸易单据管理与合规文档</p>
+        </div>
+        <div class="content-section">
+            <h3>页面功能</h3>
+            <div class="func-list">
+                <div class="func-item">
+                    <div class="func-name">单据列表</div>
+                    <div class="func-desc">查看所有贸易单据，按类型/状态筛选</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">上传单据</div>
+                    <div class="func-desc">上传发票、合同、提单等贸易文档</div>
+                </div>
+                <div class="func-item">
+                    <div class="func-name">单据关联</div>
+                    <div class="func-desc">将单据关联到对应的收付款订单</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // Menu click handling
+    document.querySelectorAll('.menu-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const pageId = item.dataset.page;
+            if (!pageId) return;
+
+            // Update active menu
+            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+            item.classList.add('active');
+
+            // Show page
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const page = document.getElementById('page-' + pageId);
+            if (page) page.classList.add('active');
+        });
+    });
+</script>
+</body>
+</html>
