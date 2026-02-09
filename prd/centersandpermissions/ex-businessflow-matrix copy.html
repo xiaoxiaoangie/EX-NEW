@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EX 机构权限矩阵 — 按业务流程</title>
+<style>
+:root{--bg:#0f172a;--bg-card:#1e293b;--bg-row:#1e293b;--bg-row-alt:#172033;--bg-header:#334155;--border:#334155;--text:#e2e8f0;--text-s:#94a3b8;--text-m:#64748b;--accent:#818cf8;--accent-bg:rgba(129,140,248,.12);--green:#34d399;--green-bg:rgba(52,211,153,.12);--red:#f87171;--red-bg:rgba(248,113,113,.1);--yellow:#fbbf24;--yellow-bg:rgba(251,191,36,.12);--cyan:#22d3ee;--cyan-bg:rgba(34,211,238,.1);--orange:#fb923c;--orange-bg:rgba(251,146,60,.12);--purple:#a78bfa;--purple-bg:rgba(167,139,250,.12)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Inter','PingFang SC',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding:32px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1500px;margin:0 auto}
+
+/* Header */
+.hdr{margin-bottom:32px}
+.hdr h1{font-size:26px;font-weight:700;margin-bottom:6px}
+.hdr .sub{color:var(--text-s);font-size:14px}
+
+/* Flow nav - primary */
+.flow-nav{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
+.flow-btn{padding:10px 22px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-s);font-size:13px;font-weight:600;border-radius:10px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px}
+.flow-btn:hover{border-color:var(--accent);color:var(--accent)}
+.flow-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.flow-btn .num{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.flow-btn.active .num{background:rgba(255,255,255,.25)}
+
+/* Summary bar */
+.summary{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.sum-card{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:14px 20px;min-width:120px}
+.sum-card .label{font-size:11px;color:var(--text-m);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.sum-card .val{font-size:24px;font-weight:700}
+
+/* Portal section */
+.portal-section{margin-bottom:28px}
+.portal-header{display:flex;align-items:center;gap:12px;padding:14px 20px;border-radius:12px 12px 0 0;cursor:pointer;user-select:none}
+.portal-header:hover{filter:brightness(1.1)}
+.portal-header h2{font-size:15px;font-weight:700;color:#fff}
+.portal-header .badge{background:rgba(255,255,255,.2);padding:2px 10px;border-radius:8px;font-size:11px;font-weight:700;color:#fff}
+.portal-header .arrow{margin-left:auto;font-size:16px;color:rgba(255,255,255,.5);transition:transform .2s}
+.portal-section.collapsed .arrow{transform:rotate(-90deg)}
+.portal-section.collapsed .portal-body{display:none}
+
+.portal-sa .portal-header{background:linear-gradient(135deg,#7c3aed,#6366f1)}
+.portal-sp .portal-header{background:linear-gradient(135deg,#0ea5e9,#6366f1)}
+.portal-tp .portal-header{background:linear-gradient(135deg,#10b981,#0ea5e9)}
+.portal-mp .portal-header{background:linear-gradient(135deg,#f59e0b,#ef4444)}
+
+/* Table */
+.portal-body{background:var(--bg-card);border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px;overflow-x:auto}
+table.ft{width:100%;border-collapse:collapse;font-size:13px}
+.ft thead th{padding:10px 16px;text-align:left;font-weight:600;font-size:11px;color:var(--text-m);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);background:var(--bg-row-alt);position:sticky;top:0;white-space:nowrap}
+.ft tbody tr{border-bottom:1px solid rgba(51,65,85,.4)}
+.ft tbody tr:nth-child(even){background:var(--bg-row-alt)}
+.ft tbody tr:hover{background:rgba(99,102,241,.08)}
+.ft td{padding:9px 16px;vertical-align:top}
+
+/* Tags */
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;white-space:nowrap}
+.tag-role-ex{background:var(--yellow-bg);color:var(--yellow)}
+.tag-role-sp{background:var(--green-bg);color:var(--green)}
+.tag-role-tp{background:var(--cyan-bg);color:var(--cyan)}
+.tag-role-merchant{background:#fce7f3;color:#ec4899}
+.tag-center{background:rgba(148,163,184,.12);color:var(--text-s)}
+
+/* Func list */
+.fn-list{margin:0;padding:0;list-style:none}
+.fn-list li{padding:2px 0;display:flex;align-items:center;gap:6px;font-size:12px}
+.fn-list li::before{content:'•';color:var(--accent);font-weight:bold}
+.note{font-size:11px;color:var(--text-m);line-height:1.4}
+.page-name{font-weight:600;color:var(--text)}
+
+/* Empty */
+.empty{padding:48px;text-align:center;color:var(--text-m);font-size:14px}
+
+/* Responsive */
+@media(max-width:1024px){body{padding:16px}.flow-nav{gap:6px}.flow-btn{padding:8px 14px;font-size:12px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+    <div class="hdr">
+        <h1>EX 机构权限矩阵 — 按业务流程</h1>
+        <p class="sub">选择业务流程 → 查看各端（SA / PP-SP / PP-TP / MP）的中心、菜单、页面、功能</p>
+    </div>
+
+    <!-- Flow navigation -->
+    <div class="flow-nav" id="flowNav"></div>
+
+    <!-- Summary -->
+    <div class="summary" id="summary"></div>
+
+    <!-- Content -->
+    <div id="content"></div>
+</div>
+
+<script>
+// ========== 业务流程数据 ==========
+const flows = [
+    { id: 'flow1', num: '1', label: '一、服务商管理', items: [
+        { role: 'EX', portal: 'SA', center: '/', module: '服务商管理', menu: '服务商管理', page: '服务商管理（列表）', functions: ['新增服务商', '查看服务商详情', '编辑服务商信息'], note: 'EX运营在SA后台管理服务商档案' },
+        // SP登录（不能注册，无个人中心，不能修改）
+        { role: '服务商', portal: 'PP-SP', center: '设置中心', module: 'User', menu: '/', page: '登录', functions: ['邮箱登录', '手机号登录'], note: 'SP由EX创建账号后登录，不能自助注册' },
+        { role: '服务商', portal: 'PP-SP', center: '设置中心', module: 'User', menu: '/', page: '重置密码', functions: ['重置密码'], note: '' },
+        { role: '服务商', portal: 'PP-SP', center: '设置中心', module: 'User', menu: '/', page: '工作台', functions: ['查看工作台概览'], note: '登录后首页' },
+        // 渠道中心 - 渠道管理
+        { role: '服务商', portal: 'PP-SP', center: '渠道中心', module: '渠道管理', menu: '渠道基本信息', page: '渠道基本信息（列表）', functions: ['新增', '查看详情', '编辑', '状态变更'], note: '' },
+        { role: '服务商', portal: 'PP-SP', center: '渠道中心', module: '渠道管理', menu: '渠道基本信息', page: '新增渠道', functions: ['填写渠道信息', '提交'], note: '' },
+        { role: '服务商', portal: 'PP-SP', center: '渠道中心', module: '渠道管理', menu: '渠道基本信息', page: '查看详情', functions: ['查看渠道详情'], note: '' },
+        { role: '服务商', portal: 'PP-SP', center: '渠道中心', module: '渠道管理', menu: '渠道能力管理', page: '渠道能力（列表）', functions: ['新增', '查看详情', '编辑', '状态变更'], note: '' },
+        { role: '服务商', portal: 'PP-SP', center: '渠道中心', module: '渠道管理', menu: '渠道能力管理', page: '新增渠道能力', functions: ['填写渠道能力信息', '提交'], note: '' },
+        { role: '服务商', portal: 'PP-SP', center: '渠道中心', module: '渠道管理', menu: '渠道能力管理', page: '查看详情', functions: ['查看渠道能力详情'], note: '' },
+        // 资金中心 - 资金管理
+        { role: '服务商', portal: 'PP-SP', center: '资金中心', module: '资金管理', menu: '资金管理', page: '渠道余额查询（列表）', functions: ['待定'], note: '功能待定' },
+    ]},
+    { id: 'flow2', num: '2', label: '二、产品上架', items: [
+        // SP在PP上架产品
+        { role: 'SP', portal: 'PP-SP', center: '产品中心', module: '产品管理', menu: '产品管理', page: '产品管理（列表）', functions: ['上架产品', '查看产品详情', '产品状态变更', '编辑产品'], note: 'SP在PP端管理自有产品' },
+        { role: 'SP', portal: 'PP-SP', center: '产品中心', module: '产品管理', menu: '产品管理', page: '上架产品', functions: ['填写产品信息', '配置产品能力', '设置产品定价', '提交上架'], note: '产品上架表单页' },
+        // SP工单中心 - 工单审核
+        { role: 'SP', portal: 'PP-SP', center: '工单中心', module: '工单审核', menu: '工单审核', page: '审核页面', functions: ['审核产品上架工单'], note: '产品上架审核' },
+        // EX在SA管理套餐和代管理产品
+        { role: 'EX', portal: 'SA', center: '/', module: '产品中心', menu: '产品中心 - 套餐管理', page: '套餐管理', functions: ['新增套餐', '查看套餐详情', '编辑套餐'], note: 'EX定义产品套餐组合' },
+        { role: 'EX', portal: 'SA', center: '/', module: '产品中心', menu: '产品中心 - 套餐管理', page: '新增套餐', functions: ['配置套餐内容', '设置套餐定价', '提交'], note: '新增套餐表单页' },
+        { role: 'EX', portal: 'SA', center: '/', module: '产品中心', menu: '产品中心 - 业务产品', page: '服务商产品列表', functions: ['上架产品（代管理）', '查看产品详情', '产品状态变更', '编辑产品'], note: 'EX代SP管理产品上架' },
+        { role: 'EX', portal: 'SA', center: '/', module: '产品中心', menu: '产品中心 - 业务产品', page: '上架产品', functions: ['填写产品信息', '配置产品能力', '设置产品定价', '提交上架'], note: '代管理上架表单页' },
+    ]},
+    { id: 'flow3', num: '3', label: '三、租户签约', items: [
+        // ===== 租户 PP-TP =====
+        // 租户登录
+        { role: '租户', portal: 'PP-TP', center: '设置中心', module: 'User', menu: '/', page: '登录', functions: ['邮箱登录', '手机号登录'], note: '租户首次登录PP' },
+        { role: '租户', portal: 'PP-TP', center: '设置中心', module: 'User', menu: '/', page: '重置密码', functions: ['重置密码'], note: '' },
+        { role: '租户', portal: 'PP-TP', center: '设置中心', module: 'User', menu: '/', page: '工作台', functions: ['查看工作台概览'], note: '登录后首页' },
+        // 租户在产品中心浏览和管理签约产品
+        { role: '租户', portal: 'PP-TP', center: '产品中心', module: '产品市场', menu: '产品市场', page: '产品市场', functions: ['产品介绍'], note: '租户浏览可签约的产品' },
+        { role: '租户', portal: 'PP-TP', center: '产品中心', module: '产品市场', menu: '已签约产品', page: '已签约产品', functions: ['查看产品能力', '配置产品费率', '配置汇率'], note: '根据实际产品配置费率/汇率' },
+        // 租户用户权限
+        { role: '租户', portal: 'PP-TP', center: '设置中心', module: '用户权限', menu: '用户管理', page: '用户管理（列表）', functions: ['新增用户', '编辑用户', '禁用/启用用户', '重置密码'], note: '' },
+        { role: '租户', portal: 'PP-TP', center: '设置中心', module: '用户权限', menu: '角色管理', page: '角色管理（列表）', functions: ['新增角色', '编辑角色', '删除角色', '配置权限'], note: '' },
+        // 租户开发者中心
+        { role: '租户', portal: 'PP-TP', center: '设置中心', module: '开发者中心', menu: '开发者中心', page: '开发者中心', functions: ['生成/查看 API Key', '生成/查看 Secret', '配置 Webhook', '文档入口'], note: '' },
+
+        // ===== EX SA =====
+        { role: 'EX', portal: 'SA', center: '/', module: '租户管理', menu: '租户管理 - 租户签约申请', page: '租户签约申请（列表）', functions: ['租户签约', '审核签约申请', '查看申请详情'], note: 'EX处理租户的签约申请' },
+        { role: 'EX', portal: 'SA', center: '/', module: '租户管理', menu: '租户管理', page: '租户基本信息', functions: ['查看租户信息', '编辑租户信息'], note: '租户档案管理' },
+        { role: 'EX', portal: 'SA', center: '/', module: '租户管理', menu: '租户管理', page: '租户签约产品', functions: ['查看签约产品', '管理签约产品'], note: '租户已签约的产品列表' },
+
+        // ===== SP PP-SP =====
+        // SP配置分佣模版
+        { role: 'SP', portal: 'PP-SP', center: '清结算中心', module: '返点/分佣规则', menu: '分佣模版配置', page: '分佣模版配置（列表）', functions: ['新增模版', '查看模版详情', '编辑模版'], note: 'SP预设分佣模版，签约时引用' },
+        { role: 'SP', portal: 'PP-SP', center: '清结算中心', module: '返点/分佣规则', menu: '分佣配置', page: '分佣配置', functions: ['配置分佣参数'], note: '分佣全局配置' },
+        // SP处理工单
+        { role: 'SP', portal: 'PP-SP', center: '工单中心', module: '工单处理', menu: '待我处理', page: '工单处理（列表）', functions: ['处理工单', '查看详情'], note: 'SP审批租户签约等工单' },
+        // SP配置分佣规则
+        { role: 'SP', portal: 'PP-SP', center: '清结算中心', module: '返点/分佣规则', menu: '分佣规则配置', page: '分佣规则配置（列表）', functions: ['查看详情', '修改分佣规则'], note: '针对具体租户的分佣规则' },
+        // SP查看机构签约产品
+        { role: '租户', portal: 'PP-SP', center: '合作伙伴', module: '机构伙伴', menu: '机构签约产品', page: '机构签约产品（列表）', functions: ['查看产品能力', '查看标准费率', '查看标准汇率'], note: 'SP查看机构伙伴的签约产品信息' },
+    ]},
+    { id: 'flow4a', num: '4', label: '四、商户登录注册', items: [
+        // 商户注册登录
+        { role: '商户', portal: 'MP', center: '/', module: '登录注册', menu: '/', page: '注册', functions: ['手机号注册', '邮箱注册', '验证码注册', '密码注册'], note: '商户在MP端自助注册' },
+        { role: '商户', portal: 'MP', center: '/', module: '登录注册', menu: '/', page: '设置密码', functions: ['设置登录密码'], note: '验证码注册后设置密码' },
+        { role: '商户', portal: 'MP', center: '/', module: '登录注册', menu: '/', page: '登录', functions: ['手机号登录', '邮箱登录', '验证码登录', '密码登录'], note: '' },
+        // 商户个人信息
+        { role: '商户', portal: 'MP', center: '/', module: 'User', menu: 'Personal Profile', page: '个人信息', functions: ['绑定/修改手机号', '绑定/修改邮箱', '开通/关闭2FA（身份验证器）', '修改昵称'], note: '商户个人账户设置' },
+        { role: '商户', portal: 'MP', center: '/', module: 'User', menu: 'Personal Profile', page: '关联商户（列表）', functions: ['查看关联商户', '切换商户'], note: '一个用户可关联多个商户' },
+        // 商户用户权限
+        { role: '商户', portal: 'MP', center: '设置中心', module: '用户权限', menu: '用户管理', page: '用户管理（列表）', functions: ['新增用户', '编辑用户', '禁用/启用用户', '重置密码'], note: '' },
+        { role: '商户', portal: 'MP', center: '设置中心', module: '用户权限', menu: '角色管理', page: '角色管理（列表）', functions: ['新增角色', '编辑角色', '删除角色', '配置权限'], note: '' },
+        // 租户查看商户用户
+        { role: '租户', portal: 'PP-TP', center: '客户中心', module: '商户用户', menu: '商户管理', page: '商户用户查询（列表）', functions: ['查询商户用户', '查看用户详情'], note: 'TP查看其下商户的用户信息' },
+    ]},
+    { id: 'flow5', num: '5', label: '五、商户开通产品', items: [
+        // 商户开通产品
+        { role: '商户', portal: 'MP', center: '/', module: '产品管理', menu: '/', page: '开通产品', functions: ['提交KYC信息', '提交产品开通信息'], note: '商户在MP端申请开通产品' },
+        { role: '商户', portal: 'MP', center: '/', module: '产品管理', menu: '/', page: '开通后落地页面', functions: ['查看开通结果', '引导下一步操作'], note: '产品开通成功/失败结果页' },
+        { role: '商户', portal: 'MP', center: '/', module: '产品管理', menu: '/', page: '产品开通列表', functions: ['查看已开通产品', '查看开通状态'], note: '商户已申请/已开通的产品列表' },
+        // 租户(TP)管理商户产品
+        { role: '租户', portal: 'PP-TP', center: '客户中心', module: '商户产品查询', menu: '商户查询', page: '商户查询（列表）', functions: ['查看商户详情'], note: 'TP查看商户基本信息' },
+        { role: '租户', portal: 'PP-TP', center: '客户中心', module: '商户产品查询', menu: '商户管理', page: '商户管理（列表）', functions: ['商户开通产品', '产品状态变更'], note: 'TP为商户开通/管理产品' },
+        // 租户(SP)查看商户
+        { role: '租户', portal: 'PP-SP', center: '客户中心', module: '商户产品查询', menu: '商户查询', page: '商户查询（列表）', functions: ['查看商户详情'], note: 'SP查看商户信息（只读）' },
+        // 合规审核
+        { role: '租户', portal: 'PP-SP', center: '合规风控中心', module: '工单审核', menu: '—', page: '—', functions: ['略过'], note: '合规风控审核流程后续补充' },
+    ]},
+    { id: 'flow6', num: '6', label: '六、商户交易', items: [
+        // ===== 商户（MP）=====
+        // 订单管理
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '对应产品菜单', page: '订单查询（列表）', functions: ['创建订单', '查看详情', '发起退款（如有）', '取消订单（如有）'], note: '不同产品对应不同商户单列表' },
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '对应产品菜单', page: '创建订单', functions: ['填写订单信息', '提交订单'], note: '创建订单表单页' },
+
+        // 收款人管理
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '收款人管理', page: '收款人管理（列表）', functions: ['新增收款人', '查看详情', '编辑', '删除'], note: '' },
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '收款人管理', page: '新增收款人', functions: ['填写收款人信息', '提交'], note: '' },
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '收款人管理', page: '收款人详情', functions: ['查看收款人信息'], note: '' },
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '收款人管理', page: '已删除收款人（列表）', functions: ['恢复'], note: '' },
+
+        // VA管理
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: 'VA管理', page: 'VA列表', functions: ['创建VA', '查看详情', '修改昵称', '删除VA（隐藏）', '下载账户证明信'], note: '' },
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: 'VA管理', page: '创建VA', functions: ['填写VA信息', '提交'], note: '' },
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: 'VA管理', page: 'VA详情', functions: ['查看VA信息'], note: '' },
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: 'VA管理', page: '账户证明信', functions: ['下载证明信'], note: '' },
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: 'VA管理', page: '已删除VA（列表）', functions: ['恢复'], note: '' },
+
+        // 卡管理
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '卡管理', page: '卡列表', functions: ['创建卡', '充值到卡', '卡余额转出', '卡片注销（单个/批量）', '卡片冻结（单个/批量）', '修改3DS验证号码', '删除卡片（单个/批量）', '查看卡信息（单个/批量）', '修改限额', '排序', '展示卡已使用额度', '下载卡账单'], note: '' },
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '卡管理', page: '卡片详情', functions: ['查看卡片信息'], note: '' },
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '卡管理', page: '卡对账单', functions: ['查看对账单'], note: '' },
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '卡管理', page: '修改限额', functions: ['修改卡片限额'], note: '' },
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '卡管理', page: '已删除的卡（列表）', functions: ['恢复'], note: '' },
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '卡管理', page: '共享账户列表', functions: ['充值到共享账户', '账户转出', '修改昵称', '账户统计信息', '查看卡用户'], note: '' },
+
+        // ===== 租户 PP-TP =====
+        // 商户单查询
+        { role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: '商户单查询', page: '订单查询（列表）', functions: ['查看详情'], note: '不同订单不同菜单' },
+
+        // 商户收款人查询
+        { role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: '商户收款人查询', page: '收款人查询（列表）', functions: ['查看详情'], note: '' },
+        { role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: '商户收款人查询', page: '收款人详情', functions: ['查看收款人信息'], note: '' },
+
+        // VA管理
+        { role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: 'VA管理', page: 'VA列表', functions: ['查看详情', '下载账户证明信（帮客户下）'], note: '' },
+        { role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: 'VA管理', page: 'VA详情', functions: ['查看VA信息'], note: '' },
+        { role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: 'VA管理', page: '账户证明信', functions: ['下载证明信'], note: '' },
+
+        // 卡管理
+        { role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: '卡管理', page: '卡列表', functions: ['展示卡已使用额度', '下载卡账单'], note: '' },
+        { role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: '卡管理', page: '共享账户列表', functions: ['账户统计信息', '查看卡用户'], note: '' },
+
+        // ===== 服务商 PP-SP =====
+        // 商户单查询
+        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '商户单查询', page: '订单查询（列表）', functions: ['查看详情'], note: '不同订单不同菜单' },
+
+        // 商户收款人查询
+        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '商户收款人查询', page: '收款人查询（列表）', functions: ['查看详情'], note: '' },
+        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '商户收款人查询', page: '收款人详情', functions: ['查看收款人信息'], note: '' },
+
+        // VA查询
+        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: 'VA查询', page: 'VA列表', functions: ['查看详情', '下载账户证明信（帮客户下）'], note: '' },
+        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: 'VA查询', page: 'VA详情', functions: ['查看VA信息'], note: '' },
+        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: 'VA查询', page: '账户证明信', functions: ['下载证明信'], note: '' },
+
+        // 卡查询
+        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '卡查询', page: '卡列表', functions: ['展示卡已使用额度', '下载卡账单'], note: '' },
+        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '卡查询', page: '共享账户列表', functions: ['账户统计信息', '查看卡用户'], note: '' },
+
+        // 交易单查询
+        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '交易单查询', page: '交易单查询（列表）', functions: ['查看详情'], note: '不同订单不同菜单' },
+
+        // 渠道单查询
+        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '渠道单查询', page: '渠道单管理（列表）', functions: ['查看详情', '切换渠道', '更新渠道单状态', '退票'], note: '不同产品单不同菜单' },
+        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '渠道单查询', page: '退票', functions: ['发起退票'], note: '' },
+        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '渠道单查询', page: '查看详情', functions: ['查看渠道单详情'], note: '' },
+        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '渠道单查询', page: '处理退款', functions: ['处理退款'], note: '' },
+
+        // 清结算中心 - 对账管理
+        { role: '服务商', portal: 'PP-SP', center: '清结算中心', module: '对账管理', menu: '渠道对账', page: '渠道对账', functions: ['待定'], note: '功能待定' },
+
+        // 合规风控
+        { role: '服务商', portal: 'PP-SP', center: '合规风控中心', module: '工单审核', menu: '工单审核', page: '工单审核', functions: ['审核工单'], note: '' },
+    ]},
+];
+
+// Portal display order & config (per-flow)
+const defaultPortalOrder = ['SA', 'PP-SP', 'PP-TP', 'MP'];
+const flowPortalOrder = {
+    flow3:  ['PP-TP', 'SA', 'PP-SP'],
+    flow4a: ['MP', 'PP-TP', 'PP-SP', 'SA'],
+    flow5:  ['MP', 'PP-TP', 'PP-SP', 'SA'],
+    flow6:  ['MP', 'PP-TP', 'PP-SP', 'SA'],
+};
+function getPortalOrder(flowId) { return flowPortalOrder[flowId] || defaultPortalOrder; }
+const portalConfig = {
+    'SA':    { label: 'SA 管理后台',  cls: 'portal-sa', icon: '⚙️' },
+    'PP-SP': { label: 'PP（SP端）',   cls: 'portal-sp', icon: '🏦' },
+    'PP-TP': { label: 'PP（TP端）',   cls: 'portal-tp', icon: '🏢' },
+    'MP':    { label: 'MP 商户端',    cls: 'portal-mp', icon: '🏪' },
+};
+
+let currentFlow = 'flow1';
+
+// ========== Render ==========
+function renderFlowNav() {
+    const nav = document.getElementById('flowNav');
+    nav.innerHTML = flows.map(f =>
+        `<button class="flow-btn ${f.id === currentFlow ? 'active' : ''}" onclick="switchFlow('${f.id}')">
+            <span class="num">${f.num}</span>${f.label}
+        </button>`
+    ).join('');
+}
+
+function switchFlow(id) {
+    currentFlow = id;
+    renderFlowNav();
+    renderContent();
+}
+
+function renderContent() {
+    const flow = flows.find(f => f.id === currentFlow);
+    if (!flow) return;
+
+    // Group items by portal
+    const byPortal = {};
+    flow.items.forEach(item => {
+        if (!byPortal[item.portal]) byPortal[item.portal] = [];
+        byPortal[item.portal].push(item);
+    });
+
+    // Summary
+    const summaryEl = document.getElementById('summary');
+    let totalItems = flow.items.length;
+    const portalOrder = getPortalOrder(currentFlow);
+    let portalCounts = {};
+    portalOrder.forEach(p => { portalCounts[p] = (byPortal[p] || []).length; });
+    summaryEl.innerHTML = `
+        <div class="sum-card"><div class="label">当前流程</div><div class="val" style="font-size:16px;color:var(--accent)">${flow.label}</div></div>
+        <div class="sum-card"><div class="label">总页面数</div><div class="val">${totalItems}</div></div>
+        ${portalOrder.map(p => `<div class="sum-card"><div class="label">${portalConfig[p].icon} ${portalConfig[p].label}</div><div class="val">${portalCounts[p]}</div></div>`).join('')}
+    `;
+
+    // Content
+    const contentEl = document.getElementById('content');
+    if (totalItems === 0) {
+        contentEl.innerHTML = '<div class="empty">该流程暂无功能数据</div>';
+        return;
+    }
+
+    let html = '';
+    portalOrder.forEach(portal => {
+        const items = byPortal[portal];
+        if (!items || items.length === 0) return;
+
+        const cfg = portalConfig[portal];
+        html += `<div class="portal-section ${cfg.cls}">
+            <div class="portal-header" onclick="togglePortal(this)">
+                <span style="font-size:18px">${cfg.icon}</span>
+                <h2>${cfg.label}</h2>
+                <span class="badge">${items.length} 个页面</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="portal-body">
+                <table class="ft">
+                    <thead><tr>
+                        <th style="width:60px">角色</th>
+                        <th style="width:100px">中心</th>
+                        <th style="width:110px">模块</th>
+                        <th style="width:140px">菜单</th>
+                        <th style="width:180px">页面</th>
+                        <th style="min-width:200px">功能</th>
+                        <th style="min-width:140px">说明</th>
+                    </tr></thead>
+                    <tbody>`;
+
+        items.forEach(item => {
+            const roleClass = item.role === 'EX' ? 'tag-role-ex' : (item.role === 'SP' || item.role === '服务商') ? 'tag-role-sp' : item.role === '租户' ? 'tag-role-tp' : 'tag-role-merchant';
+            const centerHtml = item.center === '/' ? '<span style="color:var(--text-m)">—</span>' : `<span class="tag tag-center">${item.center}</span>`;
+            const menuHtml = item.menu === '/' || item.menu === '—' ? '<span style="color:var(--text-m)">—</span>' : item.menu;
+            const funcHtml = item.functions.map(fn => `<li>${fn}</li>`).join('');
+
+            html += `<tr>
+                <td><span class="tag ${roleClass}">${item.role}</span></td>
+                <td>${centerHtml}</td>
+                <td style="font-weight:500">${item.module}</td>
+                <td>${menuHtml}</td>
+                <td class="page-name">${item.page}</td>
+                <td><ul class="fn-list">${funcHtml}</ul></td>
+                <td class="note">${item.note}</td>
+            </tr>`;
+        });
+
+        html += `</tbody></table></div></div>`;
+    });
+
+    contentEl.innerHTML = html;
+}
+
+function togglePortal(header) {
+    header.parentElement.classList.toggle('collapsed');
+}
+
+// Init
+renderFlowNav();
+renderContent();
+</script>
+</body>
+</html>

@@ -91,6 +91,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
 .tag-auth { background: var(--orange-bg); color: var(--orange); }
 .tag-workflow { background: var(--pink-bg); color: var(--pink); }
 .tag-readonly { background: var(--border-light); color: var(--text-m); }
+.tag-licensed { background: var(--accent-bg); color: var(--accent); }
 
 .func-list { margin: 0; padding: 0; list-style: none; }
 .func-list li { padding: 2px 0; display: flex; align-items: flex-start; gap: 6px; font-size: 12px; color: var(--text-s); }
@@ -136,6 +137,97 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
 
     <!-- ==================== 概览与定义 ==================== -->
     <div class="center-section active" id="sec-overview">
+
+        <!-- 角色定义 -->
+        <div class="concept-section">
+            <div class="concept-card">
+                <h2><span class="dot" style="background:var(--green)"></span>角色定义：SP、TP、商户</h2>
+                <div class="def-grid">
+                    <div class="def-block">
+                        <h3><span class="icon" style="background:var(--green-bg);color:var(--green)">🔌</span>SP（服务商 / Service Provider）</h3>
+                        <p><strong>将能力集成到 EX 平台的机构。</strong></p>
+                        <ul>
+                            <li><strong>本质</strong>：能力提供方，通过 API 或系统对接集成到 EX</li>
+                            <li><strong>类别</strong>：支付服务商、物流服务商、风控服务商等（当前仅考虑支付服务商）</li>
+                            <li><strong>牌照</strong>：支付服务商一定持牌</li>
+                            <li><strong>后台</strong>：EX 为每个 SP 提供 SP 后台；也可选择纯 API 对接</li>
+                            <li><strong>与 TP 无关</strong>：SP 身份独立于 TP 身份，SP 不一定是 TP</li>
+                        </ul>
+                        <div class="callout" style="margin-top:10px;padding:10px 14px">
+                            <div class="callout-title">SP 的两种使用模式</div>
+                            <p><strong>基础模式</strong>：SP 后台（商户/交易/计费数据同步），无清算/合规/工单中心<br>
+                            <strong>付费购买 EX 整套系统</strong>：可包含清算中心、合规风控中心、渠道中心、财资中心等</p>
+                        </div>
+                    </div>
+                    <div class="def-block">
+                        <h3><span class="icon" style="background:var(--cyan-bg);color:var(--cyan)">🏢</span>TP（租户 / Tenant）</h3>
+                        <p><strong>购买 EX 能力的机构。</strong>TP 是 EX 对使用其他 SP 能力的客户的统一称呼。</p>
+                        <ul>
+                            <li><strong>本质</strong>：EX 的一类客户，使用 EX 平台的能力来服务自己的客户</li>
+                            <li><strong>与 SP 的关系</strong>：TP 通过签约 SP 的产品来获得支付能力</li>
+                            <li><strong>可选 SP 身份</strong>：TP 可以同时是 SP（将自己的能力也集成到 EX）</li>
+                        </ul>
+                        <div class="callout" style="margin-top:10px;padding:10px 14px">
+                            <div class="callout-title">TP 与 SP 的两种合作模式</div>
+                            <p><strong>代理模式</strong>：TP 代理 SP 产品 → SP 视角 TP 是"机构代理商" → 推送商户给 SP → SP 清算<br>
+                            <strong>直接合作模式</strong>：TP 用自己牌照 → SP 视角 TP 是"机构商户" → TP 自己管商户 → TP 自己清算<br>
+                            <em>同一个 TP 可以同时使用两种模式（跟部分 SP 代理，跟部分 SP 直接合作）</em></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 机构类型全景 -->
+                <div class="callout" style="margin-top:16px">
+                    <div class="callout-title">🏛️ 机构类型全景</div>
+                    <table class="perm-table" style="margin-top:8px">
+                        <thead><tr><th>机构类型</th><th>身份</th><th>牌照</th><th>说明</th><th>举例</th></tr></thead>
+                        <tbody>
+                            <tr><td style="font-weight:600">纯 SP</td><td>SP only</td><td>✅（支付）</td><td>只把能力集成到 EX，没有自己的终端客户</td><td>某支付网关公司</td></tr>
+                            <tr><td style="font-weight:600">纯代理 TP</td><td>TP only</td><td>❌ 或 ✅</td><td>所有产品都代理 SP（即使持牌，未用自己牌照服务客户）</td><td>鲲鹏</td></tr>
+                            <tr><td style="font-weight:600">持牌 TP</td><td>TP only</td><td>✅</td><td>有牌照，用自己牌照服务客户，SP 是渠道</td><td>（独立持牌机构）</td></tr>
+                            <tr><td style="font-weight:600">TP + SP</td><td>TP + SP</td><td>✅</td><td>有自己的客户（TP）+ 把能力集成到 EX（SP）</td><td>IPL、BB</td></tr>
+                            <tr><td style="font-weight:600">混合 TP</td><td>TP（部分代理+部分直接合作）</td><td>✅</td><td>部分产品用自己牌照（直接合作），部分产品代理 SP</td><td>有收单牌照但代理收款</td></tr>
+                            <tr><td style="font-weight:600">混合 TP + SP</td><td>TP + SP（混合模式）</td><td>✅</td><td>混合 TP + 同时也是 SP</td><td>复杂大型机构</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 各中心可见性矩阵 -->
+                <div class="callout" style="margin-top:16px">
+                    <div class="callout-title">👁️ 各中心可见性矩阵（TP 端）</div>
+                    <table class="perm-table" style="margin-top:8px">
+                        <thead><tr><th>中心</th><th>纯代理 TP</th><th>持牌 TP</th><th>TP+SP</th><th>可见条件</th></tr></thead>
+                        <tbody>
+                            <tr><td style="font-weight:600">产品中心</td><td>✅</td><td>✅</td><td>✅</td><td>所有 TP</td></tr>
+                            <tr><td style="font-weight:600">客户中心</td><td>✅</td><td>✅</td><td>✅</td><td>所有 TP</td></tr>
+                            <tr><td style="font-weight:600">清算中心</td><td>❌</td><td>✅</td><td>✅</td><td><code>usesOwnLicense = true</code></td></tr>
+                            <tr><td style="font-weight:600">合规风控中心</td><td>❌</td><td>✅</td><td>✅</td><td><code>usesOwnLicense = true</code></td></tr>
+                            <tr><td style="font-weight:600">渠道中心</td><td>❌</td><td>✅</td><td>✅</td><td><code>usesOwnLicense = true</code>（SP 就是渠道）</td></tr>
+                            <tr><td style="font-weight:600">财资中心</td><td>❌</td><td>✅</td><td>✅</td><td><code>usesOwnLicense = true</code></td></tr>
+                            <tr><td style="font-weight:600">工作流中心</td><td>❌</td><td>❌</td><td>❌</td><td>SA 管理后台 only</td></tr>
+                        </tbody>
+                    </table>
+                    <p style="margin-top:8px;font-size:12px;color:var(--text-s)"><strong>混合 TP</strong>：只要有任何一条产品线通过自己的牌照能力服务客户，就 <code>usesOwnLicense = true</code>，看到所有中心。</p>
+                    <p style="font-size:12px;color:var(--red)"><strong>注意</strong>：持牌 ≠ usesOwnLicense。一个机构可能持有牌照，但如果所有产品都代理其他 SP 的能力（未用自己牌照服务客户），则实际上是代理 TP，不会看到清算/合规/渠道/财资中心。</p>
+                </div>
+
+                <!-- SP 端可见性 -->
+                <div class="callout" style="margin-top:16px">
+                    <div class="callout-title">👁️ 各中心可见性矩阵（SP 端）</div>
+                    <table class="perm-table" style="margin-top:8px">
+                        <thead><tr><th>中心</th><th>SP（基础模式）</th><th>SP（付费整套）</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr><td style="font-weight:600">SP 后台</td><td>✅</td><td>✅</td><td>所有 SP 都有</td></tr>
+                            <tr><td style="font-weight:600">清算中心</td><td>❌</td><td>✅</td><td>付费购买</td></tr>
+                            <tr><td style="font-weight:600">合规风控中心</td><td>❌</td><td>✅</td><td>付费购买</td></tr>
+                            <tr><td style="font-weight:600">渠道中心</td><td>❌</td><td>✅</td><td>付费购买</td></tr>
+                            <tr><td style="font-weight:600">财资中心</td><td>❌</td><td>✅</td><td>付费购买</td></tr>
+                            <tr><td style="font-weight:600">工作流中心</td><td>❌</td><td>❌</td><td>SA 管理后台 only</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
 
         <!-- 会员定义 -->
         <div class="concept-section">
@@ -195,20 +287,25 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
                     </div>
                     <div class="def-block">
                         <h3><span class="icon" style="background:var(--accent-bg);color:var(--accent)">⚙️</span>清算中心</h3>
-                        <p><strong>职责：</strong>SP 视角的订单处理、商户账户管理、对账、费率/汇率/返点配置与汇率源管理。</p>
+                        <p><strong>职责：</strong>管理商户订单处理、商户账户管理、对账、费率/汇率/返点配置与汇率源管理。</p>
                         <ul>
+                            <li><strong>持牌 TP</strong>：管理自己会员的清算（用自己牌照服务客户时）</li>
+                            <li><strong>SP（付费整套）</strong>：管理被推送商户的清算</li>
                             <li>商户订单管理（收款/付款/承兑订单 + 交易单 + 渠道单）</li>
                             <li>商户账户与钱包（余额查询/流水/管理/冻结解冻）</li>
                             <li>对账管理（商户对账/渠道对账/差错处理）</li>
                             <li>产品费率/汇率/返点配置</li>
                             <li>汇率源管理</li>
+                            <li>审批工单（费率/汇率/返点变更审批）</li>
                         </ul>
-                        <div style="margin-top:8px;font-size:12px;color:var(--red)">⛔ 边界：清算中心整体 requireSP=true，纯 TP 无此中心；余额管理/对账/费率汇率配置等操作仅限 SP</div>
+                        <div style="margin-top:8px;font-size:12px;color:var(--red)">⛔ 边界：清算中心 <code>usesOwnLicense=true</code> 或 SP 付费整套；纯代理 TP 无此中心</div>
                     </div>
                     <div class="def-block">
                         <h3><span class="icon" style="background:var(--teal-bg);color:var(--teal)">🛡️</span>合规风控中心</h3>
-                        <p><strong>职责：</strong>作为 SP，基于风险处置对所有商户进行合规运营管理。</p>
+                        <p><strong>职责：</strong>基于风险处置对所有商户进行合规运营管理。</p>
                         <ul>
+                            <li><strong>持牌 TP</strong>：客户合规运营（用自己牌照服务客户时）</li>
+                            <li><strong>SP（付费整套）</strong>：管理被推送商户的合规</li>
                             <li>商户基本信息管理（风险处置 + RFI）</li>
                             <li>商户余额管理（冻结/止入止出/监控）</li>
                             <li>商户产品管理（关闭/限制产品能力）</li>
@@ -216,30 +313,35 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
                             <li>贸易背景资料管理（贸易订单/文件/店铺/持有人）</li>
                             <li>RFI 管理（商户信息/VA/支付订单/收款人/发卡）</li>
                             <li>渠道运营（渠道订单查询 + 渠道调单管理）</li>
+                            <li>审批工单（商户发起 → 合规初审 → 合规复审）</li>
                         </ul>
-                        <div style="margin-top:8px;font-size:12px;color:var(--red)">⛔ 边界：合规风控中心整体 requireSP=true，纯 TP 无此中心；合规侧余额管理与清算中心独立</div>
+                        <div style="margin-top:8px;font-size:12px;color:var(--red)">⛔ 边界：合规风控中心 <code>usesOwnLicense=true</code> 或 SP 付费整套；纯代理 TP 无此中心；合规侧余额管理与清算中心独立</div>
                     </div>
                     <div class="def-block">
                         <h3><span class="icon" style="background:var(--cyan-bg);color:var(--cyan)">🔌</span>渠道中心</h3>
-                        <p><strong>职责：</strong>作为 SP，管理渠道接入、渠道能力、路由策略与渠道订单查询。</p>
+                        <p><strong>职责：</strong>管理渠道接入、渠道能力、路由策略与渠道订单查询。</p>
                         <ul>
-                            <li><strong>渠道管理</strong>：管理外部 Channel 的基本信息、状态、对接配置</li>
-                            <li><strong>渠道能力</strong>：分两类——EX 内部 SP 能力（签约时已确定）+ 外部 Channel 能力</li>
+                            <li><strong>持牌 TP</strong>：各 SP 就是渠道（EX 内部 SP 模式，能力自动同步）</li>
+                            <li><strong>SP（付费整套）</strong>：外部 Channel + 其他 EX 内部 SP</li>
+                            <li><strong>渠道管理</strong>：管理渠道的基本信息、状态、对接配置</li>
+                            <li><strong>渠道能力</strong>：EX 内部 SP 能力（自动同步，只读）+ 外部 Channel 能力（手动配置）</li>
                             <li><strong>渠道路由</strong>：配置路由规则（优先级、权重、条件路由、降级策略）</li>
                             <li><strong>渠道订单查询</strong>：运营视角查询渠道侧订单（含其他 SP 和 Channel 的订单）</li>
                         </ul>
-                        <div style="margin-top:8px;font-size:12px;color:var(--red)">⛔ 边界：渠道中心 requireSP=true；渠道中心管"通道接入与路由"，清算中心管"订单处理与资金对账"</div>
+                        <div style="margin-top:8px;font-size:12px;color:var(--red)">⛔ 边界：渠道中心 <code>usesOwnLicense=true</code> 或 SP 付费整套；渠道中心管"通道接入与路由"，清算中心管"订单处理与资金对账"</div>
                     </div>
                     <div class="def-block">
                         <h3><span class="icon" style="background:var(--orange-bg);color:var(--orange)">💰</span>财资中心</h3>
-                        <p><strong>职责：</strong>作为 SP，管理自有资金（非商户资金），包括头寸、调拨、备付金与外汇。</p>
+                        <p><strong>职责：</strong>管理自有资金（非商户资金），包括头寸、调拨、备付金与外汇。</p>
                         <ul>
+                            <li><strong>持牌 TP</strong>：管理自有资金（用自己牌照服务客户时）</li>
+                            <li><strong>SP（付费整套）</strong>：管理 SP 自有资金</li>
                             <li><strong>头寸管理</strong>：查看各渠道/银行的资金头寸、余额监控、预警</li>
                             <li><strong>资金调拨</strong>：发起资金调拨（渠道间/银行间）、审批、查看调拨记录</li>
                             <li><strong>备付金管理</strong>：备付金账户余额、充值/提现记录、监管报表</li>
                             <li><strong>外汇管理</strong>：外汇头寸、购汇/结汇操作、汇率锁定</li>
                         </ul>
-                        <div style="margin-top:8px;font-size:12px;color:var(--red)">⛔ 边界：财资中心 requireSP=true；财资中心管"SP 自有资金"，清算中心管"商户资金"</div>
+                        <div style="margin-top:8px;font-size:12px;color:var(--red)">⛔ 边界：财资中心 <code>usesOwnLicense=true</code> 或 SP 付费整套；财资中心管"自有资金"，清算中心管"商户资金"</div>
                     </div>
                     <div class="def-block">
                         <h3><span class="icon" style="background:var(--pink-bg);color:var(--pink)">🔄</span>工作流中心（Workflow）</h3>
@@ -263,20 +365,21 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
                 <div class="boundary-box">
                     <h4>🚫 中心间边界红线</h4>
                     <ul>
-                        <li><strong>产品中心 vs 客户中心</strong>：产品中心管“产品上架与市场”，客户中心管“商户的产品开通与配置”</li>
-                        <li><strong>客户中心内部分工</strong>：商户查询管“只读查询（含订单/贸易背景）”，会员管理管“配置申请 + 返点分佣查询”</li>
+                        <li><strong>SP vs TP</strong>：SP 是能力提供方，TP 是能力使用方；两者独立，可组合</li>
+                        <li><strong>代理 vs 直接合作</strong>：代理 = 推送商户给 SP；直接合作 = TP 自己管商户，SP 是渠道</li>
+                        <li><strong>会员 vs 商户</strong>：同一客户，TP 视角叫会员，SP 视角叫商户</li>
+                        <li><strong>usesOwnLicense 控制</strong>：通过自己牌照服务客户的 TP 有清算/合规/渠道/财资中心；纯代理 TP 没有（即使持牌）</li>
+                        <li><strong>SP 基础 vs 付费</strong>：SP 基础模式只有 SP 后台；付费后可获得整套中心能力</li>
+                        <li><strong>产品中心 vs 客户中心</strong>：产品中心管"产品上架与市场"，客户中心管"商户的产品开通与配置"</li>
+                        <li><strong>产品中心 vs 渠道中心</strong>：产品中心管"卖什么给商户"（前端），渠道中心管"用什么能力交付"（后端）</li>
+                        <li><strong>客户中心内部分工</strong>：商户查询管"只读查询（含订单/贸易背景）"，会员管理管"配置申请 + 返点分佣查询"</li>
                         <li><strong>工作流中心 vs 各领域</strong>：工作流中心只定义流程模板；审批工单在各领域中心内处理（清算审批在清算中心，合规审批在合规中心）</li>
                         <li><strong>会员管理仅限 TP</strong>：SP 不维护会员关系，SP 侧只有商户查询（只读 + 授权数据）</li>
-                        <li><strong>客户中心 vs 清算中心</strong>：客户中心管“只读查询 + 配置申请”，清算中心管“订单管理 + 余额操作 + 对账 + 费率汇率配置”</li>
-                        <li><strong>清算中心 requireSP</strong>：清算中心整体仅 SP 可见，纯 TP 无此中心</li>
-                        <li><strong>客户中心 vs 清算中心费率/汇率</strong>：客户中心管“会员级别配置”（TP 视角），清算中心管“产品标准配置 + SP 视角的会员配置”</li>
-                        <li><strong>合规风控中心 requireSP</strong>：合规风控中心整体仅 SP 可见，基于风险处置商户信息/余额/产品/订单/贸易背景 + RFI</li>
+                        <li><strong>客户中心 vs 清算中心</strong>：客户中心管"只读查询 + 配置申请"，清算中心管"订单管理 + 余额操作 + 对账 + 费率汇率配置"</li>
+                        <li><strong>清算中心 vs 财资中心</strong>：清算中心管"商户资金"（余额/流水/对账），财资中心管"自有资金"（头寸/调拨/备付金/外汇）</li>
                         <li><strong>合规风控 vs 清算中心</strong>：合规侧余额管理与清算侧独立，合规侧基于风险处置，清算侧基于业务运营</li>
                         <li><strong>渠道中心 vs 清算中心</strong>：渠道中心管"通道接入、能力配置、路由策略"，清算中心管"商户订单处理与资金对账"</li>
                         <li><strong>渠道中心 vs 合规风控</strong>：渠道中心的渠道订单查询是运营视角（日常查询），合规的渠道运营是风险视角（调单处理）</li>
-                        <li><strong>渠道中心 requireSP</strong>：渠道中心整体仅 SP 可见，纯 TP 无此中心</li>
-                        <li><strong>财资中心 vs 清算中心</strong>：财资中心管"SP 自有资金"（头寸/调拨/备付金/外汇），清算中心管"商户资金"（余额/流水/对账）</li>
-                        <li><strong>财资中心 requireSP</strong>：财资中心整体仅 SP 可见，纯 TP 无此中心</li>
                     </ul>
                 </div>
             </div>
@@ -972,8 +1075,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
 
         <div class="callout" style="margin:0 0 20px">
             <div class="callout-title">⚙️ 清算中心整体说明</div>
-            <p>清算中心 <strong>requireSP = true</strong>，仅 SP（服务商）可见。纯 TP（租户）无此中心。<br>
-            清算中心涵盖：商户订单管理（含交易单/渠道单）、商户账户与钱包、对账管理、费率/汇率/返点配置、汇率源管理。</p>
+            <p>清算中心 <strong>usesOwnLicense = true</strong> 或 <strong>SP 付费整套</strong>可见。纯代理 TP 无此中心（即使持牌）。<br>
+            <strong>持牌 TP</strong>：管理自己会员的清算（用自己牌照服务客户时）。<strong>SP（付费整套）</strong>：管理被推送商户的清算。<br>
+            清算中心涵盖：商户订单管理（含交易单/渠道单）、商户账户与钱包、对账管理、费率/汇率/返点配置、汇率源管理、审批工单。</p>
         </div>
 
         <!-- 1. 商户订单管理 -->
@@ -981,7 +1085,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
             <div class="menu-header" onclick="toggleMenu(this)">
                 <div class="menu-icon" style="background:var(--accent-bg)">📑</div>
                 <h3>1. 商户订单管理（一级菜单）</h3>
-                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="menu-badge tag-licensed">SP / 持牌TP</span>
                 <span class="arrow">▼</span>
             </div>
             <div class="menu-body">
@@ -1216,7 +1320,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
             <div class="menu-header" onclick="toggleMenu(this)">
                 <div class="menu-icon" style="background:var(--green-bg)">💳</div>
                 <h3>2. 商户账户与钱包（一级菜单）</h3>
-                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="menu-badge tag-licensed">SP / 持牌TP</span>
                 <span class="arrow">▼</span>
             </div>
             <div class="menu-body">
@@ -1337,7 +1441,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
             <div class="menu-header" onclick="toggleMenu(this)">
                 <div class="menu-icon" style="background:var(--cyan-bg)">📊</div>
                 <h3>3. 对账管理（一级菜单）</h3>
-                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="menu-badge tag-licensed">SP / 持牌TP</span>
                 <span class="arrow">▼</span>
             </div>
             <div class="menu-body">
@@ -1413,7 +1517,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
             <div class="menu-header" onclick="toggleMenu(this)">
                 <div class="menu-icon" style="background:var(--purple-bg)">💲</div>
                 <h3>4. 产品费率配置（一级菜单）</h3>
-                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="menu-badge tag-licensed">SP / 持牌TP</span>
                 <span class="arrow">▼</span>
             </div>
             <div class="menu-body">
@@ -1487,7 +1591,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
             <div class="menu-header" onclick="toggleMenu(this)">
                 <div class="menu-icon" style="background:var(--orange-bg)">💱</div>
                 <h3>5. 产品汇率配置（一级菜单）</h3>
-                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="menu-badge tag-licensed">SP / 持牌TP</span>
                 <span class="arrow">▼</span>
             </div>
             <div class="menu-body">
@@ -1604,7 +1708,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
             <div class="menu-header" onclick="toggleMenu(this)">
                 <div class="menu-icon" style="background:var(--pink-bg)">🎁</div>
                 <h3>6. 产品返点配置（一级菜单）</h3>
-                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="menu-badge tag-licensed">SP / 持牌TP</span>
                 <span class="arrow">▼</span>
             </div>
             <div class="menu-body">
@@ -1678,7 +1782,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
             <div class="menu-header" onclick="toggleMenu(this)">
                 <div class="menu-icon" style="background:var(--teal-bg)">🌐</div>
                 <h3>7. 汇率源（一级菜单）</h3>
-                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="menu-badge tag-licensed">SP / 持牌TP</span>
                 <span class="arrow">▼</span>
             </div>
             <div class="menu-body">
@@ -1730,7 +1834,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
             <div class="menu-header" onclick="toggleMenu(this)">
                 <div class="menu-icon" style="background:var(--pink-bg)">📋</div>
                 <h3>审批工单（一级菜单）</h3>
-                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="menu-badge tag-licensed">SP / 持牌TP</span>
                 <span class="arrow">▼</span>
             </div>
             <div class="menu-body">
@@ -1794,8 +1898,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
 
         <div class="callout" style="margin:0 0 20px">
             <div class="callout-title">🛡️ 合规风控中心整体说明</div>
-            <p>合规风控中心面向 <strong>SP（服务商）</strong>，基于风险处置对所有商户进行合规运营管理。<br>
-            包含：商户信息管理、余额管理、产品管理、支付订单管理、贸易背景资料管理、RFI 管理。</p>
+            <p>合规风控中心 <strong>usesOwnLicense = true</strong> 或 <strong>SP 付费整套</strong>可见。纯代理 TP 无此中心（即使持牌）。<br>
+            <strong>持牌 TP</strong>：客户合规运营（用自己牌照服务客户时）。<strong>SP（付费整套）</strong>：管理被推送商户的合规。<br>
+            包含：商户信息管理、余额管理、产品管理、支付订单管理、贸易背景资料管理、RFI 管理、渠道运营、审批工单。</p>
         </div>
 
         <!-- 1. 商户基本信息管理 -->
@@ -1803,7 +1908,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
             <div class="menu-header" onclick="toggleMenu(this)">
                 <div class="menu-icon" style="background:var(--cyan-bg)">👤</div>
                 <h3>1. 商户基本信息管理（一级菜单）</h3>
-                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="menu-badge tag-licensed">SP / 持牌TP</span>
                 <span class="arrow">▼</span>
             </div>
             <div class="menu-body">
@@ -1841,7 +1946,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
             <div class="menu-header" onclick="toggleMenu(this)">
                 <div class="menu-icon" style="background:var(--green-bg)">💳</div>
                 <h3>2. 商户余额管理（一级菜单）</h3>
-                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="menu-badge tag-licensed">SP / 持牌TP</span>
                 <span class="arrow">▼</span>
             </div>
             <div class="menu-body">
@@ -1879,7 +1984,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
             <div class="menu-header" onclick="toggleMenu(this)">
                 <div class="menu-icon" style="background:var(--purple-bg)">📦</div>
                 <h3>3. 商户产品管理（一级菜单）</h3>
-                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="menu-badge tag-licensed">SP / 持牌TP</span>
                 <span class="arrow">▼</span>
             </div>
             <div class="menu-body">
@@ -1915,7 +2020,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
             <div class="menu-header" onclick="toggleMenu(this)">
                 <div class="menu-icon" style="background:var(--accent-bg)">📑</div>
                 <h3>4. 商户支付订单管理（一级菜单）</h3>
-                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="menu-badge tag-licensed">SP / 持牌TP</span>
                 <span class="arrow">▼</span>
             </div>
             <div class="menu-body">
@@ -2018,7 +2123,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
             <div class="menu-header" onclick="toggleMenu(this)">
                 <div class="menu-icon" style="background:var(--orange-bg)">📄</div>
                 <h3>5. 贸易背景资料管理（一级菜单）</h3>
-                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="menu-badge tag-licensed">SP / 持牌TP</span>
                 <span class="arrow">▼</span>
             </div>
             <div class="menu-body">
@@ -2120,7 +2225,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
             <div class="menu-header" onclick="toggleMenu(this)">
                 <div class="menu-icon" style="background:var(--pink-bg)">📨</div>
                 <h3>6. RFI 管理（一级菜单）</h3>
-                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="menu-badge tag-licensed">SP / 持牌TP</span>
                 <span class="arrow">▼</span>
             </div>
             <div class="menu-body">
@@ -2246,7 +2351,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
             <div class="menu-header" onclick="toggleMenu(this)">
                 <div class="menu-icon" style="background:var(--teal-bg)">🔗</div>
                 <h3>7. 渠道运营（一级菜单）</h3>
-                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="menu-badge tag-licensed">SP / 持牌TP</span>
                 <span class="arrow">▼</span>
             </div>
             <div class="menu-body">
@@ -2307,7 +2412,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
             <div class="menu-header" onclick="toggleMenu(this)">
                 <div class="menu-icon" style="background:var(--pink-bg)">📋</div>
                 <h3>8. 审批工单（一级菜单）</h3>
-                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="menu-badge tag-licensed">SP / 持牌TP</span>
                 <span class="arrow">▼</span>
             </div>
             <div class="menu-body">
@@ -2372,9 +2477,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
 
         <div class="callout" style="margin:0 0 20px">
             <div class="callout-title">🔌 渠道中心整体说明</div>
-            <p>渠道中心面向 <strong>SP（服务商）</strong>，管理渠道接入、渠道能力、路由策略与渠道订单查询。<br>
-            渠道能力分两类：<strong>EX 内部 SP 能力</strong>（签约时已确定）和<strong>外部 Channel 能力</strong>（需独立对接配置）。<br>
-            纯 TP 无此中心。</p>
+            <p>渠道中心 <strong>usesOwnLicense = true</strong> 或 <strong>SP 付费整套</strong>可见。纯代理 TP 无此中心（即使持牌）。<br>
+            <strong>持牌 TP</strong>：各 SP 就是渠道（EX 内部 SP 模式，能力自动同步）。<strong>SP（付费整套）</strong>：外部 Channel + 其他 EX 内部 SP。<br>
+            渠道能力分两类：<strong>EX 内部 SP 能力</strong>（自动同步，只读）和<strong>外部 Channel 能力</strong>（需独立对接配置）。</p>
         </div>
 
         <!-- 1. 渠道管理 -->
@@ -2382,7 +2487,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
             <div class="menu-header" onclick="toggleMenu(this)">
                 <div class="menu-icon" style="background:var(--cyan-bg)">🏢</div>
                 <h3>1. 渠道管理（一级菜单）</h3>
-                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="menu-badge tag-licensed">SP / 持牌TP</span>
                 <span class="arrow">▼</span>
             </div>
             <div class="menu-body">
@@ -2443,7 +2548,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
             <div class="menu-header" onclick="toggleMenu(this)">
                 <div class="menu-icon" style="background:var(--green-bg)">⚡</div>
                 <h3>2. 渠道能力（一级菜单）</h3>
-                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="menu-badge tag-licensed">SP / 持牌TP</span>
                 <span class="arrow">▼</span>
             </div>
             <div class="menu-body">
@@ -2505,7 +2610,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
             <div class="menu-header" onclick="toggleMenu(this)">
                 <div class="menu-icon" style="background:var(--accent-bg)">🔀</div>
                 <h3>3. 渠道路由（一级菜单）</h3>
-                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="menu-badge tag-licensed">SP / 持牌TP</span>
                 <span class="arrow">▼</span>
             </div>
             <div class="menu-body">
@@ -2567,7 +2672,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
             <div class="menu-header" onclick="toggleMenu(this)">
                 <div class="menu-icon" style="background:var(--orange-bg)">📋</div>
                 <h3>4. 渠道订单查询（一级菜单）</h3>
-                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="menu-badge tag-licensed">SP / 持牌TP</span>
                 <span class="arrow">▼</span>
             </div>
             <div class="menu-body">
@@ -2610,10 +2715,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
 
         <div class="callout" style="margin:0 0 20px">
             <div class="callout-title">💰 财资中心整体说明</div>
-            <p>财资中心面向 <strong>SP（服务商）</strong>，管理 SP 自有资金（非商户资金）。<br>
+            <p>财资中心 <strong>usesOwnLicense = true</strong> 或 <strong>SP 付费整套</strong>可见。纯代理 TP 无此中心（即使持牌）。<br>
+            <strong>持牌 TP</strong>：管理自有资金（用自己牌照服务客户时）。<strong>SP（付费整套）</strong>：管理 SP 自有资金。<br>
             包含：头寸管理、资金调拨、备付金管理、外汇管理。<br>
-            与清算中心的区别：清算中心管"商户的钱"，财资中心管"SP 自己的钱"。<br>
-            纯 TP 无此中心。</p>
+            与清算中心的区别：清算中心管"商户的钱"，财资中心管"自己的钱"。</p>
         </div>
 
         <!-- 1. 头寸管理 -->
@@ -2621,7 +2726,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
             <div class="menu-header" onclick="toggleMenu(this)">
                 <div class="menu-icon" style="background:var(--orange-bg)">📊</div>
                 <h3>1. 头寸管理（一级菜单）</h3>
-                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="menu-badge tag-licensed">SP / 持牌TP</span>
                 <span class="arrow">▼</span>
             </div>
             <div class="menu-body">
@@ -2660,7 +2765,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
             <div class="menu-header" onclick="toggleMenu(this)">
                 <div class="menu-icon" style="background:var(--green-bg)">🔄</div>
                 <h3>2. 资金调拨（一级菜单）</h3>
-                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="menu-badge tag-licensed">SP / 持牌TP</span>
                 <span class="arrow">▼</span>
             </div>
             <div class="menu-body">
@@ -2699,7 +2804,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
             <div class="menu-header" onclick="toggleMenu(this)">
                 <div class="menu-icon" style="background:var(--purple-bg)">🏦</div>
                 <h3>3. 备付金管理（一级菜单）</h3>
-                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="menu-badge tag-licensed">SP / 持牌TP</span>
                 <span class="arrow">▼</span>
             </div>
             <div class="menu-body">
@@ -2738,7 +2843,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
             <div class="menu-header" onclick="toggleMenu(this)">
                 <div class="menu-icon" style="background:var(--cyan-bg)">💱</div>
                 <h3>4. 外汇管理（一级菜单）</h3>
-                <span class="menu-badge tag-sp">SP 服务商</span>
+                <span class="menu-badge tag-licensed">SP / 持牌TP</span>
                 <span class="arrow">▼</span>
             </div>
             <div class="menu-body">
