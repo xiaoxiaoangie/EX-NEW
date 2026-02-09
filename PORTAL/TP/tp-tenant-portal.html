@@ -856,6 +856,54 @@
                 </div>
             </div>
 
+            <!-- 工作流配置 -->
+            <div class="center-card orange" onclick="enterCenter('workflow')">
+                <div class="center-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="6" y1="3" x2="6" y2="15"/>
+                        <circle cx="18" cy="6" r="3"/>
+                        <circle cx="6" cy="18" r="3"/>
+                        <path d="M18 9a9 9 0 0 1-9 9"/>
+                    </svg>
+                </div>
+                <span class="center-badge badge-warning">3 待审</span>
+                <h3 class="center-name">工作流配置</h3>
+                <p class="center-desc">审批流程、工单管理、审批规则</p>
+                <div class="center-stats">
+                    <div class="center-stat">
+                        <span class="center-stat-value">3</span>
+                        <span class="center-stat-label">待审核</span>
+                    </div>
+                    <div class="center-stat">
+                        <span class="center-stat-value">5</span>
+                        <span class="center-stat-label">审批流程</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 下载中心 -->
+            <div class="center-card teal" onclick="enterCenter('download')">
+                <div class="center-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                </div>
+                <h3 class="center-name">下载中心</h3>
+                <p class="center-desc">下载记录、导出任务管理</p>
+                <div class="center-stats">
+                    <div class="center-stat">
+                        <span class="center-stat-value">12</span>
+                        <span class="center-stat-label">待下载</span>
+                    </div>
+                    <div class="center-stat">
+                        <span class="center-stat-value">86</span>
+                        <span class="center-stat-label">已完成</span>
+                    </div>
+                </div>
+            </div>
+
             <!-- 设置中心 -->
             <div class="center-card purple" onclick="enterCenter('settings')">
                 <div class="center-icon">
@@ -974,6 +1022,8 @@
             { id: 'sales-channel', name: '销售渠道', desc: '销售管理、普通代理商', color: 'warning', icon: 'merchant' },
             { id: 'data', name: '数据报表', desc: '报表统计', color: 'accent', icon: 'data' },
             { id: 'developer', name: '开发者中心', desc: 'API 文档、密钥', color: 'cyan', icon: 'developer' },
+            { id: 'workflow', name: '工作流配置', desc: '审批流程、工单管理', color: 'orange', icon: 'ticket' },
+            { id: 'download', name: '下载中心', desc: '下载记录、导出任务', color: 'teal', icon: 'download' },
             { id: 'settings', name: '设置中心', desc: '用户权限、协议记录', color: 'purple', icon: 'settings' }
         ];
 
@@ -992,7 +1042,8 @@
             ticket: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>',
             developer: '<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>',
             settings: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
-            risk: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>'
+            risk: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+            download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>'
         };
 
         // 颜色类映射
@@ -1186,15 +1237,6 @@
         // 管理常用页面
         function manageFavorites() {
             showNotification('点击卡片右上角的 × 可以移除常用页面');
-        }
-
-        // 进入中心
-        function enterCenter(centerId) {
-            const center = allCenters.find(c => c.id === centerId);
-            if (center) {
-                showNotification(`正在进入 ${center.name}...`);
-                // 这里可以添加实际的页面跳转逻辑
-            }
         }
 
         // 显示通知
@@ -1852,6 +1894,6 @@
         }
     </style>
 
-    <script src="tp-tenant-dashboard-v5-menus.js"></script>
+    <script src="tp-tenant-menus.js"></script>
 </body>
 </html>
