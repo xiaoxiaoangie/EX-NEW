@@ -344,142 +344,100 @@
             margin-top: 0;
         }
 
-        /* 待办和工单区域 */
+        /* 待办区域 - 紧凑横排卡片 */
         .todo-tickets-section {
-            margin-bottom: 32px;
+            margin-bottom: 24px;
         }
-        .todo-tickets-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-        .todo-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 24px;
-            transition: all 0.2s;
-        }
-        .todo-card:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-        .card-header-inline {
+        .todo-section-header {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
+            gap: 8px;
+            margin-bottom: 12px;
         }
-        .card-title-small {
-            font-size: 16px;
+        .todo-section-title {
+            font-size: 15px;
             font-weight: 600;
             color: var(--text);
-            margin: 0;
         }
-        .badge-count {
-            font-size: 12px;
+        .todo-section-count {
+            font-size: 11px;
             font-weight: 600;
-            padding: 4px 10px;
-            border-radius: 12px;
-        }
-        .badge-count.urgent {
+            padding: 2px 8px;
+            border-radius: 10px;
             background: var(--danger-bg);
             color: var(--danger);
         }
-        .badge-count.warning {
-            background: var(--warning-bg);
-            color: var(--warning);
+        .todo-cards-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
         }
-        .todo-list-compact {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .todo-item-compact {
+        .todo-mini-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px;
-            border-radius: 10px;
-            background: var(--bg-hover);
-            cursor: pointer;
-            transition: all 0.2s;
         }
-        .todo-item-compact:hover {
-            background: var(--accent-bg);
-            transform: translateX(4px);
+        .todo-mini-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         }
-        .todo-icon {
-            width: 36px;
-            height: 36px;
+        .todo-mini-icon {
+            width: 32px;
+            height: 32px;
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
         }
-        .todo-icon svg {
-            width: 18px;
-            height: 18px;
-        }
-        .todo-icon.urgent {
-            background: var(--danger-bg);
-            color: var(--danger);
-        }
-        .todo-icon.warning {
-            background: var(--warning-bg);
-            color: var(--warning);
-        }
-        .todo-icon.normal {
-            background: var(--accent-bg);
-            color: var(--accent);
-        }
-        .todo-content {
+        .todo-mini-icon svg { width: 16px; height: 16px; }
+        .todo-mini-icon.urgent { background: var(--danger-bg); color: var(--danger); }
+        .todo-mini-icon.warning { background: var(--warning-bg); color: var(--warning); }
+        .todo-mini-icon.normal { background: var(--accent-bg); color: var(--accent); }
+        .todo-mini-info {
             flex: 1;
             min-width: 0;
         }
-        .todo-title {
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text);
-            margin-bottom: 2px;
-        }
-        .todo-meta {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-        .todo-arrow {
-            font-size: 20px;
-            color: var(--text-muted);
-            flex-shrink: 0;
-        }
-        .card-footer-link {
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid var(--border);
+        .todo-mini-title {
             font-size: 13px;
             font-weight: 500;
-            color: var(--accent);
-            cursor: pointer;
-            transition: all 0.2s;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
-        .card-footer-link:hover {
-            color: var(--accent-hover);
+        .todo-mini-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 1px;
+        }
+        .todo-mini-count {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+            flex-shrink: 0;
         }
 
         /* 常用页面区域 */
         .favorites-section {
-            margin-bottom: 40px;
+            margin-bottom: 28px;
         }
         .favorites-grid {
             display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 16px;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 10px;
         }
         .favorite-card {
             background: var(--bg-card);
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            padding: 20px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 12px;
             cursor: pointer;
             transition: all 0.2s;
             position: relative;
@@ -487,8 +445,8 @@
         }
         .favorite-card:hover {
             border-color: var(--accent);
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
-            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.12);
+            transform: translateY(-1px);
         }
         .favorite-card.add-new {
             border-style: dashed;
@@ -496,42 +454,40 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 140px;
+            min-height: 90px;
         }
         .favorite-card.add-new:hover {
             border-color: var(--accent);
             background: var(--accent-bg);
         }
         .favorite-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 12px;
+            margin: 0 auto 8px;
         }
         .favorite-icon svg {
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
         }
         .favorite-name {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--text);
-            margin-bottom: 4px;
+            margin-bottom: 0;
         }
         .favorite-desc {
-            font-size: 12px;
-            color: var(--text-secondary);
-            line-height: 1.4;
+            display: none;
         }
         .favorite-remove {
             position: absolute;
-            top: 8px;
-            right: 8px;
-            width: 24px;
-            height: 24px;
+            top: 4px;
+            right: 4px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             background: var(--danger);
             color: white;
@@ -540,28 +496,28 @@
             display: none;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 12px;
         }
         .favorite-card:hover .favorite-remove {
             display: flex;
         }
         .add-icon {
-            width: 48px;
-            height: 48px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             background: var(--bg-hover);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
         .add-icon svg {
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
             color: var(--text-muted);
         }
         .add-text {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-secondary);
         }
 
@@ -620,61 +576,54 @@
 
         <!-- 待办事项 -->
         <div class="todo-tickets-section">
-            <div class="todo-card">
-                <div class="card-header-inline">
-                    <h3 class="card-title-small">📋 待办事项</h3>
-                    <span class="badge-count urgent">3</span>
+            <div class="todo-section-header">
+                <span class="todo-section-title">待办事项</span>
+                <span class="todo-section-count">3</span>
+            </div>
+            <div class="todo-cards-row">
+                <div class="todo-mini-card" onclick="handleTodoClick('member-register')">
+                    <div class="todo-mini-icon urgent">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>
+                        </svg>
+                    </div>
+                    <div class="todo-mini-info">
+                        <div class="todo-mini-title">新会员注册待确认</div>
+                        <div class="todo-mini-meta">2小时前</div>
+                    </div>
+                    <div class="todo-mini-count">3</div>
                 </div>
-                <div class="todo-list-compact">
-                    <div class="todo-item-compact" onclick="handleTodoClick('member-register')">
-                        <div class="todo-icon urgent">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"/>
-                                <path d="M12 8v4M12 16h.01"/>
-                            </svg>
-                        </div>
-                        <div class="todo-content">
-                            <div class="todo-title">新会员注册待确认</div>
-                            <div class="todo-meta">3个会员等待确认 · 2小时前</div>
-                        </div>
-                        <div class="todo-arrow">›</div>
+                <div class="todo-mini-card" onclick="handleTodoClick('contract-expire')">
+                    <div class="todo-mini-icon warning">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                        </svg>
                     </div>
-                    <div class="todo-item-compact" onclick="handleTodoClick('contract-expire')">
-                        <div class="todo-icon warning">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-                            </svg>
-                        </div>
-                        <div class="todo-content">
-                            <div class="todo-title">产品合约即将到期</div>
-                            <div class="todo-meta">2个产品合约30天内到期 · 今天</div>
-                        </div>
-                        <div class="todo-arrow">›</div>
+                    <div class="todo-mini-info">
+                        <div class="todo-mini-title">产品合约即将到期</div>
+                        <div class="todo-mini-meta">今天</div>
                     </div>
-                    <div class="todo-item-compact" onclick="handleTodoClick('settlement-pending')">
-                        <div class="todo-icon normal">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="2" y="4" width="20" height="16" rx="2"/>
-                                <path d="M12 8v8M8 12h8"/>
-                            </svg>
-                        </div>
-                        <div class="todo-content">
-                            <div class="todo-title">待处理订单</div>
-                            <div class="todo-meta">12笔订单需确认 · 昨天</div>
-                        </div>
-                        <div class="todo-arrow">›</div>
-                    </div>
+                    <div class="todo-mini-count">2</div>
                 </div>
-                <div class="card-footer-link" onclick="viewAllTodos()">
-                    查看全部待办 →
+                <div class="todo-mini-card" onclick="handleTodoClick('settlement-pending')">
+                    <div class="todo-mini-icon normal">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="4" width="20" height="16" rx="2"/><path d="M12 8v8M8 12h8"/>
+                        </svg>
+                    </div>
+                    <div class="todo-mini-info">
+                        <div class="todo-mini-title">待处理订单</div>
+                        <div class="todo-mini-meta">昨天</div>
+                    </div>
+                    <div class="todo-mini-count">12</div>
                 </div>
             </div>
         </div>
 
         <!-- 常用页面 -->
         <div class="favorites-section">
-            <div class="section-header">
-                <h2 class="section-title">常用页面</h2>
+            <div class="section-header" style="margin-bottom: 12px;">
+                <h2 class="section-title" style="font-size: 15px;">常用页面</h2>
                 <button class="btn-manage" onclick="manageFavorites()">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                     管理
@@ -684,7 +633,7 @@
         </div>
 
         <!-- 所有中心 -->
-        <div class="section-header" style="margin-top: 48px;">
+        <div class="section-header" style="margin-top: 32px;">
             <h2 class="section-title">所有中心</h2>
         </div>
 
@@ -1832,14 +1781,12 @@
         }
         @media (max-width: 900px) {
             .favorites-grid { grid-template-columns: repeat(3, 1fr); }
-            .todo-tickets-grid { grid-template-columns: 1fr; }
             .products-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
             .product-list-header { flex-direction: column; align-items: stretch; }
             .product-search { max-width: 100%; }
         }
         @media (max-width: 600px) {
             .favorites-grid { grid-template-columns: repeat(2, 1fr); }
-            .todo-tickets-grid { grid-template-columns: 1fr; }
             .products-grid { grid-template-columns: 1fr; }
             .product-filters { flex-wrap: wrap; }
             .product-detail-header { flex-direction: column; text-align: center; }
