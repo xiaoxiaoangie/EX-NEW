@@ -238,6 +238,12 @@ const centerMenus = {
             { label: '数据导出', items: [
                 { name: '报表导出', icon: 'download' },
                 { name: '定时报表', icon: 'clock' }
+            ]},
+            { label: '下载管理', items: [
+                { name: '下载列表', icon: 'download' },
+                { name: '导出任务', icon: 'file-text' },
+                { name: '定时导出', icon: 'clock' },
+                { name: '导出模板', icon: 'file' }
             ]}
         ]
     },
@@ -323,7 +329,7 @@ const centerMenus = {
                 { name: '会员基本信息查询', icon: 'users', active: true },
                 { name: '会员开通产品', icon: 'package' }
             ]},
-            { label: '商户单查询', items: [
+            { label: '客户订单查询', items: [
                 { name: 'VA账户', icon: 'credit-card' },
                 { name: '收款商户单', icon: 'download' },
                 { name: '付款商户单', icon: 'upload' },
@@ -416,20 +422,7 @@ const centerMenus = {
             ]}
         ]
     },
-    // 下载中心
-    download: {
-        name: '下载中心',
-        groups: [
-            { label: '下载管理', items: [
-                { name: '下载列表', icon: 'download', active: true },
-                { name: '导出任务', icon: 'file-text' }
-            ]},
-            { label: '导出设置', items: [
-                { name: '定时导出', icon: 'clock' },
-                { name: '导出模板', icon: 'file' }
-            ]}
-        ]
-    },
+    
     risk: {
         name: '风控合规中心',
         groups: [
@@ -2624,6 +2617,9 @@ function renderClientBalance() {
         { mid: 'CLT20250005', name: 'Tokyo Payments Inc', currency: 'USD', available: '34,500.00', pending: '2,100.00', frozen: '0.00', total: '36,600.00' },
         { mid: 'CLT20250005', name: 'Tokyo Payments Inc', currency: 'JPY', available: '5,200,000', pending: '0', frozen: '0', total: '5,200,000' }
     ];
+    const thStyle = 'padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;';
+    const thStyleR = 'padding: 10px 14px; text-align: right; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;';
+    const tdStyle = 'padding: 10px 14px; font-size: 13px; white-space: nowrap;';
     mainContent.innerHTML = `
         <div class="page-header">
             <div class="breadcrumb"><a href="#" onclick="goBack()">首页</a> / <span>客户中心</span> / <span>客户余额</span></div>
@@ -2631,58 +2627,56 @@ function renderClientBalance() {
             <p class="page-desc">查看客户各币种账户余额</p>
         </div>
         <div class="card" style="margin-bottom: 16px;">
-            <div style="padding: 24px;">
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 16px;">
+            <div style="padding: 16px 20px;">
+                <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end;">
                     <div style="display: flex; flex-direction: column;">
-                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">客户 MID</label>
-                        <input type="text" placeholder="请输入客户MID" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">客户 MID</label>
+                        <input type="text" placeholder="客户MID" style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 150px;">
                     </div>
                     <div style="display: flex; flex-direction: column;">
-                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">客户名称</label>
-                        <input type="text" placeholder="请输入客户名称" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">客户名称</label>
+                        <input type="text" placeholder="客户名称" style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 150px;">
                     </div>
                     <div style="display: flex; flex-direction: column;">
-                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">币种</label>
-                        <select style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">币种</label>
+                        <select style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 100px;">
                             <option value="">全部</option>
                             <option>USD</option><option>EUR</option><option>CNY</option><option>JPY</option><option>GBP</option>
                             <option>USDT</option><option>BTC</option><option>ETH</option>
                         </select>
                     </div>
-                </div>
-                <div style="display: flex; gap: 12px;">
-                    <button onclick="alert('查询功能开发中')" style="padding: 8px 20px; background: #4f46e5; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: 500;">查询</button>
-                    <button onclick="alert('重置')" style="padding: 8px 20px; background: white; color: #6c757d; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: 500;">重置</button>
+                    <button onclick="alert('查询功能开发中')" style="padding: 6px 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; font-size: 13px; cursor: pointer; font-weight: 500;">查询</button>
+                    <button onclick="alert('重置')" style="padding: 6px 16px; background: white; color: #6c757d; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer;">重置</button>
                 </div>
             </div>
         </div>
         <div class="card">
             <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
                 <h2 class="card-title">余额列表</h2>
-                <button onclick="renderClientBalance()" style="padding: 6px 12px; background: white; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer; color: #6c757d;">刷新</button>
+                <button onclick="renderClientBalance()" style="padding: 5px 10px; background: white; border: 1px solid #dee2e6; border-radius: 4px; font-size: 12px; cursor: pointer; color: #6c757d;">刷新</button>
             </div>
             <div style="overflow-x: auto;">
-                <table style="width: 100%; border-collapse: collapse;">
+                <table style="min-width: 800px; width: 100%; border-collapse: collapse;">
                     <thead style="background: #f8f9fa;">
                         <tr>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">客户 MID</th>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">客户名称</th>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">币种</th>
-                            <th style="padding: 12px 16px; text-align: right; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">可用余额</th>
-                            <th style="padding: 12px 16px; text-align: right; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">待结算</th>
-                            <th style="padding: 12px 16px; text-align: right; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">冻结金额</th>
-                            <th style="padding: 12px 16px; text-align: right; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">总余额</th>
+                            <th style="${thStyle}">客户 MID</th>
+                            <th style="${thStyle}">客户名称</th>
+                            <th style="${thStyle}">币种</th>
+                            <th style="${thStyleR}">可用余额</th>
+                            <th style="${thStyleR}">待结算</th>
+                            <th style="${thStyleR}">冻结金额</th>
+                            <th style="${thStyleR}">总余额</th>
                         </tr>
                     </thead>
                     <tbody>
                         ${balanceData.map(b => `<tr style="border-bottom: 1px solid #e9ecef;">
-                            <td style="padding: 14px 16px; font-size: 14px; font-family: monospace; color: #4f46e5;">${b.mid}</td>
-                            <td style="padding: 14px 16px; font-size: 14px;">${b.name}</td>
-                            <td style="padding: 14px 16px; font-size: 14px;"><span style="padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; background: #f0f0f0; color: #333; font-family: monospace;">${b.currency}</span></td>
-                            <td style="padding: 14px 16px; font-size: 14px; text-align: right; font-family: monospace; font-weight: 500; color: #059669;">${b.available}</td>
-                            <td style="padding: 14px 16px; font-size: 14px; text-align: right; font-family: monospace; color: #d97706;">${b.pending}</td>
-                            <td style="padding: 14px 16px; font-size: 14px; text-align: right; font-family: monospace; color: ${b.frozen !== '0.00' && b.frozen !== '0' && b.frozen !== '0.00000000' ? '#dc2626' : '#adb5bd'};">${b.frozen}</td>
-                            <td style="padding: 14px 16px; font-size: 14px; text-align: right; font-family: monospace; font-weight: 600;">${b.total}</td>
+                            <td style="${tdStyle} font-family: monospace; color: #4f46e5;">${b.mid}</td>
+                            <td style="${tdStyle}">${b.name}</td>
+                            <td style="${tdStyle}"><span style="padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; background: #f0f0f0; color: #333; font-family: monospace;">${b.currency}</span></td>
+                            <td style="${tdStyle} text-align: right; font-family: monospace; font-weight: 500; color: #059669;">${b.available}</td>
+                            <td style="${tdStyle} text-align: right; font-family: monospace; color: #d97706;">${b.pending}</td>
+                            <td style="${tdStyle} text-align: right; font-family: monospace; color: ${b.frozen !== '0.00' && b.frozen !== '0' && b.frozen !== '0.00000000' ? '#dc2626' : '#adb5bd'};">${b.frozen}</td>
+                            <td style="${tdStyle} text-align: right; font-family: monospace; font-weight: 600;">${b.total}</td>
                         </tr>`).join('')}
                     </tbody>
                 </table>
@@ -2696,16 +2690,19 @@ function renderClientTransactions() {
     const mainContent = document.getElementById('detailMain');
     if (!mainContent) return;
     const txData = [
-        { id: 'TXN20250209001', mid: 'CLT20250001', name: 'Alice Johnson', type: '收款', currency: 'USD', amount: '+3,500.00', balance: '12,580.50', time: '2025-02-09 14:30:22', ref: 'PAY-2025020900123' },
-        { id: 'TXN20250209002', mid: 'CLT20250001', name: 'Alice Johnson', type: '提现', currency: 'USD', amount: '-2,000.00', balance: '9,080.50', time: '2025-02-09 11:15:08', ref: 'WDR-2025020900045' },
-        { id: 'TXN20250209003', mid: 'CLT20250002', name: 'Global Trading Ltd', type: '收款', currency: 'USD', amount: '+25,000.00', balance: '156,800.25', time: '2025-02-09 10:22:15', ref: 'PAY-2025020900089' },
-        { id: 'TXN20250209004', mid: 'CLT20250002', name: 'Global Trading Ltd', type: '换汇', currency: 'EUR', amount: '+10,000.00', balance: '45,200.00', time: '2025-02-09 09:45:30', ref: 'FX-2025020900012' },
-        { id: 'TXN20250208005', mid: 'CLT20250004', name: '深圳前海科技有限公司', type: '付款', currency: 'USD', amount: '-5,600.00', balance: '89,100.00', time: '2025-02-08 16:20:45', ref: 'OUT-2025020800067' },
-        { id: 'TXN20250208006', mid: 'CLT20250005', name: 'Tokyo Payments Inc', type: '收款', currency: 'JPY', amount: '+1,200,000', balance: '5,200,000', time: '2025-02-08 15:10:33', ref: 'PAY-2025020800034' },
-        { id: 'TXN20250208007', mid: 'CLT20250001', name: 'Alice Johnson', type: '冻结', currency: 'USD', amount: '-500.00', balance: '12,580.50', time: '2025-02-08 14:05:12', ref: 'FRZ-2025020800011' },
-        { id: 'TXN20250207008', mid: 'CLT20250002', name: 'Global Trading Ltd', type: '收款', currency: 'BTC', amount: '+0.85000000', balance: '2.35000000', time: '2025-02-07 18:30:00', ref: 'CRY-2025020700023' }
+        { mid: 'CLT20250001', acctId: 'ACC-USD-0001', acctName: 'Alice USD Main', productType: '法币VA收款', txType: '收款', txId: 'TXN20250209001', merchantRef: 'PAY-2025020900123', amount: '+3,500.00', currency: 'USD', balance: '12,580.50', balCurrency: 'USD', time: '2025-02-09 14:30:22', desc: 'VA收款入账' },
+        { mid: 'CLT20250001', acctId: 'ACC-USD-0001', acctName: 'Alice USD Main', productType: '法币代付出款', txType: '提现', txId: 'TXN20250209002', merchantRef: 'WDR-2025020900045', amount: '-2,000.00', currency: 'USD', balance: '9,080.50', balCurrency: 'USD', time: '2025-02-09 11:15:08', desc: '银行卡提现' },
+        { mid: 'CLT20250002', acctId: 'ACC-USD-0002', acctName: 'Global Trading USD', productType: '法币VA收款', txType: '收款', txId: 'TXN20250209003', merchantRef: 'PAY-2025020900089', amount: '+25,000.00', currency: 'USD', balance: '156,800.25', balCurrency: 'USD', time: '2025-02-09 10:22:15', desc: 'VA收款入账' },
+        { mid: 'CLT20250002', acctId: 'ACC-EUR-0002', acctName: 'Global Trading EUR', productType: '承兑服务', txType: '换汇', txId: 'TXN20250209004', merchantRef: 'FX-2025020900012', amount: '+10,000.00', currency: 'EUR', balance: '45,200.00', balCurrency: 'EUR', time: '2025-02-09 09:45:30', desc: 'USD→EUR 换汇入账' },
+        { mid: 'CLT20250004', acctId: 'ACC-USD-0004', acctName: '前海科技 USD', productType: '法币代付出款', txType: '付款', txId: 'TXN20250208005', merchantRef: 'OUT-2025020800067', amount: '-5,600.00', currency: 'USD', balance: '89,100.00', balCurrency: 'USD', time: '2025-02-08 16:20:45', desc: '供应商付款' },
+        { mid: 'CLT20250005', acctId: 'ACC-JPY-0005', acctName: 'Tokyo JPY Main', productType: '法币VA收款', txType: '收款', txId: 'TXN20250208006', merchantRef: 'PAY-2025020800034', amount: '+1,200,000', currency: 'JPY', balance: '5,200,000', balCurrency: 'JPY', time: '2025-02-08 15:10:33', desc: 'VA收款入账' },
+        { mid: 'CLT20250001', acctId: 'ACC-USD-0001', acctName: 'Alice USD Main', productType: '-', txType: '冻结', txId: 'TXN20250208007', merchantRef: 'FRZ-2025020800011', amount: '-500.00', currency: 'USD', balance: '12,580.50', balCurrency: 'USD', time: '2025-02-08 14:05:12', desc: '风控审查冻结' },
+        { mid: 'CLT20250002', acctId: 'ACC-BTC-0002', acctName: 'Global Trading BTC', productType: '数币收款', txType: '收款', txId: 'TXN20250207008', merchantRef: 'CRY-2025020700023', amount: '+0.85000000', currency: 'BTC', balance: '2.35000000', balCurrency: 'BTC', time: '2025-02-07 18:30:00', desc: '链上收款确认' }
     ];
     const typeColors = { '收款': '#059669', '提现': '#dc2626', '付款': '#dc2626', '换汇': '#d97706', '冻结': '#7c3aed', '解冻': '#2563eb' };
+    const th = 'padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;';
+    const thR = 'padding: 10px 14px; text-align: right; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;';
+    const td = 'padding: 10px 14px; font-size: 13px; white-space: nowrap;';
     mainContent.innerHTML = `
         <div class="page-header">
             <div class="breadcrumb"><a href="#" onclick="goBack()">首页</a> / <span>客户中心</span> / <span>客户流水</span></div>
@@ -2713,38 +2710,40 @@ function renderClientTransactions() {
             <p class="page-desc">查看客户账户交易流水明细</p>
         </div>
         <div class="card" style="margin-bottom: 16px;">
-            <div style="padding: 24px;">
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 16px;">
+            <div style="padding: 16px 20px;">
+                <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end;">
                     <div style="display: flex; flex-direction: column;">
-                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">客户 MID</label>
-                        <input type="text" placeholder="请输入客户MID" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">客户 MID</label>
+                        <input type="text" placeholder="客户MID" style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 140px;">
                     </div>
                     <div style="display: flex; flex-direction: column;">
-                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">交易类型</label>
-                        <select style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">账户ID</label>
+                        <input type="text" placeholder="账户ID" style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 140px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">产品类型</label>
+                        <select style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 130px;">
+                            <option value="">全部</option>
+                            <option>法币VA收款</option><option>法币代付出款</option><option>数币收款</option><option>数币付款</option><option>承兑服务</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">交易类型</label>
+                        <select style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 100px;">
                             <option value="">全部</option>
                             <option>收款</option><option>付款</option><option>提现</option><option>换汇</option><option>冻结</option><option>解冻</option>
                         </select>
                     </div>
                     <div style="display: flex; flex-direction: column;">
-                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">币种</label>
-                        <select style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
-                            <option value="">全部</option>
-                            <option>USD</option><option>EUR</option><option>CNY</option><option>JPY</option><option>USDT</option><option>BTC</option>
-                        </select>
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">开始日期</label>
+                        <input type="date" style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px;">
                     </div>
                     <div style="display: flex; flex-direction: column;">
-                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">开始日期</label>
-                        <input type="date" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">结束日期</label>
+                        <input type="date" style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px;">
                     </div>
-                    <div style="display: flex; flex-direction: column;">
-                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">结束日期</label>
-                        <input type="date" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
-                    </div>
-                </div>
-                <div style="display: flex; gap: 12px;">
-                    <button onclick="alert('查询功能开发中')" style="padding: 8px 20px; background: #4f46e5; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: 500;">查询</button>
-                    <button onclick="alert('重置')" style="padding: 8px 20px; background: white; color: #6c757d; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: 500;">重置</button>
+                    <button onclick="alert('查询功能开发中')" style="padding: 6px 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; font-size: 13px; cursor: pointer; font-weight: 500;">查询</button>
+                    <button onclick="alert('重置')" style="padding: 6px 16px; background: white; color: #6c757d; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer;">重置</button>
                 </div>
             </div>
         </div>
@@ -2752,36 +2751,40 @@ function renderClientTransactions() {
             <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
                 <h2 class="card-title">流水记录</h2>
                 <div style="display: flex; gap: 8px;">
-                    <button onclick="alert('导出功能开发中')" style="padding: 6px 12px; background: white; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer; color: #6c757d;">导出</button>
-                    <button onclick="renderClientTransactions()" style="padding: 6px 12px; background: white; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer; color: #6c757d;">刷新</button>
+                    <button onclick="alert('导出功能开发中')" style="padding: 5px 10px; background: white; border: 1px solid #dee2e6; border-radius: 4px; font-size: 12px; cursor: pointer; color: #6c757d;">导出</button>
+                    <button onclick="renderClientTransactions()" style="padding: 5px 10px; background: white; border: 1px solid #dee2e6; border-radius: 4px; font-size: 12px; cursor: pointer; color: #6c757d;">刷新</button>
                 </div>
             </div>
             <div style="overflow-x: auto;">
-                <table style="width: 100%; border-collapse: collapse;">
+                <table style="min-width: 1400px; width: 100%; border-collapse: collapse;">
                     <thead style="background: #f8f9fa;">
                         <tr>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">流水号</th>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">客户 MID</th>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">客户名称</th>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">类型</th>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">币种</th>
-                            <th style="padding: 12px 16px; text-align: right; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">金额</th>
-                            <th style="padding: 12px 16px; text-align: right; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">余额</th>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">时间</th>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">关联单号</th>
+                            <th style="${th}">客户 MID</th>
+                            <th style="${th}">客户账户ID</th>
+                            <th style="${th}">客户账户名称</th>
+                            <th style="${th}">产品类型</th>
+                            <th style="${th}">交易类型</th>
+                            <th style="${th}">交易编号</th>
+                            <th style="${th}">商户单号</th>
+                            <th style="${thR}">金额</th>
+                            <th style="${thR}">余额</th>
+                            <th style="${th}">时间</th>
+                            <th style="${th}">资金描述</th>
                         </tr>
                     </thead>
                     <tbody>
                         ${txData.map(t => `<tr style="border-bottom: 1px solid #e9ecef;">
-                            <td style="padding: 14px 16px; font-size: 13px; font-family: monospace; color: #6c757d;">${t.id}</td>
-                            <td style="padding: 14px 16px; font-size: 14px; font-family: monospace; color: #4f46e5;">${t.mid}</td>
-                            <td style="padding: 14px 16px; font-size: 14px;">${t.name}</td>
-                            <td style="padding: 14px 16px; font-size: 14px;"><span style="padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; background: ${typeColors[t.type]}15; color: ${typeColors[t.type]};">${t.type}</span></td>
-                            <td style="padding: 14px 16px; font-size: 13px; font-family: monospace;">${t.currency}</td>
-                            <td style="padding: 14px 16px; font-size: 14px; text-align: right; font-family: monospace; font-weight: 500; color: ${t.amount.startsWith('+') ? '#059669' : '#dc2626'};">${t.amount}</td>
-                            <td style="padding: 14px 16px; font-size: 14px; text-align: right; font-family: monospace;">${t.balance}</td>
-                            <td style="padding: 14px 16px; font-size: 13px; color: #6c757d; white-space: nowrap;">${t.time}</td>
-                            <td style="padding: 14px 16px; font-size: 13px; font-family: monospace; color: #6c757d;">${t.ref}</td>
+                            <td style="${td} font-family: monospace; color: #4f46e5;">${t.mid}</td>
+                            <td style="${td} font-family: monospace; color: #6c757d;">${t.acctId}</td>
+                            <td style="${td}">${t.acctName}</td>
+                            <td style="${td} color: #6c757d;">${t.productType}</td>
+                            <td style="${td}"><span style="padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 500; background: ${typeColors[t.txType]}15; color: ${typeColors[t.txType]};">${t.txType}</span></td>
+                            <td style="${td} font-family: monospace; color: #6c757d;">${t.txId}</td>
+                            <td style="${td} font-family: monospace; color: #6c757d;">${t.merchantRef}</td>
+                            <td style="${td} text-align: right; font-family: monospace; font-weight: 500; color: ${t.amount.startsWith('+') ? '#059669' : '#dc2626'};">${t.amount} ${t.currency}</td>
+                            <td style="${td} text-align: right; font-family: monospace;">${t.balance} ${t.balCurrency}</td>
+                            <td style="${td} color: #6c757d;">${t.time}</td>
+                            <td style="${td} color: #495057;">${t.desc}</td>
                         </tr>`).join('')}
                     </tbody>
                 </table>
@@ -2802,6 +2805,9 @@ function renderClientHistoryBalance() {
         { date: '2025-02-09', mid: 'CLT20250004', name: '深圳前海科技有限公司', currency: 'USD', openBalance: '94,700.00', inflow: '0.00', outflow: '5,600.00', closeBalance: '89,100.00' },
         { date: '2025-02-08', mid: 'CLT20250005', name: 'Tokyo Payments Inc', currency: 'JPY', openBalance: '4,000,000', inflow: '1,200,000', outflow: '0', closeBalance: '5,200,000' }
     ];
+    const th = 'padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;';
+    const thR = 'padding: 10px 14px; text-align: right; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;';
+    const td = 'padding: 10px 14px; font-size: 13px; white-space: nowrap;';
     mainContent.innerHTML = `
         <div class="page-header">
             <div class="breadcrumb"><a href="#" onclick="goBack()">首页</a> / <span>客户中心</span> / <span>客户历史余额</span></div>
@@ -2809,59 +2815,57 @@ function renderClientHistoryBalance() {
             <p class="page-desc">查看客户每日余额快照</p>
         </div>
         <div class="card" style="margin-bottom: 16px;">
-            <div style="padding: 24px;">
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 16px;">
+            <div style="padding: 16px 20px;">
+                <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end;">
                     <div style="display: flex; flex-direction: column;">
-                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">客户 MID</label>
-                        <input type="text" placeholder="请输入客户MID" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">客户 MID</label>
+                        <input type="text" placeholder="客户MID" style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 140px;">
                     </div>
                     <div style="display: flex; flex-direction: column;">
-                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">币种</label>
-                        <select style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">币种</label>
+                        <select style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 100px;">
                             <option value="">全部</option><option>USD</option><option>EUR</option><option>CNY</option><option>JPY</option><option>USDT</option><option>BTC</option>
                         </select>
                     </div>
                     <div style="display: flex; flex-direction: column;">
-                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">开始日期</label>
-                        <input type="date" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">开始日期</label>
+                        <input type="date" style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px;">
                     </div>
                     <div style="display: flex; flex-direction: column;">
-                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">结束日期</label>
-                        <input type="date" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">结束日期</label>
+                        <input type="date" style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px;">
                     </div>
-                </div>
-                <div style="display: flex; gap: 12px;">
-                    <button onclick="alert('查询功能开发中')" style="padding: 8px 20px; background: #4f46e5; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: 500;">查询</button>
-                    <button onclick="alert('重置')" style="padding: 8px 20px; background: white; color: #6c757d; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: 500;">重置</button>
+                    <button onclick="alert('查询功能开发中')" style="padding: 6px 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; font-size: 13px; cursor: pointer; font-weight: 500;">查询</button>
+                    <button onclick="alert('重置')" style="padding: 6px 16px; background: white; color: #6c757d; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer;">重置</button>
                 </div>
             </div>
         </div>
         <div class="card">
             <div class="card-header"><h2 class="card-title">历史余额</h2></div>
             <div style="overflow-x: auto;">
-                <table style="width: 100%; border-collapse: collapse;">
+                <table style="min-width: 900px; width: 100%; border-collapse: collapse;">
                     <thead style="background: #f8f9fa;">
                         <tr>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">日期</th>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">客户 MID</th>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">客户名称</th>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">币种</th>
-                            <th style="padding: 12px 16px; text-align: right; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">期初余额</th>
-                            <th style="padding: 12px 16px; text-align: right; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">流入</th>
-                            <th style="padding: 12px 16px; text-align: right; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">流出</th>
-                            <th style="padding: 12px 16px; text-align: right; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">期末余额</th>
+                            <th style="${th}">日期</th>
+                            <th style="${th}">客户 MID</th>
+                            <th style="${th}">客户名称</th>
+                            <th style="${th}">币种</th>
+                            <th style="${thR}">期初余额</th>
+                            <th style="${thR}">流入</th>
+                            <th style="${thR}">流出</th>
+                            <th style="${thR}">期末余额</th>
                         </tr>
                     </thead>
                     <tbody>
                         ${histData.map(h => `<tr style="border-bottom: 1px solid #e9ecef;">
-                            <td style="padding: 14px 16px; font-size: 14px;">${h.date}</td>
-                            <td style="padding: 14px 16px; font-size: 14px; font-family: monospace; color: #4f46e5;">${h.mid}</td>
-                            <td style="padding: 14px 16px; font-size: 14px;">${h.name}</td>
-                            <td style="padding: 14px 16px; font-size: 13px; font-family: monospace;">${h.currency}</td>
-                            <td style="padding: 14px 16px; font-size: 14px; text-align: right; font-family: monospace;">${h.openBalance}</td>
-                            <td style="padding: 14px 16px; font-size: 14px; text-align: right; font-family: monospace; color: #059669;">${h.inflow}</td>
-                            <td style="padding: 14px 16px; font-size: 14px; text-align: right; font-family: monospace; color: #dc2626;">${h.outflow}</td>
-                            <td style="padding: 14px 16px; font-size: 14px; text-align: right; font-family: monospace; font-weight: 600;">${h.closeBalance}</td>
+                            <td style="${td}">${h.date}</td>
+                            <td style="${td} font-family: monospace; color: #4f46e5;">${h.mid}</td>
+                            <td style="${td}">${h.name}</td>
+                            <td style="${td} font-family: monospace;">${h.currency}</td>
+                            <td style="${td} text-align: right; font-family: monospace;">${h.openBalance}</td>
+                            <td style="${td} text-align: right; font-family: monospace; color: #059669;">${h.inflow}</td>
+                            <td style="${td} text-align: right; font-family: monospace; color: #dc2626;">${h.outflow}</td>
+                            <td style="${td} text-align: right; font-family: monospace; font-weight: 600;">${h.closeBalance}</td>
                         </tr>`).join('')}
                     </tbody>
                 </table>
@@ -2881,6 +2885,9 @@ function renderClientFreezeRecords() {
         { id: 'FRZ20250201004', mid: 'CLT20250004', name: '深圳前海科技有限公司', currency: 'USD', amount: '2,000.00', reason: '争议交易', operator: 'admin_li', time: '2025-02-01 16:20:00', status: 'frozen', unfreezeTime: '' },
         { id: 'FRZ20250115005', mid: 'CLT20250001', name: 'Alice Johnson', currency: 'USD', amount: '1,000.00', reason: '可疑交易', operator: 'system', time: '2025-01-15 09:00:00', status: 'unfrozen', unfreezeTime: '2025-01-20 14:30:00' }
     ];
+    const th = 'padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;';
+    const thR = 'padding: 10px 14px; text-align: right; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;';
+    const td = 'padding: 10px 14px; font-size: 13px; white-space: nowrap;';
     mainContent.innerHTML = `
         <div class="page-header">
             <div class="breadcrumb"><a href="#" onclick="goBack()">首页</a> / <span>客户中心</span> / <span>客户冻结记录</span></div>
@@ -2888,67 +2895,65 @@ function renderClientFreezeRecords() {
             <p class="page-desc">查看客户资金冻结记录，支持解冻操作</p>
         </div>
         <div class="card" style="margin-bottom: 16px;">
-            <div style="padding: 24px;">
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 16px;">
+            <div style="padding: 16px 20px;">
+                <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end;">
                     <div style="display: flex; flex-direction: column;">
-                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">客户 MID</label>
-                        <input type="text" placeholder="请输入客户MID" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">客户 MID</label>
+                        <input type="text" placeholder="客户MID" style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 140px;">
                     </div>
                     <div style="display: flex; flex-direction: column;">
-                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">状态</label>
-                        <select style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">状态</label>
+                        <select style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 100px;">
                             <option value="">全部</option><option value="frozen">冻结中</option><option value="unfrozen">已解冻</option>
                         </select>
                     </div>
                     <div style="display: flex; flex-direction: column;">
-                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">币种</label>
-                        <select style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">币种</label>
+                        <select style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 100px;">
                             <option value="">全部</option><option>USD</option><option>EUR</option><option>BTC</option><option>USDT</option>
                         </select>
                     </div>
-                </div>
-                <div style="display: flex; gap: 12px;">
-                    <button onclick="alert('查询功能开发中')" style="padding: 8px 20px; background: #4f46e5; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: 500;">查询</button>
-                    <button onclick="alert('重置')" style="padding: 8px 20px; background: white; color: #6c757d; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: 500;">重置</button>
+                    <button onclick="alert('查询功能开发中')" style="padding: 6px 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; font-size: 13px; cursor: pointer; font-weight: 500;">查询</button>
+                    <button onclick="alert('重置')" style="padding: 6px 16px; background: white; color: #6c757d; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer;">重置</button>
                 </div>
             </div>
         </div>
         <div class="card">
             <div class="card-header"><h2 class="card-title">冻结记录</h2></div>
             <div style="overflow-x: auto;">
-                <table style="width: 100%; border-collapse: collapse;">
+                <table style="min-width: 1100px; width: 100%; border-collapse: collapse;">
                     <thead style="background: #f8f9fa;">
                         <tr>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">冻结单号</th>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">客户 MID</th>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">客户名称</th>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">币种</th>
-                            <th style="padding: 12px 16px; text-align: right; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">冻结金额</th>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">冻结原因</th>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">操作人</th>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">冻结时间</th>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">状态</th>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">操作</th>
+                            <th style="${th}">冻结单号</th>
+                            <th style="${th}">客户 MID</th>
+                            <th style="${th}">客户名称</th>
+                            <th style="${th}">币种</th>
+                            <th style="${thR}">冻结金额</th>
+                            <th style="${th}">冻结原因</th>
+                            <th style="${th}">操作人</th>
+                            <th style="${th}">冻结时间</th>
+                            <th style="${th}">状态</th>
+                            <th style="${th}">操作</th>
                         </tr>
                     </thead>
                     <tbody>
                         ${freezeData.map(f => `<tr style="border-bottom: 1px solid #e9ecef;">
-                            <td style="padding: 14px 16px; font-size: 13px; font-family: monospace; color: #6c757d;">${f.id}</td>
-                            <td style="padding: 14px 16px; font-size: 14px; font-family: monospace; color: #4f46e5;">${f.mid}</td>
-                            <td style="padding: 14px 16px; font-size: 14px;">${f.name}</td>
-                            <td style="padding: 14px 16px; font-size: 13px; font-family: monospace;">${f.currency}</td>
-                            <td style="padding: 14px 16px; font-size: 14px; text-align: right; font-family: monospace; font-weight: 500; color: #dc2626;">${f.amount}</td>
-                            <td style="padding: 14px 16px; font-size: 14px;">${f.reason}</td>
-                            <td style="padding: 14px 16px; font-size: 14px; color: #6c757d;">${f.operator}</td>
-                            <td style="padding: 14px 16px; font-size: 13px; color: #6c757d; white-space: nowrap;">${f.time}</td>
-                            <td style="padding: 14px 16px; font-size: 14px;">
-                                <span style="display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; background: ${f.status === 'frozen' ? '#fee2e2' : '#d1fae5'}; color: ${f.status === 'frozen' ? '#991b1b' : '#065f46'};">
-                                    <span style="width: 6px; height: 6px; border-radius: 50%; background: ${f.status === 'frozen' ? '#991b1b' : '#065f46'};"></span>
+                            <td style="${td} font-family: monospace; color: #6c757d;">${f.id}</td>
+                            <td style="${td} font-family: monospace; color: #4f46e5;">${f.mid}</td>
+                            <td style="${td}">${f.name}</td>
+                            <td style="${td} font-family: monospace;">${f.currency}</td>
+                            <td style="${td} text-align: right; font-family: monospace; font-weight: 500; color: #dc2626;">${f.amount}</td>
+                            <td style="${td}">${f.reason}</td>
+                            <td style="${td} color: #6c757d;">${f.operator}</td>
+                            <td style="${td} color: #6c757d;">${f.time}</td>
+                            <td style="${td}">
+                                <span style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 500; background: ${f.status === 'frozen' ? '#fee2e2' : '#d1fae5'}; color: ${f.status === 'frozen' ? '#991b1b' : '#065f46'};">
+                                    <span style="width: 5px; height: 5px; border-radius: 50%; background: ${f.status === 'frozen' ? '#991b1b' : '#065f46'};"></span>
                                     ${f.status === 'frozen' ? '冻结中' : '已解冻'}
                                 </span>
                             </td>
-                            <td style="padding: 14px 16px; font-size: 14px;">
-                                ${f.status === 'frozen' ? '<button onclick="alert(\'解冻: ' + f.id + '\')" style="padding: 4px 12px; background: #2563eb; color: white; border: none; border-radius: 4px; font-size: 13px; cursor: pointer;">解冻</button>' : '<span style="color: #adb5bd;">-</span>'}
+                            <td style="${td}">
+                                ${f.status === 'frozen' ? '<button onclick="alert(\'解冻: ' + f.id + '\')" style="padding: 3px 10px; background: #2563eb; color: white; border: none; border-radius: 4px; font-size: 12px; cursor: pointer;">解冻</button>' : '<span style="color: #adb5bd;">-</span>'}
                             </td>
                         </tr>`).join('')}
                     </tbody>
@@ -2967,6 +2972,9 @@ function renderClientUnfreezeRecords() {
         { id: 'UFZ20250130002', freezeId: 'FRZ20250125006', mid: 'CLT20250002', name: 'Global Trading Ltd', currency: 'USD', amount: '3,000.00', reason: '争议处理完毕', operator: 'admin_zhang', freezeTime: '2025-01-25 10:00:00', unfreezeTime: '2025-01-30 16:45:00' },
         { id: 'UFZ20250203003', freezeId: 'FRZ20250128007', mid: 'CLT20250004', name: '深圳前海科技有限公司', currency: 'CNY', amount: '50,000.00', reason: '合规审查完成', operator: 'admin_li', freezeTime: '2025-01-28 14:20:00', unfreezeTime: '2025-02-03 11:10:00' }
     ];
+    const th = 'padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;';
+    const thR = 'padding: 10px 14px; text-align: right; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;';
+    const td = 'padding: 10px 14px; font-size: 13px; white-space: nowrap;';
     mainContent.innerHTML = `
         <div class="page-header">
             <div class="breadcrumb"><a href="#" onclick="goBack()">首页</a> / <span>客户中心</span> / <span>客户解冻记录</span></div>
@@ -2974,57 +2982,55 @@ function renderClientUnfreezeRecords() {
             <p class="page-desc">查看客户资金解冻历史记录</p>
         </div>
         <div class="card" style="margin-bottom: 16px;">
-            <div style="padding: 24px;">
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 16px;">
+            <div style="padding: 16px 20px;">
+                <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end;">
                     <div style="display: flex; flex-direction: column;">
-                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">客户 MID</label>
-                        <input type="text" placeholder="请输入客户MID" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">客户 MID</label>
+                        <input type="text" placeholder="客户MID" style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 140px;">
                     </div>
                     <div style="display: flex; flex-direction: column;">
-                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">开始日期</label>
-                        <input type="date" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">开始日期</label>
+                        <input type="date" style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px;">
                     </div>
                     <div style="display: flex; flex-direction: column;">
-                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">结束日期</label>
-                        <input type="date" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">结束日期</label>
+                        <input type="date" style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px;">
                     </div>
-                </div>
-                <div style="display: flex; gap: 12px;">
-                    <button onclick="alert('查询功能开发中')" style="padding: 8px 20px; background: #4f46e5; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: 500;">查询</button>
-                    <button onclick="alert('重置')" style="padding: 8px 20px; background: white; color: #6c757d; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: 500;">重置</button>
+                    <button onclick="alert('查询功能开发中')" style="padding: 6px 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; font-size: 13px; cursor: pointer; font-weight: 500;">查询</button>
+                    <button onclick="alert('重置')" style="padding: 6px 16px; background: white; color: #6c757d; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer;">重置</button>
                 </div>
             </div>
         </div>
         <div class="card">
             <div class="card-header"><h2 class="card-title">解冻记录</h2></div>
             <div style="overflow-x: auto;">
-                <table style="width: 100%; border-collapse: collapse;">
+                <table style="min-width: 1200px; width: 100%; border-collapse: collapse;">
                     <thead style="background: #f8f9fa;">
                         <tr>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">解冻单号</th>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">冻结单号</th>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">客户 MID</th>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">客户名称</th>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">币种</th>
-                            <th style="padding: 12px 16px; text-align: right; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">解冻金额</th>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">解冻原因</th>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">操作人</th>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">冻结时间</th>
-                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef;">解冻时间</th>
+                            <th style="${th}">解冻单号</th>
+                            <th style="${th}">冻结单号</th>
+                            <th style="${th}">客户 MID</th>
+                            <th style="${th}">客户名称</th>
+                            <th style="${th}">币种</th>
+                            <th style="${thR}">解冻金额</th>
+                            <th style="${th}">解冻原因</th>
+                            <th style="${th}">操作人</th>
+                            <th style="${th}">冻结时间</th>
+                            <th style="${th}">解冻时间</th>
                         </tr>
                     </thead>
                     <tbody>
                         ${unfreezeData.map(u => `<tr style="border-bottom: 1px solid #e9ecef;">
-                            <td style="padding: 14px 16px; font-size: 13px; font-family: monospace; color: #059669;">${u.id}</td>
-                            <td style="padding: 14px 16px; font-size: 13px; font-family: monospace; color: #6c757d;">${u.freezeId}</td>
-                            <td style="padding: 14px 16px; font-size: 14px; font-family: monospace; color: #4f46e5;">${u.mid}</td>
-                            <td style="padding: 14px 16px; font-size: 14px;">${u.name}</td>
-                            <td style="padding: 14px 16px; font-size: 13px; font-family: monospace;">${u.currency}</td>
-                            <td style="padding: 14px 16px; font-size: 14px; text-align: right; font-family: monospace; font-weight: 500; color: #059669;">${u.amount}</td>
-                            <td style="padding: 14px 16px; font-size: 14px;">${u.reason}</td>
-                            <td style="padding: 14px 16px; font-size: 14px; color: #6c757d;">${u.operator}</td>
-                            <td style="padding: 14px 16px; font-size: 13px; color: #6c757d; white-space: nowrap;">${u.freezeTime}</td>
-                            <td style="padding: 14px 16px; font-size: 13px; color: #059669; white-space: nowrap;">${u.unfreezeTime}</td>
+                            <td style="${td} font-family: monospace; color: #059669;">${u.id}</td>
+                            <td style="${td} font-family: monospace; color: #6c757d;">${u.freezeId}</td>
+                            <td style="${td} font-family: monospace; color: #4f46e5;">${u.mid}</td>
+                            <td style="${td}">${u.name}</td>
+                            <td style="${td} font-family: monospace;">${u.currency}</td>
+                            <td style="${td} text-align: right; font-family: monospace; font-weight: 500; color: #059669;">${u.amount}</td>
+                            <td style="${td}">${u.reason}</td>
+                            <td style="${td} color: #6c757d;">${u.operator}</td>
+                            <td style="${td} color: #6c757d;">${u.freezeTime}</td>
+                            <td style="${td} color: #059669;">${u.unfreezeTime}</td>
                         </tr>`).join('')}
                     </tbody>
                 </table>
