@@ -21,7 +21,7 @@ const centerMenus = {
         ]
     },
     product: {
-        name: '产品市场',
+        name: '产品中心',
         groups: [
             { label: '产品市场', items: [
                 { name: '浏览产品', icon: 'grid', active: true },
@@ -315,6 +315,120 @@ const centerMenus = {
             ]}
         ]
     },
+    // 客户中心（TP端：合并会员中心+订单中心）
+    customer: {
+        name: '客户中心',
+        groups: [
+            { label: '会员查询', items: [
+                { name: '会员信息查询', icon: 'search', active: true },
+                { name: '会员产品查询', icon: 'package' }
+            ]},
+            { label: '会员管理', items: [
+                { name: '商户基本信息管理', icon: 'user' },
+                { name: '商户开通产品', icon: 'package' },
+                { name: '商户产品配置', icon: 'settings' },
+                { name: '会员产品配置', icon: 'package' }
+            ]},
+            { label: '商户单查询', items: [
+                { name: 'VA账户', icon: 'credit-card' },
+                { name: '收款商户单', icon: 'download' },
+                { name: '付款商户单', icon: 'upload' },
+                { name: '换汇商户单', icon: 'repeat' },
+                { name: 'Ramp商户单', icon: 'zap' },
+                { name: '充提币商户单', icon: 'bitcoin' },
+                { name: '卡片查询', icon: 'credit-card' },
+                { name: 'VCC商户单', icon: 'credit-card' },
+                { name: '收单商户单', icon: 'tag' }
+            ]},
+            { label: '订单管理', items: [
+                { name: '订单查询', icon: 'clipboard' },
+                { name: '订单文件', icon: 'file' },
+                { name: '店铺管理', icon: 'store' }
+            ]}
+        ]
+    },
+    // 客户中心（SP端：客户基本信息+签约产品+订单）
+    client: {
+        name: '客户中心',
+        groups: [
+            { label: '客户查询', items: [
+                { name: '客户列表', icon: 'users', active: true },
+                { name: '客户基本信息', icon: 'user' },
+                { name: '客户主体信息', icon: 'building' }
+            ]},
+            { label: '签约产品', items: [
+                { name: '客户签约产品查询', icon: 'package' },
+                { name: '产品配置查看', icon: 'settings' }
+            ]},
+            { label: '商户单查询', items: [
+                { name: '收款商户单', icon: 'download' },
+                { name: '付款商户单', icon: 'upload' },
+                { name: '换汇商户单', icon: 'repeat' },
+                { name: 'Ramp商户单', icon: 'zap' },
+                { name: '充提币商户单', icon: 'bitcoin' },
+                { name: '卡片查询', icon: 'credit-card' },
+                { name: '收单商户单', icon: 'tag' }
+            ]},
+            { label: '订单查询', items: [
+                { name: '订单查询', icon: 'clipboard' },
+                { name: '订单文件', icon: 'file' }
+            ]}
+        ]
+    },
+    // 销售渠道（SP端：只有机构代理商）
+    sales: {
+        name: '销售渠道',
+        groups: [
+            { label: '机构代理商', items: [
+                { name: '代理商查询', icon: 'users', active: true },
+                { name: '代理商管理', icon: 'settings' }
+            ]},
+            { label: '分佣配置', items: [
+                { name: '分佣模板配置', icon: 'sliders' },
+                { name: '代理商分佣配置', icon: 'settings' }
+            ]},
+            { label: '分佣查询', items: [
+                { name: '分佣账单', icon: 'file-text' },
+                { name: '分佣明细', icon: 'list' },
+                { name: '结算单', icon: 'calendar' }
+            ]}
+        ]
+    },
+    // 工作流配置
+    workflow: {
+        name: '工作流配置',
+        groups: [
+            { label: '审批流程', items: [
+                { name: '审批流程管理', icon: 'git-branch', active: true },
+                { name: '审批模板', icon: 'file-text' },
+                { name: '审批规则', icon: 'sliders' }
+            ]},
+            { label: '工单管理', items: [
+                { name: '全部工单', icon: 'file', badge: '3' },
+                { name: '待审核', icon: 'clock', badge: '3' },
+                { name: '处理中', icon: 'loader' },
+                { name: '已完成', icon: 'check-circle' }
+            ]},
+            { label: '通知配置', items: [
+                { name: '审批通知', icon: 'bell' },
+                { name: '邮件模板', icon: 'mail' }
+            ]}
+        ]
+    },
+    // 下载中心
+    download: {
+        name: '下载中心',
+        groups: [
+            { label: '下载管理', items: [
+                { name: '下载列表', icon: 'download', active: true },
+                { name: '导出任务', icon: 'file-text' }
+            ]},
+            { label: '导出设置', items: [
+                { name: '定时导出', icon: 'clock' },
+                { name: '导出模板', icon: 'file' }
+            ]}
+        ]
+    },
     risk: {
         name: '风控合规中心',
         groups: [
@@ -504,38 +618,6 @@ document.addEventListener('click', function(e) {
         }
     }
 });
-
-// 角色切换
-function switchRole(role) {
-    // 更新按钮状态
-    document.querySelectorAll('.role-btn').forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.dataset.role === role) {
-            btn.classList.add('active');
-        }
-    });
-
-    // 更新Logo徽章
-    const badge = document.querySelector('.logo-badge');
-    if (badge) {
-        const labels = { sp: 'SP', tp: 'TP', both: 'TP + SP' };
-        badge.textContent = labels[role];
-    }
-
-    // 显示/隐藏中心卡片
-    document.querySelectorAll('.center-card').forEach(card => {
-        const cardRole = card.dataset.role;
-        if (role === 'both') {
-            card.style.display = '';
-        } else if (cardRole === 'both') {
-            card.style.display = '';
-        } else if (cardRole === role) {
-            card.style.display = '';
-        } else {
-            card.style.display = 'none';
-        }
-    });
-}
 
 // 产品数据
 const products = [
