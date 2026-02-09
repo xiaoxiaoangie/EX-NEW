@@ -618,112 +618,69 @@
             <p class="welcome-desc">快速访问常用功能和查看所有中心</p>
         </div>
 
-        <!-- 待办和工单区域 -->
+        <!-- 待办事项 -->
         <div class="todo-tickets-section">
-            <div class="todo-tickets-grid">
-                <!-- 待办事项 -->
-                <div class="todo-card">
-                    <div class="card-header-inline">
-                        <h3 class="card-title-small">📋 待办事项</h3>
-                        <span class="badge-count urgent">3</span>
+            <div class="todo-card">
+                <div class="card-header-inline">
+                    <h3 class="card-title-small">📋 待办事项</h3>
+                    <span class="badge-count urgent">3</span>
+                </div>
+                <div class="todo-list-compact">
+                    <div class="todo-item-compact" onclick="handleTodoClick('member-register')">
+                        <div class="todo-icon urgent">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 8v4M12 16h.01"/>
+                            </svg>
+                        </div>
+                        <div class="todo-content">
+                            <div class="todo-title">新会员注册待确认</div>
+                            <div class="todo-meta">3个会员等待确认 · 2小时前</div>
+                        </div>
+                        <div class="todo-arrow">›</div>
                     </div>
-                    <div class="todo-list-compact">
-                        <div class="todo-item-compact" onclick="handleTodoClick('member-register')">
-                            <div class="todo-icon urgent">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="12" r="10"/>
-                                    <path d="M12 8v4M12 16h.01"/>
-                                </svg>
-                            </div>
-                            <div class="todo-content">
-                                <div class="todo-title">新会员注册待确认</div>
-                                <div class="todo-meta">3个会员等待确认 · 2小时前</div>
-                            </div>
-                            <div class="todo-arrow">›</div>
+                    <div class="todo-item-compact" onclick="handleTodoClick('contract-expire')">
+                        <div class="todo-icon warning">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                            </svg>
                         </div>
-                        <div class="todo-item-compact" onclick="handleTodoClick('contract-expire')">
-                            <div class="todo-icon warning">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-                                </svg>
-                            </div>
-                            <div class="todo-content">
-                                <div class="todo-title">产品合约即将到期</div>
-                                <div class="todo-meta">2个产品合约30天内到期 · 今天</div>
-                            </div>
-                            <div class="todo-arrow">›</div>
+                        <div class="todo-content">
+                            <div class="todo-title">产品合约即将到期</div>
+                            <div class="todo-meta">2个产品合约30天内到期 · 今天</div>
                         </div>
-                        <div class="todo-item-compact" onclick="handleTodoClick('settlement-pending')">
-                            <div class="todo-icon normal">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="2" y="4" width="20" height="16" rx="2"/>
-                                    <path d="M12 8v8M8 12h8"/>
-                                </svg>
-                            </div>
-                            <div class="todo-content">
-                                <div class="todo-title">待处理订单</div>
-                                <div class="todo-meta">12笔订单需确认 · 昨天</div>
-                            </div>
-                            <div class="todo-arrow">›</div>
-                        </div>
+                        <div class="todo-arrow">›</div>
                     </div>
-                    <div class="card-footer-link" onclick="viewAllTodos()">
-                        查看全部待办 →
+                    <div class="todo-item-compact" onclick="handleTodoClick('settlement-pending')">
+                        <div class="todo-icon normal">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                                <path d="M12 8v8M8 12h8"/>
+                            </svg>
+                        </div>
+                        <div class="todo-content">
+                            <div class="todo-title">待处理订单</div>
+                            <div class="todo-meta">12笔订单需确认 · 昨天</div>
+                        </div>
+                        <div class="todo-arrow">›</div>
                     </div>
                 </div>
-
-                <!-- 待处理工单 -->
-                <div class="todo-card">
-                    <div class="card-header-inline">
-                        <h3 class="card-title-small">🎫 待处理工单</h3>
-                        <span class="badge-count warning">5</span>
-                    </div>
-                    <div class="todo-list-compact">
-                        <div class="todo-item-compact" onclick="handleTicketClick('TICKET-2024-001')">
-                            <div class="todo-icon urgent">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                    <polyline points="14 2 14 8 20 8"/>
-                                </svg>
-                            </div>
-                            <div class="todo-content">
-                                <div class="todo-title">会员费率配置变更</div>
-                                <div class="todo-meta">ABC Trading · 待审批 · 1小时前</div>
-                            </div>
-                            <div class="todo-arrow">›</div>
-                        </div>
-                        <div class="todo-item-compact" onclick="handleTicketClick('TICKET-2024-002')">
-                            <div class="todo-icon urgent">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                    <polyline points="14 2 14 8 20 8"/>
-                                </svg>
-                            </div>
-                            <div class="todo-content">
-                                <div class="todo-title">会员产品开通申请</div>
-                                <div class="todo-meta">Global Imports · 待审批 · 3小时前</div>
-                            </div>
-                            <div class="todo-arrow">›</div>
-                        </div>
-                        <div class="todo-item-compact" onclick="handleTicketClick('TICKET-2024-003')">
-                            <div class="todo-icon warning">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                    <polyline points="14 2 14 8 20 8"/>
-                                </svg>
-                            </div>
-                            <div class="todo-content">
-                                <div class="todo-title">代理商分佣调整</div>
-                                <div class="todo-meta">Tech Solutions · 待审批 · 今天</div>
-                            </div>
-                            <div class="todo-arrow">›</div>
-                        </div>
-                    </div>
-                    <div class="card-footer-link" onclick="viewAllTickets()">
-                        查看全部工单 →
-                    </div>
+                <div class="card-footer-link" onclick="viewAllTodos()">
+                    查看全部待办 →
                 </div>
             </div>
+        </div>
+
+        <!-- 常用页面 -->
+        <div class="favorites-section">
+            <div class="section-header">
+                <h2 class="section-title">常用页面</h2>
+                <button class="btn-manage" onclick="manageFavorites()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    管理
+                </button>
+            </div>
+            <div class="favorites-grid" id="favoritesGrid"></div>
         </div>
 
         <!-- 所有中心 -->
