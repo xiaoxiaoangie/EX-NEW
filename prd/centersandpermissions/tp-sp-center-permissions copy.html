@@ -229,6 +229,83 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
             </div>
         </div>
 
+        <!-- 解决方案套餐 -->
+        <div class="concept-section">
+            <div class="concept-card">
+                <h2><span class="dot" style="background:var(--yellow)"></span>EX 解决方案套餐</h2>
+
+                <!-- TP 套餐 -->
+                <div class="callout" style="margin-top:16px">
+                    <div class="callout-title">🏢 TP（租户）解决方案</div>
+                    <table class="perm-table" style="margin-top:8px">
+                        <thead><tr><th style="width:20%">能力</th><th style="width:38%">基础版</th><th style="width:38%">专业版</th></tr></thead>
+                        <tbody>
+                            <tr><td style="font-weight:600">目标客户</td><td>纯代理 TP（不持牌或持牌但未用自己牌照服务客户）</td><td>持牌 TP / 需要自主清算的 TP（<code>usesOwnLicense=true</code>）</td></tr>
+                            <tr><td style="font-weight:600">典型客户</td><td>鲲鹏</td><td>Bonbil、卓能（如果持牌）</td></tr>
+                            <tr><td style="font-weight:600">产品中心</td><td>✅ 产品市场、已签约产品</td><td>✅ 同左</td></tr>
+                            <tr><td style="font-weight:600">客户中心</td><td>✅ 会员查询、会员配置（标准费率/返点）、商户单查询、订单查询</td><td>✅ 同左（查询能力保留）</td></tr>
+                            <tr><td style="font-weight:600">设置中心</td><td>✅ 用户权限、协议记录、开发者中心</td><td>✅ 同左</td></tr>
+                            <tr><td style="font-weight:600">清算中心</td><td>❌</td><td>✅ 收费配置、结算管理、对账管理、分佣/返点规则、差错处理、审批工单</td></tr>
+                            <tr><td style="font-weight:600">渠道中心</td><td>❌</td><td>✅ 渠道管理、渠道能力、渠道路由</td></tr>
+                            <tr><td style="font-weight:600">财资中心</td><td>❌</td><td>✅ 头寸管理、资金调拨、备付金、外汇</td></tr>
+                            <tr style="background:var(--yellow-bg)"><td style="font-weight:600;color:var(--yellow)">费率配在哪</td><td><strong>客户中心 → 会员配置</strong><br>（标准费率/返点，无逐商户定制）</td><td><strong>清算中心 → 收费配置</strong><br>（标准+特殊费率，逐商户可定制）</td></tr>
+                            <tr><td style="font-weight:600">结算</td><td>❌ 由 SP 处理</td><td>✅ 自主结算</td></tr>
+                            <tr><td style="font-weight:600">对账</td><td>❌</td><td>✅ 商户对账 + 渠道对账</td></tr>
+                            <tr><td style="font-weight:600">合规风控</td><td colspan="2" style="text-align:center">独立附加服务，不在套餐内，单独售卖</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- SP 套餐 -->
+                <div class="callout" style="margin-top:16px">
+                    <div class="callout-title">🏦 SP（服务商）解决方案</div>
+                    <table class="perm-table" style="margin-top:8px">
+                        <thead><tr><th style="width:20%">能力</th><th style="width:38%">基础版</th><th style="width:38%">完整版</th></tr></thead>
+                        <tbody>
+                            <tr><td style="font-weight:600">目标客户</td><td>纯 API 对接的 SP（能力集成，不需要后台运营）</td><td>需要完整运营后台的 SP</td></tr>
+                            <tr><td style="font-weight:600">典型客户</td><td>MLG</td><td>IPL、BB</td></tr>
+                            <tr><td style="font-weight:600">产品中心</td><td>✅ 产品管理、标准报价</td><td>✅ 同左</td></tr>
+                            <tr><td style="font-weight:600">客户中心</td><td>✅ 机构伙伴（代理商/客户）、商户查询</td><td>✅ 同左</td></tr>
+                            <tr><td style="font-weight:600">设置中心</td><td>✅ 用户权限</td><td>✅ 同左</td></tr>
+                            <tr><td style="font-weight:600">清算中心</td><td>❌</td><td>✅ 收费配置、结算管理、对账管理、分佣/返点规则、差错处理、审批工单</td></tr>
+                            <tr><td style="font-weight:600">渠道中心</td><td>❌</td><td>✅ 渠道管理、渠道能力、渠道路由</td></tr>
+                            <tr><td style="font-weight:600">财资中心</td><td>❌</td><td>✅ 头寸管理、资金调拨、备付金、外汇</td></tr>
+                            <tr><td style="font-weight:600">合规风控中心</td><td>❌</td><td>✅ KYC 审核、风控规则、合规运营</td></tr>
+                            <tr style="background:var(--yellow-bg)"><td style="font-weight:600;color:var(--yellow)">费率配在哪</td><td>❌ 不配费率（由 TP 或 SA 管理）</td><td><strong>清算中心 → 收费配置</strong></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 费率归属规则 -->
+                <div class="callout" style="margin-top:16px;border-left-color:var(--yellow)">
+                    <div class="callout-title">💡 费率配置归属核心规则</div>
+                    <p style="margin-bottom:8px"><strong>判断依据：机构是否有清算中心</strong>（与产品的合作模式无关）</p>
+                    <table class="perm-table" style="margin-top:8px">
+                        <thead><tr><th>机构</th><th>有清算中心？</th><th>费率配在哪</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr><td style="font-weight:600">IPL（SP 完整版）</td><td>✅</td><td>清算中心 → 收费配置</td><td>所有商户费率统一在清算中心</td></tr>
+                            <tr><td style="font-weight:600">BB（SP 完整版）</td><td>✅</td><td>清算中心 → 收费配置</td><td>同上</td></tr>
+                            <tr><td style="font-weight:600">MLG（SP 基础版）</td><td>❌</td><td>不配费率</td><td>费率由 TP（Bonbil）在自己的清算中心配，或由 SA 代配</td></tr>
+                            <tr><td style="font-weight:600">鲲鹏（TP 基础版）</td><td>❌</td><td>客户中心 → 会员配置</td><td>标准费率/返点，无逐商户定制</td></tr>
+                            <tr><td style="font-weight:600">Bonbil（TP 专业版）</td><td>✅</td><td>清算中心 → 收费配置</td><td>所有会员费率统一在清算中心，包括代理产品和自有牌照产品</td></tr>
+                        </tbody>
+                    </table>
+                    <p style="margin-top:10px;font-size:12px;color:var(--red)"><strong>⛔ 红线</strong>：产品中心不配置具体费率数值，只引用费率方案上架。费率的具体配置只在两个地方：有清算中心 → 清算中心；无清算中心 → 客户中心会员配置。</p>
+                </div>
+
+                <!-- 套餐组合与绑定关系 -->
+                <div class="callout" style="margin-top:16px">
+                    <div class="callout-title">🔗 套餐绑定关系</div>
+                    <ul style="margin-top:8px">
+                        <li><strong>清算中心 + 渠道中心 + 财资中心</strong>：三者绑定售卖。有清算 → 需要管渠道（上游通道）→ 需要看渠道余额（财资）</li>
+                        <li><strong>合规风控中心</strong>：独立附加服务，单独售卖，不绑定在任何套餐内</li>
+                        <li><strong>设置中心</strong>：所有套餐均包含（用户权限、协议、开发者中心）</li>
+                        <li><strong>产品中心 + 客户中心</strong>：所有套餐均包含（基础能力）</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
         <!-- 会员定义 -->
         <div class="concept-section">
             <div class="concept-card">

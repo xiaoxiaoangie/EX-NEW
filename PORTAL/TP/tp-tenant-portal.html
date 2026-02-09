@@ -96,35 +96,7 @@
             gap: 12px;
         }
 
-        /* 角色切换器 */
-        .role-switcher {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--bg-hover);
-            padding: 4px;
-            border-radius: 10px;
-            margin-right: 16px;
-        }
-        .role-btn {
-            padding: 8px 16px;
-            border-radius: 8px;
-            border: none;
-            background: transparent;
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.15s;
-        }
-        .role-btn:hover {
-            color: var(--text);
-        }
-        .role-btn.active {
-            background: var(--bg-card);
-            color: var(--accent);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
+        
         .icon-btn {
             width: 40px;
             height: 40px;
@@ -618,16 +590,10 @@
                 </svg>
             </div>
             <span class="logo-text">EX Partner Portal</span>
-            <span class="logo-badge">TP + SP</span>
+            <span class="logo-badge">TP 租户端</span>
         </div>
 
         <div class="topbar-right">
-            <!-- 角色切换器 -->
-            <div class="role-switcher">
-                <button class="role-btn" data-role="sp" onclick="switchRole('sp')">仅 SP</button>
-                <button class="role-btn" data-role="tp" onclick="switchRole('tp')">仅 TP</button>
-                <button class="role-btn active" data-role="both" onclick="switchRole('both')">SP + TP</button>
-            </div>
             <button class="icon-btn">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="11" cy="11" r="8"/>
@@ -662,7 +628,7 @@
                         <span class="badge-count urgent">3</span>
                     </div>
                     <div class="todo-list-compact">
-                        <div class="todo-item-compact" onclick="handleTodoClick('merchant-review')">
+                        <div class="todo-item-compact" onclick="handleTodoClick('member-register')">
                             <div class="todo-icon urgent">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <circle cx="12" cy="12" r="10"/>
@@ -670,8 +636,8 @@
                                 </svg>
                             </div>
                             <div class="todo-content">
-                                <div class="todo-title">商户审核待处理</div>
-                                <div class="todo-meta">3个商户等待审核 · 2小时前</div>
+                                <div class="todo-title">新会员注册待确认</div>
+                                <div class="todo-meta">3个会员等待确认 · 2小时前</div>
                             </div>
                             <div class="todo-arrow">›</div>
                         </div>
@@ -682,8 +648,8 @@
                                 </svg>
                             </div>
                             <div class="todo-content">
-                                <div class="todo-title">合约即将到期</div>
-                                <div class="todo-meta">2个SP合约30天内到期 · 今天</div>
+                                <div class="todo-title">产品合约即将到期</div>
+                                <div class="todo-meta">2个产品合约30天内到期 · 今天</div>
                             </div>
                             <div class="todo-arrow">›</div>
                         </div>
@@ -695,8 +661,8 @@
                                 </svg>
                             </div>
                             <div class="todo-content">
-                                <div class="todo-title">待结算账单</div>
-                                <div class="todo-meta">$45,230.00 待结算 · 昨天</div>
+                                <div class="todo-title">待处理订单</div>
+                                <div class="todo-meta">12笔订单需确认 · 昨天</div>
                             </div>
                             <div class="todo-arrow">›</div>
                         </div>
@@ -721,7 +687,7 @@
                                 </svg>
                             </div>
                             <div class="todo-content">
-                                <div class="todo-title">商户费率调整申请</div>
+                                <div class="todo-title">会员费率配置变更</div>
                                 <div class="todo-meta">ABC Trading · 待审批 · 1小时前</div>
                             </div>
                             <div class="todo-arrow">›</div>
@@ -734,7 +700,7 @@
                                 </svg>
                             </div>
                             <div class="todo-content">
-                                <div class="todo-title">产品开通审核</div>
+                                <div class="todo-title">会员产品开通申请</div>
                                 <div class="todo-meta">Global Imports · 待审批 · 3小时前</div>
                             </div>
                             <div class="todo-arrow">›</div>
@@ -747,7 +713,7 @@
                                 </svg>
                             </div>
                             <div class="todo-content">
-                                <div class="todo-title">路由规则变更</div>
+                                <div class="todo-title">代理商分佣调整</div>
                                 <div class="todo-meta">Tech Solutions · 待审批 · 今天</div>
                             </div>
                             <div class="todo-arrow">›</div>
@@ -768,8 +734,8 @@
         <!-- 核心经营 -->
         <div class="category-title">核心经营</div>
         <div class="centers-grid">
-            <!-- 产品市场 -->
-            <div class="center-card cyan" data-role="tp" onclick="enterCenter('product')">
+            <!-- 产品中心 -->
+            <div class="center-card cyan" onclick="enterCenter('product')">
                 <div class="center-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="9" cy="21" r="1"/>
@@ -778,93 +744,22 @@
                     </svg>
                 </div>
                 <span class="center-badge badge-warning">2 到期</span>
-                <h3 class="center-name">产品市场</h3>
-                <p class="center-desc">Product Market - 浏览产品、已签约产品</p>
+                <h3 class="center-name">产品中心</h3>
+                <p class="center-desc">浏览产品市场、查看已签约产品</p>
                 <div class="center-stats">
                     <div class="center-stat">
                         <span class="center-stat-value">24</span>
                         <span class="center-stat-label">上架产品</span>
                     </div>
                     <div class="center-stat">
-                        <span class="center-stat-value">8</span>
-                        <span class="center-stat-label">签约SP</span>
+                        <span class="center-stat-value">6</span>
+                        <span class="center-stat-label">已签约</span>
                     </div>
                 </div>
             </div>
 
-            <!-- 产品中心 -->
-            <div class="center-card purple" data-role="sp" onclick="enterCenter('supply')">
-                <div class="center-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-                        <line x1="12" y1="22.08" x2="12" y2="12"/>
-                    </svg>
-                </div>
-                <h3 class="center-name">产品中心</h3>
-                <p class="center-desc">上架产品、产品管理、产品分析</p>
-                <div class="center-stats">
-                    <div class="center-stat">
-                        <span class="center-stat-value">12</span>
-                        <span class="center-stat-label">上架产品</span>
-                    </div>
-                    <div class="center-stat">
-                        <span class="center-stat-value">45</span>
-                        <span class="center-stat-label">接入TP</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 会员中心 -->
-            <div class="center-card success" data-role="both" onclick="enterCenter('merchant')">
-                <div class="center-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                        <polyline points="9 22 9 12 15 12 15 22"/>
-                    </svg>
-                </div>
-                <h3 class="center-name">会员中心</h3>
-                <p class="center-desc">会员查询、会员管理、产品配置</p>
-                <div class="center-stats">
-                    <div class="center-stat">
-                        <span class="center-stat-value">156</span>
-                        <span class="center-stat-label">总商户</span>
-                    </div>
-                    <div class="center-stat">
-                        <span class="center-stat-value">89</span>
-                        <span class="center-stat-label">直客</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 订单中心 -->
-            <div class="center-card teal" data-role="both" onclick="enterCenter('order')">
-                <div class="center-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
-                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-                    </svg>
-                </div>
-                <h3 class="center-name">订单中心</h3>
-                <p class="center-desc">商户单管理、交易背景、订单查询</p>
-                <div class="center-stats">
-                    <div class="center-stat">
-                        <span class="center-stat-value">1,234</span>
-                        <span class="center-stat-label">今日订单</span>
-                    </div>
-                    <div class="center-stat">
-                        <span class="center-stat-value">98.5%</span>
-                        <span class="center-stat-label">成功率</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 销售与财务 -->
-        <div class="category-title">销售与财务</div>
-        <div class="centers-grid">
-            <!-- 销售渠道 -->
-            <div class="center-card warning" data-role="both" onclick="enterCenter('sales-channel')">
+            <!-- 客户中心（合并会员+订单） -->
+            <div class="center-card success" onclick="enterCenter('customer')">
                 <div class="center-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
@@ -873,118 +768,47 @@
                         <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
                     </svg>
                 </div>
-                <span class="center-badge badge-warning">销售</span>
-                <h3 class="center-name">销售渠道</h3>
-                <p class="center-desc">Sales Channel - 代理商管理、代理商分佣</p>
+                <span class="center-badge badge-danger">3 待处理</span>
+                <h3 class="center-name">客户中心</h3>
+                <p class="center-desc">会员查询、会员配置、商户单查询、订单查询</p>
                 <div class="center-stats">
                     <div class="center-stat">
-                        <span class="center-stat-value">77</span>
-                        <span class="center-stat-label">合作伙伴</span>
+                        <span class="center-stat-value">156</span>
+                        <span class="center-stat-label">总会员</span>
                     </div>
                     <div class="center-stat">
-                        <span class="center-stat-value">$130K</span>
+                        <span class="center-stat-value">1,234</span>
+                        <span class="center-stat-label">今日订单</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 销售渠道 -->
+            <div class="center-card warning" onclick="enterCenter('sales-channel')">
+                <div class="center-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <line x1="19" y1="8" x2="19" y2="14"/>
+                        <line x1="22" y1="11" x2="16" y2="11"/>
+                    </svg>
+                </div>
+                <h3 class="center-name">销售渠道</h3>
+                <p class="center-desc">销售管理、普通代理商管理</p>
+                <div class="center-stats">
+                    <div class="center-stat">
+                        <span class="center-stat-value">12</span>
+                        <span class="center-stat-label">代理商</span>
+                    </div>
+                    <div class="center-stat">
+                        <span class="center-stat-value">$45K</span>
                         <span class="center-stat-label">本月分佣</span>
                     </div>
                 </div>
             </div>
 
-            <!-- 财资中心 - TP角色 -->
-            <div class="center-card pink" data-role="tp" onclick="enterCenter('finance')">
-                <div class="center-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="2" y="4" width="20" height="16" rx="2"/>
-                        <path d="M12 8v8"/>
-                        <path d="M8 12h8"/>
-                    </svg>
-                </div>
-                <span class="center-badge badge-success">可提现</span>
-                <h3 class="center-name">财资中心</h3>
-                <p class="center-desc">Finance Center - 佣金账户、交易数据、充值提现</p>
-                <div class="center-stats">
-                    <div class="center-stat">
-                        <span class="center-stat-value">$45K</span>
-                        <span class="center-stat-label">佣金余额</span>
-                    </div>
-                    <div class="center-stat">
-                        <span class="center-stat-value">$12K</span>
-                        <span class="center-stat-label">本月收入</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 渠道中心 -->
-            <div class="center-card orange" data-role="sp" onclick="enterCenter('channel')">
-                <div class="center-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-                    </svg>
-                </div>
-                <h3 class="center-name">渠道中心</h3>
-                <p class="center-desc">金融渠道管理、银行、卡组织</p>
-                <div class="center-stats">
-                    <div class="center-stat">
-                        <span class="center-stat-value">18</span>
-                        <span class="center-stat-label">接入渠道</span>
-                    </div>
-                    <div class="center-stat">
-                        <span class="center-stat-value">6</span>
-                        <span class="center-stat-label">银行</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 清结算中心 -->
-            <div class="center-card teal" data-role="sp" onclick="enterCenter('settlement')">
-                <div class="center-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-                    </svg>
-                </div>
-                <h3 class="center-name">清结算中心</h3>
-                <p class="center-desc">清算、结算、对账、商户收费、商户汇率路由、商户MK配置</p>
-                <div class="center-stats">
-                    <div class="center-stat">
-                        <span class="center-stat-value">$1.2M</span>
-                        <span class="center-stat-label">待结算</span>
-                    </div>
-                    <div class="center-stat">
-                        <span class="center-stat-value">98.5%</span>
-                        <span class="center-stat-label">对账率</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 财资中心 - SP角色 -->
-            <div class="center-card cyan" data-role="sp" onclick="enterCenter('finance')">
-                <div class="center-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="2" y="4" width="20" height="16" rx="2"/>
-                        <path d="M12 8v8"/>
-                        <path d="M8 12h8"/>
-                    </svg>
-                </div>
-                <h3 class="center-name">财资中心</h3>
-                <p class="center-desc">Finance Center - 资金账户、清结算、资金运营、汇率管理</p>
-                <div class="center-stats">
-                    <div class="center-stat">
-                        <span class="center-stat-value">$5.8M</span>
-                        <span class="center-stat-label">资金总额</span>
-                    </div>
-                    <div class="center-stat">
-                        <span class="center-stat-value">8</span>
-                        <span class="center-stat-label">账户数</span>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- 运营支撑 -->
-        <div class="category-title">运营支撑</div>
-        <div class="centers-grid">
-            <!-- 数据中心 -->
-            <div class="center-card accent" data-role="both" onclick="enterCenter('data')">
+            <!-- 数据报表 -->
+            <div class="center-card accent" onclick="enterCenter('data')">
                 <div class="center-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M18 20V10"/>
@@ -992,7 +816,7 @@
                         <path d="M6 20v-6"/>
                     </svg>
                 </div>
-                <h3 class="center-name">数据中心</h3>
+                <h3 class="center-name">数据报表</h3>
                 <p class="center-desc">报表统计、趋势分析、数据导出</p>
                 <div class="center-stats">
                     <div class="center-stat">
@@ -1005,34 +829,13 @@
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- 工单中心 -->
-            <div class="center-card danger" data-role="both" onclick="enterCenter('ticket')">
-                <div class="center-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                        <polyline points="14 2 14 8 20 8"/>
-                        <line x1="16" y1="13" x2="8" y2="13"/>
-                        <line x1="16" y1="17" x2="8" y2="17"/>
-                    </svg>
-                </div>
-                <span class="center-badge badge-danger">3 待审</span>
-                <h3 class="center-name">工单中心</h3>
-                <p class="center-desc">配置审批、流程管理</p>
-                <div class="center-stats">
-                    <div class="center-stat">
-                        <span class="center-stat-value">3</span>
-                        <span class="center-stat-label">待审核</span>
-                    </div>
-                    <div class="center-stat">
-                        <span class="center-stat-value">128</span>
-                        <span class="center-stat-label">已处理</span>
-                    </div>
-                </div>
-            </div>
-
+        <!-- 系统管理 -->
+        <div class="category-title">系统管理</div>
+        <div class="centers-grid">
             <!-- 开发者中心 -->
-            <div class="center-card cyan" data-role="both" onclick="enterCenter('developer')">
+            <div class="center-card cyan" onclick="enterCenter('developer')">
                 <div class="center-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="16 18 22 12 16 6"/>
@@ -1040,11 +843,11 @@
                     </svg>
                 </div>
                 <h3 class="center-name">开发者中心</h3>
-                <p class="center-desc">API文档、密钥、Webhooks</p>
+                <p class="center-desc">API 文档、密钥管理、Webhooks</p>
                 <div class="center-stats">
                     <div class="center-stat">
                         <span class="center-stat-value">2</span>
-                        <span class="center-stat-label">API密钥</span>
+                        <span class="center-stat-label">API 密钥</span>
                     </div>
                     <div class="center-stat">
                         <span class="center-stat-value">5</span>
@@ -1053,16 +856,16 @@
                 </div>
             </div>
 
-            <!-- 设置 -->
-            <div class="center-card purple" data-role="both" onclick="enterCenter('settings')">
+            <!-- 设置中心 -->
+            <div class="center-card purple" onclick="enterCenter('settings')">
                 <div class="center-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="3"/>
                         <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
                     </svg>
                 </div>
-                <h3 class="center-name">设置</h3>
-                <p class="center-desc">账号管理、权限配置、通知设置</p>
+                <h3 class="center-name">设置中心</h3>
+                <p class="center-desc">用户权限、协议记录、通知设置</p>
                 <div class="center-stats">
                     <div class="center-stat">
                         <span class="center-stat-value">8</span>
@@ -1071,32 +874,6 @@
                     <div class="center-stat">
                         <span class="center-stat-value">3</span>
                         <span class="center-stat-label">角色</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 风控合规 -->
-        <div class="category-title">风控合规</div>
-        <div class="centers-grid">
-            <!-- 风控合规中心 -->
-            <div class="center-card danger" data-role="sp" onclick="enterCenter('risk')">
-                <div class="center-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                    </svg>
-                </div>
-                <span class="center-badge badge-warning">5 预警</span>
-                <h3 class="center-name">风控合规中心</h3>
-                <p class="center-desc">风控规则、KYC/KYB、AML合规</p>
-                <div class="center-stats">
-                    <div class="center-stat">
-                        <span class="center-stat-value">5</span>
-                        <span class="center-stat-label">风险预警</span>
-                    </div>
-                    <div class="center-stat">
-                        <span class="center-stat-value">99.2%</span>
-                        <span class="center-stat-label">合规率</span>
                     </div>
                 </div>
             </div>
@@ -1189,22 +966,15 @@
     </style>
 
     <script>
-        // 所有可用的中心数据
+        // 所有可用的中心数据（纯 TP 基础版）
         const allCenters = [
             { id: 'dashboard', name: '工作台', desc: '数据概览', color: 'accent', icon: 'dashboard' },
-            { id: 'product', name: '产品市场', desc: 'Product Market', color: 'cyan', icon: 'product' },
-            { id: 'supply', name: '产品中心', desc: 'Product Center', color: 'purple', icon: 'supply' },
-            { id: 'merchant', name: '会员中心', desc: '会员管理', color: 'success', icon: 'merchant' },
-            { id: 'order', name: '订单中心', desc: '订单管理', color: 'teal', icon: 'order' },
-            { id: 'sales-channel', name: '销售渠道', desc: 'Sales Channel', color: 'warning', icon: 'sales' },
-            { id: 'finance', name: '财资中心', desc: 'Finance Center', color: 'pink', icon: 'finance' },
-            { id: 'channel', name: '渠道中心', desc: '金融渠道管理', color: 'orange', icon: 'channel' },
-            { id: 'settlement', name: '清结算中心', desc: '清算结算', color: 'teal', icon: 'settlement' },
-            { id: 'data', name: '数据中心', desc: '报表统计', color: 'accent', icon: 'data' },
-            { id: 'ticket', name: '工单中心', desc: '配置审批', color: 'danger', icon: 'ticket' },
-            { id: 'developer', name: '开发者中心', desc: 'API文档', color: 'cyan', icon: 'developer' },
-            { id: 'settings', name: '设置', desc: '账号管理', color: 'purple', icon: 'settings' },
-            { id: 'risk', name: '风控合规中心', desc: '风控规则', color: 'danger', icon: 'risk' }
+            { id: 'product', name: '产品中心', desc: '浏览产品、已签约产品', color: 'cyan', icon: 'product' },
+            { id: 'customer', name: '客户中心', desc: '会员查询、会员配置、订单查询', color: 'success', icon: 'sales' },
+            { id: 'sales-channel', name: '销售渠道', desc: '销售管理、普通代理商', color: 'warning', icon: 'merchant' },
+            { id: 'data', name: '数据报表', desc: '报表统计', color: 'accent', icon: 'data' },
+            { id: 'developer', name: '开发者中心', desc: 'API 文档、密钥', color: 'cyan', icon: 'developer' },
+            { id: 'settings', name: '设置中心', desc: '用户权限、协议记录', color: 'purple', icon: 'settings' }
         ];
 
         // 图标SVG映射
@@ -1252,7 +1022,7 @@
 
         // 默认常用页面（从localStorage读取，如果没有则使用默认值）
         let favorites = JSON.parse(localStorage.getItem('favorites')) || [
-            'product', 'merchant', 'sales-channel', 'finance', 'data'
+            'product', 'customer', 'sales-channel', 'data', 'developer'
         ];
 
         // 初始化页面
@@ -1451,25 +1221,6 @@
             }, 2000);
         }
 
-        // 角色切换
-        function switchRole(role) {
-            document.querySelectorAll('.role-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.querySelector(`[data-role="${role}"]`).classList.add('active');
-            
-            // 根据角色过滤显示的中心
-            const cards = document.querySelectorAll('.center-card');
-            cards.forEach(card => {
-                const cardRole = card.getAttribute('data-role');
-                if (role === 'both' || cardRole === 'both' || cardRole === role) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
-
         // 返回
         function goBack() {
             document.getElementById('centerDetail').classList.remove('show');
@@ -1478,9 +1229,9 @@
         // 处理待办事项点击
         function handleTodoClick(todoId) {
             const todoNames = {
-                'merchant-review': '商户审核',
-                'contract-expire': '合约到期提醒',
-                'settlement-pending': '待结算账单'
+                'member-register': '新会员注册确认',
+                'contract-expire': '产品合约到期提醒',
+                'settlement-pending': '待处理订单'
             };
             showNotification(`正在打开 ${todoNames[todoId] || todoId}...`);
             // 这里可以添加实际的跳转逻辑
