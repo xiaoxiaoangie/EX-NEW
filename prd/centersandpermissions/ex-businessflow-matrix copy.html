@@ -59,6 +59,7 @@ table.ft{width:100%;border-collapse:collapse;font-size:13px}
 .tag-role-sp{background:var(--green-bg);color:var(--green)}
 .tag-role-tp{background:var(--cyan-bg);color:var(--cyan)}
 .tag-role-merchant{background:#fce7f3;color:#ec4899}
+.tag-role-licensed{background:var(--accent-bg);color:var(--accent)}
 .tag-center{background:rgba(148,163,184,.12);color:var(--text-s)}
 
 /* Func list */
@@ -71,6 +72,15 @@ table.ft{width:100%;border-collapse:collapse;font-size:13px}
 /* Empty */
 .empty{padding:48px;text-align:center;color:var(--text-m);font-size:14px}
 
+/* Legend */
+.legend{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:24px}
+.legend h3{font-size:14px;font-weight:700;margin-bottom:12px;color:var(--accent)}
+.legend-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+.legend-card{background:var(--bg-row-alt);border:1px solid var(--border);border-radius:8px;padding:12px 16px}
+.legend-card h4{font-size:12px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.legend-card p{font-size:11px;color:var(--text-s);line-height:1.5;margin:0}
+.legend-card .tag{margin-right:4px}
+
 /* Responsive */
 @media(max-width:1024px){body{padding:16px}.flow-nav{gap:6px}.flow-btn{padding:8px 14px;font-size:12px}}
 </style>
@@ -78,8 +88,39 @@ table.ft{width:100%;border-collapse:collapse;font-size:13px}
 <body>
 <div class="wrap">
     <div class="hdr">
-        <h1>EX 机构权限矩阵 — 按业务流程</h1>
-        <p class="sub">选择业务流程 → 查看各端（SA / PP-SP / PP-TP / MP）的中心、菜单、页面、功能</p>
+        <h1>EX 机构权限矩阵 — 按业务流程（实例版）</h1>
+        <p class="sub">以真实机构为例，展示各端（SA / PP-SP / PP-TP / MP）在每个业务流程中的中心、菜单、页面、功能</p>
+    </div>
+
+    <!-- Legend: real company examples -->
+    <div class="legend">
+        <h3>📋 机构实例全景</h3>
+        <div class="legend-grid">
+            <div class="legend-card">
+                <h4><span class="tag tag-role-sp">SP</span>IPL（iPayLinks）</h4>
+                <p>完整套餐 SP。提供：法币收付换 + 发卡（仅法币充值）。<br>有清算/合规/渠道/财资中心。<br>对 BB 来说是 <strong>SP 类型的 Channel</strong>。</p>
+            </div>
+            <div class="legend-card">
+                <h4><span class="tag tag-role-sp">SP</span>BB（BingX/BitBridge）</h4>
+                <p>完整套餐 SP。提供：数法承兑 + 发卡（数币和法币充值）。<br>有清算/合规/渠道/财资中心。<br>渠道包括：IPL（SP类型Channel）、Reap（纯Channel）。</p>
+            </div>
+            <div class="legend-card">
+                <h4><span class="tag tag-role-sp">SP</span>MLG</h4>
+                <p>纯 API 对接 SP（基础模式）。提供：给机构开 VA（法币收付款）。<br>无清算/合规/渠道/财资中心，仅产品中心 + 客户中心。</p>
+            </div>
+            <div class="legend-card">
+                <h4><span class="tag tag-role-tp">TP</span>鲲鹏支付 — 纯代理</h4>
+                <p>代理 IPL 法币能力。无牌照，商户推送给 IPL 做合规和清算。<br>仅有：产品中心 + 客户中心 + 设置中心。</p>
+            </div>
+            <div class="legend-card">
+                <h4><span class="tag tag-role-tp">TP</span>卓能 — 纯代理</h4>
+                <p>代理 IPL + BB 能力。无牌照，商户推送给对应 SP。<br>仅有：产品中心 + 客户中心 + 设置中心。</p>
+            </div>
+            <div class="legend-card">
+                <h4><span class="tag tag-role-licensed">TP</span>Bonbil — 持牌+代理混合</h4>
+                <p>跟 IPL、BB 是<strong>代理模式</strong>（商户推送给 SP）。<br>跟 MLG 是<strong>渠道合作模式</strong>（用自己牌照，MLG 是渠道）。<br>有清算/合规/渠道/财资中心（usesOwnLicense=true）。</p>
+            </div>
+        </div>
     </div>
 
     <!-- Flow navigation -->
@@ -95,177 +136,206 @@ table.ft{width:100%;border-collapse:collapse;font-size:13px}
 <script>
 // ========== 业务流程数据 ==========
 const flows = [
-    { id: 'flow1', num: '1', label: '一、服务商管理', items: [
-        { role: 'EX', portal: 'SA', center: '/', module: '服务商管理', menu: '服务商管理', page: '服务商管理（列表）', functions: ['新增服务商', '查看服务商详情', '编辑服务商信息'], note: 'EX运营在SA后台管理服务商档案' },
-        // SP登录（不能注册，无个人中心，不能修改）
-        { role: '服务商', portal: 'PP-SP', center: '设置中心', module: 'User', menu: '/', page: '登录', functions: ['邮箱登录', '手机号登录'], note: 'SP由EX创建账号后登录，不能自助注册' },
-        { role: '服务商', portal: 'PP-SP', center: '设置中心', module: 'User', menu: '/', page: '重置密码', functions: ['重置密码'], note: '' },
-        { role: '服务商', portal: 'PP-SP', center: '设置中心', module: 'User', menu: '/', page: '工作台', functions: ['查看工作台概览'], note: '登录后首页' },
-        // 渠道中心 - 渠道管理
-        { role: '服务商', portal: 'PP-SP', center: '渠道中心', module: '渠道管理', menu: '渠道基本信息', page: '渠道基本信息（列表）', functions: ['新增', '查看详情', '编辑', '状态变更'], note: '' },
-        { role: '服务商', portal: 'PP-SP', center: '渠道中心', module: '渠道管理', menu: '渠道基本信息', page: '新增渠道', functions: ['填写渠道信息', '提交'], note: '' },
-        { role: '服务商', portal: 'PP-SP', center: '渠道中心', module: '渠道管理', menu: '渠道基本信息', page: '查看详情', functions: ['查看渠道详情'], note: '' },
-        { role: '服务商', portal: 'PP-SP', center: '渠道中心', module: '渠道管理', menu: '渠道能力管理', page: '渠道能力（列表）', functions: ['新增', '查看详情', '编辑', '状态变更'], note: '' },
-        { role: '服务商', portal: 'PP-SP', center: '渠道中心', module: '渠道管理', menu: '渠道能力管理', page: '新增渠道能力', functions: ['填写渠道能力信息', '提交'], note: '' },
-        { role: '服务商', portal: 'PP-SP', center: '渠道中心', module: '渠道管理', menu: '渠道能力管理', page: '查看详情', functions: ['查看渠道能力详情'], note: '' },
-        // 资金中心 - 资金管理
-        { role: '服务商', portal: 'PP-SP', center: '资金中心', module: '资金管理', menu: '资金管理', page: '渠道余额查询（列表）', functions: ['待定'], note: '功能待定' },
+    // ==================== 零、基础准备 ====================
+    { id: 'flow0', num: '0', label: '零、基础准备', items: [
+        // ===== SA — 产品管理 =====
+        { role: 'EX', portal: 'SA', center: '/', module: '产品管理', menu: '产品属性定义', page: '产品属性定义（列表）', functions: ['新增产品属性', '编辑产品属性', '查看属性详情', '启用/停用属性'], note: '定义产品的基础属性（如：币种、地区、结算周期、费率类型等）' },
+        { role: 'EX', portal: 'SA', center: '/', module: '产品管理', menu: '套餐管理', page: '套餐管理（列表）', functions: ['新增套餐', '查看套餐详情', '编辑套餐'], note: 'EX定义产品套餐组合' },
+        { role: 'EX', portal: 'SA', center: '/', module: '产品管理', menu: '套餐管理', page: '新增套餐', functions: ['配置套餐内容', '设置套餐定价', '提交'], note: '新增套餐表单页' },
+        // ===== SA — 协议管理 =====
+        { role: 'EX', portal: 'SA', center: '/', module: '协议管理', menu: '协议版本管理', page: '协议版本管理（列表）', functions: ['查看版本历史', '发布新版本', '回退版本'], note: '管理协议的版本迭代' },
+        // ===== SA — 工作流中心 =====
+        { role: 'EX', portal: 'SA', center: '/', module: '工作流中心', menu: '流程管理', page: '流程管理（列表）', functions: ['新增流程', '编辑流程', '查看详情', ], note: '定义各类审批流程' },
+        { role: 'EX', portal: 'SA', center: '/', module: '工作流中心', menu: '租户签约工作流', page: '租户签约工作流配置', functions: ['配置签约审批流程', '配置审批节点', ], note: '定义租户签约的审批流程（如：SA发起→SP确认→SA终审）' },
     ]},
-    { id: 'flow2', num: '2', label: '二、产品上架', items: [
-        // SP在PP上架产品
-        { role: 'SP', portal: 'PP-SP', center: '产品中心', module: '产品管理', menu: '产品管理', page: '产品管理（列表）', functions: ['上架产品', '查看产品详情', '产品状态变更', '编辑产品'], note: 'SP在PP端管理自有产品' },
-        { role: 'SP', portal: 'PP-SP', center: '产品中心', module: '产品管理', menu: '产品管理', page: '上架产品', functions: ['填写产品信息', '配置产品能力', '设置产品定价', '提交上架'], note: '产品上架表单页' },
-        // SP工单中心 - 工单审核
-        { role: 'SP', portal: 'PP-SP', center: '工单中心', module: '工单审核', menu: '工单审核', page: '审核页面', functions: ['审核产品上架工单'], note: '产品上架审核' },
-        // EX在SA管理套餐和代管理产品
-        { role: 'EX', portal: 'SA', center: '/', module: '产品中心', menu: '产品中心 - 套餐管理', page: '套餐管理', functions: ['新增套餐', '查看套餐详情', '编辑套餐'], note: 'EX定义产品套餐组合' },
-        { role: 'EX', portal: 'SA', center: '/', module: '产品中心', menu: '产品中心 - 套餐管理', page: '新增套餐', functions: ['配置套餐内容', '设置套餐定价', '提交'], note: '新增套餐表单页' },
-        { role: 'EX', portal: 'SA', center: '/', module: '产品中心', menu: '产品中心 - 业务产品', page: '服务商产品列表', functions: ['上架产品（代管理）', '查看产品详情', '产品状态变更', '编辑产品'], note: 'EX代SP管理产品上架' },
-        { role: 'EX', portal: 'SA', center: '/', module: '产品中心', menu: '产品中心 - 业务产品', page: '上架产品', functions: ['填写产品信息', '配置产品能力', '设置产品定价', '提交上架'], note: '代管理上架表单页' },
-    ]},
-    { id: 'flow3', num: '3', label: '三、租户签约', items: [
-        // ===== 租户 PP-TP =====
-        // 租户登录
-        { role: '租户', portal: 'PP-TP', center: '设置中心', module: 'User', menu: '/', page: '登录', functions: ['邮箱登录', '手机号登录'], note: '租户首次登录PP' },
-        { role: '租户', portal: 'PP-TP', center: '设置中心', module: 'User', menu: '/', page: '重置密码', functions: ['重置密码'], note: '' },
-        { role: '租户', portal: 'PP-TP', center: '设置中心', module: 'User', menu: '/', page: '工作台', functions: ['查看工作台概览'], note: '登录后首页' },
-        // 租户在产品中心浏览和管理签约产品
-        { role: '租户', portal: 'PP-TP', center: '产品中心', module: '产品市场', menu: '产品市场', page: '产品市场', functions: ['产品介绍'], note: '租户浏览可签约的产品' },
-        { role: '租户', portal: 'PP-TP', center: '产品中心', module: '产品市场', menu: '已签约产品', page: '已签约产品', functions: ['查看产品能力', '配置产品费率', '配置汇率'], note: '根据实际产品配置费率/汇率' },
-        // 租户用户权限
-        { role: '租户', portal: 'PP-TP', center: '设置中心', module: '用户权限', menu: '用户管理', page: '用户管理（列表）', functions: ['新增用户', '编辑用户', '禁用/启用用户', '重置密码'], note: '' },
-        { role: '租户', portal: 'PP-TP', center: '设置中心', module: '用户权限', menu: '角色管理', page: '角色管理（列表）', functions: ['新增角色', '编辑角色', '删除角色', '配置权限'], note: '' },
-        // 租户开发者中心
-        { role: '租户', portal: 'PP-TP', center: '设置中心', module: '开发者中心', menu: '开发者中心', page: '开发者中心', functions: ['生成/查看 API Key', '生成/查看 Secret', '配置 Webhook', '文档入口'], note: '' },
 
-        // ===== EX SA =====
-        { role: 'EX', portal: 'SA', center: '/', module: '租户管理', menu: '租户管理 - 租户签约申请', page: '租户签约申请（列表）', functions: ['租户签约', '审核签约申请', '查看申请详情'], note: 'EX处理租户的签约申请' },
-        { role: 'EX', portal: 'SA', center: '/', module: '租户管理', menu: '租户管理', page: '租户基本信息', functions: ['查看租户信息', '编辑租户信息'], note: '租户档案管理' },
-        { role: 'EX', portal: 'SA', center: '/', module: '租户管理', menu: '租户管理', page: '租户签约产品', functions: ['查看签约产品', '管理签约产品'], note: '租户已签约的产品列表' },
+    // ==================== 一、服务商入驻 ====================
+    { id: 'flow1', num: '1', label: '一、服务商入驻', items: [
+        // ===== SP（PP-SP端）— 登录注册、用户权限 =====
+        { role: 'SP', portal: 'PP-SP', center: '设置中心', module: 'User', menu: '/', page: '登录', functions: ['邮箱登录', '手机号登录'], note: 'SP由EX创建账号后登录，不能自助注册' },
+        { role: 'SP', portal: 'PP-SP', center: '设置中心', module: 'User', menu: '/', page: '重置密码', functions: ['重置密码'], note: '' },
+        { role: 'SP', portal: 'PP-SP', center: '设置中心', module: 'User', menu: '/', page: '工作台', functions: ['查看工作台概览'], note: '登录后首页' },
+        { role: 'SP', portal: 'PP-SP', center: '设置中心', module: '用户权限', menu: '用户管理', page: '用户管理（列表）', functions: ['新增用户', '编辑用户', '禁用/启用用户', '重置密码'], note: '' },
+        { role: 'SP', portal: 'PP-SP', center: '设置中心', module: '用户权限', menu: '角色管理', page: '角色管理（列表）', functions: ['新增角色', '编辑角色', '删除角色', '配置权限'], note: '' },
 
-        // ===== SP PP-SP =====
-        // SP配置分佣模版
-        { role: 'SP', portal: 'PP-SP', center: '清结算中心', module: '返点/分佣规则', menu: '分佣模版配置', page: '分佣模版配置（列表）', functions: ['新增模版', '查看模版详情', '编辑模版'], note: 'SP预设分佣模版，签约时引用' },
-        { role: 'SP', portal: 'PP-SP', center: '清结算中心', module: '返点/分佣规则', menu: '分佣配置', page: '分佣配置', functions: ['配置分佣参数'], note: '分佣全局配置' },
-        // SP处理工单
-        { role: 'SP', portal: 'PP-SP', center: '工单中心', module: '工单处理', menu: '待我处理', page: '工单处理（列表）', functions: ['处理工单', '查看详情'], note: 'SP审批租户签约等工单' },
-        // SP配置分佣规则
-        { role: 'SP', portal: 'PP-SP', center: '清结算中心', module: '返点/分佣规则', menu: '分佣规则配置', page: '分佣规则配置（列表）', functions: ['查看详情', '修改分佣规则'], note: '针对具体租户的分佣规则' },
-        // SP查看机构签约产品
-        { role: '租户', portal: 'PP-SP', center: '合作伙伴', module: '机构伙伴', menu: '机构签约产品', page: '机构签约产品（列表）', functions: ['查看产品能力', '查看标准费率', '查看标准汇率'], note: 'SP查看机构伙伴的签约产品信息' },
+        // ===== SA — 服务商信息管理 =====
+        { role: 'EX', portal: 'SA', center: '/', module: '服务商管理', menu: '服务商管理', page: '服务商管理（列表）', functions: ['新增服务商', '查看服务商详情', '编辑服务商信息', '配置SP模式（基础/完整套餐）'], note: '例：新增 IPL（完整套餐）、BB（完整套餐）、MLG（基础/纯API）' },
+        { role: 'EX', portal: 'SA', center: '/', module: '服务商管理', menu: '服务商管理', page: '服务商详情', functions: [, '查看SP产品', ], note: 'IPL：法币收付换+发卡（法币充值）；BB：数法承兑+发卡（数币+法币充值）；MLG：VA法币收付款' },
+        { role: 'EX', portal: 'SA', center: '/', module: '服务商管理', menu: '服务商用户管理', page: '服务商用户管理（列表）', functions: ['查看SP用户', '创建SP初始账号', '重置密码'], note: 'SA为SP创建初始登录账号' },
+        { role: 'EX', portal: 'SA', center: '/', module: '协议管理', menu: 'SP服务协议', page: 'SP服务协议（列表）', functions: ['查看SP服务协议记录', '查看协议详情'], note: 'SA查看所有SP的服务协议记录' },
+
+        // ===== SP — 维护产品标准报价 =====
+        { role: 'SP', portal: 'PP-SP', center: '产品中心', module: '产品管理', menu: '标准报价', page: '标准报价配置', functions: ['配置产品标准费率', '配置标准汇率'], note: '例：IPL配置法币收款标准费率1.5%；BB配置数法承兑标准费率' },
+
+        // ===== SP — 维护标准分佣返点规则（清算中心）=====
+        { role: 'SP', portal: 'PP-SP', center: '清算中心', module: '返点/分佣规则', menu: '分佣/返点模版配置', page: '分佣/返点模版配置（列表）', functions: ['新增模版', '查看模版详情', '编辑模版'], note: '例：IPL预设分佣模版（标准版），租户签约时引用' },
+
+        // ===== SP — 维护外部渠道能力（渠道中心，仅完整套餐SP：IPL、BB）=====
+        { role: 'SP', portal: 'PP-SP', center: '渠道中心', module: '渠道管理', menu: '渠道基本信息', page: '渠道基本信息（列表）', functions: ['新增', '查看详情', '编辑', '状态变更'], note: '例：BB 的渠道列表 → IPL（SP类型Channel）、Reap（纯Channel）' },
+        { role: 'SP', portal: 'PP-SP', center: '渠道中心', module: '渠道管理', menu: '渠道基本信息', page: '新增渠道', functions: ['填写渠道信息', '提交'], note: '例：BB 新增 Reap 为外部 Channel' },
+        { role: 'SP', portal: 'PP-SP', center: '渠道中心', module: '渠道管理', menu: '渠道能力管理', page: '渠道能力（列表）', functions: ['新增', '查看详情', '编辑', '状态变更'], note: 'EX内部SP能力自动同步（只读），外部Channel能力手动配置' },
+        { role: 'SP', portal: 'PP-SP', center: '渠道中心', module: '渠道管理', menu: '渠道能力管理', page: '新增渠道能力', functions: ['填写渠道能力信息', '提交'], note: '' },
+
+        // ===== SP — 财资中心（仅完整套餐SP：IPL、BB）=====
+        { role: 'SP', portal: 'PP-SP', center: '财资中心', module: '头寸管理', menu: '头寸管理', page: '渠道余额查询（列表）', functions: ['查看各渠道/银行资金头寸', '余额监控', '预警设置'], note: '管理SP自有资金（非商户资金）。MLG无此中心（基础模式）' },
+
+        // ===== 产品同步到TP可见 =====
+        { role: 'TP', portal: 'PP-TP', center: '产品中心', module: '产品市场', menu: '产品市场', page: '产品市场', functions: ['浏览可签约产品', '查看产品介绍', ], note: '产品上架后同步到产品市场。例：鲲鹏看到IPL法币产品；卓能看到IPL+BB产品；Bonbil看到IPL+BB+MLG产品' },
     ]},
-    { id: 'flow4a', num: '4', label: '四、商户登录注册', items: [
-        // 商户注册登录
-        { role: '商户', portal: 'MP', center: '/', module: '登录注册', menu: '/', page: '注册', functions: ['手机号注册', '邮箱注册', '验证码注册', '密码注册'], note: '商户在MP端自助注册' },
+
+    // ==================== 二、租户签约 ====================
+    { id: 'flow2', num: '2', label: '二、租户签约', items: [
+        // ===== SA — 租户签约（本期SA代签，不支持TP自签）=====
+        { role: 'EX', portal: 'SA', center: '/', module: '租户管理', menu: '新增租户', page: '新增租户', functions: ['填写租户基本信息', '选择签约产品', '配置TP模式（代理/持牌/混合）', '提交签约'], note: '本期由SA发起签约，不支持TP自助签约。例：为鲲鹏签约IPL法币；为Bonbil签约IPL+BB+MLG' },
+        { role: 'EX', portal: 'SA', center: '/', module: '租户管理', menu: '租户签约申请', page: '租户签约申请（列表）', functions: ['查看签约申请', '审核签约申请', '查看申请详情'], note: '签约审批流程（工作流引擎驱动）' },
+        { role: 'EX', portal: 'SA', center: '/', module: '租户管理', menu: '租户管理', page: '租户基本信息', functions: ['查看租户详情', '编辑租户信息', '配置TP模式（代理/持牌/混合）'], note: '例：鲲鹏=纯代理；Bonbil=持牌+代理混合（usesOwnLicense=true）' },
+        { role: 'EX', portal: 'SA', center: '/', module: '租户管理', menu: '租户管理', page: '租户签约产品', functions: ['查看签约产品', '管理签约产品', '配置合作模式（代理/渠道合作）'], note: '例：Bonbil 的 IPL产品=代理模式，MLG产品=渠道合作模式' },
+        // SA协议记录
+        { role: 'EX', portal: 'SA', center: '/', module: '协议管理', menu: '所有协议记录', page: '所有协议记录（列表）', functions: ['查看所有协议记录', '按类型筛选', '查看协议详情'], note: 'SA查看平台所有协议记录' },
+
+        // ===== SP（PP-SP端）— 机构代理/机构客户 =====
+        { role: 'SP', portal: 'PP-SP', center: '客户中心', module: '机构伙伴', menu: '机构代理商', page: '机构代理商（列表）', functions: ['查看机构代理商列表', '查看详情', '查看签约产品'], note: '例：IPL查看鲲鹏（代理IPL法币）、卓能（代理IPL+BB）→ 代理模式，商户推送给IPL' },
+        { role: 'SP', portal: 'PP-SP', center: '客户中心', module: '机构伙伴', menu: '机构客户', page: '机构客户（列表）', functions: ['查看机构客户列表', '查看详情', '查看签约产品'], note: '例：IPL查看Bonbil（IPL产品=代理模式）→ Bonbil既是代理商又是客户' },
+        { role: 'SP', portal: 'PP-SP', center: '客户中心', module: '机构伙伴', menu: '机构客户', page: '机构客户（列表）', functions: ['查看机构客户列表', '查看详情'], note: '例：MLG查看Bonbil（渠道合作模式，Bonbil用自己牌照，MLG是渠道）' },
+        { role: 'SP', portal: 'PP-SP', center: '客户中心', module: '机构伙伴', menu: '机构签约产品', page: '机构签约产品（列表）', functions: ['查看产品能力', '查看标准费率', '查看标准汇率'], note: '例：IPL查看鲲鹏/卓能/Bonbil的签约产品' },
+        // SP协议记录（租户入网后，SP看到与TP的签约协议）
+        { role: 'SP', portal: 'PP-SP', center: '设置中心', module: '协议记录', menu: '机构签约协议', page: '机构签约协议记录（列表）', functions: ['查看机构签约协议记录', '查看协议详情'], note: '例：IPL查看与鲲鹏（机构代理商）、Bonbil（机构客户/代理商）的签约协议' },
+
+        // ===== SP — 配置特殊费率、特殊返点（清算中心）=====
+        { role: 'SP', portal: 'PP-SP', center: '清算中心', module: '收费配置', menu: '特殊商户费率', page: '特殊商户费率配置（列表）', functions: ['新增特殊费率', '编辑', '查看详情'], note: '例：IPL为鲲鹏的大客户配置特殊费率（低于标准费率）' },
+        { role: 'SP', portal: 'PP-SP', center: '清算中心', module: '返点/分佣规则', menu: '机构分佣规则', page: '机构分佣规则配置（列表）', functions: ['新增规则', '编辑', '查看详情'], note: '例：IPL为鲲鹏配置特殊分佣比例（高于标准分佣）' },
+        { role: 'SP', portal: 'PP-SP', center: '清算中心', module: '返点/分佣规则', menu: '机构返点规则', page: '机构返点规则配置（列表）', functions: ['新增规则', '编辑', '查看详情'], note: '例：BB为卓能配置发卡返点规则（部分产品商户也有返点，如发卡）' },
+        // SP工作流 — 待办
+        { role: 'SP', portal: 'PP-SP', center: '清算中心', module: '审批工单', menu: '待我处理', page: '审批工单处理（列表）', functions: ['处理审批工单', '查看详情'], note: '例：IPL审批鲲鹏签约工单、费率变更工单、分佣变更工单' },
+        { role: 'SP', portal: 'PP-SP', center: '清算中心', module: '审批工单', menu: '我发起的', page: '我发起的工单（列表）', functions: ['查看工单状态', '查看详情'], note: '' },
+
+        // ===== TP（PP-TP端）— 登录注册、用户权限 =====
+        { role: 'TP', portal: 'PP-TP', center: '设置中心', module: 'User', menu: '/', page: '登录', functions: ['邮箱登录', '手机号登录'], note: '租户首次登录PP（SA创建账号后）' },
+        { role: 'TP', portal: 'PP-TP', center: '设置中心', module: 'User', menu: '/', page: '重置密码', functions: ['重置密码'], note: '' },
+        { role: 'TP', portal: 'PP-TP', center: '设置中心', module: 'User', menu: '/', page: '工作台', functions: ['查看工作台概览'], note: '登录后首页' },
+        { role: 'TP', portal: 'PP-TP', center: '设置中心', module: '用户权限', menu: '用户管理', page: '用户管理（列表）', functions: ['新增用户', '编辑用户', '禁用/启用用户', '重置密码'], note: '' },
+        { role: 'TP', portal: 'PP-TP', center: '设置中心', module: '用户权限', menu: '角色管理', page: '角色管理（列表）', functions: ['新增角色', '编辑角色', '删除角色', '配置权限'], note: '' },
+        // TP 开发者中心
+        { role: 'TP', portal: 'PP-TP', center: '设置中心', module: '开发者中心', menu: '开发者中心', page: '开发者中心', functions: ['生成/查看 API Key', '生成/查看 Secret', '配置 Webhook', '文档入口'], note: '' },
+        // TP 产品市场 — 查看已签约产品
+        { role: 'TP', portal: 'PP-TP', center: '产品中心', module: '产品市场', menu: '产品市场', page: '产品市场', functions: ['浏览可签约产品', '查看产品介绍'], note: '例：鲲鹏看到IPL法币产品；Bonbil看到IPL+BB+MLG产品' },
+        { role: 'TP', portal: 'PP-TP', center: '产品中心', module: '产品市场', menu: '已签约产品', page: '已签约产品', functions: ['查看产品能力', '查看签约状态'], note: '例：鲲鹏已签约IPL法币收付换；Bonbil已签约IPL法币+BB数法承兑+MLG VA。费率不在产品中心配置' },
+        // TP 协议记录（白牌协议由SA上传）
+        { role: 'TP', portal: 'PP-TP', center: '设置中心', module: '协议记录', menu: '租户服务协议', page: '租户服务协议记录（列表）', functions: ['查看租户服务协议记录', '查看协议详情'], note: 'TP查看自己与EX签订的租户服务协议' },
+        { role: 'TP', portal: 'PP-TP', center: '设置中心', module: '协议记录', menu: '白牌协议', page: '白牌协议（列表）', functions: ['查看白牌协议', '查看协议详情'], note: '白牌上展示的协议（会员服务协议等），由SA统一上传管理。TP如需更新找SA' },
+    ]},
+
+    // ==================== 三、商户登录注册 ====================
+    { id: 'flow3', num: '3', label: '三、商户登录注册', items: [
+        // ===== 商户（MP）=====
+        { role: '商户', portal: 'MP', center: '/', module: '登录注册', menu: '/', page: '注册', functions: ['手机号注册', '邮箱注册', '验证码注册', '密码注册'], note: '商户在MP端自助注册（例：鲲鹏的商户在鲲鹏白牌MP注册）' },
         { role: '商户', portal: 'MP', center: '/', module: '登录注册', menu: '/', page: '设置密码', functions: ['设置登录密码'], note: '验证码注册后设置密码' },
         { role: '商户', portal: 'MP', center: '/', module: '登录注册', menu: '/', page: '登录', functions: ['手机号登录', '邮箱登录', '验证码登录', '密码登录'], note: '' },
-        // 商户个人信息
-        { role: '商户', portal: 'MP', center: '/', module: 'User', menu: 'Personal Profile', page: '个人信息', functions: ['绑定/修改手机号', '绑定/修改邮箱', '开通/关闭2FA（身份验证器）', '修改昵称'], note: '商户个人账户设置' },
+        { role: '商户', portal: 'MP', center: '/', module: 'User', menu: 'Personal Profile', page: '个人信息', functions: ['绑定/修改手机号', '绑定/修改邮箱', '开通/关闭2FA', '修改昵称'], note: '商户个人账户设置' },
         { role: '商户', portal: 'MP', center: '/', module: 'User', menu: 'Personal Profile', page: '关联商户（列表）', functions: ['查看关联商户', '切换商户'], note: '一个用户可关联多个商户' },
-        // 商户用户权限
         { role: '商户', portal: 'MP', center: '设置中心', module: '用户权限', menu: '用户管理', page: '用户管理（列表）', functions: ['新增用户', '编辑用户', '禁用/启用用户', '重置密码'], note: '' },
         { role: '商户', portal: 'MP', center: '设置中心', module: '用户权限', menu: '角色管理', page: '角色管理（列表）', functions: ['新增角色', '编辑角色', '删除角色', '配置权限'], note: '' },
-        // 租户查看商户用户
-        { role: '租户', portal: 'PP-TP', center: '客户中心', module: '商户用户', menu: '商户管理', page: '商户用户查询（列表）', functions: ['查询商户用户', '查看用户详情'], note: 'TP查看其下商户的用户信息' },
+        // ===== TP（PP-TP端）— 客户中心：商户查询 + 会员配置 =====
+        { role: 'TP', portal: 'PP-TP', center: '客户中心', module: '商户查询', menu: '商户查询', page: '商户查询（列表）', functions: ['查询商户', '查看商户详情'], note: '例：鲲鹏查看其下注册的商户（会员）' },
+        { role: 'TP', portal: 'PP-TP', center: '客户中心', module: '商户查询', menu: '商户用户查询', page: '商户用户查询（列表）', functions: ['查询商户用户', '查看用户详情'], note: 'TP查看商户下的用户信息' },
+        { role: 'TP', portal: 'PP-TP', center: '客户中心', module: '会员配置', menu: '会员配置', page: '会员配置', functions: ['配置会员标准费率', '配置会员标准返点', '配置注册流程'], note: '无清算中心的TP（如鲲鹏）在此配置会员费率/返点。有清算中心的机构（SP/持牌TP）统一在清算中心配置' },
+        // TP协议记录（商户注册时签署的会员服务协议）
+        { role: 'TP', portal: 'PP-TP', center: '设置中心', module: '协议记录', menu: '会员服务协议', page: '会员服务协议记录（列表）', functions: ['查看会员服务协议记录', '查看协议详情'], note: 'TP查看其下商户注册时签署的会员服务协议' },
+        // ===== SP（PP-SP端）— 客户中心：商户查询 =====
+        { role: 'SP', portal: 'PP-SP', center: '客户中心', module: '商户查询', menu: '商户查询', page: '商户查询（列表）', functions: ['查询商户', '查看商户详情'], note: '例：IPL查看代理TP推送过来的注册商户（只读）' },
+        // ===== SA =====
+        { role: 'EX', portal: 'SA', center: '/', module: '协议管理', menu: '会员服务协议', page: '会员服务协议记录（列表）', functions: ['查看所有会员服务协议记录', '查看协议详情'], note: '商户注册时签署的会员服务协议' },
     ]},
-    { id: 'flow5', num: '5', label: '五、商户开通产品', items: [
-        // 商户开通产品
-        { role: '商户', portal: 'MP', center: '/', module: '产品管理', menu: '/', page: '开通产品', functions: ['提交KYC信息', '提交产品开通信息'], note: '商户在MP端申请开通产品' },
-        { role: '商户', portal: 'MP', center: '/', module: '产品管理', menu: '/', page: '开通后落地页面', functions: ['查看开通结果', '引导下一步操作'], note: '产品开通成功/失败结果页' },
-        { role: '商户', portal: 'MP', center: '/', module: '产品管理', menu: '/', page: '产品开通列表', functions: ['查看已开通产品', '查看开通状态'], note: '商户已申请/已开通的产品列表' },
-        // 租户(TP)管理商户产品
-        { role: '租户', portal: 'PP-TP', center: '客户中心', module: '商户产品查询', menu: '商户查询', page: '商户查询（列表）', functions: ['查看商户详情'], note: 'TP查看商户基本信息' },
-        { role: '租户', portal: 'PP-TP', center: '客户中心', module: '商户产品查询', menu: '商户管理', page: '商户管理（列表）', functions: ['商户开通产品', '产品状态变更'], note: 'TP为商户开通/管理产品' },
-        // 租户(SP)查看商户
-        { role: '租户', portal: 'PP-SP', center: '客户中心', module: '商户产品查询', menu: '商户查询', page: '商户查询（列表）', functions: ['查看商户详情'], note: 'SP查看商户信息（只读）' },
-        // 合规审核
-        { role: '租户', portal: 'PP-SP', center: '合规风控中心', module: '工单审核', menu: '—', page: '—', functions: ['略过'], note: '合规风控审核流程后续补充' },
-    ]},
-    { id: 'flow6', num: '6', label: '六、商户交易', items: [
+
+    // ==================== 四、商户开通产品 ====================
+    { id: 'flow4', num: '4', label: '四、商户开通产品', items: [
         // ===== 商户（MP）=====
-        // 订单管理
+        { role: '商户', portal: 'MP', center: '/', module: '产品管理', menu: '/', page: '开通产品', functions: ['提交KYC信息', '提交产品开通信息'], note: '例：鲲鹏商户开通IPL法币收款；Bonbil商户开通MLG VA收款' },
+        { role: '商户', portal: 'MP', center: '/', module: '产品管理', menu: '/', page: '开通后落地页面', functions: ['查看开通结果', '引导下一步操作'], note: '产品开通成功/失败结果页' },
+        { role: '商户', portal: 'MP', center: '/', module: '产品管理', menu: '/', page: '产品开通列表', functions: ['查看已开通产品', '查看开通状态'], note: '' },
+        // ===== TP（PP-TP端）=====
+        { role: 'TP', portal: 'PP-TP', center: '客户中心', module: '商户产品查询', menu: '商户查询', page: '商户查询（列表）', functions: ['查看商户详情'], note: '例：鲲鹏查看其下商户基本信息' },
+        { role: 'TP', portal: 'PP-TP', center: '客户中心', module: '商户产品查询', menu: '商户管理', page: '商户管理（列表）', functions: ['商户开通产品', '产品状态变更'], note: '例：鲲鹏为商户开通IPL法币收款' },
+        // ===== SP（PP-SP端）— 代理模式下SP收到推送商户 =====
+        { role: 'SP', portal: 'PP-SP', center: '客户中心', module: '商户产品查询', menu: '商户查询', page: '商户查询（列表）', functions: ['查看商户详情'], note: '例：IPL查看鲲鹏/卓能推送过来的商户信息（只读）' },
+        // SP — 商户开通时配置费率（清算中心）
+        { role: 'SP', portal: 'PP-SP', center: '清算中心', module: '收费配置', menu: '商户费率配置', page: '商户费率配置（列表）', functions: ['配置商户费率', '配置商户汇率', '查看详情'], note: '有清算中心的机构在此配置会员/商户费率。例：IPL为鲲鹏推送的商户配费率' },
+        // 合规审核（完整套餐SP：IPL、BB）
+        { role: 'SP', portal: 'PP-SP', center: '合规风控中心', module: '审批工单', menu: '审批工单', page: '合规审批工单（列表）', functions: ['KYC审核', '产品开通合规审核'], note: '例：IPL审核鲲鹏推送商户的KYC（代理模式，商户推送给SP做合规）' },
+        // ===== 持牌TP（Bonbil）— 渠道合作模式下自己做合规+费率 =====
+        { role: 'SP/持牌TP', portal: 'PP-SP', center: '清算中心', module: '收费配置', menu: '商户费率配置', page: '商户费率配置（列表）', functions: ['配置商户费率', '配置商户汇率', '查看详情'], note: '例：Bonbil（持牌TP，有清算中心）在清算中心统一配置所有会员费率，包括代理产品和自有牌照产品' },
+        { role: 'SP/持牌TP', portal: 'PP-SP', center: '合规风控中心', module: '审批工单', menu: '审批工单', page: '合规审批工单（列表）', functions: ['KYC审核', '产品开通合规审核'], note: '例：Bonbil自己审核商户KYC（MLG渠道合作模式，用自己牌照，不推送商户）' },
+    ]},
+
+    // ==================== 五、商户交易 ====================
+    { id: 'flow5', num: '5', label: '五、商户交易', items: [
+        // ===== 商户（MP）=====
         { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '对应产品菜单', page: '订单查询（列表）', functions: ['创建订单', '查看详情', '发起退款（如有）', '取消订单（如有）'], note: '不同产品对应不同商户单列表' },
         { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '对应产品菜单', page: '创建订单', functions: ['填写订单信息', '提交订单'], note: '创建订单表单页' },
-
         // 收款人管理
         { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '收款人管理', page: '收款人管理（列表）', functions: ['新增收款人', '查看详情', '编辑', '删除'], note: '' },
         { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '收款人管理', page: '新增收款人', functions: ['填写收款人信息', '提交'], note: '' },
         { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '收款人管理', page: '收款人详情', functions: ['查看收款人信息'], note: '' },
         { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '收款人管理', page: '已删除收款人（列表）', functions: ['恢复'], note: '' },
-
         // VA管理
-        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: 'VA管理', page: 'VA列表', functions: ['创建VA', '查看详情', '修改昵称', '删除VA（隐藏）', '下载账户证明信'], note: '' },
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: 'VA管理', page: 'VA列表', functions: ['创建VA', '查看详情', '修改昵称', '删除VA（隐藏）', '下载账户证明信'], note: '例：Bonbil商户通过MLG渠道开VA' },
         { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: 'VA管理', page: '创建VA', functions: ['填写VA信息', '提交'], note: '' },
         { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: 'VA管理', page: 'VA详情', functions: ['查看VA信息'], note: '' },
         { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: 'VA管理', page: '账户证明信', functions: ['下载证明信'], note: '' },
         { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: 'VA管理', page: '已删除VA（列表）', functions: ['恢复'], note: '' },
-
         // 卡管理
-        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '卡管理', page: '卡列表', functions: ['创建卡', '充值到卡', '卡余额转出', '卡片注销（单个/批量）', '卡片冻结（单个/批量）', '修改3DS验证号码', '删除卡片（单个/批量）', '查看卡信息（单个/批量）', '修改限额', '排序', '展示卡已使用额度', '下载卡账单'], note: '' },
+        { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '卡管理', page: '卡列表', functions: ['创建卡', '充值到卡', '卡余额转出', '卡片注销', '卡片冻结', '修改3DS验证号码', '删除卡片', '查看卡信息', '修改限额', '下载卡账单'], note: '例：BB发卡（数币+法币充值）、IPL发卡（仅法币充值）' },
         { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '卡管理', page: '卡片详情', functions: ['查看卡片信息'], note: '' },
         { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '卡管理', page: '卡对账单', functions: ['查看对账单'], note: '' },
         { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '卡管理', page: '修改限额', functions: ['修改卡片限额'], note: '' },
         { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '卡管理', page: '已删除的卡（列表）', functions: ['恢复'], note: '' },
         { role: '商户', portal: 'MP', center: '/', module: '订单管理', menu: '卡管理', page: '共享账户列表', functions: ['充值到共享账户', '账户转出', '修改昵称', '账户统计信息', '查看卡用户'], note: '' },
 
-        // ===== 租户 PP-TP =====
-        // 商户单查询
-        { role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: '商户单查询', page: '订单查询（列表）', functions: ['查看详情'], note: '不同订单不同菜单' },
+        // ===== TP（PP-TP端）— 客户中心（所有TP可见）=====
+        { role: 'TP', portal: 'PP-TP', center: '客户中心', module: '商户查询', menu: '商户单查询', page: '订单查询（列表）', functions: ['查看详情'], note: '例：鲲鹏查看其下商户的订单' },
+        { role: 'TP', portal: 'PP-TP', center: '客户中心', module: '商户查询', menu: '商户收款人查询', page: '收款人查询（列表）', functions: ['查看详情'], note: '' },
+        { role: 'TP', portal: 'PP-TP', center: '客户中心', module: '商户查询', menu: '商户收款人查询', page: '收款人详情', functions: ['查看收款人信息'], note: '' },
+        { role: 'TP', portal: 'PP-TP', center: '客户中心', module: '商户查询', menu: 'VA管理', page: 'VA列表', functions: ['查看详情', '下载账户证明信（帮客户下）'], note: '' },
+        { role: 'TP', portal: 'PP-TP', center: '客户中心', module: '商户查询', menu: 'VA管理', page: 'VA详情', functions: ['查看VA信息'], note: '' },
+        { role: 'TP', portal: 'PP-TP', center: '客户中心', module: '商户查询', menu: 'VA管理', page: '账户证明信', functions: ['下载证明信'], note: '' },
+        { role: 'TP', portal: 'PP-TP', center: '客户中心', module: '商户查询', menu: '卡管理', page: '卡列表', functions: ['展示卡已使用额度', '下载卡账单'], note: '' },
+        { role: 'TP', portal: 'PP-TP', center: '客户中心', module: '商户查询', menu: '卡管理', page: '共享账户列表', functions: ['账户统计信息', '查看卡用户'], note: '' },
 
-        // 商户收款人查询
-        { role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: '商户收款人查询', page: '收款人查询（列表）', functions: ['查看详情'], note: '' },
-        { role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: '商户收款人查询', page: '收款人详情', functions: ['查看收款人信息'], note: '' },
+        // ===== SP（PP-SP端）— 清算中心（完整套餐SP：IPL、BB）=====
+        { role: 'SP', portal: 'PP-SP', center: '清算中心', module: '商户订单管理', menu: '商户单查询', page: '订单查询（列表）', functions: ['查看详情'], note: '例：IPL查看鲲鹏推送商户的订单' },
+        { role: 'SP', portal: 'PP-SP', center: '清算中心', module: '商户订单管理', menu: '商户收款人查询', page: '收款人查询（列表）', functions: ['查看详情'], note: '' },
+        { role: 'SP', portal: 'PP-SP', center: '清算中心', module: '商户订单管理', menu: '商户收款人查询', page: '收款人详情', functions: ['查看收款人信息'], note: '' },
+        { role: 'SP', portal: 'PP-SP', center: '清算中心', module: '商户订单管理', menu: 'VA查询', page: 'VA列表', functions: ['查看详情', '下载账户证明信'], note: '' },
+        { role: 'SP', portal: 'PP-SP', center: '清算中心', module: '商户订单管理', menu: 'VA查询', page: 'VA详情', functions: ['查看VA信息'], note: '' },
+        { role: 'SP', portal: 'PP-SP', center: '清算中心', module: '商户订单管理', menu: 'VA查询', page: '账户证明信', functions: ['下载证明信'], note: '' },
+        { role: 'SP', portal: 'PP-SP', center: '清算中心', module: '商户订单管理', menu: '卡查询', page: '卡列表', functions: ['展示卡已使用额度', '下载卡账单'], note: '' },
+        { role: 'SP', portal: 'PP-SP', center: '清算中心', module: '商户订单管理', menu: '卡查询', page: '共享账户列表', functions: ['账户统计信息', '查看卡用户'], note: '' },
+        { role: 'SP', portal: 'PP-SP', center: '清算中心', module: '商户订单管理', menu: '交易单查询', page: '交易单查询（列表）', functions: ['查看详情'], note: '' },
+        { role: 'SP', portal: 'PP-SP', center: '清算中心', module: '商户订单管理', menu: '渠道单查询', page: '渠道单管理（列表）', functions: ['查看详情', '切换渠道', '更新渠道单状态', '退票'], note: '' },
+        { role: 'SP', portal: 'PP-SP', center: '清算中心', module: '商户订单管理', menu: '渠道单查询', page: '退票', functions: ['发起退票'], note: '' },
+        { role: 'SP', portal: 'PP-SP', center: '清算中心', module: '商户订单管理', menu: '渠道单查询', page: '查看详情', functions: ['查看渠道单详情'], note: '' },
+        { role: 'SP', portal: 'PP-SP', center: '清算中心', module: '商户订单管理', menu: '渠道单查询', page: '处理退款', functions: ['处理退款'], note: '' },
+        { role: 'SP', portal: 'PP-SP', center: '清算中心', module: '对账管理', menu: '渠道对账', page: '渠道对账', functions: ['待定'], note: '功能待定' },
+        // 合规风控中心
+        { role: 'SP', portal: 'PP-SP', center: '合规风控中心', module: '审批工单', menu: '审批工单', page: '合规审批工单', functions: ['审核工单'], note: '例：IPL审核交易相关合规工单' },
 
-        // VA管理
-        { role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: 'VA管理', page: 'VA列表', functions: ['查看详情', '下载账户证明信（帮客户下）'], note: '' },
-        { role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: 'VA管理', page: 'VA详情', functions: ['查看VA信息'], note: '' },
-        { role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: 'VA管理', page: '账户证明信', functions: ['下载证明信'], note: '' },
-
-        // 卡管理
-        { role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: '卡管理', page: '卡列表', functions: ['展示卡已使用额度', '下载卡账单'], note: '' },
-        { role: '租户', portal: 'PP-TP', center: '订单中心', module: '商户单查询', menu: '卡管理', page: '共享账户列表', functions: ['账户统计信息', '查看卡用户'], note: '' },
-
-        // ===== 服务商 PP-SP =====
-        // 商户单查询
-        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '商户单查询', page: '订单查询（列表）', functions: ['查看详情'], note: '不同订单不同菜单' },
-
-        // 商户收款人查询
-        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '商户收款人查询', page: '收款人查询（列表）', functions: ['查看详情'], note: '' },
-        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '商户收款人查询', page: '收款人详情', functions: ['查看收款人信息'], note: '' },
-
-        // VA查询
-        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: 'VA查询', page: 'VA列表', functions: ['查看详情', '下载账户证明信（帮客户下）'], note: '' },
-        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: 'VA查询', page: 'VA详情', functions: ['查看VA信息'], note: '' },
-        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: 'VA查询', page: '账户证明信', functions: ['下载证明信'], note: '' },
-
-        // 卡查询
-        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '卡查询', page: '卡列表', functions: ['展示卡已使用额度', '下载卡账单'], note: '' },
-        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '卡查询', page: '共享账户列表', functions: ['账户统计信息', '查看卡用户'], note: '' },
-
-        // 交易单查询
-        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '交易单查询', page: '交易单查询（列表）', functions: ['查看详情'], note: '不同订单不同菜单' },
-
-        // 渠道单查询
-        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '渠道单查询', page: '渠道单管理（列表）', functions: ['查看详情', '切换渠道', '更新渠道单状态', '退票'], note: '不同产品单不同菜单' },
-        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '渠道单查询', page: '退票', functions: ['发起退票'], note: '' },
-        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '渠道单查询', page: '查看详情', functions: ['查看渠道单详情'], note: '' },
-        { role: '服务商', portal: 'PP-SP', center: '订单中心', module: '商户单查询', menu: '渠道单查询', page: '处理退款', functions: ['处理退款'], note: '' },
-
-        // 清结算中心 - 对账管理
-        { role: '服务商', portal: 'PP-SP', center: '清结算中心', module: '对账管理', menu: '渠道对账', page: '渠道对账', functions: ['待定'], note: '功能待定' },
-
-        // 合规风控
-        { role: '服务商', portal: 'PP-SP', center: '合规风控中心', module: '工单审核', menu: '工单审核', page: '工单审核', functions: ['审核工单'], note: '' },
+        // ===== 持牌TP（Bonbil）— 清算中心（usesOwnLicense=true）=====
+        { role: 'SP/持牌TP', portal: 'PP-SP', center: '清算中心', module: '商户订单管理', menu: '商户单查询', page: '订单查询（列表）', functions: ['查看详情'], note: '例：Bonbil查看自己会员的MLG渠道订单（用自己牌照服务的商户）' },
+        { role: 'SP/持牌TP', portal: 'PP-SP', center: '清算中心', module: '商户订单管理', menu: '交易单查询', page: '交易单查询（列表）', functions: ['查看详情'], note: '' },
+        { role: 'SP/持牌TP', portal: 'PP-SP', center: '清算中心', module: '商户订单管理', menu: '渠道单查询', page: '渠道单管理（列表）', functions: ['查看详情', '切换渠道', '更新渠道单状态'], note: '' },
+        { role: 'SP/持牌TP', portal: 'PP-SP', center: '清算中心', module: '对账管理', menu: '渠道对账', page: '渠道对账', functions: ['待定'], note: '例：Bonbil与MLG的渠道对账' },
     ]},
 ];
 
 // Portal display order & config (per-flow)
 const defaultPortalOrder = ['SA', 'PP-SP', 'PP-TP', 'MP'];
 const flowPortalOrder = {
-    flow3:  ['PP-TP', 'SA', 'PP-SP'],
-    flow4a: ['MP', 'PP-TP', 'PP-SP', 'SA'],
-    flow5:  ['MP', 'PP-TP', 'PP-SP', 'SA'],
-    flow6:  ['MP', 'PP-TP', 'PP-SP', 'SA'],
+    flow0:  ['SA'],
+    flow1:  ['SA', 'PP-SP', 'PP-TP'],
+    flow2:  ['SA', 'PP-SP', 'PP-TP'],
+    flow3:  ['MP', 'PP-TP', 'PP-SP', 'SA'],
+    flow4:  ['MP', 'PP-TP', 'PP-SP'],
+    flow5:  ['MP', 'PP-TP', 'PP-SP'],
 };
 function getPortalOrder(flowId) { return flowPortalOrder[flowId] || defaultPortalOrder; }
 const portalConfig = {
@@ -275,7 +345,7 @@ const portalConfig = {
     'MP':    { label: 'MP 商户端',    cls: 'portal-mp', icon: '🏪' },
 };
 
-let currentFlow = 'flow1';
+let currentFlow = 'flow0';
 
 // ========== Render ==========
 function renderFlowNav() {
@@ -350,7 +420,7 @@ function renderContent() {
                     <tbody>`;
 
         items.forEach(item => {
-            const roleClass = item.role === 'EX' ? 'tag-role-ex' : (item.role === 'SP' || item.role === '服务商') ? 'tag-role-sp' : item.role === '租户' ? 'tag-role-tp' : 'tag-role-merchant';
+            const roleClass = item.role === 'EX' ? 'tag-role-ex' : (item.role === 'SP' || item.role === '服务商') ? 'tag-role-sp' : item.role === 'SP/持牌TP' ? 'tag-role-licensed' : (item.role === 'TP' || item.role === '租户') ? 'tag-role-tp' : 'tag-role-merchant';
             const centerHtml = item.center === '/' ? '<span style="color:var(--text-m)">—</span>' : `<span class="tag tag-center">${item.center}</span>`;
             const menuHtml = item.menu === '/' || item.menu === '—' ? '<span style="color:var(--text-m)">—</span>' : item.menu;
             const funcHtml = item.functions.map(fn => `<li>${fn}</li>`).join('');
