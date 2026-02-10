@@ -292,32 +292,15 @@ const centerMenus = {
         ]
     },
     settings: {
-        name: '设置',
+        name: '设置中心',
         groups: [
-            { label: '账号设置', items: [
+            { label: '个人信息', items: [
                 { name: '个人资料', icon: 'user', active: true },
-                { name: '安全设置', icon: 'lock' },
-                { name: '登录日志', icon: 'terminal' }
+                { name: '安全设置', icon: 'lock' }
             ]},
-            { label: '企业设置', items: [
-                { name: '公司信息', icon: 'building' },
-                { name: '品牌设置', icon: 'image' },
-                { name: '业务配置', icon: 'sliders' }
-            ]},
-            { label: '团队管理', items: [
-                { name: '成员管理', icon: 'users' },
+            { label: '权限配置', items: [
                 { name: '角色管理', icon: 'shield' },
-                { name: '权限配置', icon: 'key' },
-                { name: '部门管理', icon: 'git-branch' }
-            ]},
-            { label: '通知与集成', items: [
-                { name: '通知设置', icon: 'bell' },
-                { name: '邮件模板', icon: 'mail' },
-                { name: '第三方集成', icon: 'link' }
-            ]},
-            { label: '审计与日志', items: [
-                { name: '操作日志', icon: 'file-text' },
-                { name: '审计追踪', icon: 'eye' }
+                { name: '用户管理', icon: 'users' }
             ]}
         ]
     },
@@ -550,6 +533,8 @@ function enterCenter(center) {
                 ${renderProductList('all')}
             </div>
         `;
+    } else if (center === 'settings') {
+        renderSettingsProfile();
     } else {
         // 其他中心使用默认内容
         document.getElementById('detailMain').innerHTML = `
@@ -630,6 +615,14 @@ document.addEventListener('click', function(e) {
                 renderTradeOrders();
             } else if (pageName === '店铺查询') {
                 renderShopQuery();
+            } else if (pageName === '个人资料') {
+                renderSettingsProfile();
+            } else if (pageName === '安全设置') {
+                renderSettingsSecurity();
+            } else if (pageName === '角色管理') {
+                renderSettingsRoles();
+            } else if (pageName === '用户管理') {
+                renderSettingsUsers();
             }
         }
     }
@@ -3207,6 +3200,425 @@ function renderShopQuery() {
             </div>
         </div>
     `;
+}
+
+// ========== 设置中心 ==========
+
+// 个人资料 (Profile) - 参考截图1
+function renderSettingsProfile() {
+    const mainContent = document.getElementById('detailMain');
+    if (!mainContent) return;
+    const sectionStyle = 'background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 28px 32px; margin-bottom: 20px;';
+    const sectionTitle = 'font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 4px;';
+    const sectionDesc = 'font-size: 13px; color: var(--text-muted); margin-bottom: 24px;';
+    const rowStyle = 'display: flex; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--border);';
+    const labelStyle = 'width: 140px; font-size: 14px; color: var(--text-secondary); flex-shrink: 0;';
+    const valueStyle = 'flex: 1; font-size: 14px; color: var(--text); font-weight: 500; display: flex; align-items: center; gap: 10px;';
+    const editBtn = 'margin-left: auto; background: none; border: none; color: var(--accent); font-size: 14px; font-weight: 500; cursor: pointer; padding: 4px 0;';
+    const badgeVerified = 'display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; background: var(--success-bg); color: var(--success);';
+    mainContent.innerHTML = `
+        <div class="page-header">
+            <div class="breadcrumb"><a href="#" onclick="goBack()">首页</a> / <span>设置中心</span> / <span>个人资料</span></div>
+            <h1 class="page-title">个人资料</h1>
+            <p class="page-desc">管理您的个人信息和登录方式</p>
+        </div>
+
+        <div style="${sectionStyle}">
+            <div style="${sectionTitle}">联系方式与登录方式</div>
+            <div style="${sectionDesc}">管理您的邮箱、手机号和首选登录方式</div>
+            <div style="${rowStyle}">
+                <span style="${labelStyle}">邮箱</span>
+                <span style="${valueStyle}">admin@company.com <span style="${badgeVerified}">已验证</span></span>
+                <button onclick="showEditModal('邮箱', 'admin@company.com')" style="${editBtn}">编辑</button>
+            </div>
+            <div style="${rowStyle}">
+                <span style="${labelStyle}">手机号</span>
+                <span style="${valueStyle}">+86 138****5678 <span style="${badgeVerified}">已验证</span></span>
+                <button onclick="showEditModal('手机号', '+86 138****5678')" style="${editBtn}">编辑</button>
+            </div>
+            <div style="${rowStyle} border-bottom: none;">
+                <span style="${labelStyle}">登录方式</span>
+                <span style="${valueStyle}">邮箱 <svg style="width:14px;height:14px;color:var(--text-muted);cursor:help;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
+                <button onclick="showEditModal('登录方式', '邮箱')" style="${editBtn}">编辑</button>
+            </div>
+        </div>
+
+        <div style="${sectionStyle}">
+            <div style="${sectionTitle}">基本信息</div>
+            <div style="${sectionDesc}">您的个人基本信息</div>
+            <div style="${rowStyle}">
+                <span style="${labelStyle}">昵称</span>
+                <span style="${valueStyle}">Admin</span>
+                <button onclick="showEditModal('昵称', 'Admin')" style="${editBtn}">编辑</button>
+            </div>
+            <div style="${rowStyle} border-bottom: none;">
+                <span style="${labelStyle}">语言</span>
+                <span style="${valueStyle}">简体中文</span>
+                <button onclick="showEditModal('语言', '简体中文')" style="${editBtn}">编辑</button>
+            </div>
+        </div>
+    `;
+}
+
+// 编辑弹窗
+function showEditModal(field, currentValue) {
+    const existing = document.querySelector('.product-modal');
+    if (existing) existing.remove();
+    const modal = document.createElement('div');
+    modal.className = 'product-modal';
+    modal.innerHTML = `
+        <div class="product-modal-overlay" onclick="this.parentElement.remove()"></div>
+        <div class="product-modal-content" style="max-width: 480px; padding: 32px;">
+            <button class="modal-close" onclick="this.closest('.product-modal').remove()">×</button>
+            <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 24px;">编辑${field}</h2>
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px;">${field}</label>
+                ${field === '语言' ? `
+                    <select style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; background: var(--bg-card);">
+                        <option ${currentValue === '简体中文' ? 'selected' : ''}>简体中文</option>
+                        <option ${currentValue === 'English' ? 'selected' : ''}>English</option>
+                        <option>繁體中文</option>
+                        <option>日本語</option>
+                    </select>
+                ` : field === '登录方式' ? `
+                    <select style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; background: var(--bg-card);">
+                        <option ${currentValue === '邮箱' ? 'selected' : ''}>邮箱</option>
+                        <option ${currentValue === '手机号' ? 'selected' : ''}>手机号</option>
+                    </select>
+                ` : `
+                    <input type="text" value="${currentValue}" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+                `}
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button onclick="this.closest('.product-modal').remove()" style="flex: 1; padding: 10px; background: var(--bg-hover); border: 1px solid var(--border); border-radius: 8px; font-size: 14px; cursor: pointer; color: var(--text);">取消</button>
+                <button onclick="alert('已保存'); this.closest('.product-modal').remove()" style="flex: 1; padding: 10px; background: var(--accent); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer;">保存</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+// 安全设置 (Security) - 参考截图2
+function renderSettingsSecurity() {
+    const mainContent = document.getElementById('detailMain');
+    if (!mainContent) return;
+    const sectionStyle = 'background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 28px 32px; margin-bottom: 20px;';
+    const sectionTitle = 'font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 4px;';
+    const sectionDesc = 'font-size: 13px; color: var(--text-muted); margin-bottom: 24px;';
+    const outlineBtn = 'padding: 8px 20px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; font-size: 14px; font-weight: 500; color: var(--text); cursor: pointer;';
+    mainContent.innerHTML = `
+        <div class="page-header">
+            <div class="breadcrumb"><a href="#" onclick="goBack()">首页</a> / <span>设置中心</span> / <span>安全设置</span></div>
+            <h1 class="page-title">安全设置</h1>
+            <p class="page-desc">管理您的密码和双因素认证</p>
+        </div>
+
+        <div style="${sectionStyle}">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                    <div style="${sectionTitle}">密码</div>
+                    <div style="font-size: 13px; color: var(--text-muted);">选择一个强密码以保护您的账户安全</div>
+                </div>
+                <button onclick="showChangePasswordModal()" style="${outlineBtn}">修改密码</button>
+            </div>
+        </div>
+
+        <div style="${sectionStyle}">
+            <div style="${sectionTitle}">双因素认证 (2FA)</div>
+            <div style="${sectionDesc}">增加额外的安全层，登录时需要提供额外的验证方式。 <a href="#" style="color: var(--accent); text-decoration: none; font-weight: 500;">了解更多</a></div>
+
+            <div style="display: flex; align-items: center; gap: 16px; padding: 20px; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 12px;">
+                <div style="width: 44px; height: 44px; border-radius: 10px; background: var(--accent-bg); color: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 22px; height: 22px;">
+                        <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
+                    </svg>
+                </div>
+                <div style="flex: 1;">
+                    <div style="font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 2px;">Authenticator App</div>
+                    <div style="font-size: 13px; color: var(--text-muted);">使用第三方认证器应用生成验证码</div>
+                </div>
+                <button onclick="alert('设置 Authenticator App')" style="${outlineBtn}">设置</button>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 16px; padding: 20px; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 16px;">
+                <div style="width: 44px; height: 44px; border-radius: 10px; background: var(--accent-bg); color: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 22px; height: 22px;">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                </div>
+                <div style="flex: 1;">
+                    <div style="font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 2px;">短信验证</div>
+                    <div style="font-size: 13px; color: var(--text-muted);">通过短信接收验证码</div>
+                </div>
+                <button onclick="alert('设置短信验证')" style="${outlineBtn}">设置</button>
+            </div>
+
+            <div style="font-size: 13px;">
+                <a href="#" onclick="alert('生成恢复码'); return false;" style="color: var(--accent); text-decoration: none; font-weight: 500;">生成恢复码</a>
+                <span style="color: var(--text-muted);"> 以便在丢失 2FA 访问权限时登录</span>
+            </div>
+        </div>
+    `;
+}
+
+// 修改密码弹窗
+function showChangePasswordModal() {
+    const existing = document.querySelector('.product-modal');
+    if (existing) existing.remove();
+    const modal = document.createElement('div');
+    modal.className = 'product-modal';
+    modal.innerHTML = `
+        <div class="product-modal-overlay" onclick="this.parentElement.remove()"></div>
+        <div class="product-modal-content" style="max-width: 480px; padding: 32px;">
+            <button class="modal-close" onclick="this.closest('.product-modal').remove()">×</button>
+            <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 24px;">修改密码</h2>
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px;">当前密码</label>
+                <input type="password" placeholder="请输入当前密码" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+            </div>
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px;">新密码</label>
+                <input type="password" placeholder="请输入新密码" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+            </div>
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px;">确认新密码</label>
+                <input type="password" placeholder="请再次输入新密码" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button onclick="this.closest('.product-modal').remove()" style="flex: 1; padding: 10px; background: var(--bg-hover); border: 1px solid var(--border); border-radius: 8px; font-size: 14px; cursor: pointer; color: var(--text);">取消</button>
+                <button onclick="alert('密码已修改'); this.closest('.product-modal').remove()" style="flex: 1; padding: 10px; background: var(--accent); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer;">确认修改</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+// 角色管理
+function renderSettingsRoles() {
+    const mainContent = document.getElementById('detailMain');
+    if (!mainContent) return;
+    const roles = [
+        { name: '管理员', desc: '拥有所有权限，可管理系统设置、用户和角色', users: 2, isSystem: true, permissions: ['全部权限'] },
+        { name: '财务', desc: '可查看和管理财务相关功能，包括余额、流水、结算', users: 3, isSystem: true, permissions: ['客户余额查询', '余额流水', '结算管理', '报表导出'] },
+        { name: '运营', desc: '可管理客户、订单和产品相关功能', users: 5, isSystem: true, permissions: ['客户管理', '订单查询', '产品查看', '数据报表'] },
+        { name: '客服', desc: '可查看客户信息和订单，处理工单', users: 4, isSystem: false, permissions: ['客户查询', '订单查询', '工单处理'] },
+        { name: '审计', desc: '可查看操作日志和审计记录', users: 1, isSystem: false, permissions: ['操作日志', '审计追踪', '报表查看'] }
+    ];
+    const th = 'padding: 14px 20px; text-align: left; font-size: 13px; font-weight: 600; color: var(--text-secondary); border-bottom: 1px solid var(--border);';
+    const td = 'padding: 16px 20px; font-size: 14px; border-bottom: 1px solid var(--border);';
+    mainContent.innerHTML = `
+        <div class="page-header">
+            <div class="breadcrumb"><a href="#" onclick="goBack()">首页</a> / <span>设置中心</span> / <span>角色管理</span></div>
+            <h1 class="page-title">角色管理</h1>
+            <p class="page-desc">管理系统角色和权限分配</p>
+        </div>
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 16px;">
+            <button onclick="showAddRoleModal()" style="padding: 8px 20px; background: var(--accent); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                新建角色
+            </button>
+        </div>
+        <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead style="background: var(--bg-hover);">
+                    <tr>
+                        <th style="${th}">角色名称</th>
+                        <th style="${th}">描述</th>
+                        <th style="${th}">权限</th>
+                        <th style="${th}">用户数</th>
+                        <th style="${th}">类型</th>
+                        <th style="${th}">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${roles.map(r => `<tr>
+                        <td style="${td}">
+                            <div style="font-weight: 600; color: var(--text);">${r.name}</div>
+                        </td>
+                        <td style="${td} color: var(--text-secondary); max-width: 240px;">${r.desc}</td>
+                        <td style="${td}">
+                            <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+                                ${r.permissions.map(p => `<span style="display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; background: var(--accent-bg); color: var(--accent);">${p}</span>`).join('')}
+                            </div>
+                        </td>
+                        <td style="${td}">
+                            <span style="font-weight: 600;">${r.users}</span> <span style="color: var(--text-muted);">人</span>
+                        </td>
+                        <td style="${td}">
+                            <span style="display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; background: ${r.isSystem ? 'var(--accent-bg)' : 'var(--bg-hover)'}; color: ${r.isSystem ? 'var(--accent)' : 'var(--text-secondary)'};">
+                                ${r.isSystem ? '系统角色' : '自定义'}
+                            </span>
+                        </td>
+                        <td style="${td}">
+                            <div style="display: flex; gap: 8px;">
+                                <button onclick="alert('编辑角色: ${r.name}')" style="background: none; border: none; color: var(--accent); cursor: pointer; font-size: 13px; font-weight: 500;">编辑</button>
+                                ${!r.isSystem ? `<button onclick="alert('删除角色: ${r.name}')" style="background: none; border: none; color: var(--danger); cursor: pointer; font-size: 13px; font-weight: 500;">删除</button>` : ''}
+                            </div>
+                        </td>
+                    </tr>`).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+// 新建角色弹窗
+function showAddRoleModal() {
+    const existing = document.querySelector('.product-modal');
+    if (existing) existing.remove();
+    const allPerms = ['客户管理', '客户余额查询', '余额流水', '订单查询', '产品查看', '产品管理', '结算管理', '报表导出', '数据报表', '工单处理', '操作日志', '审计追踪', '用户管理', '角色管理', '系统设置'];
+    const modal = document.createElement('div');
+    modal.className = 'product-modal';
+    modal.innerHTML = `
+        <div class="product-modal-overlay" onclick="this.parentElement.remove()"></div>
+        <div class="product-modal-content" style="max-width: 560px; padding: 32px;">
+            <button class="modal-close" onclick="this.closest('.product-modal').remove()">×</button>
+            <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 24px;">新建角色</h2>
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px;">角色名称 <span style="color: var(--danger);">*</span></label>
+                <input type="text" placeholder="请输入角色名称" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+            </div>
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px;">角色描述</label>
+                <textarea placeholder="请输入角色描述" rows="2" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; box-sizing: border-box; resize: vertical;"></textarea>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-bottom: 8px;">权限配置</label>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    ${allPerms.map(p => `<label style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; cursor: pointer; user-select: none;">
+                        <input type="checkbox" style="accent-color: var(--accent);"> ${p}
+                    </label>`).join('')}
+                </div>
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button onclick="this.closest('.product-modal').remove()" style="flex: 1; padding: 10px; background: var(--bg-hover); border: 1px solid var(--border); border-radius: 8px; font-size: 14px; cursor: pointer; color: var(--text);">取消</button>
+                <button onclick="alert('角色已创建'); this.closest('.product-modal').remove()" style="flex: 1; padding: 10px; background: var(--accent); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer;">创建</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+// 用户管理
+function renderSettingsUsers() {
+    const mainContent = document.getElementById('detailMain');
+    if (!mainContent) return;
+    const users = [
+        { name: '张三', email: 'zhangsan@company.com', phone: '+86 138****1234', role: '管理员', status: 'active', lastLogin: '2025-02-10 09:30:00' },
+        { name: '李四', email: 'lisi@company.com', phone: '+86 139****5678', role: '财务', status: 'active', lastLogin: '2025-02-09 18:15:00' },
+        { name: '王五', email: 'wangwu@company.com', phone: '+86 137****9012', role: '运营', status: 'active', lastLogin: '2025-02-10 08:45:00' },
+        { name: '赵六', email: 'zhaoliu@company.com', phone: '+86 136****3456', role: '运营', status: 'active', lastLogin: '2025-02-08 14:20:00' },
+        { name: '钱七', email: 'qianqi@company.com', phone: '+86 135****7890', role: '客服', status: 'active', lastLogin: '2025-02-10 10:00:00' },
+        { name: '孙八', email: 'sunba@company.com', phone: '+86 134****2345', role: '客服', status: 'inactive', lastLogin: '2025-01-15 11:30:00' },
+        { name: '周九', email: 'zhoujiu@company.com', phone: '+86 133****6789', role: '财务', status: 'active', lastLogin: '2025-02-09 16:40:00' },
+        { name: '吴十', email: 'wushi@company.com', phone: '+86 132****0123', role: '审计', status: 'active', lastLogin: '2025-02-07 09:00:00' }
+    ];
+    const roleBadge = (role) => {
+        const colors = { '管理员': { bg: 'var(--danger-bg)', c: 'var(--danger)' }, '财务': { bg: 'var(--success-bg)', c: 'var(--success)' }, '运营': { bg: 'var(--accent-bg)', c: 'var(--accent)' }, '客服': { bg: 'var(--warning-bg)', c: 'var(--warning)' }, '审计': { bg: 'var(--purple-bg)', c: 'var(--purple)' } };
+        const s = colors[role] || { bg: 'var(--bg-hover)', c: 'var(--text-secondary)' };
+        return `<span style="display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; background: ${s.bg}; color: ${s.c};">${role}</span>`;
+    };
+    const th = 'padding: 14px 20px; text-align: left; font-size: 13px; font-weight: 600; color: var(--text-secondary); border-bottom: 1px solid var(--border);';
+    const td = 'padding: 16px 20px; font-size: 14px; border-bottom: 1px solid var(--border);';
+    mainContent.innerHTML = `
+        <div class="page-header">
+            <div class="breadcrumb"><a href="#" onclick="goBack()">首页</a> / <span>设置中心</span> / <span>用户管理</span></div>
+            <h1 class="page-title">用户管理</h1>
+            <p class="page-desc">管理系统用户和角色分配</p>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <input type="text" placeholder="搜索用户名、邮箱..." style="padding: 8px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; width: 240px;">
+                <select style="padding: 8px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px;">
+                    <option value="">全部角色</option><option>管理员</option><option>财务</option><option>运营</option><option>客服</option><option>审计</option>
+                </select>
+            </div>
+            <button onclick="showAddUserModal()" style="padding: 8px 20px; background: var(--accent); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+                添加用户
+            </button>
+        </div>
+        <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead style="background: var(--bg-hover);">
+                    <tr>
+                        <th style="${th}">用户</th>
+                        <th style="${th}">手机号</th>
+                        <th style="${th}">角色</th>
+                        <th style="${th}">状态</th>
+                        <th style="${th}">最近登录</th>
+                        <th style="${th}">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${users.map(u => `<tr>
+                        <td style="${td}">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--purple)); display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; font-weight: 600; flex-shrink: 0;">${u.name.charAt(0)}</div>
+                                <div>
+                                    <div style="font-weight: 600; color: var(--text);">${u.name}</div>
+                                    <div style="font-size: 12px; color: var(--text-muted);">${u.email}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="${td} color: var(--text-secondary);">${u.phone}</td>
+                        <td style="${td}">${roleBadge(u.role)}</td>
+                        <td style="${td}">
+                            <span style="display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 500; color: ${u.status === 'active' ? 'var(--success)' : 'var(--text-muted)'};">
+                                <span style="width: 6px; height: 6px; border-radius: 50%; background: ${u.status === 'active' ? 'var(--success)' : 'var(--text-muted)'};"></span>
+                                ${u.status === 'active' ? '启用' : '停用'}
+                            </span>
+                        </td>
+                        <td style="${td} color: var(--text-muted); font-size: 13px;">${u.lastLogin}</td>
+                        <td style="${td}">
+                            <div style="display: flex; gap: 8px;">
+                                <button onclick="alert('编辑用户: ${u.name}')" style="background: none; border: none; color: var(--accent); cursor: pointer; font-size: 13px; font-weight: 500;">编辑</button>
+                                <button onclick="alert('${u.status === 'active' ? '停用' : '启用'}用户: ${u.name}')" style="background: none; border: none; color: ${u.status === 'active' ? 'var(--warning)' : 'var(--success)'}; cursor: pointer; font-size: 13px; font-weight: 500;">${u.status === 'active' ? '停用' : '启用'}</button>
+                            </div>
+                        </td>
+                    </tr>`).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+// 添加用户弹窗
+function showAddUserModal() {
+    const existing = document.querySelector('.product-modal');
+    if (existing) existing.remove();
+    const modal = document.createElement('div');
+    modal.className = 'product-modal';
+    modal.innerHTML = `
+        <div class="product-modal-overlay" onclick="this.parentElement.remove()"></div>
+        <div class="product-modal-content" style="max-width: 480px; padding: 32px;">
+            <button class="modal-close" onclick="this.closest('.product-modal').remove()">×</button>
+            <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 24px;">添加用户</h2>
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px;">姓名 <span style="color: var(--danger);">*</span></label>
+                <input type="text" placeholder="请输入姓名" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+            </div>
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px;">邮箱 <span style="color: var(--danger);">*</span></label>
+                <input type="email" placeholder="请输入邮箱" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+            </div>
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px;">手机号</label>
+                <input type="tel" placeholder="请输入手机号" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+            </div>
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px;">角色 <span style="color: var(--danger);">*</span></label>
+                <select style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+                    <option value="">请选择角色</option><option>管理员</option><option>财务</option><option>运营</option><option>客服</option><option>审计</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button onclick="this.closest('.product-modal').remove()" style="flex: 1; padding: 10px; background: var(--bg-hover); border: 1px solid var(--border); border-radius: 8px; font-size: 14px; cursor: pointer; color: var(--text);">取消</button>
+                <button onclick="alert('用户已添加，邀请邮件已发送'); this.closest('.product-modal').remove()" style="flex: 1; padding: 10px; background: var(--accent); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer;">添加</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
 }
 
 // 渲染代理商产品表格行
