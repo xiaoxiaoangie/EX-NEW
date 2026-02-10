@@ -47,22 +47,32 @@ const centerMenus = {
     client: {
         name: '客户中心',
         groups: [
-            { label: '商户查询', scope: 'global', items: [
-                { name: '商户查询', icon: 'search', active: true }
+            { label: '客户信息', items: [
+                { name: '客户基本信息查询', icon: 'users', active: true }
             ]},
-            { label: '商户配置', scope: 'owned', items: [
-                { name: '商户产品配置', icon: 'package' },
-                { name: '商户费率配置', icon: 'percent' },
-                { name: '商户汇率配置', icon: 'trending-up' }
+            { label: '客户产品信息', items: [
+                { name: '客户产品列表', icon: 'package' }
             ]},
-            { label: '商户余额查询', scope: 'global', items: [
-                { name: '余额查询', icon: 'wallet' },
-                { name: '余额变动流水', icon: 'list' }
+            { label: '客户余额查询', items: [
+                { name: '客户余额查询', icon: 'credit-card' },
+                { name: '客户账户余额', icon: 'wallet' },
+                { name: '客户余额流水', icon: 'list' }
             ]},
-            { label: '商户结算/返点查询', scope: 'global', items: [
-                { name: '结算单查询', icon: 'file-text' },
-                { name: '返点/分佣查询', icon: 'dollar-sign' },
-                { name: '商户对账单下载', icon: 'download' }
+            { label: '客户订单', items: [
+                { name: 'VA账户', icon: 'credit-card' },
+                { name: '收款商户单', icon: 'download' },
+                { name: '付款商户单', icon: 'upload' },
+                { name: '换汇商户单', icon: 'repeat' },
+                { name: 'Ramp商户单', icon: 'zap' },
+                { name: '充提币商户单', icon: 'bitcoin' },
+                { name: '卡片查询', icon: 'credit-card' },
+                { name: 'VCC商户单', icon: 'credit-card' },
+                { name: '收单商户单', icon: 'tag' }
+            ]},
+            { label: '客户贸易背景', items: [
+                { name: '贸易订单', icon: 'clipboard' },
+                { name: '订单文件', icon: 'file' },
+                { name: '店铺查询', icon: 'store' }
             ]}
         ]
     },
@@ -548,6 +558,13 @@ document.addEventListener('click', function(e) {
             '机构签约产品': renderAgencyProductQuery,
             '模版配置': renderTemplateConfig,
             '机构佣金配置': renderAgencyRebateConfig,
+            '客户基本信息查询': renderClientInfoQuery,
+            '客户产品列表': renderClientProductList,
+            '客户余额查询': renderClientBalance,
+            '客户账户余额': renderClientAccountBalance,
+            '客户余额流水': renderClientBalanceFlow,
+            '贸易订单': renderTradeOrders,
+            '店铺查询': renderShopQuery,
         };
 
         if (pageRenderers[pageName]) {
@@ -1293,3 +1310,841 @@ function filterProducts(filter) {
 function signProduct(productId) { alert(`正在发起产品签约流程... 产品ID: ${productId}`); }
 function renewProduct(productId) { alert(`正在发起产品续签流程... 产品ID: ${productId}`); }
 function manageProduct(productId) { alert(`正在打开产品管理... 产品ID: ${productId}`); }
+
+// ========== 客户中心模块 ==========
+
+const clientMockData = [
+    { mid: 'CLT20250001', name: 'Alice Johnson', type: '个人', regSource: 'EX', agentType: '普通代理商', agentId: 'AGT001', agentName: '鲲鹏科技', status: 'active', regTime: '2025-01-15 10:30:00', kyc: { legalName: 'Alice Johnson', idType: '护照', idNumber: 'E1234****', nationality: '美国', address: '123 Main St, New York, NY 10001', phone: '+1-212-555-0001', email: 'alice@example.com', kycStatus: 'approved', kycTime: '2025-01-16 14:00:00' }},
+    { mid: 'CLT20250002', name: 'Global Trading Ltd', type: '企业', regSource: '张三', agentType: '机构代理', agentId: 'AGT002', agentName: '上海贸易集团', status: 'active', regTime: '2025-01-20 14:15:00', kyc: { legalName: 'Global Trading Limited', idType: '营业执照', idNumber: '91310000****', nationality: '中国', address: '上海市浦东新区陆家嘴金融中心', phone: '+86-21-5555-0002', email: 'admin@globaltrading.com', kycStatus: 'approved', kycTime: '2025-01-22 09:30:00', regCapital: 'USD 5,000,000', legalRep: 'Wang Lei', bizScope: '跨境支付、国际贸易' }},
+    { mid: 'CLT20250003', name: 'Bob Smith', type: '个人', regSource: '', agentType: '', agentId: '', agentName: '', status: 'suspended', regTime: '2025-02-01 09:00:00', kyc: { legalName: 'Robert Smith', idType: '身份证', idNumber: '4403****5678', nationality: '英国', address: '45 Oxford Street, London W1D 2DZ', phone: '+44-20-7946-0003', email: 'bob.smith@mail.com', kycStatus: 'pending', kycTime: '' }},
+    { mid: 'CLT20250004', name: '深圳前海科技有限公司', type: '企业', regSource: '王五', agentType: '机构代理', agentId: 'AGT003', agentName: '深圳科技集团', status: 'active', regTime: '2025-02-05 16:20:00', kyc: { legalName: '深圳前海科技有限公司', idType: '营业执照', idNumber: '91440300****', nationality: '中国', address: '深圳市前海深港合作区', phone: '+86-755-8888-0004', email: 'info@szqhtech.com', kycStatus: 'approved', kycTime: '2025-02-06 11:00:00', regCapital: 'CNY 10,000,000', legalRep: 'Li Ming', bizScope: '电子商务、支付技术' }},
+    { mid: 'CLT20250005', name: 'Tokyo Payments Inc', type: '企业', regSource: 'EX', agentType: '普通代理商', agentId: 'AGT004', agentName: '游戏总代', status: 'active', regTime: '2025-02-08 11:45:00', kyc: { legalName: 'Tokyo Payments Inc.', idType: '营业执照', idNumber: 'JP-CORP-****', nationality: '日本', address: '1-1-1 Shibuya, Tokyo 150-0002', phone: '+81-3-1234-0005', email: 'contact@tokyopay.jp', kycStatus: 'approved', kycTime: '2025-02-09 10:00:00', regCapital: 'JPY 100,000,000', legalRep: 'Tanaka Yuki', bizScope: '游戏支付、跨境结算' }},
+    { mid: 'CLT20250006', name: 'Maria Garcia', type: '个人', regSource: '张三', agentType: '普通代理商', agentId: 'AGT001', agentName: '鲲鹏科技', status: 'inactive', regTime: '2024-12-10 08:30:00', kyc: { legalName: 'Maria Garcia Lopez', idType: '护照', idNumber: 'ES9876****', nationality: '西班牙', address: 'Calle Mayor 10, Madrid 28013', phone: '+34-91-555-0006', email: 'maria.garcia@correo.es', kycStatus: 'approved', kycTime: '2024-12-12 15:30:00' }}
+];
+
+// 1. 客户基本信息查询
+function renderClientInfoQuery() {
+    const mainContent = document.getElementById('detailMain');
+    if (!mainContent) return;
+    mainContent.innerHTML = `
+        <div class="page-header">
+            <div class="breadcrumb"><a href="#" onclick="goBack()">首页</a> / <span>客户中心</span> / <span>客户基本信息查询</span></div>
+            <h1 class="page-title">客户基本信息查询</h1>
+            <p class="page-desc">查询和管理所有客户的基本信息</p>
+        </div>
+        <div class="card" style="margin-bottom: 16px;">
+            <div style="padding: 24px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 16px;">
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">客户 MID</label>
+                        <input type="text" id="clientMid" placeholder="请输入客户MID" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">客户名称</label>
+                        <input type="text" id="clientName" placeholder="请输入客户名称" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">客户类型</label>
+                        <select id="clientType" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                            <option value="">全部</option><option value="个人">个人</option><option value="企业">企业</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">客户状态</label>
+                        <select id="clientStatus" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                            <option value="">全部</option><option value="active">正常</option><option value="suspended">暂停</option><option value="inactive">未激活</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">所属代理类型</label>
+                        <select id="clientAgentType" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                            <option value="">全部</option><option value="机构代理">机构代理</option><option value="普通代理商">普通代理商</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">注册来源</label>
+                        <select id="clientSource" style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                            <option value="">全部</option><option value="EX">EX</option><option value="sales">销售推荐</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <button onclick="searchClients()" style="padding: 8px 20px; background: #4f46e5; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: 500;">查询</button>
+                    <button onclick="resetClientForm()" style="padding: 8px 20px; background: white; color: #6c757d; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: 500;">重置</button>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 class="card-title">客户列表 <span style="font-size: 13px; color: #6c757d; font-weight: 400;">共 ${clientMockData.length} 条</span></h2>
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="alert('导出功能开发中')" style="padding: 6px 12px; background: white; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer; color: #6c757d;">导出</button>
+                    <button onclick="renderClientInfoQuery()" style="padding: 6px 12px; background: white; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer; color: #6c757d;">刷新</button>
+                </div>
+            </div>
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead style="background: #f8f9fa;">
+                        <tr>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">客户 MID</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">客户名称</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">类型</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">注册来源</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">代理类型</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">代理商ID</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">代理商名称</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">状态</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">注册时间</th>
+                            <th style="padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${renderClientTableRows()}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+function renderClientTableRows() {
+    const statusMap = { active: { label: '正常', bg: '#d1fae5', color: '#065f46' }, suspended: { label: '暂停', bg: '#fef3c7', color: '#92400e' }, inactive: { label: '未激活', bg: '#e2e8f0', color: '#475569' } };
+    return clientMockData.map(c => `
+        <tr style="border-bottom: 1px solid #e9ecef; cursor: pointer;" onmouseover="this.style.background='#f8f9fa'" onmouseout="this.style.background=''">
+            <td style="padding: 14px 16px; font-size: 14px; font-family: monospace; color: #4f46e5;">${c.mid}</td>
+            <td style="padding: 14px 16px; font-size: 14px; font-weight: 500;">${c.name}</td>
+            <td style="padding: 14px 16px; font-size: 14px;">
+                <span style="padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; background: ${c.type === '企业' ? '#dbeafe' : '#fae8ff'}; color: ${c.type === '企业' ? '#1e40af' : '#86198f'};">${c.type}</span>
+            </td>
+            <td style="padding: 14px 16px; font-size: 14px; color: ${c.regSource ? '#1f2937' : '#adb5bd'};">${c.regSource || '-'}</td>
+            <td style="padding: 14px 16px; font-size: 14px; color: ${c.agentType ? '#1f2937' : '#adb5bd'};">${c.agentType || '-'}</td>
+            <td style="padding: 14px 16px; font-size: 14px; font-family: monospace; color: ${c.agentId ? '#6c757d' : '#adb5bd'};">${c.agentId || '-'}</td>
+            <td style="padding: 14px 16px; font-size: 14px; color: ${c.agentName ? '#1f2937' : '#adb5bd'};">${c.agentName || '-'}</td>
+            <td style="padding: 14px 16px; font-size: 14px;">
+                <span style="display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; background: ${statusMap[c.status].bg}; color: ${statusMap[c.status].color};">
+                    <span style="width: 6px; height: 6px; border-radius: 50%; background: ${statusMap[c.status].color};"></span>
+                    ${statusMap[c.status].label}
+                </span>
+            </td>
+            <td style="padding: 14px 16px; font-size: 13px; color: #6c757d; white-space: nowrap;">${c.regTime}</td>
+            <td style="padding: 14px 16px; font-size: 14px;">
+                <button onclick="viewClientDetail('${c.mid}')" style="background: none; border: none; color: #4f46e5; cursor: pointer; font-size: 14px; text-decoration: underline;">详情</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function viewClientDetail(mid) {
+    const c = clientMockData.find(item => item.mid === mid);
+    if (!c) return;
+    const statusMap = { active: { label: '正常', bg: '#d1fae5', color: '#065f46' }, suspended: { label: '暂停', bg: '#fef3c7', color: '#92400e' }, inactive: { label: '未激活', bg: '#e2e8f0', color: '#475569' } };
+    const s = statusMap[c.status];
+    const k = c.kyc;
+    const kycStatusMap = { approved: { label: '已通过', bg: '#d1fae5', color: '#065f46' }, pending: { label: '审核中', bg: '#fef3c7', color: '#92400e' }, rejected: { label: '已拒绝', bg: '#fee2e2', color: '#991b1b' } };
+    const ks = kycStatusMap[k.kycStatus] || { label: k.kycStatus, bg: '#e2e8f0', color: '#475569' };
+    const modal = document.createElement('div');
+    modal.className = 'product-modal';
+    modal.innerHTML = `
+        <div class="product-modal-overlay" onclick="this.parentElement.remove()"></div>
+        <div class="product-modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+            <button class="modal-close" onclick="this.closest('.product-modal').remove()">×</button>
+            <div style="display: flex; align-items: center; gap: 16px; padding-bottom: 20px; border-bottom: 1px solid #e9ecef; margin-bottom: 24px;">
+                <div style="width: 56px; height: 56px; border-radius: 14px; background: ${c.type === '企业' ? 'linear-gradient(135deg, #3b82f6, #1d4ed8)' : 'linear-gradient(135deg, #a855f7, #7c3aed)'}; display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; font-weight: 700;">
+                    ${c.type === '企业' ? '企' : '个'}
+                </div>
+                <div style="flex: 1;">
+                    <h2 style="margin: 0 0 4px 0; font-size: 20px; font-weight: 600;">${c.name}</h2>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 13px; color: #6c757d; font-family: monospace;">${c.mid}</span>
+                        <span style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; background: ${s.bg}; color: ${s.color};">
+                            <span style="width: 6px; height: 6px; border-radius: 50%; background: ${s.color};"></span>${s.label}
+                        </span>
+                        <span style="padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; background: ${c.type === '企业' ? '#dbeafe' : '#fae8ff'}; color: ${c.type === '企业' ? '#1e40af' : '#86198f'};">${c.type}</span>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-bottom: 24px;">
+                <h3 style="font-size: 15px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0; padding-bottom: 8px; border-bottom: 2px solid #4f46e5; display: inline-block;">基本信息</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0;">
+                    ${renderClientDetailRow('客户 MID', c.mid, true)}
+                    ${renderClientDetailRow('客户名称', c.name)}
+                    ${renderClientDetailRow('客户类型', c.type)}
+                    ${renderClientDetailRow('注册来源', c.regSource || '-')}
+                    ${renderClientDetailRow('所属代理类型', c.agentType || '-')}
+                    ${renderClientDetailRow('代理商 ID', c.agentId || '-')}
+                    ${renderClientDetailRow('代理商名称', c.agentName || '-')}
+                    ${renderClientDetailRow('客户状态', '<span style="display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500;background:' + s.bg + ';color:' + s.color + ';"><span style="width:6px;height:6px;border-radius:50%;background:' + s.color + ';"></span>' + s.label + '</span>')}
+                    ${renderClientDetailRow('注册时间', c.regTime)}
+                </div>
+            </div>
+            <div style="margin-bottom: 24px;">
+                <h3 style="font-size: 15px; font-weight: 600; color: #1f2937; margin: 0 0 16px 0; padding-bottom: 8px; border-bottom: 2px solid #10b981; display: inline-block;">主体信息（KYC）</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0;">
+                    ${renderClientDetailRow('法定名称', k.legalName, true)}
+                    ${renderClientDetailRow('证件类型', k.idType)}
+                    ${renderClientDetailRow('证件号码', '<span style="font-family:monospace;">' + k.idNumber + '</span>')}
+                    ${renderClientDetailRow('国籍/注册地', k.nationality)}
+                    ${renderClientDetailRow('地址', k.address)}
+                    ${renderClientDetailRow('联系电话', '<span style="font-family:monospace;">' + k.phone + '</span>')}
+                    ${renderClientDetailRow('邮箱', k.email)}
+                    ${c.type === '企业' && k.regCapital ? renderClientDetailRow('注册资本', k.regCapital) : ''}
+                    ${c.type === '企业' && k.legalRep ? renderClientDetailRow('法定代表人', k.legalRep) : ''}
+                    ${c.type === '企业' && k.bizScope ? renderClientDetailRow('经营范围', k.bizScope) : ''}
+                    ${renderClientDetailRow('KYC 状态', '<span style="display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500;background:' + ks.bg + ';color:' + ks.color + ';"><span style="width:6px;height:6px;border-radius:50%;background:' + ks.color + ';"></span>' + ks.label + '</span>')}
+                    ${renderClientDetailRow('KYC 审核时间', k.kycTime || '-')}
+                </div>
+            </div>
+            <div style="display: flex; gap: 12px; padding-top: 20px; border-top: 1px solid #e9ecef;">
+                <button onclick="alert('查看客户产品: ${c.mid}')" style="padding: 10px 20px; background: #4f46e5; color: white; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; font-weight: 500;">查看开通产品</button>
+                <button onclick="alert('查看客户余额: ${c.mid}')" style="padding: 10px 20px; background: #10b981; color: white; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; font-weight: 500;">查看余额</button>
+                <button onclick="this.closest('.product-modal').remove()" style="padding: 10px 20px; background: white; color: #6c757d; border: 1px solid #dee2e6; border-radius: 6px; font-size: 14px; cursor: pointer; font-weight: 500;">关闭</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function renderClientDetailRow(label, value, isFirst) {
+    return `<div style="padding: 12px 0; ${isFirst ? '' : 'border-top: 1px solid #f1f3f5;'}">
+        <div style="font-size: 12px; color: #6c757d; margin-bottom: 4px;">${label}</div>
+        <div style="font-size: 14px; color: #1f2937;">${value}</div>
+    </div>`;
+}
+
+function searchClients() { alert('搜索功能开发中'); }
+function resetClientForm() {
+    ['clientMid','clientName','clientType','clientStatus','clientAgentType','clientSource'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.value = '';
+    });
+}
+
+// 2. 客户产品列表
+function renderClientProductList() {
+    const mainContent = document.getElementById('detailMain');
+    if (!mainContent) return;
+    const productData = [
+        { mid: 'CLT20250001', name: 'Alice Johnson', product: 'Crypto Collection', openDate: '2025-01-20', expireDate: '2026-01-20', status: 'active' },
+        { mid: 'CLT20250001', name: 'Alice Johnson', product: 'Fiat VA Collection', openDate: '2025-01-25', expireDate: '2026-01-25', status: 'active' },
+        { mid: 'CLT20250002', name: 'Global Trading Ltd', product: 'Crypto Payment', openDate: '2025-02-01', expireDate: '2026-02-01', status: 'active' },
+        { mid: 'CLT20250002', name: 'Global Trading Ltd', product: 'On/Off Ramp', openDate: '2025-02-01', expireDate: '2026-02-01', status: 'active' },
+        { mid: 'CLT20250004', name: '深圳前海科技有限公司', product: 'Virtual Card Issuing', openDate: '2025-02-10', expireDate: '2025-08-10', status: 'active' },
+        { mid: 'CLT20250005', name: 'Tokyo Payments Inc', product: 'Checkout', openDate: '2025-02-08', expireDate: '2026-02-08', status: 'active' },
+        { mid: 'CLT20250003', name: 'Bob Smith', product: 'Crypto Collection', openDate: '2025-02-01', expireDate: '2025-04-01', status: 'disabled' },
+        { mid: 'CLT20250006', name: 'Maria Garcia', product: 'Fiat VA Collection', openDate: '2024-12-15', expireDate: '2025-06-15', status: 'expired' }
+    ];
+    mainContent.innerHTML = `
+        <div class="page-header">
+            <div class="breadcrumb"><a href="#" onclick="goBack()">首页</a> / <span>客户中心</span> / <span>客户产品列表</span></div>
+            <h1 class="page-title">客户产品信息</h1>
+            <p class="page-desc">查看客户已开通的产品及状态</p>
+        </div>
+        <div class="card" style="margin-bottom: 16px;">
+            <div style="padding: 16px 20px;">
+                <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end;">
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">客户 MID</label>
+                        <input type="text" placeholder="客户MID" style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 140px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">产品名称</label>
+                        <input type="text" placeholder="产品名称" style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 140px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">状态</label>
+                        <select style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 100px;">
+                            <option value="">全部</option><option value="active">已开通</option><option value="disabled">已禁用</option><option value="expired">已过期</option>
+                        </select>
+                    </div>
+                    <button onclick="alert('查询功能开发中')" style="padding: 6px 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; font-size: 13px; cursor: pointer; font-weight: 500;">查询</button>
+                    <button onclick="alert('重置')" style="padding: 6px 16px; background: white; color: #6c757d; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer;">重置</button>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 class="card-title">客户产品列表 <span style="font-size: 13px; color: #6c757d; font-weight: 400;">共 ${productData.length} 条</span></h2>
+                <button onclick="renderClientProductList()" style="padding: 5px 10px; background: white; border: 1px solid #dee2e6; border-radius: 4px; font-size: 12px; cursor: pointer; color: #6c757d;">刷新</button>
+            </div>
+            <div style="overflow-x: auto;">
+                <table style="min-width: 900px; width: 100%; border-collapse: collapse;">
+                    <thead style="background: #f8f9fa;">
+                        <tr>
+                            <th style="padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">客户 MID</th>
+                            <th style="padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">客户名称</th>
+                            <th style="padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">开通产品</th>
+                            <th style="padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">开通时间</th>
+                            <th style="padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">有效期截止</th>
+                            <th style="padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">状态</th>
+                            <th style="padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${productData.map(p => {
+                            const sMap = { active: {l:'已开通',bg:'#d1fae5',c:'#065f46'}, disabled: {l:'已禁用',bg:'#fee2e2',c:'#991b1b'}, expired: {l:'已过期',bg:'#e2e8f0',c:'#475569'} };
+                            const st = sMap[p.status];
+                            return `<tr style="border-bottom: 1px solid #e9ecef;">
+                                <td style="padding: 10px 14px; font-size: 13px; font-family: monospace; color: #4f46e5; white-space: nowrap;">${p.mid}</td>
+                                <td style="padding: 10px 14px; font-size: 13px; white-space: nowrap;">${p.name}</td>
+                                <td style="padding: 10px 14px; font-size: 13px; font-weight: 500; white-space: nowrap;">${p.product}</td>
+                                <td style="padding: 10px 14px; font-size: 13px; white-space: nowrap;">${p.openDate}</td>
+                                <td style="padding: 10px 14px; font-size: 13px; white-space: nowrap;">${p.expireDate}</td>
+                                <td style="padding: 10px 14px; font-size: 13px; white-space: nowrap;">
+                                    <span style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 500; background: ${st.bg}; color: ${st.c};">
+                                        <span style="width: 5px; height: 5px; border-radius: 50%; background: ${st.c};"></span>${st.l}
+                                    </span>
+                                </td>
+                                <td style="padding: 10px 14px; font-size: 13px; white-space: nowrap;">
+                                    <button onclick="alert('产品详情: ${p.mid} - ${p.product}')" style="background: none; border: none; color: #4f46e5; cursor: pointer; font-size: 13px; text-decoration: underline;">详情</button>
+                                </td>
+                            </tr>`;
+                        }).join('')}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 3. 客户余额查询（含止入/止出/冻结操作）
+function renderClientBalance() {
+    const mainContent = document.getElementById('detailMain');
+    if (!mainContent) return;
+    const balanceData = [
+        { mid: 'CLT20250001', name: 'Alice Johnson', currency: 'USD', available: '12,580.50', pending: '1,200.00', frozen: '500.00', total: '14,280.50' },
+        { mid: 'CLT20250001', name: 'Alice Johnson', currency: 'USDT', available: '8,350.00', pending: '0.00', frozen: '0.00', total: '8,350.00' },
+        { mid: 'CLT20250002', name: 'Global Trading Ltd', currency: 'USD', available: '156,800.25', pending: '12,500.00', frozen: '5,000.00', total: '174,300.25' },
+        { mid: 'CLT20250002', name: 'Global Trading Ltd', currency: 'EUR', available: '45,200.00', pending: '3,000.00', frozen: '0.00', total: '48,200.00' },
+        { mid: 'CLT20250002', name: 'Global Trading Ltd', currency: 'BTC', available: '2.35000000', pending: '0.00000000', frozen: '0.50000000', total: '2.85000000' },
+        { mid: 'CLT20250004', name: '深圳前海科技有限公司', currency: 'USD', available: '89,100.00', pending: '5,600.00', frozen: '2,000.00', total: '96,700.00' },
+        { mid: 'CLT20250004', name: '深圳前海科技有限公司', currency: 'CNY', available: '520,000.00', pending: '0.00', frozen: '0.00', total: '520,000.00' },
+        { mid: 'CLT20250005', name: 'Tokyo Payments Inc', currency: 'USD', available: '34,500.00', pending: '2,100.00', frozen: '0.00', total: '36,600.00' },
+        { mid: 'CLT20250005', name: 'Tokyo Payments Inc', currency: 'JPY', available: '5,200,000', pending: '0', frozen: '0', total: '5,200,000' }
+    ];
+    const thStyle = 'padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;';
+    const thStyleR = 'padding: 10px 14px; text-align: right; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;';
+    const tdStyle = 'padding: 10px 14px; font-size: 13px; white-space: nowrap;';
+    mainContent.innerHTML = `
+        <div class="page-header">
+            <div class="breadcrumb"><a href="#" onclick="goBack()">首页</a> / <span>客户中心</span> / <span>客户余额查询</span></div>
+            <h1 class="page-title">客户余额查询</h1>
+            <p class="page-desc">查看客户各币种账户余额</p>
+        </div>
+        <div class="card" style="margin-bottom: 16px;">
+            <div style="padding: 16px 20px;">
+                <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end;">
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">客户 MID</label>
+                        <input type="text" placeholder="客户MID" style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 150px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">客户名称</label>
+                        <input type="text" placeholder="客户名称" style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 150px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">币种</label>
+                        <select style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 100px;">
+                            <option value="">全部</option><option>USD</option><option>EUR</option><option>CNY</option><option>JPY</option><option>GBP</option><option>USDT</option><option>BTC</option><option>ETH</option>
+                        </select>
+                    </div>
+                    <button onclick="alert('查询功能开发中')" style="padding: 6px 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; font-size: 13px; cursor: pointer; font-weight: 500;">查询</button>
+                    <button onclick="alert('重置')" style="padding: 6px 16px; background: white; color: #6c757d; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer;">重置</button>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 class="card-title">余额列表</h2>
+                <button onclick="renderClientBalance()" style="padding: 5px 10px; background: white; border: 1px solid #dee2e6; border-radius: 4px; font-size: 12px; cursor: pointer; color: #6c757d;">刷新</button>
+            </div>
+            <div style="overflow-x: auto;">
+                <table style="min-width: 900px; width: 100%; border-collapse: collapse;">
+                    <thead style="background: #f8f9fa;">
+                        <tr>
+                            <th style="${thStyle}">客户 MID</th>
+                            <th style="${thStyle}">客户名称</th>
+                            <th style="${thStyle}">币种</th>
+                            <th style="${thStyleR}">可用余额</th>
+                            <th style="${thStyleR}">待结算</th>
+                            <th style="${thStyleR}">冻结金额</th>
+                            <th style="${thStyleR}">总余额</th>
+                            <th style="${thStyle}">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${balanceData.map(b => `<tr style="border-bottom: 1px solid #e9ecef;">
+                            <td style="${tdStyle} font-family: monospace; color: #4f46e5;">${b.mid}</td>
+                            <td style="${tdStyle}">${b.name}</td>
+                            <td style="${tdStyle}"><span style="padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; background: #f0f0f0; color: #333; font-family: monospace;">${b.currency}</span></td>
+                            <td style="${tdStyle} text-align: right; font-family: monospace; font-weight: 500; color: #059669;">${b.available}</td>
+                            <td style="${tdStyle} text-align: right; font-family: monospace; color: #d97706;">${b.pending}</td>
+                            <td style="${tdStyle} text-align: right; font-family: monospace; color: ${b.frozen !== '0.00' && b.frozen !== '0' && b.frozen !== '0.00000000' ? '#dc2626' : '#adb5bd'};">${b.frozen}</td>
+                            <td style="${tdStyle} text-align: right; font-family: monospace; font-weight: 600;">${b.total}</td>
+                            <td style="${tdStyle}">
+                                <div style="display: flex; gap: 6px;">
+                                    <button onclick="showBalanceActionModal('止入', '${b.mid}', '${b.name}', '${b.currency}')" style="padding: 3px 10px; background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: 500;">止入</button>
+                                    <button onclick="showBalanceActionModal('止出', '${b.mid}', '${b.name}', '${b.currency}')" style="padding: 3px 10px; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: 500;">止出</button>
+                                    <button onclick="showFreezeModal('${b.mid}', '${b.name}', '${b.currency}')" style="padding: 3px 10px; background: #eef2ff; color: #4f46e5; border: 1px solid #c7d2fe; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: 500;">冻结</button>
+                                </div>
+                            </td>
+                        </tr>`).join('')}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 止入/止出 确认弹层
+function showBalanceActionModal(action, mid, name, currency) {
+    const actionDesc = action === '止入' ? '禁止该账户的资金转入' : '禁止该账户的资金转出';
+    const actionColor = action === '止入' ? '#c2410c' : '#dc2626';
+    const actionBg = action === '止入' ? '#fff7ed' : '#fef2f2';
+    const modal = document.createElement('div');
+    modal.className = 'product-modal';
+    modal.innerHTML = `
+        <div class="product-modal-overlay" onclick="this.parentElement.remove()"></div>
+        <div class="product-modal-content" style="max-width: 480px;">
+            <button class="modal-close" onclick="this.closest('.product-modal').remove()">×</button>
+            <div style="text-align: center; padding: 10px 0 20px;">
+                <div style="width: 56px; height: 56px; border-radius: 50%; background: ${actionBg}; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="${actionColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                </div>
+                <h2 style="font-size: 18px; font-weight: 600; margin: 0 0 8px; color: #1f2937;">确认${action}操作</h2>
+                <p style="font-size: 14px; color: #6c757d; margin: 0 0 20px;">${actionDesc}</p>
+            </div>
+            <div style="background: #f8f9fa; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div><div style="font-size: 12px; color: #6c757d; margin-bottom: 2px;">客户 MID</div><div style="font-size: 14px; font-family: monospace; color: #4f46e5;">${mid}</div></div>
+                    <div><div style="font-size: 12px; color: #6c757d; margin-bottom: 2px;">客户名称</div><div style="font-size: 14px; font-weight: 500;">${name}</div></div>
+                    <div><div style="font-size: 12px; color: #6c757d; margin-bottom: 2px;">币种</div><div style="font-size: 14px; font-family: monospace;">${currency}</div></div>
+                    <div><div style="font-size: 12px; color: #6c757d; margin-bottom: 2px;">操作类型</div><div style="font-size: 14px; font-weight: 600; color: ${actionColor};">${action}</div></div>
+                </div>
+            </div>
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <button onclick="this.closest('.product-modal').remove()" style="padding: 8px 20px; background: white; color: #6c757d; border: 1px solid #dee2e6; border-radius: 6px; font-size: 14px; cursor: pointer;">取消</button>
+                <button onclick="alert('${action}操作已提交：${mid} ${currency}'); this.closest('.product-modal').remove();" style="padding: 8px 20px; background: ${actionColor}; color: white; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; font-weight: 500;">确认${action}</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+// 冻结弹层（填写冻结金额和备注）
+function showFreezeModal(mid, name, currency) {
+    const modal = document.createElement('div');
+    modal.className = 'product-modal';
+    modal.innerHTML = `
+        <div class="product-modal-overlay" onclick="this.parentElement.remove()"></div>
+        <div class="product-modal-content" style="max-width: 520px;">
+            <button class="modal-close" onclick="this.closest('.product-modal').remove()">×</button>
+            <div style="padding-bottom: 20px; border-bottom: 1px solid #e9ecef; margin-bottom: 20px;">
+                <h2 style="font-size: 18px; font-weight: 600; margin: 0 0 6px; color: #1f2937;">冻结客户余额</h2>
+                <p style="font-size: 14px; color: #6c757d; margin: 0;">冻结指定金额的客户账户余额</p>
+            </div>
+            <div style="background: #f8f9fa; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+                    <div><div style="font-size: 12px; color: #6c757d; margin-bottom: 2px;">客户 MID</div><div style="font-size: 14px; font-family: monospace; color: #4f46e5;">${mid}</div></div>
+                    <div><div style="font-size: 12px; color: #6c757d; margin-bottom: 2px;">客户名称</div><div style="font-size: 14px; font-weight: 500;">${name}</div></div>
+                    <div><div style="font-size: 12px; color: #6c757d; margin-bottom: 2px;">币种</div><div style="font-size: 14px; font-family: monospace;">${currency}</div></div>
+                </div>
+            </div>
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">冻结金额 <span style="color: #dc2626;">*</span></label>
+                <input type="text" id="freezeAmount" placeholder="请输入冻结金额" style="width: 100%; padding: 10px 12px; border: 1px solid #dee2e6; border-radius: 6px; font-size: 14px; box-sizing: border-box;">
+            </div>
+            <div style="margin-bottom: 24px;">
+                <label style="display: block; font-size: 13px; color: #495057; margin-bottom: 6px; font-weight: 500;">冻结备注 <span style="color: #dc2626;">*</span></label>
+                <textarea id="freezeRemark" placeholder="请输入冻结原因" rows="3" style="width: 100%; padding: 10px 12px; border: 1px solid #dee2e6; border-radius: 6px; font-size: 14px; resize: vertical; box-sizing: border-box;"></textarea>
+            </div>
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <button onclick="this.closest('.product-modal').remove()" style="padding: 8px 20px; background: white; color: #6c757d; border: 1px solid #dee2e6; border-radius: 6px; font-size: 14px; cursor: pointer;">取消</button>
+                <button onclick="submitFreeze('${mid}', '${currency}')" style="padding: 8px 20px; background: #4f46e5; color: white; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; font-weight: 500;">确认冻结</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function submitFreeze(mid, currency) {
+    const amount = document.getElementById('freezeAmount')?.value;
+    const remark = document.getElementById('freezeRemark')?.value;
+    if (!amount) { alert('请输入冻结金额'); return; }
+    if (!remark) { alert('请输入冻结备注'); return; }
+    alert('冻结操作已提交\\n客户: ' + mid + '\\n币种: ' + currency + '\\n金额: ' + amount + '\\n备注: ' + remark);
+    document.querySelector('.product-modal')?.remove();
+}
+
+// 3.5 客户账户余额（账户维度，专用户可止入/止出）
+function renderClientAccountBalance() {
+    const mainContent = document.getElementById('detailMain');
+    if (!mainContent) return;
+    const accountData = [
+        { mid: 'CLT20250001', name: 'Alice Johnson', acctName: 'Alice USD 专用户', acctId: 'ACC-USD-0001', acctType: '专用户', balance: '12,580.50', currency: 'USD', updateTime: '2025-02-09 14:30:22' },
+        { mid: 'CLT20250001', name: 'Alice Johnson', acctName: 'Alice USD 基本户', acctId: 'ACC-USD-0001-B', acctType: '基本户', balance: '3,200.00', currency: 'USD', updateTime: '2025-02-09 14:30:22' },
+        { mid: 'CLT20250001', name: 'Alice Johnson', acctName: 'Alice USD 冻结户', acctId: 'ACC-USD-0001-F', acctType: '冻结户', balance: '500.00', currency: 'USD', updateTime: '2025-02-08 14:05:12' },
+        { mid: 'CLT20250001', name: 'Alice Johnson', acctName: 'Alice USD 待结算账户', acctId: 'ACC-USD-0001-S', acctType: '待结算账户', balance: '1,200.00', currency: 'USD', updateTime: '2025-02-09 10:00:00' },
+        { mid: 'CLT20250001', name: 'Alice Johnson', acctName: 'Alice USDT 专用户', acctId: 'ACC-USDT-0001', acctType: '专用户', balance: '8,350.00', currency: 'USDT', updateTime: '2025-02-09 12:15:00' },
+        { mid: 'CLT20250002', name: 'Global Trading Ltd', acctName: 'GT USD 专用户', acctId: 'ACC-USD-0002', acctType: '专用户', balance: '156,800.25', currency: 'USD', updateTime: '2025-02-09 10:22:15' },
+        { mid: 'CLT20250002', name: 'Global Trading Ltd', acctName: 'GT USD 基本户', acctId: 'ACC-USD-0002-B', acctType: '基本户', balance: '8,500.00', currency: 'USD', updateTime: '2025-02-09 10:22:15' },
+        { mid: 'CLT20250002', name: 'Global Trading Ltd', acctName: 'GT USD 冻结户', acctId: 'ACC-USD-0002-F', acctType: '冻结户', balance: '5,000.00', currency: 'USD', updateTime: '2025-02-05 10:30:00' },
+        { mid: 'CLT20250002', name: 'Global Trading Ltd', acctName: 'GT USD 待结算账户', acctId: 'ACC-USD-0002-S', acctType: '待结算账户', balance: '12,500.00', currency: 'USD', updateTime: '2025-02-09 09:00:00' },
+        { mid: 'CLT20250002', name: 'Global Trading Ltd', acctName: 'GT EUR 专用户', acctId: 'ACC-EUR-0002', acctType: '专用户', balance: '45,200.00', currency: 'EUR', updateTime: '2025-02-09 09:45:30' },
+        { mid: 'CLT20250002', name: 'Global Trading Ltd', acctName: 'GT BTC 专用户', acctId: 'ACC-BTC-0002', acctType: '专用户', balance: '2.35000000', currency: 'BTC', updateTime: '2025-02-07 18:30:00' },
+        { mid: 'CLT20250004', name: '深圳前海科技有限公司', acctName: '前海科技 USD 专用户', acctId: 'ACC-USD-0004', acctType: '专用户', balance: '89,100.00', currency: 'USD', updateTime: '2025-02-08 16:20:45' },
+        { mid: 'CLT20250004', name: '深圳前海科技有限公司', acctName: '前海科技 CNY 专用户', acctId: 'ACC-CNY-0004', acctType: '专用户', balance: '520,000.00', currency: 'CNY', updateTime: '2025-02-09 08:00:00' },
+        { mid: 'CLT20250005', name: 'Tokyo Payments Inc', acctName: 'TP USD 专用户', acctId: 'ACC-USD-0005', acctType: '专用户', balance: '34,500.00', currency: 'USD', updateTime: '2025-02-09 11:00:00' },
+        { mid: 'CLT20250005', name: 'Tokyo Payments Inc', acctName: 'TP JPY 专用户', acctId: 'ACC-JPY-0005', acctType: '专用户', balance: '5,200,000', currency: 'JPY', updateTime: '2025-02-08 15:10:33' }
+    ];
+    const acctTypeBadge = (type) => {
+        const map = { '专用户': { bg: '#dbeafe', c: '#1e40af' }, '基本户': { bg: '#d1fae5', c: '#065f46' }, '冻结户': { bg: '#fee2e2', c: '#991b1b' }, '待结算账户': { bg: '#fef3c7', c: '#92400e' } };
+        const s = map[type] || { bg: '#e2e8f0', c: '#475569' };
+        return `<span style="padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 500; background: ${s.bg}; color: ${s.c};">${type}</span>`;
+    };
+    const th = 'padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;';
+    const thR = 'padding: 10px 14px; text-align: right; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;';
+    const td = 'padding: 10px 14px; font-size: 13px; white-space: nowrap;';
+    mainContent.innerHTML = `
+        <div class="page-header">
+            <div class="breadcrumb"><a href="#" onclick="goBack()">首页</a> / <span>客户中心</span> / <span>客户账户余额</span></div>
+            <h1 class="page-title">客户账户余额</h1>
+            <p class="page-desc">查看客户各账户余额明细</p>
+        </div>
+        <div class="card" style="margin-bottom: 16px;">
+            <div style="padding: 16px 20px;">
+                <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end;">
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">客户 MID</label>
+                        <input type="text" placeholder="客户MID" style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 140px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">客户名称</label>
+                        <input type="text" placeholder="客户名称" style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 140px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">账户类型</label>
+                        <select style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 120px;">
+                            <option value="">全部</option><option>专用户</option><option>基本户</option><option>冻结户</option><option>待结算账户</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">币种</label>
+                        <select style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 100px;">
+                            <option value="">全部</option><option>USD</option><option>EUR</option><option>CNY</option><option>JPY</option><option>USDT</option><option>BTC</option>
+                        </select>
+                    </div>
+                    <button onclick="alert('查询功能开发中')" style="padding: 6px 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; font-size: 13px; cursor: pointer; font-weight: 500;">查询</button>
+                    <button onclick="alert('重置')" style="padding: 6px 16px; background: white; color: #6c757d; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer;">重置</button>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 class="card-title">账户余额列表</h2>
+                <button onclick="renderClientAccountBalance()" style="padding: 5px 10px; background: white; border: 1px solid #dee2e6; border-radius: 4px; font-size: 12px; cursor: pointer; color: #6c757d;">刷新</button>
+            </div>
+            <div style="overflow-x: auto;">
+                <table style="min-width: 1100px; width: 100%; border-collapse: collapse;">
+                    <thead style="background: #f8f9fa;">
+                        <tr>
+                            <th style="${th}">客户 MID</th>
+                            <th style="${th}">客户名称</th>
+                            <th style="${th}">客户账户名称</th>
+                            <th style="${th}">客户账户ID</th>
+                            <th style="${th}">客户账户类型</th>
+                            <th style="${thR}">账户余额</th>
+                            <th style="${th}">更新时间</th>
+                            <th style="${th}">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${accountData.map(a => `<tr style="border-bottom: 1px solid #e9ecef;">
+                            <td style="${td} font-family: monospace; color: #4f46e5;">${a.mid}</td>
+                            <td style="${td}">${a.name}</td>
+                            <td style="${td} font-weight: 500;">${a.acctName}</td>
+                            <td style="${td} font-family: monospace; color: #6c757d;">${a.acctId}</td>
+                            <td style="${td}">${acctTypeBadge(a.acctType)}</td>
+                            <td style="${td} text-align: right; font-family: monospace; font-weight: 600;">${a.balance} <span style="font-size: 11px; color: #6c757d; font-weight: 400;">${a.currency}</span></td>
+                            <td style="${td} color: #6c757d;">${a.updateTime}</td>
+                            <td style="${td}">
+                                ${a.acctType === '专用户' ? `<div style="display: flex; gap: 6px;">
+                                    <button onclick="showBalanceActionModal('止入', '${a.mid}', '${a.name}', '${a.currency}')" style="padding: 3px 10px; background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: 500;">止入</button>
+                                    <button onclick="showBalanceActionModal('止出', '${a.mid}', '${a.name}', '${a.currency}')" style="padding: 3px 10px; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: 500;">止出</button>
+                                </div>` : '<span style="color: #adb5bd;">-</span>'}
+                            </td>
+                        </tr>`).join('')}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 4. 客户余额流水
+function renderClientBalanceFlow() {
+    const mainContent = document.getElementById('detailMain');
+    if (!mainContent) return;
+    const txData = [
+        { mid: 'CLT20250001', acctId: 'ACC-USD-0001', acctName: 'Alice USD Main', productType: '法币VA收款', txType: '收款', txId: 'TXN20250209001', merchantRef: 'PAY-2025020900123', amount: '+3,500.00', currency: 'USD', balance: '12,580.50', balCurrency: 'USD', time: '2025-02-09 14:30:22', desc: 'VA收款入账' },
+        { mid: 'CLT20250001', acctId: 'ACC-USD-0001', acctName: 'Alice USD Main', productType: '法币代付出款', txType: '提现', txId: 'TXN20250209002', merchantRef: 'WDR-2025020900045', amount: '-2,000.00', currency: 'USD', balance: '9,080.50', balCurrency: 'USD', time: '2025-02-09 11:15:08', desc: '银行卡提现' },
+        { mid: 'CLT20250002', acctId: 'ACC-USD-0002', acctName: 'Global Trading USD', productType: '法币VA收款', txType: '收款', txId: 'TXN20250209003', merchantRef: 'PAY-2025020900089', amount: '+25,000.00', currency: 'USD', balance: '156,800.25', balCurrency: 'USD', time: '2025-02-09 10:22:15', desc: 'VA收款入账' },
+        { mid: 'CLT20250002', acctId: 'ACC-EUR-0002', acctName: 'Global Trading EUR', productType: '承兑服务', txType: '换汇', txId: 'TXN20250209004', merchantRef: 'FX-2025020900012', amount: '+10,000.00', currency: 'EUR', balance: '45,200.00', balCurrency: 'EUR', time: '2025-02-09 09:45:30', desc: 'USD→EUR 换汇入账' },
+        { mid: 'CLT20250004', acctId: 'ACC-USD-0004', acctName: '前海科技 USD', productType: '法币代付出款', txType: '付款', txId: 'TXN20250208005', merchantRef: 'OUT-2025020800067', amount: '-5,600.00', currency: 'USD', balance: '89,100.00', balCurrency: 'USD', time: '2025-02-08 16:20:45', desc: '供应商付款' },
+        { mid: 'CLT20250005', acctId: 'ACC-JPY-0005', acctName: 'Tokyo JPY Main', productType: '法币VA收款', txType: '收款', txId: 'TXN20250208006', merchantRef: 'PAY-2025020800034', amount: '+1,200,000', currency: 'JPY', balance: '5,200,000', balCurrency: 'JPY', time: '2025-02-08 15:10:33', desc: 'VA收款入账' },
+        { mid: 'CLT20250001', acctId: 'ACC-USD-0001', acctName: 'Alice USD Main', productType: '-', txType: '冻结', txId: 'TXN20250208007', merchantRef: 'FRZ-2025020800011', amount: '-500.00', currency: 'USD', balance: '12,580.50', balCurrency: 'USD', time: '2025-02-08 14:05:12', desc: '风控审查冻结' },
+        { mid: 'CLT20250002', acctId: 'ACC-BTC-0002', acctName: 'Global Trading BTC', productType: '数币收款', txType: '收款', txId: 'TXN20250207008', merchantRef: 'CRY-2025020700023', amount: '+0.85000000', currency: 'BTC', balance: '2.35000000', balCurrency: 'BTC', time: '2025-02-07 18:30:00', desc: '链上收款确认' }
+    ];
+    const typeColors = { '收款': '#059669', '提现': '#dc2626', '付款': '#dc2626', '换汇': '#d97706', '冻结': '#7c3aed', '解冻': '#2563eb' };
+    const th = 'padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;';
+    const thR = 'padding: 10px 14px; text-align: right; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;';
+    const td = 'padding: 10px 14px; font-size: 13px; white-space: nowrap;';
+    mainContent.innerHTML = `
+        <div class="page-header">
+            <div class="breadcrumb"><a href="#" onclick="goBack()">首页</a> / <span>客户中心</span> / <span>客户余额流水</span></div>
+            <h1 class="page-title">客户余额流水</h1>
+            <p class="page-desc">查看客户账户余额变动流水明细</p>
+        </div>
+        <div class="card" style="margin-bottom: 16px;">
+            <div style="padding: 16px 20px;">
+                <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end;">
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">客户 MID</label>
+                        <input type="text" placeholder="客户MID" style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 140px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">账户ID</label>
+                        <input type="text" placeholder="账户ID" style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 140px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">产品类型</label>
+                        <select style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 130px;">
+                            <option value="">全部</option><option>法币VA收款</option><option>法币代付出款</option><option>数币收款</option><option>数币付款</option><option>承兑服务</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">交易类型</label>
+                        <select style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 100px;">
+                            <option value="">全部</option><option>收款</option><option>付款</option><option>提现</option><option>换汇</option><option>冻结</option><option>解冻</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">开始日期</label>
+                        <input type="date" style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">结束日期</label>
+                        <input type="date" style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px;">
+                    </div>
+                    <button onclick="alert('查询功能开发中')" style="padding: 6px 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; font-size: 13px; cursor: pointer; font-weight: 500;">查询</button>
+                    <button onclick="alert('重置')" style="padding: 6px 16px; background: white; color: #6c757d; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer;">重置</button>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 class="card-title">流水记录</h2>
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="alert('导出功能开发中')" style="padding: 5px 10px; background: white; border: 1px solid #dee2e6; border-radius: 4px; font-size: 12px; cursor: pointer; color: #6c757d;">导出</button>
+                    <button onclick="renderClientBalanceFlow()" style="padding: 5px 10px; background: white; border: 1px solid #dee2e6; border-radius: 4px; font-size: 12px; cursor: pointer; color: #6c757d;">刷新</button>
+                </div>
+            </div>
+            <div style="overflow-x: auto;">
+                <table style="min-width: 1400px; width: 100%; border-collapse: collapse;">
+                    <thead style="background: #f8f9fa;">
+                        <tr>
+                            <th style="${th}">客户 MID</th>
+                            <th style="${th}">客户账户ID</th>
+                            <th style="${th}">客户账户名称</th>
+                            <th style="${th}">产品类型</th>
+                            <th style="${th}">交易类型</th>
+                            <th style="${th}">交易编号</th>
+                            <th style="${th}">商户单号</th>
+                            <th style="${thR}">金额</th>
+                            <th style="${thR}">余额</th>
+                            <th style="${th}">时间</th>
+                            <th style="${th}">资金描述</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${txData.map(t => `<tr style="border-bottom: 1px solid #e9ecef;">
+                            <td style="${td} font-family: monospace; color: #4f46e5;">${t.mid}</td>
+                            <td style="${td} font-family: monospace; color: #6c757d;">${t.acctId}</td>
+                            <td style="${td}">${t.acctName}</td>
+                            <td style="${td} color: #6c757d;">${t.productType}</td>
+                            <td style="${td}"><span style="padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 500; background: ${typeColors[t.txType]}15; color: ${typeColors[t.txType]};">${t.txType}</span></td>
+                            <td style="${td} font-family: monospace; color: #6c757d;">${t.txId}</td>
+                            <td style="${td} font-family: monospace; color: #6c757d;">${t.merchantRef}</td>
+                            <td style="${td} text-align: right; font-family: monospace; font-weight: 500; color: ${t.amount.startsWith('+') ? '#059669' : '#dc2626'};">${t.amount} ${t.currency}</td>
+                            <td style="${td} text-align: right; font-family: monospace;">${t.balance} ${t.balCurrency}</td>
+                            <td style="${td} color: #6c757d;">${t.time}</td>
+                            <td style="${td} color: #495057;">${t.desc}</td>
+                        </tr>`).join('')}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 5. 贸易订单
+function renderTradeOrders() {
+    const mainContent = document.getElementById('detailMain');
+    if (!mainContent) return;
+    const tradeData = [
+        { id: 'TRD20250209001', mid: 'CLT20250001', name: 'Alice Johnson', type: '货物贸易', counterparty: 'Supplier Co Ltd', currency: 'USD', amount: '15,000.00', tradeDate: '2025-02-09', status: 'completed' },
+        { id: 'TRD20250208002', mid: 'CLT20250002', name: 'Global Trading Ltd', type: '服务贸易', counterparty: 'Tech Services Inc', currency: 'EUR', amount: '8,500.00', tradeDate: '2025-02-08', status: 'completed' },
+        { id: 'TRD20250207003', mid: 'CLT20250004', name: '深圳前海科技有限公司', type: '货物贸易', counterparty: '广州供应链有限公司', currency: 'CNY', amount: '120,000.00', tradeDate: '2025-02-07', status: 'pending' },
+        { id: 'TRD20250206004', mid: 'CLT20250005', name: 'Tokyo Payments Inc', type: '服务贸易', counterparty: 'Game Studio JP', currency: 'JPY', amount: '2,500,000', tradeDate: '2025-02-06', status: 'completed' },
+        { id: 'TRD20250205005', mid: 'CLT20250001', name: 'Alice Johnson', type: '货物贸易', counterparty: 'Fashion Brand EU', currency: 'EUR', amount: '3,200.00', tradeDate: '2025-02-05', status: 'reviewing' }
+    ];
+    const statusMap = { completed: {l:'已完成',bg:'#d1fae5',c:'#065f46'}, pending: {l:'待审核',bg:'#fef3c7',c:'#92400e'}, reviewing: {l:'审核中',bg:'#dbeafe',c:'#1e40af'} };
+    mainContent.innerHTML = `
+        <div class="page-header">
+            <div class="breadcrumb"><a href="#" onclick="goBack()">首页</a> / <span>客户中心</span> / <span>贸易订单</span></div>
+            <h1 class="page-title">贸易订单</h1>
+            <p class="page-desc">查看客户贸易背景订单信息</p>
+        </div>
+        <div class="card" style="margin-bottom: 16px;">
+            <div style="padding: 16px 20px;">
+                <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end;">
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">客户 MID</label>
+                        <input type="text" placeholder="客户MID" style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 140px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">贸易类型</label>
+                        <select style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 120px;">
+                            <option value="">全部</option><option>货物贸易</option><option>服务贸易</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">状态</label>
+                        <select style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 100px;">
+                            <option value="">全部</option><option value="completed">已完成</option><option value="pending">待审核</option><option value="reviewing">审核中</option>
+                        </select>
+                    </div>
+                    <button onclick="alert('查询功能开发中')" style="padding: 6px 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; font-size: 13px; cursor: pointer; font-weight: 500;">查询</button>
+                    <button onclick="alert('重置')" style="padding: 6px 16px; background: white; color: #6c757d; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer;">重置</button>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header"><h2 class="card-title">贸易订单列表</h2></div>
+            <div style="overflow-x: auto;">
+                <table style="min-width: 1100px; width: 100%; border-collapse: collapse;">
+                    <thead style="background: #f8f9fa;">
+                        <tr>
+                            <th style="padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">贸易单号</th>
+                            <th style="padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">客户 MID</th>
+                            <th style="padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">客户名称</th>
+                            <th style="padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">贸易类型</th>
+                            <th style="padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">交易对手</th>
+                            <th style="padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">币种</th>
+                            <th style="padding: 10px 14px; text-align: right; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">金额</th>
+                            <th style="padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">贸易日期</th>
+                            <th style="padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">状态</th>
+                            <th style="padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${tradeData.map(t => { const st = statusMap[t.status]; return `<tr style="border-bottom: 1px solid #e9ecef;">
+                            <td style="padding: 10px 14px; font-size: 13px; font-family: monospace; color: #6c757d; white-space: nowrap;">${t.id}</td>
+                            <td style="padding: 10px 14px; font-size: 13px; font-family: monospace; color: #4f46e5; white-space: nowrap;">${t.mid}</td>
+                            <td style="padding: 10px 14px; font-size: 13px; white-space: nowrap;">${t.name}</td>
+                            <td style="padding: 10px 14px; font-size: 13px; white-space: nowrap;">${t.type}</td>
+                            <td style="padding: 10px 14px; font-size: 13px; white-space: nowrap;">${t.counterparty}</td>
+                            <td style="padding: 10px 14px; font-size: 13px; font-family: monospace; white-space: nowrap;">${t.currency}</td>
+                            <td style="padding: 10px 14px; font-size: 13px; text-align: right; font-family: monospace; font-weight: 500; white-space: nowrap;">${t.amount}</td>
+                            <td style="padding: 10px 14px; font-size: 13px; white-space: nowrap;">${t.tradeDate}</td>
+                            <td style="padding: 10px 14px; font-size: 13px; white-space: nowrap;">
+                                <span style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 500; background: ${st.bg}; color: ${st.c};">
+                                    <span style="width: 5px; height: 5px; border-radius: 50%; background: ${st.c};"></span>${st.l}
+                                </span>
+                            </td>
+                            <td style="padding: 10px 14px; font-size: 13px; white-space: nowrap;">
+                                <button onclick="alert('贸易订单详情: ${t.id}')" style="background: none; border: none; color: #4f46e5; cursor: pointer; font-size: 13px; text-decoration: underline;">详情</button>
+                            </td>
+                        </tr>`; }).join('')}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// 6. 店铺查询
+function renderShopQuery() {
+    const mainContent = document.getElementById('detailMain');
+    if (!mainContent) return;
+    const shopData = [
+        { id: 'SHOP001', mid: 'CLT20250001', name: 'Alice Johnson', shopName: "Alice's Fashion Store", platform: 'Shopify', url: 'alicefashion.myshopify.com', status: 'active', createTime: '2025-01-20 10:00:00' },
+        { id: 'SHOP002', mid: 'CLT20250002', name: 'Global Trading Ltd', shopName: 'GT Electronics', platform: 'Amazon', url: 'amazon.com/gt-electronics', status: 'active', createTime: '2025-01-25 14:30:00' },
+        { id: 'SHOP003', mid: 'CLT20250002', name: 'Global Trading Ltd', shopName: 'GT Home Goods', platform: 'eBay', url: 'ebay.com/gt-home', status: 'active', createTime: '2025-02-01 09:15:00' },
+        { id: 'SHOP004', mid: 'CLT20250004', name: '深圳前海科技有限公司', shopName: '前海数码旗舰店', platform: '独立站', url: 'www.qhdigital.com', status: 'active', createTime: '2025-02-05 16:45:00' },
+        { id: 'SHOP005', mid: 'CLT20250005', name: 'Tokyo Payments Inc', shopName: 'TP Game Shop', platform: 'Steam', url: 'store.steampowered.com/tp', status: 'suspended', createTime: '2025-02-08 11:00:00' }
+    ];
+    mainContent.innerHTML = `
+        <div class="page-header">
+            <div class="breadcrumb"><a href="#" onclick="goBack()">首页</a> / <span>客户中心</span> / <span>店铺查询</span></div>
+            <h1 class="page-title">店铺查询</h1>
+            <p class="page-desc">查看客户关联的店铺信息</p>
+        </div>
+        <div class="card" style="margin-bottom: 16px;">
+            <div style="padding: 16px 20px;">
+                <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end;">
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">客户 MID</label>
+                        <input type="text" placeholder="客户MID" style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 140px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">店铺名称</label>
+                        <input type="text" placeholder="店铺名称" style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 140px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 12px; color: #495057; margin-bottom: 4px; font-weight: 500;">平台</label>
+                        <select style="padding: 6px 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 120px;">
+                            <option value="">全部</option><option>Shopify</option><option>Amazon</option><option>eBay</option><option>独立站</option><option>Steam</option>
+                        </select>
+                    </div>
+                    <button onclick="alert('查询功能开发中')" style="padding: 6px 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; font-size: 13px; cursor: pointer; font-weight: 500;">查询</button>
+                    <button onclick="alert('重置')" style="padding: 6px 16px; background: white; color: #6c757d; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; cursor: pointer;">重置</button>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header"><h2 class="card-title">店铺列表</h2></div>
+            <div style="overflow-x: auto;">
+                <table style="min-width: 1000px; width: 100%; border-collapse: collapse;">
+                    <thead style="background: #f8f9fa;">
+                        <tr>
+                            <th style="padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">店铺ID</th>
+                            <th style="padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">客户 MID</th>
+                            <th style="padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">客户名称</th>
+                            <th style="padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">店铺名称</th>
+                            <th style="padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">平台</th>
+                            <th style="padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">店铺地址</th>
+                            <th style="padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">状态</th>
+                            <th style="padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #495057; border-bottom: 2px solid #e9ecef; white-space: nowrap;">创建时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${shopData.map(s => `<tr style="border-bottom: 1px solid #e9ecef;">
+                            <td style="padding: 10px 14px; font-size: 13px; font-family: monospace; color: #6c757d; white-space: nowrap;">${s.id}</td>
+                            <td style="padding: 10px 14px; font-size: 13px; font-family: monospace; color: #4f46e5; white-space: nowrap;">${s.mid}</td>
+                            <td style="padding: 10px 14px; font-size: 13px; white-space: nowrap;">${s.name}</td>
+                            <td style="padding: 10px 14px; font-size: 13px; font-weight: 500; white-space: nowrap;">${s.shopName}</td>
+                            <td style="padding: 10px 14px; font-size: 13px; white-space: nowrap;"><span style="padding: 2px 8px; border-radius: 4px; font-size: 11px; background: #f0f0f0; color: #333;">${s.platform}</span></td>
+                            <td style="padding: 10px 14px; font-size: 13px; color: #4f46e5; white-space: nowrap;">${s.url}</td>
+                            <td style="padding: 10px 14px; font-size: 13px; white-space: nowrap;">
+                                <span style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 500; background: ${s.status === 'active' ? '#d1fae5' : '#fef3c7'}; color: ${s.status === 'active' ? '#065f46' : '#92400e'};">
+                                    <span style="width: 5px; height: 5px; border-radius: 50%; background: ${s.status === 'active' ? '#065f46' : '#92400e'};"></span>
+                                    ${s.status === 'active' ? '正常' : '暂停'}
+                                </span>
+                            </td>
+                            <td style="padding: 10px 14px; font-size: 13px; color: #6c757d; white-space: nowrap;">${s.createTime}</td>
+                        </tr>`).join('')}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
