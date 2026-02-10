@@ -329,7 +329,7 @@ const centerMenus = {
                 { name: '会员基本信息查询', icon: 'users', active: true },
                 { name: '会员开通产品', icon: 'package' }
             ]},
-            { label: '客户订单查询', items: [
+            { label: '订单查询', items: [
                 { name: 'VA账户', icon: 'credit-card' },
                 { name: '收款商户单', icon: 'download' },
                 { name: '付款商户单', icon: 'upload' },
@@ -340,10 +340,10 @@ const centerMenus = {
                 { name: 'VCC商户单', icon: 'credit-card' },
                 { name: '收单商户单', icon: 'tag' }
             ]},
-            { label: '订单管理', items: [
-                { name: '订单查询', icon: 'clipboard' },
-                { name: '订单文件', icon: 'file' },
-                { name: '店铺管理', icon: 'store' }
+            
+            { label: '会员分佣结算', items: [
+                { name: '分佣/返点账单', icon: 'clipboard' },
+                { name: '结算单查询', icon: 'file' },
             ]}
         ]
     },
