@@ -18,24 +18,102 @@
 
 ---
 
+## ⚠️ 本期上线能力范围（Phase 1）
+
+> 本章节明确本期（Phase 1）实际上线的能力边界，与后续文档描述的完整设计做区分。
+
+### P1-1. 产品与SP的对应关系
+
+**本期产品-SP映射为1:1，不存在多SP共享同一产品的场景：**
+
+| SP            | 产品                         | 说明                             |
+| ------------- | ---------------------------- | -------------------------------- |
+| **BB**  | 承兑产品（On/Off-Ramp）      | BB专注数币⇄法币承兑能力         |
+| **BB**  | 数币钱包（Crypto Wallet）    | BB提供加密资产托管、链上收付能力 |
+| **IPL** | 收款产品（Collection/Payin） | IPL提供VA收款等法币入金能力      |
+| **IPL** | 账户产品（Fiat Account）     | IPL提供法币账户、法币出入金能力  |
+
+**本期简化点：**
+
+- ❌ **不需要入网推送规则配置**：商户选择开通某个产品时，该产品只对应唯一一个SP，系统直接推送到该SP审核，无需TP配置"推送到哪个SP"的规则
+- ❌ **不需要交易路由（默认路由）功能**：每个产品只有一个SP提供能力，交易直接走该SP，无需路由选择
+- ❌ **不存在"2个SP提供同1个产品"的场景**：BB不做收款，IPL不做承兑，产品能力不重叠
+
+> 💡 后续如果出现多SP提供同一产品的场景（如BB和IPL都提供收款产品），再启用入网推送规则和交易路由功能。本期文档中关于多SP场景处理、入网推送规则、交易路由规则的设计为**预留设计**，本期不实现。
+
+### P1-2. BB的法币通道能力
+
+**BB自身对接了具备VA和POBO能力的外部通道，而非仅依赖IPL赋能法币能力：**
+
+```
+BB 的通道架构（本期）：
+┌─────────────────────────────────────────┐
+│  BB（承兑SP）                             │
+│                                          │
+│  核心能力：数币⇄法币承兑 + 数币钱包         │
+│                                          │
+│  法币通道来源：                            │
+│  ├── 通道A：VA收款能力（非IPL）            │
+│  ├── 通道B：POBO付款能力（非IPL）          │
+│  └── 通道C：其他法币通道...               │
+│                                          │
+│  ⚠️ 不是只有 IPL→BB 这一条法币通道        │
+│  BB 独立对接多条法币通道，具备完整的        │
+│  法币收付能力来支撑承兑业务                 │
+└─────────────────────────────────────────┘
+```
+
+**关键澄清：**
+
+- ✅ BB已对接多条外部法币通道（VA收款、POBO付款等），**独立具备法币收付能力**
+- ✅ BB的承兑流程中，法币侧的收付由BB自己的通道完成，不依赖IPL
+- ❌ 本期不考虑"IPL作为BB的法币通道"这种SP间互为通道的场景
+- 📌 IPL和BB在EX平台上是**平行的两个SP**，各自独立提供不同产品能力
+
+### P1-3. 本期能力总结
+
+```
+本期上线范围：
+✅ SP产品上架（BB承兑 + 数币钱包 / IPL收款 + 法币账户）
+✅ TP与SP签约
+✅ 商户注册（白牌Portal + API）
+✅ 商户选择产品 → 直接推送到唯一SP审核
+✅ SP审核 → 产品开通
+✅ 商户交易 → 直接走产品对应的唯一SP
+
+本期不实现（预留设计）：
+❌ 入网推送规则配置（1个产品只有1个SP，无需选择）
+❌ 交易路由规则配置（1个产品只有1个SP，无需路由）
+❌ 多SP提供同一产品的场景
+❌ 商户级路由调整
+❌ SP间互为通道（如IPL为BB提供法币通道）
+```
+
+---
+
 ## 目录
 
-1. [前置条件](#前置条件)
+0. [⚠️ 本期上线能力范围（Phase 1）](#️-本期上线能力范围phase-1)
+   - P1-1. [产品与SP的对应关系](#p1-1-产品与sp的对应关系)
+   - P1-2. [BB的法币通道能力](#p1-2-bb的法币通道能力)
+   - P1-3. [本期能力总结](#p1-3-本期能力总结)
+1. [前置条件](#前置条件)（本期仅需 1.1 + 1.2）
    - 1.1 [SP产品上架](#11-sp产品上架)
    - 1.2 [TP与SP签约](#12-tp与sp签约)
-   - 1.3 [TP配置入网推送规则](#13-tp配置入网推送规则)
-   - 1.4 [TP配置交易路由规则](#14-tp配置交易路由规则)
+   - 1.2.1 [租户签约详细流程](#121-租户签约详细流程)
+   - 1.3 [TP配置入网推送规则](#13-tp配置入网推送规则) ⛔ 预留
+   - 1.4 [TP配置交易路由规则](#14-tp配置交易路由规则) ⛔ 预留
 2. [商户入网流程](#商户入网流程)
    - 2.1 [白牌模式（MP Portal）](#21-白牌模式mp-portal)
    - 2.2 [API模式](#22-api模式)
-3. [多SP场景处理](#多sp场景处理)
-   - 3.1 [入网推送逻辑](#31-入网推送逻辑)
-   - 3.2 [SP审核结果处理](#32-sp审核结果处理)
-4. [交易路由逻辑](#交易路由逻辑)
-   - 4.1 [路由规则匹配](#41-路由规则匹配)
-   - 4.2 [商户级路由调整](#42-商户级路由调整)
-5. [数据表设计](#数据表设计)
-6. [完整时序图](#完整时序图)
+3. [多SP场景处理](#多sp场景处理) ⛔ 预留
+   - 3.1 [入网推送逻辑](#31-入网推送逻辑) ⛔ 预留
+   - 3.2 [SP审核结果处理](#32-sp审核结果处理) ⛔ 预留
+4. [交易路由逻辑](#交易路由逻辑) ⛔ 预留
+   - 4.1 [路由规则匹配](#41-路由规则匹配) ⛔ 预留
+   - 4.2 [商户级路由调整](#42-商户级路由调整) ⛔ 预留
+5. [完整时序图](#完整时序图)
+6. [附录](#附录)
 
 ---
 
@@ -112,6 +190,154 @@ sequenceDiagram
   "product_code": "CRYPTO_COLLECTION",
   "contract_status": "ACTIVE",
   "signed_at": "2026-02-01T10:00:00Z"
+}
+```
+
+---
+
+### 1.2.1 租户签约详细流程
+
+**说明：** TP与SP签约时，不仅选择产品，还需要配置每个产品下的具体能力来源（哪个SP提供哪部分能力）。
+
+**核心概念：**
+
+- **产品签约**：TP选择要开通的产品（如承兑、数币钱包、收款、法币账户）
+- **能力配置**：每个产品下，配置具体能力由哪个SP提供
+- **法币账户选择**：承兑产品涉及法币侧入账，TP需选择法币账户由 IPL / BB / 都选择
+
+**签约配置示例：**
+
+```
+租户签约配置：
+┌─────────────────────────────────────────────────────────────────┐
+│  产品1：承兑产品（On/Off-Ramp）                                   │
+│  ├── 承兑能力提供方：BB（固定，BB专做承兑）                         │
+│  └── 承兑后法币账户：                                             │
+│      ☐ IPL法币账户（承兑后USD入到IPL账户）                         │
+│      ☐ BB法币账户（承兑后USD入到BB账户）                           │
+│      ☐ 都选择（商户可自行选择入到哪个法币账户）                     │
+│                                                                  │
+│  产品2：数币钱包（Crypto Wallet）                                  │
+│  ├── 钱包能力提供方：BB（固定）                                    │
+│  └── 无需选择法币账户                                             │
+│                                                                  │
+│  产品3：收款产品（Collection/Payin）                               │
+│  ├── 法币收款：IPL                                                │
+│  └── 数币收款：BB                                                 │
+│                                                                  │
+│  产品4：法币账户（Fiat Account）                                   │
+│  ├── IPL法币账户：☐ 选择                                          │
+│  └── BB法币账户：☐ 选择                                           │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**签约流程：**
+
+```mermaid
+sequenceDiagram
+    participant TP as 租户(TP)
+    participant Portal as TP Portal
+    participant EX as EX平台
+    participant BB as BB(SP)
+    participant IPL as IPL(SP)
+  
+    rect rgb(240, 248, 255)
+        Note over TP,IPL: 阶段1：选择产品
+        TP->>Portal: 1. 进入"SP产品签约"页面
+        Portal->>EX: 2. 查询可签约的SP产品列表
+        EX->>Portal: 3. 返回产品列表
+        Note over Portal: 展示可签约产品：<br/>☐ 承兑产品（BB）<br/>☐ 数币钱包（BB）<br/>☐ 法币收款（IPL）<br/>☐ 法币账户（IPL/BB）
+        TP->>Portal: 4. 勾选产品：承兑产品 ✅
+    end
+  
+    rect rgb(255, 250, 240)
+        Note over TP,IPL: 阶段2：配置产品能力
+        Portal->>TP: 5. 展示承兑产品配置项
+        Note over TP,Portal: 承兑产品配置：<br/>━━━━━━━━━━━━━━━━━━━━<br/>承兑能力：BB（不可更改）<br/>━━━━━━━━━━━━━━━━━━━━<br/>承兑后法币账户去向：<br/>◉ 仅IPL法币账户<br/>○ 仅BB法币账户<br/>○ IPL + BB（商户可选）
+        TP->>Portal: 6. 选择法币账户：IPL + BB（都选择）
+    end
+  
+    rect rgb(240, 255, 240)
+        Note over TP,IPL: 阶段3：提交签约申请
+        Portal->>EX: 7. 提交签约申请
+        Note over EX: 签约内容：<br/>- 产品：承兑<br/>- 承兑SP：BB<br/>- 法币账户：IPL + BB
+  
+        par 并行提交签约
+            EX->>BB: 8a. 提交签约申请(承兑产品)
+            Note over BB: 9a. BB审核TP资质
+            BB->>EX: 10a. BB签约通过
+        and
+            EX->>IPL: 8b. 提交签约申请(法币账户)
+            Note over IPL: 9b. IPL审核TP资质
+            IPL->>EX: 10b. IPL签约通过
+        end
+    end
+  
+    rect rgb(255, 245, 238)
+        Note over TP,IPL: 阶段4：签约完成
+        EX->>EX: 11. 记录签约关系
+        Note over EX: tenant_sp_contracts：<br/>- TP + BB(承兑) ✅<br/>- TP + IPL(法币账户) ✅<br/>- TP + BB(法币账户) ✅<br/><br/>tenant_product_config：<br/>- 承兑产品.法币账户 = [IPL, BB]
+        EX->>Portal: 12. 签约成功
+        Portal->>TP: 13. 签约完成，可为商户开通承兑产品
+    end
+```
+
+**承兑产品 - 法币账户选择的三种模式：**
+
+| 模式               | 法币账户    | 承兑后资金去向           | 商户体验                 | 适用场景                    |
+| ------------------ | ----------- | ------------------------ | ------------------------ | --------------------------- |
+| **仅IPL**    | IPL法币账户 | 承兑后USD入到IPL账户     | 商户无需选择，自动入IPL  | TP只签约了IPL法币账户       |
+| **仅BB**     | BB法币账户  | 承兑后USD入到BB账户      | 商户无需选择，自动入BB   | TP只签约了BB法币账户        |
+| **IPL + BB** | 两者都有    | 商户自行选择入到哪个账户 | 商户在承兑时选择目标账户 | TP同时签约了IPL和BB法币账户 |
+
+**法币账户选择对交易流程的影响：**
+
+```
+承兑产品签约配置 → 决定交易流程：
+┌──────────────────────────────────────────────────────────┐
+│  法币账户 = 仅BB                                          │
+│  → 走 5.1 纯BB承兑流程（BB内部账户划转）                    │
+│                                                          │
+│  法币账户 = 仅IPL                                         │
+│  → 走 5.2.1 BB数币→IPL法币承兑（IPL侧同名收款）           │
+│                                                          │
+│  法币账户 = IPL + BB                                      │
+│  → 商户选择目标账户：                                      │
+│    - 选BB → 走 5.1 纯BB承兑                               │
+│    - 选IPL → 走 5.2.1 BB数币→IPL法币承兑                  │
+└──────────────────────────────────────────────────────────┘
+```
+
+**数据示例：**
+
+```json
+{
+  "tenant_id": 2001,
+  "product_contracts": [
+    {
+      "product_code": "ON_OFF_RAMP",
+      "product_name": "承兑产品",
+      "exchange_sp": "BB",
+      "fiat_account_options": ["IPL", "BB"],
+      "fiat_account_mode": "BOTH",
+      "contract_status": "ACTIVE",
+      "signed_at": "2026-02-11T10:00:00Z"
+    }
+  ],
+  "sp_contracts": [
+    {
+      "sp_id": 1001,
+      "sp_name": "BB",
+      "products": ["ON_OFF_RAMP", "CRYPTO_WALLET"],
+      "contract_status": "ACTIVE"
+    },
+    {
+      "sp_id": 1002,
+      "sp_name": "IPL",
+      "products": ["FIAT_ACCOUNT"],
+      "contract_status": "ACTIVE"
+    }
+  ]
 }
 ```
 
@@ -204,9 +430,9 @@ sequenceDiagram
         Note over TP,EX: 配置默认路由规则
         TP->>Portal: 2. 配置默认规则
         Note over TP,Portal: 规则1：<br/>- 产品：数币收款<br/>- 币种：USDT<br/>- 金额：>10000<br/>- 目标SP：BB<br/>- 优先级：100
-    
+  
         Note over TP,Portal: 规则2：<br/>- 产品：数币收款<br/>- 币种：USDT<br/>- 金额：<10000<br/>- 目标SP：IPL<br/>- 优先级：100
-    
+  
         Portal->>EX: 3. 保存规则到tenant_routing_rules表<br/>(merchant_id = NULL)
     end
   
@@ -215,7 +441,7 @@ sequenceDiagram
         TP->>Portal: 4. 选择商户M001
         TP->>Portal: 5. 配置商户级规则
         Note over TP,Portal: 规则：<br/>- 商户：M001<br/>- 产品：数币收款<br/>- 条件：全部<br/>- 目标SP：IPL<br/>- 优先级：10（高优先级）
-    
+  
         Portal->>EX: 6. 保存规则到tenant_routing_rules表<br/>(merchant_id = M001)
     end
   
@@ -280,11 +506,11 @@ sequenceDiagram
         MP->>Portal: 1. 访问注册页面
         MP->>Portal: 2. 填写基础信息<br/>- 公司名称<br/>- 联系人姓名<br/>- 联系邮箱<br/>- 联系电话<br/>- 设置密码
         Portal->>EX: 3. 提交注册
-    
+  
         Note over EX: 4. 校验信息<br/>- 邮箱格式<br/>- 手机号格式<br/>- 密码强度<br/>- 邮箱/手机号唯一性
-    
+  
         EX->>EX: 5. 创建商户记录<br/>- 生成MID<br/>- 状态: REGISTERED<br/>⚡ 无需等待审核
-    
+  
         EX->>Portal: 6. 注册成功<br/>返回MID和Token
         Portal->>MP: 7. 跳转到产品选择页面
     end
@@ -293,41 +519,41 @@ sequenceDiagram
         Note over MP,BB: 第二步：选择产品
         Portal->>EX: 8. 查询可开通产品<br/>（基于TP签约的SP产品）
         EX->>Portal: 9. 返回产品列表<br/>☐ 数币收款（USDT/USDC）<br/>☐ 承兑服务<br/>☐ 法币VA收款<br/>☐ 法币代付出款
-    
+  
         MP->>Portal: 10. 选择产品<br/>(数币收款)
-    
+  
         Portal->>MP: 11. 显示资料提交页面<br/>💡 根据产品要求显示对应资料项
     end
   
     rect rgb(240, 255, 240)
         Note over MP,BB: 第三步：提交资料并审核
         MP->>Portal: 12. 上传资料<br/>【基础资料】<br/>- 营业执照<br/>- 法人身份证<br/>- 公司地址证明<br/>【业务资料】<br/>- 业务类型<br/>- 预计月交易量<br/>- 主要交易国家
-    
+  
         Portal->>EX: 13. 提交产品开通申请
-    
+  
         Note over EX: 14. 校验资料完整性<br/>- 必填项检查<br/>- 文件格式检查<br/>- 文件大小检查
-    
+  
         Note over EX: 15. 查询TP入网推送规则<br/>- 产品：数币收款<br/>- 预计月交易量：30000<br/>✅ 匹配默认规则 → BB
-    
+  
         alt TP未配置规则
             EX->>Portal: ❌ 开通失败
             Portal->>MP: "请联系租户配置入网规则"
         else TP已配置规则
             EX->>BB: 16. 推送商户入网申请<br/>- MID: M001<br/>- 产品：数币收款<br/>- KYC/KYB资料<br/>- 业务信息
-        
+  
             Note over BB: 17. SP审核<br/>- 资质审核<br/>- 合规审核<br/>- 风控审核<br/>⏱️ 1-3个工作日
-        
+  
             BB->>EX: 18. 审核结果<br/>- 状态：通过/拒绝<br/>- SP商户ID：BB_M001<br/>- 审核意见
-        
+  
             alt 审核通过
                 EX->>EX: 19. 更新商户产品状态<br/>- 产品：数币收款<br/>- SP：BB<br/>- 状态：ACTIVE<br/>- SP商户ID：BB_M001
-            
+      
                 EX->>Portal: 20. 发送通知<br/>- 站内信<br/>- 邮件
-            
+      
                 Portal->>MP: 21. 🎉 产品开通成功<br/>引导商户开始使用
             else 审核拒绝
                 EX->>EX: 19. 更新商户产品状态<br/>- 状态：REJECTED<br/>- 拒绝原因
-            
+      
                 EX->>Portal: 20. 发送通知
                 Portal->>MP: 21. ❌ 产品开通失败<br/>显示拒绝原因
             end
@@ -353,28 +579,28 @@ sequenceDiagram
     rect rgb(240, 248, 255)
         Note over Tenant,SP: Step 1: 创建商户（获得MID）
         Tenant->>API: POST /api/v1/merchants<br/>{<br/>  "company_name": "ABC公司",<br/>  "contact_name": "张三",<br/>  "email": "zhang@abc.com",<br/>  "phone": "+86 138xxxx"<br/>}
-    
+  
         API->>EX: 创建商户
         EX->>EX: 生成MID<br/>状态: REGISTERED
         EX->>API: 返回MID
-    
+  
         API->>Tenant: {<br/>  "merchant_id": "M202602030001",<br/>  "status": "REGISTERED",<br/>  "created_at": "2026-02-03T10:00:00Z"<br/>}
     end
   
     rect rgb(255, 250, 240)
         Note over Tenant,SP: Step 2: 为商户开通产品
         Tenant->>API: POST /api/v1/merchants/{mid}/products<br/>{<br/>  "products": ["CRYPTO_COLLECTION"],<br/>  "kyc_documents": {...},<br/>  "business_info": {<br/>    "business_type": "电商",<br/>    "monthly_volume": 30000<br/>  }<br/>}
-    
+  
         API->>EX: 提交产品开通
         EX->>EX: 校验资料完整性
         EX->>EX: 查询入网推送规则<br/>✅ 匹配 → BB
         EX->>SP: 自动提交SP入网
-    
+  
         Note over SP: SP审核<br/>⏱️ 1-3个工作日
-    
+  
         SP->>EX: 审核结果
         EX->>API: 返回状态
-    
+  
         API->>Tenant: {<br/>  "status": "PENDING_APPROVAL",<br/>  "products": [{<br/>    "product_code": "CRYPTO_COLLECTION",<br/>    "sp_name": "BB",<br/>    "status": "PENDING"<br/>  }]<br/>}
     end
   
@@ -820,5 +1046,5 @@ Response:
 
 ---
 
-*最后更新：2026-02-03*
-*文档版本：v1.0*
+*最后更新：2026-02-11*
+*文档版本：v1.2 — 新增租户签约详细流程（产品选择+法币账户配置）*

@@ -47,11 +47,9 @@ const centerMenus = {
     client: {
         name: '客户中心',
         groups: [
-            { label: '客户信息', items: [
-                { name: '客户基本信息查询', icon: 'users', active: true }
-            ]},
-            { label: '客户产品信息', items: [
-                { name: '客户产品列表', icon: 'package' }
+            { label: '客户管理', items: [
+                { name: '客户基本信息', icon: 'users', active: true },
+                { name: '客户产品开通', icon: 'package' }
             ]},
             { label: '客户余额查询', items: [
                 { name: '客户余额查询', icon: 'credit-card' },
