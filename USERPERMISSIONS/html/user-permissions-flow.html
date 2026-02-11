@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EX - Permission System End-to-End Flow</title>
+<style>
+:root {
+    --pri: #5b6cf5; --pri-h: #4a5ae0; --pri-l: #eef0ff;
+    --bg: #f5f7fa; --white: #fff; --border: #e2e8f0; --border-l: #f1f3f5;
+    --t1: #1a202c; --t2: #4a5568; --t3: #a0aec0;
+    --ok: #10b981; --ok-bg: #d1fae5; --ok-t: #065f46;
+    --warn: #f59e0b; --warn-bg: #fef3c7; --warn-t: #92400e;
+    --err: #ef4444; --err-bg: #fee2e2; --err-t: #991b1b;
+    --info: #3b82f6; --info-bg: #dbeafe; --info-t: #1e40af;
+    --r: 8px; --font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'PingFang SC', sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: var(--font); background: var(--bg); color: var(--t1); -webkit-font-smoothing: antialiased; }
+
+/* === Top Bar === */
+.topbar { background: var(--white); border-bottom: 1px solid var(--border); height: 52px; display: flex; align-items: center; padding: 0 28px; position: sticky; top: 0; z-index: 100; }
+.topbar-logo { font-size: 15px; font-weight: 700; color: var(--pri); display: flex; align-items: center; gap: 8px; }
+.topbar-logo svg { flex-shrink: 0; }
+.topbar-mid { margin-left: 32px; font-size: 13px; color: var(--t2); }
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.topbar-user { display: flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; border: 1px solid var(--border); border-radius: 20px; font-size: 13px; color: var(--t2); cursor: default; }
+.topbar-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--pri); color: #fff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+
+/* === Progress Rail === */
+.rail { background: var(--white); border-bottom: 1px solid var(--border); padding: 16px 28px; display: flex; align-items: center; gap: 0; overflow-x: auto; }
+.rail-step { display: flex; align-items: center; gap: 0; white-space: nowrap; }
+.rail-dot { width: 30px; height: 30px; border-radius: 50%; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; background: #edf2f7; color: var(--t3); flex-shrink: 0; cursor: pointer; transition: all .15s; border: 2px solid transparent; }
+.rail-dot:hover { border-color: #cbd5e0; }
+.rail-dot.active { background: var(--pri); color: #fff; border-color: var(--pri); }
+.rail-dot.done { background: var(--ok); color: #fff; border-color: var(--ok); }
+.rail-label { font-size: 11px; color: var(--t3); margin-left: 6px; margin-right: 6px; }
+.rail-label.active { color: var(--t1); font-weight: 600; }
+.rail-label.done { color: var(--ok-t); }
+.rail-bar { width: 32px; height: 2px; background: #edf2f7; flex-shrink: 0; margin: 0 2px; }
+.rail-bar.done { background: var(--ok); }
+
+/* === Page === */
+.page { display: none; max-width: 820px; margin: 0 auto; padding: 28px 20px 60px; }
+.page.on { display: block; }
+.page h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+.page .subtitle { font-size: 14px; color: var(--t3); margin-bottom: 24px; line-height: 1.5; }
+
+/* === Card === */
+.card { background: var(--white); border: 1px solid var(--border); border-radius: var(--r); padding: 20px 24px; margin-bottom: 16px; }
+.card-title { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+.card-desc { font-size: 13px; color: var(--t3); margin-bottom: 14px; line-height: 1.5; }
+
+/* === Form === */
+.fg { margin-bottom: 16px; }
+.fl { display: block; font-size: 13px; font-weight: 500; color: var(--t2); margin-bottom: 5px; }
+.fi { width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; color: var(--t1); background: var(--white); outline: none; transition: border-color .15s, box-shadow .15s; font-family: var(--font); }
+.fi:focus { border-color: var(--pri); box-shadow: 0 0 0 3px rgba(91,108,245,.1); }
+.fi::placeholder { color: #cbd5e0; }
+.fi-hint { font-size: 12px; color: var(--t3); margin-top: 4px; line-height: 1.4; }
+.fi-row { display: flex; gap: 8px; }
+.fi-row .fi { flex: 1; }
+select.fi { cursor: pointer; }
+
+/* === Buttons === */
+.btn { padding: 9px 20px; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all .15s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-family: var(--font); }
+.btn-pri { background: var(--pri); color: #fff; }
+.btn-pri:hover { background: var(--pri-h); }
+.btn-sec { background: var(--white); color: var(--t2); border: 1px solid var(--border); }
+.btn-sec:hover { background: var(--bg); }
+.btn-sm { padding: 6px 14px; font-size: 13px; }
+.btn-ghost { background: none; color: var(--pri); padding: 6px 10px; font-size: 13px; }
+.btn-ghost:hover { background: var(--pri-l); }
+.btn-full { width: 100%; }
+.btn-bar { display: flex; gap: 8px; margin-top: 20px; justify-content: flex-end; }
+
+/* === Badge === */
+.badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 500; }
+.b-ok { background: var(--ok-bg); color: var(--ok-t); }
+.b-warn { background: var(--warn-bg); color: var(--warn-t); }
+.b-err { background: var(--err-bg); color: var(--err-t); }
+.b-pri { background: var(--pri-l); color: var(--pri); }
+.b-info { background: var(--info-bg); color: var(--info-t); }
+.b-muted { background: #f1f3f5; color: var(--t3); }
+
+/* === Alert === */
+.alert { padding: 12px 16px; border-radius: var(--r); font-size: 13px; line-height: 1.6; margin-bottom: 16px; display: flex; gap: 10px; align-items: flex-start; }
+.alert-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.a-info { background: var(--info-bg); color: var(--info-t); border: 1px solid #93c5fd; }
+.a-warn { background: var(--warn-bg); color: var(--warn-t); border: 1px solid #fcd34d; }
+.a-ok { background: var(--ok-bg); color: var(--ok-t); border: 1px solid #6ee7b7; }
+
+/* === Toggle === */
+.tg-group { display: flex; gap: 6px; flex-wrap: wrap; }
+.tg { padding: 7px 14px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; font-weight: 500; color: var(--t2); background: var(--white); cursor: pointer; transition: all .15s; user-select: none; }
+.tg:hover { border-color: #cbd5e0; }
+.tg.on { border-color: var(--pri); background: var(--pri-l); color: var(--pri); }
+
+/* === Checkbox Grid === */
+.ck-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.ck-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-size: 13px; color: var(--t2); transition: all .12s; user-select: none; }
+.ck-item:hover { border-color: #cbd5e0; }
+.ck-item.on { border-color: var(--pri); background: var(--pri-l); color: var(--pri); }
+.ck-box { width: 16px; height: 16px; border: 2px solid var(--border); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: transparent; flex-shrink: 0; transition: all .12s; }
+.ck-item.on .ck-box { background: var(--pri); border-color: var(--pri); color: #fff; }
+.ck-group-label { font-size: 11px; font-weight: 600; color: var(--t3); text-transform: uppercase; letter-spacing: .5px; padding: 8px 0 4px; grid-column: 1 / -1; }
+
+/* === Table === */
+.tbl { width: 100%; border-collapse: collapse; }
+.tbl th { text-align: left; font-size: 11px; font-weight: 600; color: var(--t3); text-transform: uppercase; letter-spacing: .4px; padding: 8px; border-bottom: 1px solid var(--border); }
+.tbl td { padding: 12px 8px; font-size: 13px; color: var(--t2); border-bottom: 1px solid var(--border-l); vertical-align: middle; }
+.tbl .nm { font-weight: 500; color: var(--t1); }
+.tbl .sub { font-size: 11px; color: var(--t3); }
+.tbl .ctr { text-align: center; }
+
+/* === Perm Badge (clickable) === */
+.pb { display: inline-flex; padding: 3px 10px; border-radius: 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all .12s; user-select: none; }
+.pb:hover { transform: scale(1.05); }
+.pb-self { background: var(--ok-bg); color: var(--ok-t); }
+.pb-owner { background: var(--err-bg); color: var(--err-t); }
+.pb-all { background: var(--ok-bg); color: var(--ok-t); }
+.pb-own { background: var(--warn-bg); color: var(--warn-t); }
+.pb-na { background: #f1f3f5; color: var(--t3); cursor: default; }
+
+/* === Info Row === */
+.irow { display: flex; padding: 12px 0; border-bottom: 1px solid var(--border-l); }
+.irow:last-child { border-bottom: none; }
+.irow-k { width: 140px; font-size: 13px; font-weight: 500; color: var(--t3); flex-shrink: 0; }
+.irow-v { flex: 1; font-size: 14px; color: var(--t2); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+/* === Tag List === */
+.tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.tag { padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 500; }
+
+/* === Toast === */
+.toast { position: fixed; top: 60px; right: 20px; padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 500; color: #fff; z-index: 9999; transform: translateX(calc(100% + 40px)); transition: transform .25s ease; box-shadow: 0 4px 12px rgba(0,0,0,.12); }
+.toast.show { transform: translateX(0); }
+
+/* === Overlay / Modal === */
+.ov { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.3); backdrop-filter: blur(2px); z-index: 500; align-items: center; justify-content: center; }
+.ov.show { display: flex; }
+.modal { background: var(--white); border-radius: 12px; padding: 28px; width: 100%; max-width: 480px; box-shadow: 0 8px 24px rgba(0,0,0,.12); position: relative; animation: fadeUp .2s ease; max-height: 90vh; overflow-y: auto; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.modal-x { position: absolute; top: 14px; right: 14px; width: 28px; height: 28px; border: none; background: var(--bg); border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--t3); }
+.modal-x:hover { background: #e2e8f0; }
+.modal h3 { font-size: 17px; font-weight: 600; margin-bottom: 4px; }
+.modal .mdesc { font-size: 13px; color: var(--t3); margin-bottom: 18px; line-height: 1.5; }
+
+/* === Misc === */
+.sep { height: 1px; background: var(--border-l); margin: 16px 0; }
+.center { text-align: center; }
+.mt-8 { margin-top: 8px; } .mt-12 { margin-top: 12px; } .mt-16 { margin-top: 16px; } .mt-20 { margin-top: 20px; } .mt-24 { margin-top: 24px; }
+.mb-8 { margin-bottom: 8px; } .mb-16 { margin-bottom: 16px; }
+.muted { color: var(--t3); }
+.small { font-size: 12px; }
+.flex-b { display: flex; align-items: center; justify-content: space-between; }
+.link { color: var(--pri); font-weight: 500; cursor: pointer; text-decoration: none; font-size: 13px; }
+.link:hover { text-decoration: underline; }
+.highlight-box { background: var(--bg); border-radius: var(--r); padding: 14px 16px; margin-bottom: 14px; }
+.role-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="topbar">
+    <div class="topbar-logo">
+        <svg width="24" height="24" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#5b6cf5"/><path d="M16 8L22 12V20L16 24L10 20V12L16 8Z" fill="white"/></svg>
+        EX Platform
+    </div>
+    <div class="topbar-mid">ABC Trading (MID-001) · Permission Management</div>
+    <div class="topbar-right">
+        <div class="topbar-user">
+            <div class="topbar-avatar">张</div>
+            张三 (Owner)
+        </div>
+    </div>
+</div>
+
+<!-- Progress Rail -->
+<div class="rail" id="rail">
+    <div class="rail-step">
+        <div class="rail-dot active" onclick="goStep(0)">1</div>
+        <div class="rail-label active">Configure Role</div>
+    </div>
+    <div class="rail-bar"></div>
+    <div class="rail-step">
+        <div class="rail-dot" onclick="goStep(1)">2</div>
+        <div class="rail-label">Menu & Operations</div>
+    </div>
+    <div class="rail-bar"></div>
+    <div class="rail-step">
+        <div class="rail-dot" onclick="goStep(2)">3</div>
+        <div class="rail-label">Data Access</div>
+    </div>
+    <div class="rail-bar"></div>
+    <div class="rail-step">
+        <div class="rail-dot" onclick="goStep(3)">4</div>
+        <div class="rail-label">Invite User</div>
+    </div>
+    <div class="rail-bar"></div>
+    <div class="rail-step">
+        <div class="rail-dot" onclick="goStep(4)">5</div>
+        <div class="rail-label">User Registers</div>
+    </div>
+    <div class="rail-bar"></div>
+    <div class="rail-step">
+        <div class="rail-dot" onclick="goStep(5)">6</div>
+        <div class="rail-label">Review & Modify</div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- ==================== STEP 0: Configure Role ==================== -->
+<div class="page on" id="step-0">
+    <h2>Step 1: Configure Role</h2>
+    <p class="subtitle">As Owner of ABC Trading, you create a new role or use a preset. Roles define what a user can see and do.</p>
+
+    <div class="card">
+        <div class="card-title">Existing roles</div>
+        <div class="card-desc">These roles already exist in your MID. You can create a new one or edit existing.</div>
+        <table class="tbl">
+            <thead><tr><th>Role</th><th>Type</th><th>Members</th><th></th></tr></thead>
+            <tbody>
+                <tr>
+                    <td><div class="nm">Owner</div><div class="sub">开户人/法人/董事</div></td>
+                    <td><span class="badge b-warn">System</span></td>
+                    <td>1 (张三)</td>
+                    <td class="muted">—</td>
+                </tr>
+                <tr>
+                    <td><div class="nm">管理员</div><div class="sub">Full menu access, no member mgmt</div></td>
+                    <td><span class="badge b-pri">Preset</span></td>
+                    <td>0</td>
+                    <td><span class="link" onclick="loadPreset('管理员')">Edit</span></td>
+                </tr>
+                <tr>
+                    <td><div class="nm">财务</div><div class="sub">Assets, Transactions, Reports</div></td>
+                    <td><span class="badge b-pri">Preset</span></td>
+                    <td>0</td>
+                    <td><span class="link" onclick="loadPreset('财务')">Edit</span></td>
+                </tr>
+                <tr>
+                    <td><div class="nm">运营</div><div class="sub">Transfer In, Checkout, Cards</div></td>
+                    <td><span class="badge b-pri">Preset</span></td>
+                    <td>0</td>
+                    <td><span class="link" onclick="loadPreset('运营')">Edit</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card" style="border: 2px dashed var(--pri); background: var(--pri-l);">
+        <div class="card-title" style="color:var(--pri);">Create new role</div>
+        <div class="card-desc">Or start from scratch with a custom role.</div>
+        <div class="fg">
+            <label class="fl">Role name</label>
+            <input class="fi" id="roleName" placeholder="e.g. 高级运营, 审核员..." value="高级财务">
+        </div>
+        <div class="fg">
+            <label class="fl">Base template (optional)</label>
+            <div class="tg-group">
+                <div class="tg" onclick="pickBase(this,'none')">From scratch</div>
+                <div class="tg on" onclick="pickBase(this,'财务')">Based on 财务</div>
+                <div class="tg" onclick="pickBase(this,'运营')">Based on 运营</div>
+                <div class="tg" onclick="pickBase(this,'管理员')">Based on 管理员</div>
+            </div>
+        </div>
+        <div class="btn-bar">
+            <button class="btn btn-pri" onclick="createRole()">Create & configure permissions →</button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== STEP 1: Menu & Operation Permissions ==================== -->
+<div class="page" id="step-1">
+    <h2>Step 2: Menu & Operation Permissions</h2>
+    <p class="subtitle">Configure which menus <strong id="s1RoleName">高级财务</strong> can see, and how sensitive operations are verified.</p>
+
+    <div class="card">
+        <div class="card-title">Menu access</div>
+        <div class="card-desc">Check the menus this role can access. Click to toggle.</div>
+        <div class="ck-grid" id="menuGrid">
+            <div class="ck-group-label">ASSETS</div>
+            <div class="ck-item on" data-menu="Fiat Accounts" onclick="ckToggle(this)"><div class="ck-box">✓</div>Fiat Accounts</div>
+            <div class="ck-item on" data-menu="Crypto Wallet" onclick="ckToggle(this)"><div class="ck-box">✓</div>Crypto Wallet</div>
+            <div class="ck-item on" data-menu="Exchange" onclick="ckToggle(this)"><div class="ck-box">✓</div>Exchange</div>
+
+            <div class="ck-group-label">TRANSFER IN</div>
+            <div class="ck-item" data-menu="Collection Tools" onclick="ckToggle(this)"><div class="ck-box">✓</div>Collection Tools</div>
+            <div class="ck-item" data-menu="Remitter" onclick="ckToggle(this)"><div class="ck-box">✓</div>Remitter</div>
+            <div class="ck-item on" data-menu="Payins" onclick="ckToggle(this)"><div class="ck-box">✓</div>Payins</div>
+            <div class="ck-item on" data-menu="Crypto Receive" onclick="ckToggle(this)"><div class="ck-box">✓</div>Crypto Receive</div>
+
+            <div class="ck-group-label">CHECKOUT</div>
+            <div class="ck-item" data-menu="Online Payment" onclick="ckToggle(this)"><div class="ck-box">✓</div>Online Payment</div>
+            <div class="ck-item" data-menu="Invoice" onclick="ckToggle(this)"><div class="ck-box">✓</div>Invoice</div>
+            <div class="ck-item" data-menu="Subscription" onclick="ckToggle(this)"><div class="ck-box">✓</div>Subscription</div>
+
+            <div class="ck-group-label">TRANSFER OUT</div>
+            <div class="ck-item on" data-menu="Beneficiary" onclick="ckToggle(this)"><div class="ck-box">✓</div>Beneficiary</div>
+            <div class="ck-item on" data-menu="Payouts" onclick="ckToggle(this)"><div class="ck-box">✓</div>Payouts</div>
+            <div class="ck-item on" data-menu="Crypto Send" onclick="ckToggle(this)"><div class="ck-box">✓</div>Crypto Send</div>
+            <div class="ck-item on" data-menu="Remittance Orders" onclick="ckToggle(this)"><div class="ck-box">✓</div>Remittance Orders</div>
+
+            <div class="ck-group-label">CARDS</div>
+            <div class="ck-item" data-menu="Cards Management" onclick="ckToggle(this)"><div class="ck-box">✓</div>Cards Management</div>
+            <div class="ck-item" data-menu="Card Transactions" onclick="ckToggle(this)"><div class="ck-box">✓</div>Card Transactions</div>
+
+            <div class="ck-group-label">OTHER</div>
+            <div class="ck-item on" data-menu="Reports" onclick="ckToggle(this)"><div class="ck-box">✓</div>Reports</div>
+            <div class="ck-item on" data-menu="Trade Documents" onclick="ckToggle(this)"><div class="ck-box">✓</div>Trade Documents</div>
+            <div class="ck-item" data-menu="Developer" onclick="ckToggle(this)"><div class="ck-box">✓</div>Developer (API)</div>
+            <div class="ck-item" data-menu="Settings" onclick="ckToggle(this)"><div class="ck-box">✓</div>Settings</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Operation permissions (default for this role)</div>
+        <div class="card-desc">When a user with this role performs sensitive operations, how should they be verified? Click to toggle Self ↔ Owner.</div>
+        <table class="tbl">
+            <thead><tr><th>Operation category</th><th>Description</th><th class="ctr">Default</th></tr></thead>
+            <tbody>
+                <tr>
+                    <td class="nm">Initiate transaction</td>
+                    <td class="sub">Payins, Payouts, Crypto Send/Receive, Exchange, Remittance</td>
+                    <td class="ctr"><span class="pb pb-self" onclick="togglePB(this)">Self</span></td>
+                </tr>
+                <tr>
+                    <td class="nm">Fund operations</td>
+                    <td class="sub">Deposit, Withdrawal, Internal transfer, Card top-up</td>
+                    <td class="ctr"><span class="pb pb-owner" onclick="togglePB(this)">Owner</span></td>
+                </tr>
+                <tr>
+                    <td class="nm">Merchant config</td>
+                    <td class="sub">Webhooks, API keys, Notifications, Company profile</td>
+                    <td class="ctr"><span class="pb pb-owner" onclick="togglePB(this)">Owner</span></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="fi-hint mt-8"><strong>Self</strong> = user verifies with own credential. <strong>Owner</strong> = code sent to Owner's mobile. Owner can override per-user later.</div>
+    </div>
+
+    <div class="btn-bar">
+        <button class="btn btn-sec" onclick="goStep(0)">← Back</button>
+        <button class="btn btn-pri" onclick="saveMenuOps()">Save & configure data access →</button>
+    </div>
+</div>
+
+<!-- ==================== STEP 2: Data Access ==================== -->
+<div class="page" id="step-2">
+    <h2>Step 3: Data Access</h2>
+    <p class="subtitle">Configure whether <strong id="s2RoleName">高级财务</strong> sees all data or only data assigned to them, per module.</p>
+
+    <div class="alert a-info">
+        <span class="alert-icon">💡</span>
+        <div>
+            <strong>All</strong> = sees all data in this module. <strong>Own</strong> = only sees data assigned to / created by this user.<br>
+            Only modules with menu access are shown. Click badges to toggle.
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Data visibility per module</div>
+        <div class="card-desc">Modules without menu access are automatically hidden.</div>
+        <table class="tbl" id="dataTable">
+            <thead><tr><th>Module</th><th class="ctr">Data scope</th></tr></thead>
+            <tbody id="dataBody">
+                <!-- filled by JS -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card" style="background:var(--bg);border:none;">
+        <div style="font-size:13px;color:var(--t2);line-height:1.7;">
+            <strong>Data assignment rules:</strong><br>
+            • <strong>Unassigned data</strong> is visible to everyone with menu access<br>
+            • Data <strong>created by a user</strong> is auto-assigned to that user<br>
+            • Owner/管理员 can assign data from each module's list page<br>
+            • Related data follows: e.g., assigning a Collection Tool also assigns its Payins<br>
+            • <strong>Region-based filtering</strong>: planned for future release (not this version)
+        </div>
+    </div>
+
+    <div class="btn-bar">
+        <button class="btn btn-sec" onclick="goStep(1)">← Back</button>
+        <button class="btn btn-pri" onclick="saveDataAccess()">Save role & invite user →</button>
+    </div>
+</div>
+
+<!-- ==================== STEP 3: Invite User ==================== -->
+<div class="page" id="step-3">
+    <h2>Step 4: Invite User</h2>
+    <p class="subtitle">Send an invitation to a new user. You can assign one or multiple roles.</p>
+
+    <div class="card">
+        <div class="card-title">Role created successfully!</div>
+        <div class="card-desc">Your new role is ready. Now invite someone to use it.</div>
+        <div class="highlight-box" id="roleSummaryBox">
+            <!-- filled by JS -->
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Invite a new member</div>
+        <div class="card-desc">Enter their email or mobile. They'll receive an invitation link.</div>
+
+        <div class="fg">
+            <label class="fl">Invite via</label>
+            <div class="tg-group">
+                <div class="tg on" id="invEmail" onclick="setInvMethod('email')">📧 Email</div>
+                <div class="tg" id="invMobile" onclick="setInvMethod('mobile')">📱 Mobile</div>
+            </div>
+        </div>
+
+        <div class="fg" id="invEmailFg">
+            <label class="fl">Email address</label>
+            <input class="fi" id="invAddress" placeholder="user@example.com" value="wang@newuser.com">
+        </div>
+        <div class="fg" id="invMobileFg" style="display:none;">
+            <label class="fl">Mobile number</label>
+            <div class="fi-row">
+                <select class="fi" style="width:100px;"><option>🇨🇳 +86</option><option>🇭🇰 +852</option><option>🇺🇸 +1</option></select>
+                <input class="fi" placeholder="Phone number">
+            </div>
+        </div>
+
+        <div class="fg">
+            <label class="fl">Assign roles (can select multiple)</label>
+            <div class="tg-group" id="roleAssignGroup">
+                <!-- filled by JS -->
+            </div>
+            <div class="fi-hint mt-8">This user will have the combined permissions of all selected roles.</div>
+        </div>
+
+        <div class="alert a-info">
+            <span class="alert-icon">🔒</span>
+            <div>
+                <strong>Invitation rules:</strong><br>
+                • Link expires in <strong>7 days</strong>, can only be used <strong>once</strong><br>
+                • If email is not registered → user will be guided to register first<br>
+                • If email is already registered → user logs in to accept<br>
+                • New member defaults to <strong>Owner verification</strong> for all operations<br>
+                • Owner is notified when invitation is accepted
+            </div>
+        </div>
+    </div>
+
+    <div class="btn-bar">
+        <button class="btn btn-sec" onclick="goStep(2)">← Back</button>
+        <button class="btn btn-pri" onclick="sendInvite()">Send invitation →</button>
+    </div>
+</div>
+
+<!-- ==================== STEP 4: User Registers ==================== -->
+<div class="page" id="step-4">
+    <h2>Step 5: User Receives Invitation & Registers</h2>
+    <p class="subtitle">Switching perspective: now we are <strong>王五 (wang@newuser.com)</strong>, the invited user.</p>
+
+    <!-- Sub-step A: Email received -->
+    <div id="s4a">
+        <div class="card" style="border-left: 3px solid var(--pri);">
+            <div style="font-size:12px;color:var(--t3);margin-bottom:8px;">📧 Email received by wang@newuser.com</div>
+            <div style="background:var(--bg);border-radius:var(--r);padding:16px;">
+                <div style="font-size:11px;color:var(--t3);">From: EX Platform &lt;noreply@ex.com&gt;</div>
+                <div style="font-size:16px;font-weight:600;margin:8px 0;">You've been invited to join ABC Trading</div>
+                <div style="font-size:13px;color:var(--t2);line-height:1.6;">
+                    张三 has invited you to join <strong>ABC Trading</strong> on EX Platform.<br>
+                    Your role: <strong id="s4RoleNames">高级财务</strong><br><br>
+                    Click below to accept the invitation.
+                </div>
+                <button class="btn btn-pri btn-sm mt-12" onclick="s4GoRegister()">Accept invitation →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sub-step B: Not registered, create account -->
+    <div id="s4b" style="display:none;">
+        <div class="alert a-warn">
+            <span class="alert-icon">⚠️</span>
+            <div><strong>No account found</strong> for wang@newuser.com. Create an account to join ABC Trading.</div>
+        </div>
+        <div class="card">
+            <div class="card-title">Create your account</div>
+            <div class="card-desc">Register to accept the invitation.</div>
+            <div class="fg">
+                <label class="fl">Email</label>
+                <input class="fi" value="wang@newuser.com" disabled style="background:var(--bg);">
+                <div class="fi-hint">Pre-filled from invitation</div>
+            </div>
+            <div class="fg">
+                <label class="fl">Set password</label>
+                <input class="fi" type="password" placeholder="At least 8 characters" value="••••••••">
+            </div>
+            <div class="fg">
+                <label class="fl">Verification code</label>
+                <div class="fi-row">
+                    <input class="fi" placeholder="6-digit code" value="382916">
+                    <button class="btn btn-sec btn-sm" onclick="showToast('Code sent to wang@newuser.com','info')">Send code</button>
+                </div>
+            </div>
+            <div class="alert a-info" style="margin-bottom:14px;">
+                <span class="alert-icon">💡</span>
+                <div>Already have an account? <span class="link" onclick="showToast('Redirecting to login...','info')">Sign in with existing account</span></div>
+            </div>
+            <button class="btn btn-pri btn-full" onclick="s4Complete()">Create account & join ABC Trading</button>
+        </div>
+    </div>
+
+    <!-- Sub-step C: Success -->
+    <div id="s4c" style="display:none;">
+        <div class="card">
+            <div class="center">
+                <div style="font-size:48px;margin-bottom:12px;">🎉</div>
+                <h2>Welcome to ABC Trading!</h2>
+                <p class="muted mt-8" style="font-size:14px;">You have joined as <strong id="s4JoinedRoles">高级财务</strong>.</p>
+            </div>
+            <div class="highlight-box mt-16" id="s4AccessSummary">
+                <!-- filled by JS -->
+            </div>
+            <div class="alert a-info mt-12">
+                <span class="alert-icon">🔒</span>
+                <div>All sensitive operations require <strong>Owner verification</strong> by default. The Owner can authorize you to use Self verification later.</div>
+            </div>
+            <div class="btn-bar" style="justify-content:center;">
+                <button class="btn btn-pri" onclick="goStep(5)">Continue → Owner reviews permissions</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== STEP 5: Review & Modify ==================== -->
+<div class="page" id="step-5">
+    <h2>Step 6: Review & Modify User Permissions</h2>
+    <p class="subtitle">Back to <strong>Owner (张三)</strong> perspective. View 王五's full permission details and make changes.</p>
+
+    <div class="card">
+        <div class="flex-b mb-16">
+            <div>
+                <div class="card-title">User: 王五</div>
+                <div class="card-desc" style="margin-bottom:0;">wang@newuser.com · Joined just now</div>
+            </div>
+            <span class="badge b-ok">Active</span>
+        </div>
+
+        <div class="irow">
+            <div class="irow-k">Roles</div>
+            <div class="irow-v" id="reviewRoles">
+                <!-- filled by JS -->
+            </div>
+        </div>
+        <div class="irow">
+            <div class="irow-k">Portal</div>
+            <div class="irow-v">Merchant Portal (MP)</div>
+        </div>
+        <div class="irow">
+            <div class="irow-k">MID</div>
+            <div class="irow-v">ABC Trading (MID-001)</div>
+        </div>
+        <div class="irow">
+            <div class="irow-k">Invited by</div>
+            <div class="irow-v">张三 (Owner)</div>
+        </div>
+    </div>
+
+    <!-- Menu Access Review -->
+    <div class="card">
+        <div class="flex-b mb-8">
+            <div class="card-title">Menu access</div>
+            <button class="btn btn-ghost btn-sm" onclick="openModal('mEditMenu')">Edit</button>
+        </div>
+        <div class="card-desc">Menus this user can see (combined from all assigned roles).</div>
+        <div class="tags" id="reviewMenus">
+            <!-- filled by JS -->
+        </div>
+    </div>
+
+    <!-- Operation Permissions Review -->
+    <div class="card">
+        <div class="flex-b mb-8">
+            <div class="card-title">Operation permissions</div>
+            <button class="btn btn-ghost btn-sm" onclick="openModal('mEditOps')">Edit</button>
+        </div>
+        <div class="card-desc">How sensitive operations are verified for this user. Owner can override role defaults.</div>
+        <table class="tbl" id="reviewOpsTable">
+            <thead><tr><th>Operation</th><th class="ctr">Role default</th><th class="ctr">User override</th></tr></thead>
+            <tbody id="reviewOpsBody">
+                <!-- filled by JS -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Data Access Review -->
+    <div class="card">
+        <div class="flex-b mb-8">
+            <div class="card-title">Data access</div>
+            <button class="btn btn-ghost btn-sm" onclick="openModal('mEditData')">Edit</button>
+        </div>
+        <div class="card-desc">What data this user can see in each module.</div>
+        <table class="tbl" id="reviewDataTable">
+            <thead><tr><th>Module</th><th class="ctr">Scope</th></tr></thead>
+            <tbody id="reviewDataBody">
+                <!-- filled by JS -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Change Role -->
+    <div class="card">
+        <div class="flex-b mb-8">
+            <div class="card-title">Change roles</div>
+        </div>
+        <div class="card-desc">Add or remove roles for this user. Permissions update immediately.</div>
+        <div class="tg-group" id="reviewRoleToggles">
+            <!-- filled by JS -->
+        </div>
+        <div class="fi-hint mt-8">Changing roles will update menu access and default operation permissions. Data access and per-user overrides are preserved.</div>
+    </div>
+
+    <div class="card" style="border-color:var(--err);border-style:dashed;">
+        <div class="flex-b">
+            <div>
+                <div class="card-title" style="color:var(--err);">Remove user</div>
+                <div class="card-desc" style="margin-bottom:0;">Remove 王五 from ABC Trading. They will lose all access.</div>
+            </div>
+            <button class="btn btn-sm" style="background:var(--err-bg);color:var(--err);border:1px solid #fca5a5;" onclick="showToast('User removed from ABC Trading','err')">Remove</button>
+        </div>
+    </div>
+
+    <div class="btn-bar" style="justify-content:center;">
+        <button class="btn btn-pri" onclick="goStep(0);showToast('Flow complete! Start over from Step 1.','ok')">↻ Start over</button>
+    </div>
+</div>
+
+<!-- ==================== MODALS ==================== -->
+
+<!-- Edit Menu Modal -->
+<div class="ov" id="mEditMenu"><div class="modal" style="max-width:520px;"><button class="modal-x" onclick="closeModal('mEditMenu')">×</button>
+    <h3>Edit menu access for 王五</h3>
+    <p class="mdesc">Toggle menus on/off. This overrides the role default for this specific user.</p>
+    <div class="ck-grid" id="editMenuGrid">
+        <!-- cloned from step 1 by JS -->
+    </div>
+    <div class="btn-bar mt-16">
+        <button class="btn btn-sec" onclick="closeModal('mEditMenu')">Cancel</button>
+        <button class="btn btn-pri" onclick="saveEditMenu()">Save changes</button>
+    </div>
+</div></div>
+
+<!-- Edit Ops Modal -->
+<div class="ov" id="mEditOps"><div class="modal"><button class="modal-x" onclick="closeModal('mEditOps')">×</button>
+    <h3>Edit operation permissions for 王五</h3>
+    <p class="mdesc">Override the role default for this specific user. Click badges to toggle.</p>
+    <table class="tbl">
+        <thead><tr><th>Operation</th><th class="ctr">Verification</th></tr></thead>
+        <tbody>
+            <tr><td class="nm">Initiate transaction</td><td class="ctr"><span class="pb pb-self" onclick="togglePB(this)">Self</span></td></tr>
+            <tr><td class="nm">Fund operations</td><td class="ctr"><span class="pb pb-owner" onclick="togglePB(this)">Owner</span></td></tr>
+            <tr><td class="nm">Merchant config</td><td class="ctr"><span class="pb pb-owner" onclick="togglePB(this)">Owner</span></td></tr>
+        </tbody>
+    </table>
+    <div class="btn-bar mt-16">
+        <button class="btn btn-sec" onclick="closeModal('mEditOps')">Cancel</button>
+        <button class="btn btn-pri" onclick="closeModal('mEditOps');showToast('Operation permissions updated','ok')">Save changes</button>
+    </div>
+</div></div>
+
+<!-- Edit Data Modal -->
+<div class="ov" id="mEditData"><div class="modal"><button class="modal-x" onclick="closeModal('mEditData')">×</button>
+    <h3>Edit data access for 王五</h3>
+    <p class="mdesc">Toggle All ↔ Own for each module. Click badges to toggle.</p>
+    <table class="tbl" id="editDataModalTable">
+        <thead><tr><th>Module</th><th class="ctr">Scope</th></tr></thead>
+        <tbody id="editDataModalBody">
+            <!-- filled by JS -->
+        </tbody>
+    </table>
+    <div class="btn-bar mt-16">
+        <button class="btn btn-sec" onclick="closeModal('mEditData')">Cancel</button>
+        <button class="btn btn-pri" onclick="saveEditData()">Save changes</button>
+    </div>
+</div></div>
+
+
+<script>
+// ============ STATE ============
+let currentStep = 0;
+const STEPS = 6;
+
+// Role being configured
+let roleConfig = {
+    name: '高级财务',
+    base: '财务',
+    menus: [],
+    ops: { transaction: 'Self', fund: 'Owner', config: 'Owner' },
+    data: {} // menu -> 'All' | 'Own'
+};
+
+// User being invited
+let inviteConfig = {
+    email: 'wang@newuser.com',
+    roles: [] // role names
+};
+
+// All menus
+const ALL_MENUS = [
+    'Fiat Accounts','Crypto Wallet','Exchange',
+    'Collection Tools','Remitter','Payins','Crypto Receive',
+    'Online Payment','Invoice','Subscription',
+    'Beneficiary','Payouts','Crypto Send','Remittance Orders',
+    'Cards Management','Card Transactions',
+    'Reports','Trade Documents','Developer','Settings'
+];
+
+// Preset role menus
+const PRESETS = {
+    '管理员': ALL_MENUS.slice(),
+    '财务': ['Fiat Accounts','Crypto Wallet','Exchange','Payins','Crypto Receive','Beneficiary','Payouts','Crypto Send','Remittance Orders','Reports','Trade Documents'],
+    '运营': ['Collection Tools','Remitter','Payins','Crypto Receive','Online Payment','Invoice','Subscription','Cards Management','Card Transactions','Reports']
+};
+
+// ============ NAVIGATION ============
+function goStep(n) {
+    if (n < 0 || n >= STEPS) return;
+    currentStep = n;
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+    document.getElementById('step-' + n).classList.add('on');
+    updateRail();
+    window.scrollTo(0, 0);
+}
+
+function updateRail() {
+    const dots = document.querySelectorAll('.rail-dot');
+    const labels = document.querySelectorAll('.rail-label');
+    const bars = document.querySelectorAll('.rail-bar');
+    dots.forEach((d, i) => {
+        d.classList.remove('active', 'done');
+        labels[i].classList.remove('active', 'done');
+        if (i < currentStep) { d.classList.add('done'); d.textContent = '✓'; labels[i].classList.add('done'); }
+        else if (i === currentStep) { d.classList.add('active'); d.textContent = (i + 1); labels[i].classList.add('active'); }
+        else { d.textContent = (i + 1); }
+    });
+    bars.forEach((b, i) => {
+        b.classList.toggle('done', i < currentStep);
+    });
+}
+
+// ============ TOAST ============
+function showToast(msg, type) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.style.background = type === 'ok' ? 'var(--ok)' : type === 'err' ? 'var(--err)' : 'var(--pri)';
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+// ============ MODAL ============
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+document.querySelectorAll('.ov').forEach(o => o.addEventListener('click', e => { if (e.target === o) o.classList.remove('show'); }));
+
+// ============ STEP 0: Configure Role ============
+function pickBase(el, base) {
+    el.parentElement.querySelectorAll('.tg').forEach(t => t.classList.remove('on'));
+    el.classList.add('on');
+    roleConfig.base = base;
+}
+
+function loadPreset(name) {
+    document.getElementById('roleName').value = name;
+    roleConfig.name = name;
+    roleConfig.base = name;
+    createRole();
+}
+
+function createRole() {
+    roleConfig.name = document.getElementById('roleName').value || '自定义角色';
+    // Apply base template to menu checkboxes
+    const baseMenus = roleConfig.base === 'none' ? [] : (PRESETS[roleConfig.base] || []);
+    document.querySelectorAll('#menuGrid .ck-item').forEach(item => {
+        const menu = item.dataset.menu;
+        if (baseMenus.includes(menu)) item.classList.add('on');
+        else item.classList.remove('on');
+    });
+    document.getElementById('s1RoleName').textContent = roleConfig.name;
+    document.getElementById('s2RoleName').textContent = roleConfig.name;
+    goStep(1);
+    showToast('Configuring "' + roleConfig.name + '"', 'info');
+}
+
+// ============ STEP 1: Menu & Ops ============
+function ckToggle(el) { el.classList.toggle('on'); }
+
+function togglePB(el) {
+    if (el.textContent === 'Self') {
+        el.textContent = 'Owner'; el.className = 'pb pb-owner';
+    } else {
+        el.textContent = 'Self'; el.className = 'pb pb-self';
+    }
+}
+
+function saveMenuOps() {
+    // Collect selected menus
+    roleConfig.menus = [];
+    document.querySelectorAll('#menuGrid .ck-item.on').forEach(item => {
+        roleConfig.menus.push(item.dataset.menu);
+    });
+    // Collect ops
+    const opRows = document.querySelectorAll('#step-1 .tbl .pb');
+    roleConfig.ops.transaction = opRows[0].textContent;
+    roleConfig.ops.fund = opRows[1].textContent;
+    roleConfig.ops.config = opRows[2].textContent;
+
+    // Build data access table
+    buildDataTable();
+    goStep(2);
+    showToast(roleConfig.menus.length + ' menus selected', 'ok');
+}
+
+// ============ STEP 2: Data Access ============
+function buildDataTable() {
+    const body = document.getElementById('dataBody');
+    body.innerHTML = '';
+    roleConfig.menus.forEach(menu => {
+        roleConfig.data[menu] = roleConfig.data[menu] || 'Own';
+        const scope = roleConfig.data[menu];
+        const cls = scope === 'All' ? 'pb-all' : 'pb-own';
+        body.innerHTML += `<tr><td class="nm">${menu}</td><td class="ctr"><span class="pb ${cls}" onclick="toggleDataPB(this,'${menu}')">${scope}</span></td></tr>`;
+    });
+}
+
+function toggleDataPB(el, menu) {
+    if (el.textContent === 'All') {
+        el.textContent = 'Own'; el.className = 'pb pb-own';
+        roleConfig.data[menu] = 'Own';
+    } else {
+        el.textContent = 'All'; el.className = 'pb pb-all';
+        roleConfig.data[menu] = 'All';
+    }
+}
+
+function saveDataAccess() {
+    // Build role summary for step 3
+    buildRoleSummary();
+    buildRoleAssignGroup();
+    goStep(3);
+    showToast('Role "' + roleConfig.name + '" saved!', 'ok');
+}
+
+// ============ STEP 3: Invite ============
+function buildRoleSummary() {
+    const box = document.getElementById('roleSummaryBox');
+    const menuTags = roleConfig.menus.map(m => `<span class="tag b-pri">${m}</span>`).join(' ');
+    box.innerHTML = `
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+            <div class="role-icon" style="background:var(--info-bg);">💼</div>
+            <div>
+                <div style="font-size:15px;font-weight:600;">${roleConfig.name}</div>
+                <div style="font-size:12px;color:var(--t3);">${roleConfig.menus.length} menus · Ops: ${roleConfig.ops.transaction}/${roleConfig.ops.fund}/${roleConfig.ops.config}</div>
+            </div>
+        </div>
+        <div style="font-size:12px;color:var(--t3);margin-bottom:6px;">Menu access:</div>
+        <div class="tags">${menuTags}</div>
+    `;
+}
+
+function buildRoleAssignGroup() {
+    const group = document.getElementById('roleAssignGroup');
+    const roles = ['管理员', '财务', '运营', roleConfig.name];
+    const unique = [...new Set(roles)];
+    group.innerHTML = '';
+    unique.forEach(r => {
+        const isNew = r === roleConfig.name;
+        group.innerHTML += `<div class="tg${isNew ? ' on' : ''}" onclick="toggleRoleAssign(this)">${r}</div>`;
+    });
+}
+
+function toggleRoleAssign(el) { el.classList.toggle('on'); }
+
+function setInvMethod(m) {
+    document.getElementById('invEmail').classList.toggle('on', m === 'email');
+    document.getElementById('invMobile').classList.toggle('on', m === 'mobile');
+    document.getElementById('invEmailFg').style.display = m === 'email' ? 'block' : 'none';
+    document.getElementById('invMobileFg').style.display = m === 'mobile' ? 'block' : 'none';
+}
+
+function sendInvite() {
+    // Collect assigned roles
+    inviteConfig.roles = [];
+    document.querySelectorAll('#roleAssignGroup .tg.on').forEach(t => inviteConfig.roles.push(t.textContent));
+    inviteConfig.email = document.getElementById('invAddress').value || 'wang@newuser.com';
+
+    // Update step 4
+    document.getElementById('s4RoleNames').textContent = inviteConfig.roles.join(' + ');
+    document.getElementById('s4JoinedRoles').textContent = inviteConfig.roles.join(' + ');
+
+    // Reset step 4 sub-steps
+    document.getElementById('s4a').style.display = 'block';
+    document.getElementById('s4b').style.display = 'none';
+    document.getElementById('s4c').style.display = 'none';
+
+    goStep(4);
+    showToast('Invitation sent to ' + inviteConfig.email, 'ok');
+}
+
+// ============ STEP 4: User Registers ============
+function s4GoRegister() {
+    document.getElementById('s4a').style.display = 'none';
+    document.getElementById('s4b').style.display = 'block';
+}
+
+function s4Complete() {
+    document.getElementById('s4b').style.display = 'none';
+    document.getElementById('s4c').style.display = 'block';
+
+    // Build access summary
+    const box = document.getElementById('s4AccessSummary');
+    const menuTags = roleConfig.menus.map(m => `<span class="tag b-pri">${m}</span>`).join(' ');
+    box.innerHTML = `
+        <div style="font-size:12px;color:var(--t3);margin-bottom:6px;">Your menu access:</div>
+        <div class="tags">${menuTags}</div>
+    `;
+
+    showToast('Account created! Joined ABC Trading.', 'ok');
+}
+
+// ============ STEP 5: Review & Modify ============
+// This runs when entering step 5
+function buildReviewPage() {
+    // Roles
+    const rolesDiv = document.getElementById('reviewRoles');
+    rolesDiv.innerHTML = inviteConfig.roles.map(r => `<span class="badge b-pri">${r}</span>`).join(' ');
+
+    // Menus
+    const menusDiv = document.getElementById('reviewMenus');
+    menusDiv.innerHTML = roleConfig.menus.map(m => `<span class="tag b-pri">${m}</span>`).join(' ');
+
+    // Ops
+    const opsBody = document.getElementById('reviewOpsBody');
+    opsBody.innerHTML = `
+        <tr><td class="nm">Initiate transaction</td><td class="ctr"><span class="pb pb-${roleConfig.ops.transaction === 'Self' ? 'self' : 'owner'}">${roleConfig.ops.transaction}</span></td><td class="ctr"><span class="pb pb-${roleConfig.ops.transaction === 'Self' ? 'self' : 'owner'}" onclick="togglePB(this)">${roleConfig.ops.transaction}</span></td></tr>
+        <tr><td class="nm">Fund operations</td><td class="ctr"><span class="pb pb-${roleConfig.ops.fund === 'Self' ? 'self' : 'owner'}">${roleConfig.ops.fund}</span></td><td class="ctr"><span class="pb pb-${roleConfig.ops.fund === 'Self' ? 'self' : 'owner'}" onclick="togglePB(this)">${roleConfig.ops.fund}</span></td></tr>
+        <tr><td class="nm">Merchant config</td><td class="ctr"><span class="pb pb-${roleConfig.ops.config === 'Self' ? 'self' : 'owner'}">${roleConfig.ops.config}</span></td><td class="ctr"><span class="pb pb-${roleConfig.ops.config === 'Self' ? 'self' : 'owner'}" onclick="togglePB(this)">${roleConfig.ops.config}</span></td></tr>
+    `;
+
+    // Data
+    const dataBody = document.getElementById('reviewDataBody');
+    dataBody.innerHTML = '';
+    roleConfig.menus.forEach(menu => {
+        const scope = roleConfig.data[menu] || 'Own';
+        const cls = scope === 'All' ? 'pb-all' : 'pb-own';
+        dataBody.innerHTML += `<tr><td class="nm">${menu}</td><td class="ctr"><span class="pb ${cls}">${scope}</span></td></tr>`;
+    });
+
+    // Role toggles
+    const togglesDiv = document.getElementById('reviewRoleToggles');
+    const allRoles = [...new Set(['管理员', '财务', '运营', roleConfig.name])];
+    togglesDiv.innerHTML = '';
+    allRoles.forEach(r => {
+        const isOn = inviteConfig.roles.includes(r);
+        togglesDiv.innerHTML += `<div class="tg${isOn ? ' on' : ''}" onclick="toggleReviewRole(this,'${r}')">${r}</div>`;
+    });
+
+    // Edit menu modal
+    buildEditMenuModal();
+    // Edit data modal
+    buildEditDataModal();
+}
+
+function toggleReviewRole(el, role) {
+    el.classList.toggle('on');
+    showToast('Role "' + role + '" ' + (el.classList.contains('on') ? 'added' : 'removed'), 'ok');
+}
+
+function buildEditMenuModal() {
+    const grid = document.getElementById('editMenuGrid');
+    grid.innerHTML = document.getElementById('menuGrid').innerHTML;
+    // Sync on/off state
+    grid.querySelectorAll('.ck-item').forEach(item => {
+        const menu = item.dataset.menu;
+        if (roleConfig.menus.includes(menu)) item.classList.add('on');
+        else item.classList.remove('on');
+        item.onclick = function() { ckToggle(this); };
+    });
+}
+
+function saveEditMenu() {
+    // Collect from modal
+    const newMenus = [];
+    document.querySelectorAll('#editMenuGrid .ck-item.on').forEach(item => {
+        newMenus.push(item.dataset.menu);
+    });
+    roleConfig.menus = newMenus;
+    // Refresh review
+    const menusDiv = document.getElementById('reviewMenus');
+    menusDiv.innerHTML = roleConfig.menus.map(m => `<span class="tag b-pri">${m}</span>`).join(' ');
+    closeModal('mEditMenu');
+    showToast('Menu access updated (' + newMenus.length + ' menus)', 'ok');
+}
+
+function buildEditDataModal() {
+    const body = document.getElementById('editDataModalBody');
+    body.innerHTML = '';
+    roleConfig.menus.forEach(menu => {
+        const scope = roleConfig.data[menu] || 'Own';
+        const cls = scope === 'All' ? 'pb-all' : 'pb-own';
+        body.innerHTML += `<tr><td class="nm">${menu}</td><td class="ctr"><span class="pb ${cls}" onclick="toggleEditDataPB(this,'${menu}')">${scope}</span></td></tr>`;
+    });
+}
+
+function toggleEditDataPB(el, menu) {
+    if (el.textContent === 'All') {
+        el.textContent = 'Own'; el.className = 'pb pb-own';
+        roleConfig.data[menu] = 'Own';
+    } else {
+        el.textContent = 'All'; el.className = 'pb pb-all';
+        roleConfig.data[menu] = 'All';
+    }
+}
+
+function saveEditData() {
+    // Refresh review data table
+    const dataBody = document.getElementById('reviewDataBody');
+    dataBody.innerHTML = '';
+    roleConfig.menus.forEach(menu => {
+        const scope = roleConfig.data[menu] || 'Own';
+        const cls = scope === 'All' ? 'pb-all' : 'pb-own';
+        dataBody.innerHTML += `<tr><td class="nm">${menu}</td><td class="ctr"><span class="pb ${cls}">${scope}</span></td></tr>`;
+    });
+    closeModal('mEditData');
+    showToast('Data access updated', 'ok');
+}
+
+// Override goStep to trigger review build
+const _goStep = goStep;
+goStep = function(n) {
+    _goStep(n);
+    if (n === 5) buildReviewPage();
+};
+</script>
+</body>
+</html>

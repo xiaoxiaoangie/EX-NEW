@@ -407,9 +407,6 @@
         <div class="menu-item" data-page="payouts">
             <span class="icon">📤</span> Payouts
         </div>
-        <div class="menu-item" data-page="crypto-send">
-            <span class="icon">⬆️</span> Crypto Send
-        </div>
         <div class="menu-item" data-page="remittance-orders">
             <span class="icon">🔀</span> Remittance Orders
         </div>
@@ -529,7 +526,7 @@
                 1. <strong>Assets（资产）</strong>= 余额查看 + 同名充提 + 兑换（纯钱包内操作）<br>
                 2. <strong>Directory（通讯录）</strong>= 所有非交易的"账号/工具/对手方"管理：收款工具（VA+地址）、汇款人、收款人<br>
                 3. <strong>Transfers In（转账入金）</strong>= 所有入金交易：Payins（VA收款+链上收款+同名充值+同名充币）<br>
-                4. <strong>Transfers Out（转账出金）</strong>= 所有出金交易：Payouts（法币付款）、Crypto Send（加密转出）、Remittance Orders（一单到底）<br>
+                4. <strong>Transfers Out（转账出金）</strong>= 所有出金交易：Payouts（所有出金：法币付款+链上付币+同名提现+同名提币）、Remittance Orders（收→换→付一单到底，编排层）<br>
                 5. <strong>Checkout（收单）</strong>= 商户管理收款订单，底层收款方式由系统自动选择<br>
                 6. <strong>Cards（发卡）</strong>= 通过卡消费方式付款<br>
                 7. <strong>核心变化 vs V1：</strong>V1的Transfer In/Out包含工具+对手方+交易混在一起 → V2将非交易部分（工具+对手方）拆入 Directory，交易部分保留 Transfers In/Out 方向分组
@@ -559,8 +556,7 @@
                     <tr><td>Beneficiary</td><td>收款人管理（银行账户/加密地址）</td><td><span class="tag tag-other">非交易</span></td></tr>
                     <tr><td rowspan="2"><strong>TRANSFERS IN</strong><br><span style="font-size:11px;color:var(--text-muted);">转账入金</span></td><td>Payins</td><td>所有入金（VA收款+链上收款+同名充值+同名充币）</td><td><span class="tag tag-other">入金</span></td></tr>
                     <tr><td>Crypto Receive</td><td>通过VA收款后自动换U（法币→USDT），一单到底</td><td><span class="tag tag-other">入金+换U</span></td></tr>
-                    <tr><td rowspan="3"><strong>TRANSFERS OUT</strong><br><span style="font-size:11px;color:var(--text-muted);">转账出金</span></td><td>Payouts</td><td>法币付款</td><td><span class="tag tag-cross">出金</span></td></tr>
-                    <tr><td>Crypto Send</td><td>U→付法币出去（USDT换法币后付款），一单到底</td><td><span class="tag tag-cross">换U+出金</span></td></tr>
+                    <tr><td rowspan="2"><strong>TRANSFERS OUT</strong><br><span style="font-size:11px;color:var(--text-muted);">转账出金</span></td><td>Payouts</td><td>所有出金（法币付款+链上付币+同名提现+同名提币）</td><td><span class="tag tag-cross">出金</span></td></tr>
                     <tr><td>Remittance Orders</td><td>收→换→付一单到底，系统自动编排</td><td><span class="tag tag-cross">收→换→付</span></td></tr>
                     <tr><td rowspan="3"><strong>CHECKOUT</strong><br><span style="font-size:11px;color:var(--text-muted);">收单 — 订单驱动</span></td><td>Online Payment</td><td>在线支付订单</td><td><span class="tag tag-other">他人→我</span></td></tr>
                     <tr><td>Invoice</td><td>账单支付</td><td><span class="tag tag-other">他人→我</span></td></tr>
@@ -701,7 +697,7 @@
             <h3>职责定义</h3>
             <div class="note-box">
                 <strong>本菜单只管"自己的加密资产"：</strong>查看余额、同名充币（自己外部钱包→平台托管地址）、同名提币（平台→自己外部钱包）。<br>
-                <strong>不管：</strong>收别人的加密转账（→ Transfer In / Crypto Receive）、转给别人（→ Transfer Out / Crypto Send）、法币⇄加密兑换（→ Exchange）
+                <strong>不管：</strong>收别人的加密转账（→ Transfers In / Crypto Receive）、转给别人（→ Transfers Out / Payouts）、法币⇄加密兑换（→ Exchange）
             </div>
         </div>
         <div class="content-section">
@@ -985,7 +981,7 @@
         <div class="content-section">
             <h3>职责定义</h3>
             <div class="note-box">
-                <strong>本菜单管"我付给谁"：</strong>统一管理所有收款人信息，跨场景通用（Payouts / Crypto Send / Remittance / Cards充值等都可引用）。<br>
+                <strong>本菜单管"我付给谁"：</strong>统一管理所有收款人信息，跨场景通用（Payouts / Remittance / Cards充值等都可引用）。<br>
                 <strong>与 Remitter 的对称关系：</strong>Remitter = 谁付给我，Beneficiary = 我付给谁<br>
                 <strong>收款人类型：</strong>银行账户、加密钱包地址
             </div>
@@ -1119,14 +1115,24 @@
     <div class="page" id="page-payouts">
         <div class="page-header">
             <div class="breadcrumb">Transfers Out / <span>Payouts</span></div>
-            <h1>Payouts（法币付款）</h1>
-            <p>通过银行转账向收款人付款 <span class="tag tag-cross">出金</span></p>
+            <h1>Payouts（所有出金交易）</h1>
+            <p>所有资金流出的交易记录，统一查看 <span class="tag tag-cross">出金</span></p>
         </div>
         <div class="content-section">
             <h3>职责定义</h3>
             <div class="note-box">
-                <strong>本菜单管"直接银行转账付款"：</strong>账户已有余额，直接付给收款人。<br>
-                <strong>不管：</strong>需要先充值/承兑再付款的场景（→ Remittance Orders）
+                <strong>本菜单管"所有出金交易记录"：</strong>统一展示所有资金流出记录，包括：<br>
+                1. 法币付款（银行转账付给他人收款人）<br>
+                2. 链上付币（加密资产转给他人链上地址）<br>
+                3. 同名提现（平台法币账户→自己银行账户）<br>
+                4. 同名提币（平台托管地址→自己外部钱包）<br>
+                <strong>不管：</strong>需要先承兑/换汇再付款的组合流程（→ Remittance = 收→换→付一单到底）；Checkout退款产生的出金（→ Checkout）
+            </div>
+            <div class="note-box" style="background: #eff6ff; border-color: #93c5fd; color: #1e40af;">
+                <strong>与 Payins 的对称关系：</strong><br>
+                • <strong>Payins</strong> = 所有入金（VA收款 + 链上收款 + 同名充值 + 同名充币）<br>
+                • <strong>Payouts</strong> = 所有出金（法币付款 + 链上付币 + 同名提现 + 同名提币）<br>
+                • 两者都是"纯交易记录"，不含编排层（Crypto Receive / Remittance 是编排层）
             </div>
         </div>
         <div class="content-section">
@@ -1134,70 +1140,23 @@
             <div class="func-list">
                 <div class="func-item">
                     <div class="func-name">创建付款</div>
-                    <div class="func-desc">选择收款人（从 Directory / Beneficiary 引用）→ 输入金额/币种 → 确认付款。系统自动从多个SP账户扣款（根据优先级），商户不感知SP</div>
+                    <div class="func-desc">选择收款人（银行账户或链上地址，从 Directory / Beneficiary 引用）→ 输入金额/币种 → 确认付款。系统自动从多个SP账户扣款（根据优先级），商户不感知SP</div>
                 </div>
                 <div class="func-item">
-                    <div class="func-name">付款记录</div>
-                    <div class="func-desc">所有法币付款记录混合展示，支持按币种/时间/状态/收款人筛选。不展示SP</div>
+                    <div class="func-name">出金交易列表</div>
+                    <div class="func-desc">所有出金记录混合展示，支持按类型（法币付款/链上付币/同名提现/同名提币）、币种/时间/状态/收款人筛选。不展示SP</div>
                 </div>
                 <div class="func-item">
-                    <div class="func-name">付款详情</div>
-                    <div class="func-desc">付款金额、收款人信息、到账时间</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ===== TRANSFERS OUT: Crypto Send ===== -->
-    <div class="page" id="page-crypto-send">
-        <div class="page-header">
-            <div class="breadcrumb">Transfers Out / <span>Crypto Send</span></div>
-            <h1>Crypto Send（U→付法币出去）</h1>
-            <p>USDT自动兑换为法币后付款给收款人，一单到底 <span class="tag tag-cross">换U+出金</span></p>
-        </div>
-        <div class="content-section">
-            <h3>职责定义</h3>
-            <div class="note-box">
-                <strong>本菜单管"U→换法币→付出去"的组合流程：</strong>商户用加密钱包中的USDT（或其他稳定币），系统自动将USDT兑换为法币，再通过银行转账付给收款人。整个流程一单到底，商户无需手动操作Exchange。<br>
-                <strong>底层编排：</strong>扣USDT（Crypto Wallet）→ Off-Ramp/数转法（Exchange）→ 法币付款（Payouts）<br>
-                <strong>与 Payouts 的区别：</strong>Payouts = 法币账户直接付款，Crypto Send = 先用U换法币再付款<br>
-                <strong>与 Crypto Receive 的对称关系：</strong>Crypto Receive = 收法币→换U（钱进来），Crypto Send = U→换法币→付出去（钱出去）
-            </div>
-        </div>
-        <div class="content-section">
-            <h3>页面功能</h3>
-            <div class="func-list">
-                <div class="func-item">
-                    <div class="func-name">U付款订单列表</div>
-                    <div class="func-desc">所有Crypto Send订单，展示：USDT扣款数量、兑换汇率、法币付款金额、收款人、订单状态。支持按时间/币种/状态筛选</div>
-                </div>
-                <div class="func-item">
-                    <div class="func-name">订单详情 — 全链路视图</div>
-                    <div class="func-desc">展示完整资金链路：扣USDT（加密钱包）→ 兑换（USDT→法币）→ 付款（法币到收款人银行账户），每步状态实时更新</div>
-                </div>
-                <div class="func-item">
-                    <div class="func-name">子步骤追踪</div>
-                    <div class="func-desc">每个子步骤的独立状态、时间、金额、汇率、手续费明细</div>
-                </div>
-                <div class="func-item">
-                    <div class="func-name">配置规则</div>
-                    <div class="func-desc">设置自动换法币规则：指定付款时自动触发兑换、源币种（USDT/USDC等）、目标法币、汇率策略（实时/锁定）</div>
-                </div>
-            </div>
-        </div>
-        <div class="content-section">
-            <h3>典型场景</h3>
-            <div class="func-list">
-                <div class="func-item">
-                    <div class="func-name">场景：用U付供应商货款</div>
-                    <div class="func-desc">商户持有USDT → 系统自动将USDT兑换为USD → USD通过银行转账付给供应商。商户全程无需手动操作</div>
+                    <div class="func-name">交易详情</div>
+                    <div class="func-desc">出金金额、目标类型、收款人/目标信息、到账时间、链上TxHash（如适用）</div>
                 </div>
             </div>
             <div class="note-box">
-                <strong>与其他菜单的关系：</strong><br>
-                • Crypto Send 是"编排层"，底层复用 Exchange（Off-Ramp/数转法）和 Payouts（法币付款）的能力<br>
-                • 商户在 Crypto Send 看到完整链路，在 Exchange 和 Payouts 也能看到对应的子订单记录<br>
-                • 通过关联订单号串联，各菜单都能追溯
+                <strong>交易类型标签：</strong><br>
+                • <span class="tag tag-cross">法币付款</span> 银行转账付给他人收款人<br>
+                • <span class="tag tag-cross">链上付币</span> 加密资产转给他人链上地址<br>
+                • <span class="tag tag-same">同名提现</span> 平台法币账户提现到自己银行<br>
+                • <span class="tag tag-same">同名提币</span> 平台托管地址提币到自己外部钱包
             </div>
         </div>
     </div>
@@ -1213,7 +1172,7 @@
             <h3>职责定义</h3>
             <div class="note-box">
                 <strong>本菜单管"承兑+付款一单到底"：</strong>商户下一个订单，系统自动编排充值→换汇/承兑→付款全流程。适用于钱包没钱或需要跨币种/跨形态付款的场景。<br>
-                <strong>不管：</strong>账户已有余额直接付款（→ Payouts / Crypto Send）、纯钱包内兑换（→ Exchange）
+                <strong>不管：</strong>账户已有余额直接付款（→ Payouts）、纯钱包内兑换（→ Exchange）
             </div>
         </div>
         <div class="content-section">
@@ -1246,7 +1205,7 @@
                 </div>
                 <div class="func-item">
                     <div class="func-name">场景2：法币→加密付款</div>
-                    <div class="func-desc">充值USD → On-Ramp（法转数）→ Crypto Send到收款人地址</div>
+                    <div class="func-desc">充值USD → On-Ramp（法转数）→ 链上付币到收款人地址（通过Payouts）</div>
                 </div>
                 <div class="func-item">
                     <div class="func-name">场景3：加密→法币付款</div>

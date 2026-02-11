@@ -987,16 +987,136 @@
                     <div class="tfa-body"><div class="tfa-name" style="color:#3730a3;">董事 (Director)</div><div class="tfa-desc">Face recognition + mobile verification, or offline documents.</div></div>
                 </div>
             </div>
+        </div>
+
         <!-- PERMISSIONS (Users.md 7.7 - MID级操作权限授权) -->
         <div class="uc-panel" id="p-permissions">
+
+            <!-- Context banner -->
             <div class="card" style="background:var(--primary-light);border-color:var(--primary);border-style:dashed;">
-                <div style="font-size:13px;color:var(--primary);font-weight:500;">You are viewing as <strong>Owner</strong> of <strong id="permMID">ABC Trading</strong>. You can configure which operations each user can perform independently.</div>
+                <div style="font-size:13px;color:var(--primary);font-weight:500;">You are viewing as <strong>Owner</strong> of <strong id="permMID">ABC Trading</strong> (MID-001). Only Owner can manage members and configure operation permissions.</div>
             </div>
+
+            <!-- Role definitions -->
+            <div class="card">
+                <div class="card-head">Role definitions</div>
+                <div class="card-sub">Each MID has three role levels with different capabilities.</div>
+                <div class="tfa-row">
+                    <div class="tfa-icon" style="background:var(--warning-bg);"><svg viewBox="0 0 24 24" fill="none" stroke="#92400e" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+                    <div class="tfa-body">
+                        <div class="tfa-name" style="color:#92400e;">Owner <span class="badge badge-warning">1 per MID</span></div>
+                        <div class="tfa-desc">Full control. Can manage members, configure permissions, and perform all operations. Must be 开户人/法人/董事. Cannot be removed.</div>
+                    </div>
+                </div>
+                <div class="tfa-row">
+                    <div class="tfa-icon" style="background:var(--primary-light);"><svg viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+                    <div class="tfa-body">
+                        <div class="tfa-name" style="color:var(--primary);">Admin <span class="badge badge-primary">Multiple</span></div>
+                        <div class="tfa-desc">Can perform business operations. Sensitive operations require Self or Owner verification depending on permission config. Cannot manage members.</div>
+                    </div>
+                </div>
+                <div class="tfa-row">
+                    <div class="tfa-icon" style="background:#f1f3f5;"><svg viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+                    <div class="tfa-body">
+                        <div class="tfa-name" style="color:#64748b;">Member <span class="badge badge-muted">Multiple</span></div>
+                        <div class="tfa-desc">View-only by default. All operations require Owner verification unless explicitly authorized. Suitable for read-only staff.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Member management -->
             <div class="card">
                 <div class="flex-between" style="margin-bottom:16px;">
-                    <div><div class="card-head">MID operation permissions</div><div class="card-sub" style="margin-bottom:0;">Configure whether each user verifies with their own credential or requires Owner verification for sensitive operations.</div></div>
+                    <div><div class="card-head">Members</div><div class="card-sub" style="margin-bottom:0;">Manage who has access to this MID.</div></div>
+                    <button class="btn btn-primary btn-sm" onclick="openM('mInvite')">+ Invite member</button>
                 </div>
                 <table class="data-table">
+                    <thead><tr><th>User</th><th>Role</th><th>Status</th><th>Joined</th><th></th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td><div class="name-cell">张三 (You)</div><div class="sub-cell">liuxiaoxiaoangie@gmail.com</div></td>
+                            <td><span class="badge badge-warning">Owner</span></td>
+                            <td><span class="badge badge-success">Active</span></td>
+                            <td style="font-size:13px;color:var(--text-muted);">2024-01-15</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td><div class="name-cell">李四</div><div class="sub-cell">li@test.com</div></td>
+                            <td>
+                                <div class="dotmenu" style="display:inline-block;">
+                                    <span class="badge badge-primary" style="cursor:pointer;" onclick="toggleDM(this.nextElementSibling)">Admin ▾</span>
+                                    <div class="dotmenu-dd">
+                                        <div class="dotmenu-item" onclick="changeRole(this,'Admin')">Admin</div>
+                                        <div class="dotmenu-item" onclick="changeRole(this,'Member')">Member</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="badge badge-success">Active</span></td>
+                            <td style="font-size:13px;color:var(--text-muted);">2024-03-20</td>
+                            <td>
+                                <div class="dotmenu">
+                                    <button class="dotmenu-btn" onclick="toggleDM(this)">···</button>
+                                    <div class="dotmenu-dd">
+                                        <div class="dotmenu-item red" onclick="toast('Member removed','inf')">Remove</div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><div class="name-cell">王五</div><div class="sub-cell">wang@test.com</div></td>
+                            <td>
+                                <div class="dotmenu" style="display:inline-block;">
+                                    <span class="badge badge-primary" style="cursor:pointer;" onclick="toggleDM(this.nextElementSibling)">Admin ▾</span>
+                                    <div class="dotmenu-dd">
+                                        <div class="dotmenu-item" onclick="changeRole(this,'Admin')">Admin</div>
+                                        <div class="dotmenu-item" onclick="changeRole(this,'Member')">Member</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="badge badge-success">Active</span></td>
+                            <td style="font-size:13px;color:var(--text-muted);">2024-05-10</td>
+                            <td>
+                                <div class="dotmenu">
+                                    <button class="dotmenu-btn" onclick="toggleDM(this)">···</button>
+                                    <div class="dotmenu-dd">
+                                        <div class="dotmenu-item red" onclick="toast('Member removed','inf')">Remove</div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><div class="name-cell">赵六</div><div class="sub-cell">zhao@test.com</div></td>
+                            <td>
+                                <div class="dotmenu" style="display:inline-block;">
+                                    <span class="badge badge-muted" style="cursor:pointer;" onclick="toggleDM(this.nextElementSibling)">Member ▾</span>
+                                    <div class="dotmenu-dd">
+                                        <div class="dotmenu-item" onclick="changeRole(this,'Admin')">Admin</div>
+                                        <div class="dotmenu-item" onclick="changeRole(this,'Member')">Member</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="badge badge-success">Active</span></td>
+                            <td style="font-size:13px;color:var(--text-muted);">2024-08-01</td>
+                            <td>
+                                <div class="dotmenu">
+                                    <button class="dotmenu-btn" onclick="toggleDM(this)">···</button>
+                                    <div class="dotmenu-dd">
+                                        <div class="dotmenu-item red" onclick="toast('Member removed','inf')">Remove</div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Operation permissions matrix -->
+            <div class="card">
+                <div class="flex-between" style="margin-bottom:4px;">
+                    <div><div class="card-head">Operation permissions</div><div class="card-sub" style="margin-bottom:0;">Configure whether each user verifies with their own credential (Self) or requires Owner verification (Owner) for sensitive operations.</div></div>
+                </div>
+                <div style="overflow-x:auto;">
+                <table class="data-table" style="margin-top:12px;">
                     <thead><tr><th>User</th><th>Initiate transaction</th><th>Fund operations</th><th>Merchant config</th><th>Add/remove members</th></tr></thead>
                     <tbody>
                         <tr>
@@ -1022,13 +1142,61 @@
                         </tr>
                     </tbody>
                 </table>
+                </div>
                 <div class="form-hint" style="margin-top:12px;">
-                    <strong>Self</strong> = User verifies with their own credential. <strong>Owner</strong> = Verification code sent to Owner. Click badges to toggle. New users default to Owner for all operations.
+                    <strong>Self</strong> = User verifies with their own credential (email/mobile/2FA). <strong>Owner</strong> = Verification code sent to Owner's mobile. Click badges to toggle.
                 </div>
             </div>
-        </div>
+
+            <!-- Operation categories explanation -->
+            <div class="card">
+                <div class="card-head">Operation categories</div>
+                <div class="card-sub">What each permission category covers.</div>
+                <div class="tfa-row">
+                    <div class="tfa-icon" style="background:#dbeafe;"><svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+                    <div class="tfa-body">
+                        <div class="tfa-name" style="color:#2563eb;">Initiate transaction</div>
+                        <div class="tfa-desc">Payins, Payouts, Crypto Send, Crypto Receive, Remittance Orders, Exchange, Checkout orders</div>
+                    </div>
+                </div>
+                <div class="tfa-row">
+                    <div class="tfa-icon" style="background:#fef3c7;"><svg viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a4 4 0 0 0-8 0v2"/></svg></div>
+                    <div class="tfa-body">
+                        <div class="tfa-name" style="color:#d97706;">Fund operations</div>
+                        <div class="tfa-desc">Deposit, Withdrawal, Internal transfer, SP balance operations, Card top-up</div>
+                    </div>
+                </div>
+                <div class="tfa-row">
+                    <div class="tfa-icon" style="background:#e0e7ff;"><svg viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+                    <div class="tfa-body">
+                        <div class="tfa-name" style="color:#4f46e5;">Merchant config</div>
+                        <div class="tfa-desc">Webhook settings, API keys, Notification preferences, Company profile changes</div>
+                    </div>
+                </div>
+                <div class="tfa-row">
+                    <div class="tfa-icon" style="background:#fce7f3;"><svg viewBox="0 0 24 24" fill="none" stroke="#db2777" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg></div>
+                    <div class="tfa-body">
+                        <div class="tfa-name" style="color:#db2777;">Add/remove members</div>
+                        <div class="tfa-desc">Invite new users, remove existing members, change member roles. Owner-only by default.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rules note -->
+            <div class="card" style="background:var(--bg);border:none;">
+                <div style="font-size:13px;color:var(--text-secondary);line-height:1.7;">
+                    <strong>Permission rules:</strong><br>
+                    • New members default to <strong>Owner</strong> verification for all operations<br>
+                    • Owner can toggle each operation to <strong>Self</strong> (user verifies themselves) or <strong>Owner</strong> (code sent to Owner)<br>
+                    • When set to <strong>Self</strong>: user receives verification code on their own mobile/email<br>
+                    • When set to <strong>Owner</strong>: verification code is sent to Owner's mobile — user must wait for Owner to cooperate<br>
+                    • Owner's own operations always use Self verification (Owner = themselves)<br>
+                    • If Owner is unavailable, operations requiring Owner verification will be blocked
+                </div>
+            </div>
 
         </div>
+
     </div>
 </div>
 
@@ -1269,6 +1437,19 @@
     </div>
 </div></div>
 
+<!-- Invite Member -->
+<div class="overlay" id="mInvite"><div class="modal"><button class="modal-x" onclick="closeM('mInvite')">×</button>
+    <h3>Invite member</h3><p class="mdesc">Invite a user to join <strong>ABC Trading</strong> (MID-001). They will receive an email invitation.</p>
+    <div class="form-group"><label class="form-label">Email address</label><input class="form-input" id="invEmail" placeholder="user@example.com"></div>
+    <div class="form-group"><label class="form-label">Role</label>
+        <div style="display:flex;gap:8px;">
+            <div class="toggle-btn active" id="invAdmin" onclick="pickInvRole('Admin','invAdmin')" style="flex:1;">Admin</div>
+            <div class="toggle-btn" id="invMember" onclick="pickInvRole('Member','invMember')" style="flex:1;">Member</div>
+        </div>
+        <div class="form-hint" style="margin-top:6px;">Admin can perform operations; Member is view-only by default.</div>
+    </div>
+    <button class="btn btn-primary" onclick="sendInvite()">Send invitation</button>
+</div></div>
 
 <script>
 let vMode='code', lTab='email', curLM='Email', curLang='English', authOn=false, smsOn=false;
@@ -1404,6 +1585,35 @@ function rcGen(){if(!document.getElementById('rcPW').value){toast('Enter passwor
 
 // Dot menu
 function toggleDM(btn){const dd=btn.nextElementSibling;document.querySelectorAll('.dotmenu-dd').forEach(d=>{if(d!==dd)d.classList.remove('show');});dd.classList.toggle('show');}
+
+// === Member management ===
+let invRole='Admin';
+function changeRole(el,role){
+    const row=el.closest('.dotmenu');
+    const badge=row.previousElementSibling||row.parentElement.querySelector('.badge');
+    // find the badge in the same td
+    const td=el.closest('td');
+    const b=td.querySelector('.badge');
+    if(b){
+        b.textContent=role+' ▾';
+        b.className='badge '+(role==='Admin'?'badge-primary':'badge-muted');
+        b.style.cursor='pointer';
+    }
+    row.querySelector('.dotmenu-dd').classList.remove('show');
+    toast('Role changed to '+role,'ok');
+}
+function pickInvRole(r,id){
+    invRole=r;
+    document.querySelectorAll('#mInvite .toggle-btn').forEach(x=>x.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+function sendInvite(){
+    const e=document.getElementById('invEmail').value;
+    if(!e||!e.includes('@')){toast('Enter a valid email','err');return;}
+    toast('Invitation sent to '+e+' as '+invRole,'ok');
+    closeM('mInvite');
+    document.getElementById('invEmail').value='';
+}
 
 // === Permission toggle (Users.md 7.7) ===
 function togglePerm(el){
