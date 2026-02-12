@@ -347,8 +347,8 @@
         <div class="menu-item" data-page="payins">
             <span class="icon">📥</span> Payins
         </div>
-        <div class="menu-item" data-page="crypto-receive">
-            <span class="icon">⛓️</span> Crypto Receive
+        <div class="menu-item" data-page="Onramp">
+            <span class="icon">⛓️</span> Onramp
         </div>
     </div>
 
@@ -378,6 +378,9 @@
         </div>
         <div class="menu-item" data-page="payouts">
             <span class="icon">�</span> Payouts
+        </div>
+        <div class="menu-item" data-page="OffRamp">
+            <span class="icon">�</span> OffRamp
         </div>
         <div class="menu-item" data-page="remittance-orders">
             <span class="icon">🔀</span> Remittance Orders
@@ -481,12 +484,12 @@
             <div class="note-box">
                 <strong>菜单设计原则：</strong><br>
                 1. <strong>Assets（资产）</strong>= 同名充提 + 兑换（自己的钱左手倒右手，纯钱包内操作）；承兑后要付出去的走Transfer Out<br>
-                2. <strong>Transfer In（转账收款）</strong>= 收款工具管理（Collection Tools）+ 汇款人维护 + Payins（所有入金）+ Crypto Receive（收法币→自动换U）<br>
+                2. <strong>Transfer In（转账收款）</strong>= 收款工具管理（Collection Tools）+ 汇款人维护 + Payins（所有入金）+ Onramp（收法币→自动换U）<br>
                 3. <strong>Checkout（收单）</strong>= 商户管理收款订单，底层收款方式（VA/地址/在线支付）由系统自动选择<br>
                 4. <strong>Transfer Out（转账付款）</strong>= Beneficiary（收款人）+ Payouts（所有出金：法币付款+链上付币+同名提现+同名提币）+ Remittance Orders（收→换→付一单到底，编排层）<br>
                 5. <strong>Cards（发卡）</strong>= 通过卡消费方式付款<br>
                 6. <strong>Transfer In vs Checkout：</strong>Transfer In 管收款工具（商户主动申请的VA/地址），Checkout 管收款订单（底层工具由系统分配，对商户透明）<br>
-                7. <strong>Payins vs Payouts 对称：</strong>Payins = 所有入金，Payouts = 所有出金；Crypto Receive（收法币→换U）和 Remittance（收→换→付）是编排层
+                7. <strong>Payins vs Payouts 对称：</strong>Payins = 所有入金，Payouts = 所有出金；Onramp（收法币→换U）和 Remittance（收→换→付）是编排层
             </div>
             <div class="note-box">
                 <strong>SP透明 & 账户结构规则：</strong><br>
@@ -510,12 +513,13 @@
                     <tr><td rowspan="4"><strong>TRANSFER IN</strong></td><td>Collection Tools</td><td>收款工具管理（Tab: Global Account/VA + 加密收款地址）</td><td><span class="tag tag-other">他人→我（转账）</span></td></tr>
                     <tr><td>Remitter</td><td>汇款人维护（银行账户/链上地址）</td><td><span class="tag tag-other">他人→我</span></td></tr>
                     <tr><td>Payins</td><td>所有入金交易（VA收款+链上收款+同名充值+同名充币）</td><td><span class="tag tag-other">他人→我 + 同名</span></td></tr>
-                    <tr><td>Crypto Receive</td><td>通过VA收款后自动换U（法币→USDT），一单到底</td><td><span class="tag tag-other">入金+换U</span></td></tr>
+                    <tr><td>Onramp</td><td>通过VA收款后自动换U（法币→USDT），一单到底</td><td><span class="tag tag-other">入金+换U</span></td></tr>
                     <tr><td rowspan="3"><strong>CHECKOUT</strong></td><td>Online Payment</td><td>在线支付订单</td><td><span class="tag tag-other">他人→我（收单）</span></td></tr>
                     <tr><td>Invoice</td><td>账单支付</td><td><span class="tag tag-other">他人→我（收单）</span></td></tr>
                     <tr><td>Subscription</td><td>订阅支付</td><td><span class="tag tag-other">他人→我（收单）</span></td></tr>
                     <tr><td rowspan="3"><strong>TRANSFER OUT</strong></td><td>Beneficiary</td><td>收款人管理</td><td><span class="tag tag-other">我→他人（转账）</span></td></tr>
                     <tr><td>Payouts</td><td>所有出金（法币付款+链上付币+同名提现+同名提币）</td><td><span class="tag tag-other">出金</span></td></tr>
+                    <tr><td>OffRamp</td><td>offramp（数币钱包-法币账户，和数币钱包直接到收款人）</td><td><span class="tag tag-other">出金</span></td></tr>
                     <tr><td>Remittance Orders</td><td>收→换→付一单到底，系统自动编排全链路</td><td><span class="tag tag-other">收→换→付</span></td></tr>
                     <tr><td rowspan="2"><strong>CARDS</strong></td><td>Cards Management</td><td>开卡、充值、冻结、注销</td><td><span class="tag tag-other">我→他人（卡）</span></td></tr>
                     <tr><td>Card Transactions</td><td>卡交易记录</td><td><span class="tag tag-other">我→他人（卡）</span></td></tr>
@@ -695,7 +699,7 @@
         </div>
     </div>
 
-    <!-- ===== TRANSFER IN: Collection Tools (Global Accounts + Crypto Receive 合并) ===== -->
+    <!-- ===== TRANSFER IN: Collection Tools (Global Accounts + Onramp 合并) ===== -->
     <div class="page" id="page-collection-tools">
         <div class="page-header">
             <div class="breadcrumb">Transfer In / <span>Collection Tools</span></div>
@@ -738,9 +742,9 @@
                 </div>
             </div>
 
-            <!-- Tab: Crypto Receive Address -->
+            <!-- Tab: Onramp Address -->
             <div class="tab-panel" id="tab-crypto-addr">
-                <h3>收款地址（Crypto Receive Address）<span class="badge" style="background: #fef3c7; color: #92400e;">加密收款</span></h3>
+                <h3>收款地址（Onramp Address）<span class="badge" style="background: #fef3c7; color: #92400e;">加密收款</span></h3>
                 <div class="func-list">
                     <div class="func-item">
                         <div class="func-name">收款地址管理</div>
@@ -871,11 +875,11 @@
         </div>
     </div>
 
-    <!-- ===== TRANSFER IN: Crypto Receive ===== -->
+    <!-- ===== TRANSFER IN: Onramp ===== -->
     <div class="page" id="page-crypto-receive">
         <div class="page-header">
-            <div class="breadcrumb">Transfer In / <span>Crypto Receive</span></div>
-            <h1>Crypto Receive（收款换U）</h1>
+            <div class="breadcrumb">Transfer In / <span>Onramp</span></div>
+            <h1>Onramp（收款换U）</h1>
             <p>通过VA收款后自动兑换为USDT，一单到底 <span class="tag tag-other">入金+换U</span></p>
         </div>
         <div class="content-section">
@@ -883,8 +887,8 @@
             <div class="note-box">
                 <strong>本菜单管"法币收款→自动换U"的组合流程：</strong>他人通过VA银行转账法币入金，系统自动将收到的法币兑换为USDT（或其他稳定币），最终入账到商户的加密钱包。整个流程一单到底，商户无需手动操作Exchange。<br>
                 <strong>底层编排：</strong>VA收款（Payins）→ On-Ramp/法转数（Exchange）→ 入账USDT到Crypto Wallet<br>
-                <strong>与 Payins 的区别：</strong>Payins = 纯入金记录（法币到法币账户），Crypto Receive = 入金+自动换U（法币→USDT到加密钱包）<br>
-                <strong>与 Remittance 的对称关系：</strong>Remittance = 收→换→付（钱出去），Crypto Receive = 收→换→入账（钱进来换形态）
+                <strong>与 Payins 的区别：</strong>Payins = 纯入金记录（法币到法币账户），Onramp = 入金+自动换U（法币→USDT到加密钱包）<br>
+                <strong>与 Remittance 的对称关系：</strong>Remittance = 收→换→付（钱出去），Onramp = 收→换→入账（钱进来换形态）
             </div>
         </div>
         <div class="content-section">
@@ -892,7 +896,7 @@
             <div class="func-list">
                 <div class="func-item">
                     <div class="func-name">收款换U订单列表</div>
-                    <div class="func-desc">所有Crypto Receive订单，展示：法币收款金额、兑换汇率、USDT到账数量、订单状态。支持按时间/币种/状态筛选</div>
+                    <div class="func-desc">所有Onramp订单，展示：法币收款金额、兑换汇率、USDT到账数量、订单状态。支持按时间/币种/状态筛选</div>
                 </div>
                 <div class="func-item">
                     <div class="func-name">订单详情 — 全链路视图</div>
@@ -918,8 +922,8 @@
             </div>
             <div class="note-box">
                 <strong>与其他菜单的关系：</strong><br>
-                • Crypto Receive 是"编排层"，底层复用 Payins（VA收款）和 Exchange（On-Ramp/法转数）的能力<br>
-                • 商户在 Crypto Receive 看到完整链路，在 Payins 和 Exchange 也能看到对应的子订单记录<br>
+                • Onramp 是"编排层"，底层复用 Payins（VA收款）和 Exchange（On-Ramp/法转数）的能力<br>
+                • 商户在 Onramp 看到完整链路，在 Payins 和 Exchange 也能看到对应的子订单记录<br>
                 • 通过关联订单号串联，各菜单都能追溯
             </div>
         </div>
@@ -987,7 +991,7 @@
                 <strong>与 Payins 的对称关系：</strong><br>
                 • <strong>Payins</strong> = 所有入金（VA收款 + 链上收款 + 同名充值 + 同名充币）<br>
                 • <strong>Payouts</strong> = 所有出金（法币付款 + 链上付币 + 同名提现 + 同名提币）<br>
-                • 两者都是"纯交易记录"，不含编排层（Crypto Receive / Remittance 是编排层）
+                • 两者都是"纯交易记录"，不含编排层（Onramp / Remittance 是编排层）
             </div>
         </div>
         <div class="content-section">
