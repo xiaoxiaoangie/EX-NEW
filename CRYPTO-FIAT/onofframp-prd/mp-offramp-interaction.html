@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MP 商户端 — OffRamp 交互原型</title>
+<style>
+:root {
+    --bg: #f0f2f5; --card-bg: #fff; --border: #e2e8f0; --border-light: #f1f5f9;
+    --text: #1a1f36; --text-s: #6b7294; --text-m: #a5aac4;
+    --primary: #4f46e5; --primary-light: #eef2ff; --primary-dark: #3730a3;
+    --green: #10b981; --green-bg: #ecfdf5; --green-border: #a7f3d0;
+    --orange: #f59e0b; --orange-bg: #fffbeb; --orange-border: #fde68a;
+    --red: #ef4444; --red-bg: #fef2f2;
+    --blue: #3b82f6; --blue-bg: #eff6ff; --blue-border: #93c5fd;
+    --purple: #7c3aed; --purple-bg: #f5f3ff;
+    --sidebar-w: 250px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', sans-serif; background: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; -webkit-font-smoothing: antialiased; }
+
+.sidebar { width: var(--sidebar-w); background: var(--card-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; }
+.sidebar-logo { padding: 20px 16px; font-size: 16px; font-weight: 700; color: var(--primary); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+.sidebar-logo .logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, var(--primary), #6366f1); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; font-weight: 700; }
+.menu-group { padding: 12px 8px 4px; }
+.menu-group-label { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 0 8px 6px; display: flex; align-items: center; gap: 6px; }
+.menu-group-label .dot { width: 6px; height: 6px; border-radius: 50%; }
+.menu-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; color: var(--text-s); transition: all .15s; user-select: none; }
+.menu-item:hover { background: var(--bg); color: var(--text); }
+.menu-item.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
+.menu-item .icon { width: 18px; text-align: center; font-size: 14px; }
+
+.main { flex: 1; overflow-y: auto; padding: 28px 36px; }
+.page { display: none; }
+.page.active { display: block; }
+.breadcrumb { font-size: 12px; color: var(--text-m); margin-bottom: 6px; }
+.breadcrumb span { color: var(--primary); font-weight: 500; }
+.page-header { margin-bottom: 24px; }
+.page-header h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+.page-header p { color: var(--text-s); font-size: 13px; }
+
+.card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); padding: 24px; margin-bottom: 16px; }
+.card h3 { font-size: 15px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+.tag-active { background: var(--green-bg); color: var(--green); }
+.tag-pending { background: var(--orange-bg); color: var(--orange); }
+.tag-bb { background: #dbeafe; color: #1e40af; }
+.tag-ipl { background: var(--orange-bg); color: var(--orange); }
+
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all .15s; }
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-outline { background: white; color: var(--primary); border: 1px solid var(--primary); }
+.btn-outline:hover { background: var(--primary-light); }
+.btn-sm { padding: 5px 12px; font-size: 12px; border-radius: 6px; }
+.btn-ghost { background: transparent; color: var(--primary); padding: 4px 8px; }
+
+.note-box { border-radius: 8px; padding: 14px 16px; font-size: 13px; line-height: 1.6; margin-bottom: 12px; }
+.note-warn { background: var(--orange-bg); border: 1px solid var(--orange-border); color: #92400e; }
+.note-info { background: var(--blue-bg); border: 1px solid var(--blue-border); color: #1e40af; }
+.note-green { background: var(--green-bg); border: 1px solid var(--green-border); color: #065f46; }
+.note-purple { background: var(--purple-bg); border: 1px solid #c4b5fd; color: #5b21b6; }
+
+.divider { height: 1px; background: var(--border); margin: 16px 0; }
+
+.scenario-tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 20px; overflow-x: auto; }
+.scenario-tab { padding: 10px 18px; font-size: 12px; font-weight: 500; color: var(--text-s); background: none; border: none; border-bottom: 2px solid transparent; margin-bottom: -2px; cursor: pointer; transition: all .15s; white-space: nowrap; }
+.scenario-tab:hover { color: var(--text); }
+.scenario-tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+.scenario-panel { display: none; }
+.scenario-panel.active { display: block; }
+
+.flow-step { display: flex; gap: 16px; margin-bottom: 0; padding: 16px 0; position: relative; }
+.flow-step:not(:last-child) { border-left: 2px solid var(--border); margin-left: 15px; padding-left: 28px; }
+.flow-step:last-child { margin-left: 15px; padding-left: 28px; }
+.flow-step .step-dot { position: absolute; left: -8px; top: 16px; width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--primary); background: white; z-index: 1; }
+.flow-step .step-dot.done { background: var(--green); border-color: var(--green); }
+.flow-step .step-dot.current { background: var(--primary); border-color: var(--primary); }
+.flow-step .step-content { flex: 1; }
+.flow-step .step-title { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+.flow-step .step-desc { font-size: 13px; color: var(--text-s); line-height: 1.6; }
+
+.account-card { background: var(--border-light); border-radius: 10px; padding: 16px; margin-bottom: 10px; border-left: 4px solid var(--blue); }
+.account-card.ipl { border-left-color: var(--orange); }
+.account-card .ac-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.account-card .ac-name { font-weight: 700; font-size: 14px; }
+.account-card .ac-detail { font-size: 12px; color: var(--text-s); line-height: 1.6; }
+
+.mock-form { background: var(--border-light); border-radius: 10px; padding: 16px; margin: 10px 0; }
+.mock-form .form-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.mock-form .form-row:last-child { margin-bottom: 0; }
+.mock-form label { font-size: 13px; font-weight: 600; min-width: 110px; }
+.mock-form select, .mock-form input[type="text"], .mock-form input[type="number"] {
+    padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; background: white; flex: 1; max-width: 300px;
+}
+
+.scenario-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 14px; }
+.scenario-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.scenario-card .sc-tags { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.data-table th { text-align: left; padding: 10px 12px; background: var(--border-light); font-weight: 600; font-size: 12px; color: var(--text-s); border-bottom: 2px solid var(--border); }
+.data-table td { padding: 10px 12px; border-bottom: 1px solid var(--border-light); vertical-align: top; }
+
+.empty-state { text-align: center; padding: 40px 20px; }
+.empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state .empty-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+.empty-state .empty-desc { font-size: 13px; color: var(--text-s); margin-bottom: 16px; line-height: 1.6; }
+
+/* Beneficiary card */
+.bene-card { background: var(--border-light); border-radius: 10px; padding: 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: all .15s; border: 2px solid transparent; }
+.bene-card:hover { border-color: var(--primary); background: var(--primary-light); }
+.bene-card.selected { border-color: var(--primary); background: var(--primary-light); }
+.bene-card .bene-avatar { width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #6366f1, #a78bfa); display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+.bene-card .bene-info { flex: 1; }
+.bene-card .bene-name { font-weight: 700; font-size: 13px; }
+.bene-card .bene-detail { font-size: 11px; color: var(--text-s); }
+.bene-card .bene-check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; }
+.bene-card.selected .bene-check { background: var(--primary); border-color: var(--primary); color: white; }
+
+/* Sub-scenario */
+.sub-scenario { display: none; }
+.sub-scenario.active { display: block; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-icon">MP</div>
+        Merchant Portal
+    </div>
+
+    <div class="menu-group">
+        <div class="menu-group-label" style="color:#10b981"><span class="dot" style="background:#10b981"></span> ASSETS</div>
+        <div class="menu-item" data-page="fiat-accounts"><span class="icon">🏦</span> Fiat Accounts</div>
+        <div class="menu-item" data-page="crypto-wallet"><span class="icon">💎</span> Crypto Wallet</div>
+        <div class="menu-item" data-page="exchange"><span class="icon">🔄</span> Exchange</div>
+    </div>
+
+    <div class="menu-group">
+        <div class="menu-group-label" style="color:#3b82f6"><span class="dot" style="background:#3b82f6"></span> TRANSFER IN</div>
+        <div class="menu-item" data-page="collection-tools"><span class="icon">🛠️</span> Collection Tools</div>
+        <div class="menu-item" data-page="payins"><span class="icon">📥</span> Payins</div>
+        <div class="menu-item" data-page="onramp"><span class="icon">⛓️</span> OnRamp</div>
+    </div>
+
+    <div class="menu-group">
+        <div class="menu-group-label" style="color:#f59e0b"><span class="dot" style="background:#f59e0b"></span> TRANSFER OUT</div>
+        <div class="menu-item" data-page="beneficiary"><span class="icon">👤</span> Beneficiary</div>
+        <div class="menu-item" data-page="payouts"><span class="icon">📤</span> Payouts</div>
+        <div class="menu-item active" data-page="offramp"><span class="icon">💱</span> OffRamp</div>
+        <div class="menu-item" data-page="remittance"><span class="icon">🔀</span> Remittance Orders</div>
+    </div>
+
+    <div class="menu-group">
+        <div class="menu-group-label" style="color:#64748b"><span class="dot" style="background:#64748b"></span> OTHER</div>
+        <div class="menu-item"><span class="icon">📊</span> Reports</div>
+        <div class="menu-item"><span class="icon">⚙️</span> Settings</div>
+    </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<!-- ==================== OffRamp 主页面 ==================== -->
+<div class="page active" id="page-offramp">
+    <div class="page-header">
+        <div class="breadcrumb">Transfer Out / <span>OffRamp</span></div>
+        <h1>OffRamp（数币→法币）</h1>
+        <p>将数币钱包中的USDT/USDC承兑为法币，入账到法币账户或直接付款给收款人银行</p>
+    </div>
+
+    <div class="card">
+        <h3>📋 OffRamp 概览</h3>
+        <div class="note-box note-info">
+            <strong>OffRamp = 数币→法币承兑</strong><br>
+            • <strong>资金来源：</strong>BB数币钱包（USDT/USDC）<br>
+            • <strong>承兑引擎：</strong>BB（固定）<br>
+            • <strong>目标：</strong>法币入账到法币账户（BB/IPL），或直接付款到收款人银行账户<br>
+            • <strong>商户不感知SP：</strong>商户只看到"数币钱包"和"法币账户"/"收款人"
+        </div>
+
+        <div style="display:flex; gap:10px; margin-bottom:16px;">
+            <button class="btn btn-primary" onclick="switchScenario('bb-fiat')">+ 发起 OffRamp</button>
+            <button class="btn btn-outline">📋 OffRamp 订单列表</button>
+        </div>
+    </div>
+
+    <!-- ===== 场景选择 ===== -->
+    <div class="card">
+        <h3>🔀 OffRamp 场景交互（按目标分）</h3>
+        <div class="scenario-tabs">
+            <button class="scenario-tab active" onclick="switchScenario('bb-fiat')">① BB数币→BB法币</button>
+            <button class="scenario-tab" onclick="switchScenario('bb-beneficiary')">② BB数币→收款人银行(BB)</button>
+            <button class="scenario-tab" onclick="switchScenario('ipl-fiat')">③ BB数币→IPL法币</button>
+            <button class="scenario-tab" onclick="switchScenario('ipl-beneficiary')">④ BB数币→收款人银行(IPL)</button>
+        </div>
+
+        <!-- ===== 场景①：BB数币钱包→BB法币账户 ===== -->
+        <div class="scenario-panel active" id="scenario-bb-fiat">
+            <div class="scenario-card">
+                <h4>① BB 数币钱包 → BB 法币账户 <span class="tag tag-bb">BB内部</span></h4>
+                <div class="sc-tags">
+                    <span class="tag tag-bb">来源: BB数币钱包 USDT</span>
+                    <span class="tag tag-bb">承兑引擎: BB</span>
+                    <span class="tag tag-active">目标: BB法币账户 USD</span>
+                </div>
+
+                <div class="note-box note-green">
+                    <strong>场景说明：</strong>商户将BB数币钱包中的USDT承兑为USD，入账到BB法币账户。<br>
+                    <strong>底层：</strong>BB内部完成，数币钱包扣USDT → BB承兑 → USD入账到BB法币账户。<br>
+                    <strong>最简单的OffRamp场景</strong>，无跨SP，资金留在BB体系内。
+                </div>
+
+                <div class="divider"></div>
+                <h4>交互流程</h4>
+
+                <div class="flow-container">
+                    <div class="flow-step">
+                        <div class="step-dot done"></div>
+                        <div class="step-content">
+                            <div class="step-title">Step 1：选择OffRamp方式</div>
+                            <div class="step-desc">商户进入OffRamp页面，选择"承兑到法币账户"。</div>
+                            <div class="mock-form">
+                                <div class="form-row">
+                                    <label>OffRamp目标</label>
+                                    <select>
+                                        <option>🏦 承兑到法币账户（数币→法币，入账到自己的法币账户）</option>
+                                        <option>🏧 承兑并付款到收款人银行（数币→法币→直接付给他人）</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-step">
+                        <div class="step-dot done"></div>
+                        <div class="step-content">
+                            <div class="step-title">Step 2：输入承兑信息</div>
+                            <div class="step-desc">选择来源币种、金额、目标法币。</div>
+                            <div class="mock-form">
+                                <div class="form-row">
+                                    <label>来源钱包</label>
+                                    <select>
+                                        <option>💎 USDT (TRC-20) — 可用: 25,000.00 USDT</option>
+                                        <option>💎 USDC (ERC-20) — 可用: 8,500.00 USDC</option>
+                                    </select>
+                                </div>
+                                <div class="form-row">
+                                    <label>承兑金额</label>
+                                    <input type="number" value="10000" style="max-width:150px;"> <span style="font-size:13px; color:var(--text-s);">USDT</span>
+                                </div>
+                                <div class="form-row">
+                                    <label>目标法币</label>
+                                    <select>
+                                        <option>USD — 美元</option>
+                                        <option>EUR — 欧元</option>
+                                    </select>
+                                </div>
+                                <div class="form-row">
+                                    <label>实时汇率</label>
+                                    <span style="font-size:14px; font-weight:700; color:var(--green);">1 USDT = 1.0005 USD</span>
+                                </div>
+                                <div class="form-row">
+                                    <label>预计到账</label>
+                                    <span style="font-size:14px; font-weight:700;">≈ $9,955.00 USD</span>
+                                </div>
+                                <div class="form-row">
+                                    <label>手续费</label>
+                                    <span style="font-size:13px; color:var(--text-s);">$50.00 (0.5%)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-step">
+                        <div class="step-dot done"></div>
+                        <div class="step-content">
+                            <div class="step-title">Step 3：确认并提交</div>
+                            <div class="mock-form">
+                                <div style="background:white; border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:10px;">
+                                    <div style="font-size:12px; color:var(--text-m); margin-bottom:8px;">确认OffRamp详情</div>
+                                    <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span>扣款</span><strong>10,000.00 USDT</strong></div>
+                                    <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span>手续费</span><strong>$50.00</strong></div>
+                                    <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span>汇率</span><strong>1 USDT = 1.0005 USD</strong></div>
+                                    <div style="height:1px; background:var(--border); margin:8px 0;"></div>
+                                    <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:14px; font-weight:700;"><span>预计入账</span><span style="color:var(--green);">$9,955.00 USD → 法币账户</span></div>
+                                </div>
+                                <button class="btn btn-primary" style="width:100%;">🔐 确认OffRamp（需二次验证）</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-step">
+                        <div class="step-dot current"></div>
+                        <div class="step-content">
+                            <div class="step-title">Step 4：承兑处理 & 入账</div>
+                            <div class="note-box note-green">
+                                <strong>全链路视图：</strong><br>
+                                ① 数币扣款（BB数币钱包 -10,000 USDT） ✅ 完成<br>
+                                ② 承兑处理（USDT→USD） ⏳ 处理中<br>
+                                ③ 法币入账（BB法币账户 +$9,955.00） ⏳ 等待
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 场景②：BB数币钱包→收款人银行（BB付款） ===== -->
+        <div class="scenario-panel" id="scenario-bb-beneficiary">
+            <div class="scenario-card">
+                <h4>② BB 数币钱包 → 收款人银行（BB出款） <span class="tag tag-bb">BB</span></h4>
+                <div class="sc-tags">
+                    <span class="tag tag-bb">来源: BB数币钱包 USDT</span>
+                    <span class="tag tag-bb">承兑引擎: BB</span>
+                    <span class="tag tag-bb">出款: BB代收付/XPAY POBO</span>
+                    <span class="tag tag-active">目标: 收款人银行账户</span>
+                </div>
+
+                <div class="note-box note-info">
+                    <strong>场景说明：</strong>商户将USDT承兑为USD，<strong>不入自己的法币账户</strong>，而是直接付款到收款人（Beneficiary）的银行账户。<br>
+                    <strong>底层：</strong>BB数币钱包扣USDT → BB承兑 → BB通过代收付账户/XPAY POBO出款到收款人银行。<br>
+                    <strong>等同于：</strong>OffRamp + Payout 一步完成（编排层）。
+                </div>
+
+                <div class="divider"></div>
+
+                <!-- 子场景：收款人状态 -->
+                <div class="scenario-tabs" style="margin-bottom:16px;">
+                    <button class="scenario-tab active" onclick="switchSubScenario('bb-bene', 'no-bene')">没有收款人</button>
+                    <button class="scenario-tab" onclick="switchSubScenario('bb-bene', 'has-bene')">有可用收款人</button>
+                </div>
+
+                <!-- 没有收款人 -->
+                <div class="sub-scenario active" id="bb-bene-no-bene">
+                    <div class="scenario-card" style="border:1px dashed var(--orange-border); background:var(--orange-bg);">
+                        <h4>⚠️ 还没有收款人 — 需先添加</h4>
+                        <div class="empty-state">
+                            <div class="empty-icon">👤</div>
+                            <div class="empty-title">暂无可用的收款人</div>
+                            <div class="empty-desc">
+                                您还没有添加收款人（Beneficiary），无法直接付款到银行账户。<br>
+                                请先前往 <strong>Beneficiary</strong> 添加收款人信息。
+                            </div>
+                            <div style="display:flex; gap:10px; justify-content:center;">
+                                <button class="btn btn-primary">👤 前往添加收款人 →</button>
+                                <button class="btn btn-outline">🏦 改为承兑到法币账户</button>
+                            </div>
+                        </div>
+                        <div class="note-box note-info">
+                            <strong>交互说明：</strong><br>
+                            • 商户选择"承兑并付款到收款人银行"时，系统检测到没有可用收款人<br>
+                            • 展示空状态引导，提供两个选择：<br>
+                            &nbsp;&nbsp;1. 前往 Beneficiary 添加收款人<br>
+                            &nbsp;&nbsp;2. 改为承兑到自己的法币账户（场景①）<br>
+                            • 也可以在OffRamp流程中内嵌"快速添加收款人"弹窗
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 有可用收款人 -->
+                <div class="sub-scenario" id="bb-bene-has-bene">
+                    <div class="scenario-card">
+                        <h4>✅ 有可用收款人 — 正常OffRamp+付款流程</h4>
+
+                        <div class="flow-container">
+                            <div class="flow-step">
+                                <div class="step-dot done"></div>
+                                <div class="step-content">
+                                    <div class="step-title">Step 1：选择OffRamp方式</div>
+                                    <div class="mock-form">
+                                        <div class="form-row">
+                                            <label>OffRamp目标</label>
+                                            <select>
+                                                <option>🏧 承兑并付款到收款人银行</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flow-step">
+                                <div class="step-dot done"></div>
+                                <div class="step-content">
+                                    <div class="step-title">Step 2：选择收款人</div>
+                                    <div class="step-desc">从已添加的收款人列表中选择，或快速新增。</div>
+
+                                    <div style="margin:10px 0;">
+                                        <div class="bene-card selected" onclick="selectBene(this)">
+                                            <div class="bene-avatar">JD</div>
+                                            <div class="bene-info">
+                                                <div class="bene-name">John Doe Trading Ltd.</div>
+                                                <div class="bene-detail">Bank: HSBC Hong Kong · Account: ****5678 · SWIFT: HSBCHKHH</div>
+                                            </div>
+                                            <div class="bene-check">✓</div>
+                                        </div>
+                                        <div class="bene-card" onclick="selectBene(this)">
+                                            <div class="bene-avatar" style="background:linear-gradient(135deg,#f59e0b,#fbbf24);">SM</div>
+                                            <div class="bene-info">
+                                                <div class="bene-name">Smith Manufacturing Co.</div>
+                                                <div class="bene-detail">Bank: DBS Singapore · Account: ****1234 · SWIFT: DBSSSGSG</div>
+                                            </div>
+                                            <div class="bene-check"></div>
+                                        </div>
+                                        <div class="bene-card" onclick="selectBene(this)">
+                                            <div class="bene-avatar" style="background:linear-gradient(135deg,#10b981,#34d399);">WL</div>
+                                            <div class="bene-info">
+                                                <div class="bene-name">Wang Li International</div>
+                                                <div class="bene-detail">Bank: BOC China · Account: ****9012 · SWIFT: BKCHCNBJ</div>
+                                            </div>
+                                            <div class="bene-check"></div>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-outline btn-sm">+ 快速添加新收款人</button>
+                                </div>
+                            </div>
+
+                            <div class="flow-step">
+                                <div class="step-dot done"></div>
+                                <div class="step-content">
+                                    <div class="step-title">Step 3：输入承兑 & 付款信息</div>
+                                    <div class="mock-form">
+                                        <div class="form-row">
+                                            <label>来源钱包</label>
+                                            <select><option>💎 USDT (TRC-20) — 可用: 25,000.00 USDT</option></select>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>付款金额</label>
+                                            <input type="number" value="5000" style="max-width:150px;"> <span style="font-size:13px; color:var(--text-s);">USD（收款人实收）</span>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>汇率</label>
+                                            <span style="font-size:14px; font-weight:700; color:var(--green);">1 USDT = 1.0005 USD</span>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>需扣USDT</label>
+                                            <span style="font-size:14px; font-weight:700;">≈ 5,022.50 USDT（含手续费）</span>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>付款备注</label>
+                                            <input type="text" value="Invoice #INV-2026-0215" style="max-width:300px;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flow-step">
+                                <div class="step-dot done"></div>
+                                <div class="step-content">
+                                    <div class="step-title">Step 4：确认详情</div>
+                                    <div class="mock-form">
+                                        <div style="background:white; border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:10px;">
+                                            <div style="font-size:12px; color:var(--text-m); margin-bottom:8px;">确认OffRamp + 付款详情</div>
+                                            <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span>收款人</span><strong>John Doe Trading Ltd.</strong></div>
+                                            <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span>收款银行</span><strong>HSBC Hong Kong</strong></div>
+                                            <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span>收款人实收</span><strong>$5,000.00 USD</strong></div>
+                                            <div style="height:1px; background:var(--border); margin:8px 0;"></div>
+                                            <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span>扣款</span><strong>5,022.50 USDT</strong></div>
+                                            <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span>承兑手续费</span><strong>$25.00</strong></div>
+                                            <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span>付款手续费</span><strong>$15.00</strong></div>
+                                            <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span>备注</span><span>Invoice #INV-2026-0215</span></div>
+                                        </div>
+                                        <button class="btn btn-primary" style="width:100%;">🔐 确认OffRamp + 付款（需二次验证）</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flow-step">
+                                <div class="step-dot current"></div>
+                                <div class="step-content">
+                                    <div class="step-title">Step 5：承兑 + 出款处理</div>
+                                    <div class="note-box note-green">
+                                        <strong>全链路视图：</strong><br>
+                                        ① 数币扣款（BB数币钱包 -5,022.50 USDT） ✅ 完成<br>
+                                        ② 承兑处理（USDT→USD） ⏳ 处理中<br>
+                                        ③ BB出款到收款人银行（$5,000 → HSBC HK ****5678） ⏳ 等待<br>
+                                        ④ 收款人到账 ⏳ 预计1-3个工作日
+                                    </div>
+                                    <div class="note-box note-info">
+                                        <strong>底层（商户不可见）：</strong>BB通过代收付账户或XPAY POBO出款，由BB内部决策走哪个渠道。
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 场景③：BB数币钱包→IPL法币账户 ===== -->
+        <div class="scenario-panel" id="scenario-ipl-fiat">
+            <div class="scenario-card">
+                <h4>③ BB 数币钱包 → IPL 法币账户 <span class="tag tag-bb">BB承兑</span> → <span class="tag tag-ipl">IPL入账</span></h4>
+                <div class="sc-tags">
+                    <span class="tag tag-bb">来源: BB数币钱包 USDT</span>
+                    <span class="tag tag-bb">承兑引擎: BB</span>
+                    <span class="tag tag-ipl">目标: IPL法币账户 USD</span>
+                </div>
+
+                <div class="note-box note-warn">
+                    <strong>场景说明：</strong>商户将USDT承兑为USD，入账到<strong>IPL法币账户</strong>（而非BB法币账户）。<br>
+                    <strong>关键：</strong>承兑在BB，但目标账户在IPL → 需要<strong>跨SP资金划转</strong>：BB数币扣款 → BB承兑 → BB法币 → 划转到IPL法币账户。<br>
+                    <strong>商户不感知：</strong>商户只看到"承兑到法币账户"，系统根据TP配置的优先级或商户选择决定入到哪个法币账户。<br>
+                    <strong>前提：</strong>商户已开通IPL法币账户。
+                </div>
+
+                <div class="divider"></div>
+                <h4>交互流程</h4>
+
+                <div class="flow-container">
+                    <div class="flow-step">
+                        <div class="step-dot done"></div>
+                        <div class="step-content">
+                            <div class="step-title">Step 1：选择OffRamp方式 & 目标账户</div>
+                            <div class="step-desc">
+                                商户选择"承兑到法币账户"。<br>
+                                <strong>如果TP配置了"IPL+BB"模式：</strong>商户可以选择入到哪个法币账户。<br>
+                                <strong>如果TP配置了"仅IPL"模式：</strong>系统自动入到IPL，商户无需选择。
+                            </div>
+                            <div class="mock-form">
+                                <div class="form-row">
+                                    <label>OffRamp目标</label>
+                                    <select><option>🏦 承兑到法币账户</option></select>
+                                </div>
+                                <div class="form-row">
+                                    <label>目标法币账户</label>
+                                    <select>
+                                        <option>🏦 法币账户 A（系统默认推荐）</option>
+                                        <option>🏦 法币账户 B</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="note-box note-purple" style="margin-top:8px;">
+                                <strong>商户视角：</strong>商户看到的是"法币账户A/B"，不知道A是BB、B是IPL。<br>
+                                <strong>系统推荐：</strong>根据TP配置的优先级，系统默认推荐一个账户。<br>
+                                <strong>IPL+BB模式下：</strong>商户可以切换，选择入到另一个法币账户。
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-step">
+                        <div class="step-dot done"></div>
+                        <div class="step-content">
+                            <div class="step-title">Step 2：输入承兑信息</div>
+                            <div class="step-desc">与场景①完全相同的输入界面。</div>
+                            <div class="mock-form">
+                                <div class="form-row">
+                                    <label>来源钱包</label>
+                                    <select><option>💎 USDT (TRC-20) — 可用: 25,000.00 USDT</option></select>
+                                </div>
+                                <div class="form-row">
+                                    <label>承兑金额</label>
+                                    <input type="number" value="10000" style="max-width:150px;"> <span style="font-size:13px; color:var(--text-s);">USDT</span>
+                                </div>
+                                <div class="form-row">
+                                    <label>目标法币</label>
+                                    <select><option>USD</option></select>
+                                </div>
+                                <div class="form-row">
+                                    <label>预计到账</label>
+                                    <span style="font-size:14px; font-weight:700;">≈ $9,955.00 USD → 法币账户 B</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-step">
+                        <div class="step-dot done"></div>
+                        <div class="step-content">
+                            <div class="step-title">Step 3：确认并提交</div>
+                            <div class="mock-form">
+                                <div style="background:white; border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:10px;">
+                                    <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span>扣款</span><strong>10,000.00 USDT</strong></div>
+                                    <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span>手续费</span><strong>$50.00</strong></div>
+                                    <div style="height:1px; background:var(--border); margin:8px 0;"></div>
+                                    <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:14px; font-weight:700;"><span>预计入账</span><span style="color:var(--green);">$9,955.00 USD → 法币账户 B</span></div>
+                                </div>
+                                <button class="btn btn-primary" style="width:100%;">🔐 确认OffRamp</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-step">
+                        <div class="step-dot current"></div>
+                        <div class="step-content">
+                            <div class="step-title">Step 4：跨SP处理 & 入账</div>
+                            <div class="note-box note-green">
+                                <strong>全链路视图（商户看到简化版）：</strong><br>
+                                ① 数币扣款（-10,000 USDT） ✅ 完成<br>
+                                ② 承兑处理（USDT→USD） ⏳ 处理中<br>
+                                ③ 法币入账（+$9,955.00 → 法币账户 B） ⏳ 等待
+                            </div>
+                            <div class="note-box note-info">
+                                <strong>底层全链路（商户不可见，TP可在交易中心查看）：</strong><br>
+                                ① BB数币钱包扣款 -10,000 USDT ✅<br>
+                                ② BB承兑引擎处理 USDT→USD ⏳<br>
+                                ③ BB法币账户入账 +$9,955 ✅<br>
+                                ④ BB→IPL 法币划转 $9,955（SP间互转）⏳<br>
+                                ⑤ IPL法币账户入账 +$9,955 ✅
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 场景④：BB数币钱包→收款人银行（IPL出款） ===== -->
+        <div class="scenario-panel" id="scenario-ipl-beneficiary">
+            <div class="scenario-card">
+                <h4>④ BB 数币钱包 → 收款人银行（IPL出款） <span class="tag tag-bb">BB承兑</span> → <span class="tag tag-ipl">IPL POBO</span></h4>
+                <div class="sc-tags">
+                    <span class="tag tag-bb">来源: BB数币钱包 USDT</span>
+                    <span class="tag tag-bb">承兑引擎: BB</span>
+                    <span class="tag tag-ipl">出款: IPL POBO</span>
+                    <span class="tag tag-active">目标: 收款人银行账户</span>
+                </div>
+
+                <div class="note-box note-warn">
+                    <strong>场景说明：</strong>商户将USDT承兑为USD，直接付款到收款人银行。<br>
+                    <strong>关键区别：</strong>与场景②不同，这里<strong>实际出款方是IPL</strong>（通过IPL POBO），不是BB。<br>
+                    <strong>底层：</strong>BB数币扣款 → BB承兑 → BB法币 → 划转到IPL → IPL POBO出款到收款人银行。<br>
+                    <strong>商户不感知：</strong>商户只看到"承兑并付款到收款人"，不知道底层走的是IPL出款。<br>
+                    <strong>适用场景：</strong>TP配置了IPL优先出款，或BB出款渠道不支持某些目标国家/银行。
+                </div>
+
+                <div class="divider"></div>
+
+                <!-- 子场景：收款人状态 -->
+                <div class="scenario-tabs" style="margin-bottom:16px;">
+                    <button class="scenario-tab active" onclick="switchSubScenario('ipl-bene', 'no-bene')">没有收款人</button>
+                    <button class="scenario-tab" onclick="switchSubScenario('ipl-bene', 'has-bene')">有可用收款人</button>
+                </div>
+
+                <!-- 没有收款人 -->
+                <div class="sub-scenario active" id="ipl-bene-no-bene">
+                    <div class="scenario-card" style="border:1px dashed var(--orange-border); background:var(--orange-bg);">
+                        <h4>⚠️ 还没有收款人 — 需先添加</h4>
+                        <div class="empty-state">
+                            <div class="empty-icon">👤</div>
+                            <div class="empty-title">暂无可用的收款人</div>
+                            <div class="empty-desc">
+                                您还没有添加收款人（Beneficiary），无法直接付款到银行账户。<br>
+                                请先前往 <strong>Beneficiary</strong> 添加收款人信息。
+                            </div>
+                            <div style="display:flex; gap:10px; justify-content:center;">
+                                <button class="btn btn-primary">👤 前往添加收款人 →</button>
+                                <button class="btn btn-outline">🏦 改为承兑到法币账户</button>
+                            </div>
+                        </div>
+                        <div class="note-box note-info">
+                            <strong>交互说明：</strong>与场景②的"没有收款人"交互完全一致。<br>
+                            商户不感知底层出款走BB还是IPL，所以空状态引导也一样。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 有可用收款人 -->
+                <div class="sub-scenario" id="ipl-bene-has-bene">
+                    <div class="scenario-card">
+                        <h4>✅ 有可用收款人 — 正常OffRamp+付款流程（IPL出款）</h4>
+
+                        <div class="flow-container">
+                            <div class="flow-step">
+                                <div class="step-dot done"></div>
+                                <div class="step-content">
+                                    <div class="step-title">Step 1：选择OffRamp方式</div>
+                                    <div class="mock-form">
+                                        <div class="form-row">
+                                            <label>OffRamp目标</label>
+                                            <select><option>🏧 承兑并付款到收款人银行</option></select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flow-step">
+                                <div class="step-dot done"></div>
+                                <div class="step-content">
+                                    <div class="step-title">Step 2：选择收款人</div>
+                                    <div class="step-desc">与场景②完全相同的收款人选择界面。</div>
+                                    <div style="margin:10px 0;">
+                                        <div class="bene-card selected">
+                                            <div class="bene-avatar">JD</div>
+                                            <div class="bene-info">
+                                                <div class="bene-name">John Doe Trading Ltd.</div>
+                                                <div class="bene-detail">Bank: HSBC Hong Kong · Account: ****5678 · SWIFT: HSBCHKHH</div>
+                                            </div>
+                                            <div class="bene-check">✓</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flow-step">
+                                <div class="step-dot done"></div>
+                                <div class="step-content">
+                                    <div class="step-title">Step 3：输入承兑 & 付款信息</div>
+                                    <div class="step-desc">与场景②完全相同的输入界面。商户不感知出款走BB还是IPL。</div>
+                                    <div class="mock-form">
+                                        <div class="form-row">
+                                            <label>来源钱包</label>
+                                            <select><option>💎 USDT (TRC-20) — 可用: 25,000.00 USDT</option></select>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>付款金额</label>
+                                            <input type="number" value="5000" style="max-width:150px;"> <span style="font-size:13px; color:var(--text-s);">USD（收款人实收）</span>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>需扣USDT</label>
+                                            <span style="font-size:14px; font-weight:700;">≈ 5,022.50 USDT（含手续费）</span>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>付款备注</label>
+                                            <input type="text" value="Invoice #INV-2026-0215" style="max-width:300px;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flow-step">
+                                <div class="step-dot done"></div>
+                                <div class="step-content">
+                                    <div class="step-title">Step 4：确认详情</div>
+                                    <div class="mock-form">
+                                        <div style="background:white; border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:10px;">
+                                            <div style="font-size:12px; color:var(--text-m); margin-bottom:8px;">确认OffRamp + 付款详情</div>
+                                            <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span>收款人</span><strong>John Doe Trading Ltd.</strong></div>
+                                            <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span>收款银行</span><strong>HSBC Hong Kong</strong></div>
+                                            <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span>收款人实收</span><strong>$5,000.00 USD</strong></div>
+                                            <div style="height:1px; background:var(--border); margin:8px 0;"></div>
+                                            <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span>扣款</span><strong>5,022.50 USDT</strong></div>
+                                            <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span>承兑手续费</span><strong>$25.00</strong></div>
+                                            <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span>付款手续费</span><strong>$15.00</strong></div>
+                                        </div>
+                                        <button class="btn btn-primary" style="width:100%;">🔐 确认OffRamp + 付款</button>
+                                    </div>
+                                    <div class="note-box note-info" style="margin-top:8px;">
+                                        <strong>商户视角：</strong>确认页面与场景②完全一致，商户不知道底层出款走IPL。
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flow-step">
+                                <div class="step-dot current"></div>
+                                <div class="step-content">
+                                    <div class="step-title">Step 5：跨SP承兑 + 出款处理</div>
+                                    <div class="note-box note-green">
+                                        <strong>全链路视图（商户看到简化版）：</strong><br>
+                                        ① 数币扣款（-5,022.50 USDT） ✅ 完成<br>
+                                        ② 承兑处理（USDT→USD） ⏳ 处理中<br>
+                                        ③ 付款到收款人银行（$5,000 → HSBC HK ****5678） ⏳ 等待<br>
+                                        ④ 收款人到账 ⏳ 预计1-3个工作日
+                                    </div>
+                                    <div class="note-box note-info">
+                                        <strong>底层全链路（商户不可见，TP可在交易中心查看）：</strong><br>
+                                        ① BB数币钱包扣款 -5,022.50 USDT ✅<br>
+                                        ② BB承兑引擎处理 USDT→USD ⏳<br>
+                                        ③ BB法币账户入账 +$5,000 ✅<br>
+                                        ④ BB→IPL 法币划转 $5,000（SP间互转）⏳<br>
+                                        ⑤ IPL法币账户入账 +$5,000 ✅<br>
+                                        ⑥ IPL POBO出款到收款人银行 $5,000 ⏳<br>
+                                        ⑦ 收款人到账 ⏳
+                                    </div>
+                                    <div class="note-box note-warn">
+                                        <strong>与场景②的底层区别：</strong><br>
+                                        • 场景②：BB承兑 → BB直接出款（BB代收付/XPAY POBO）<br>
+                                        • 场景④：BB承兑 → BB法币划转到IPL → IPL POBO出款<br>
+                                        • <strong>商户完全不感知这个区别</strong>，由TP配置的出款优先级决定走哪条路径
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== OffRamp 场景汇总表 ===== -->
+    <div class="card">
+        <h3>📊 OffRamp 四大场景汇总</h3>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>场景</th>
+                    <th>来源</th>
+                    <th>承兑</th>
+                    <th>目标</th>
+                    <th>出款方</th>
+                    <th>是否跨SP</th>
+                    <th>收款人分支</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>① BB→BB法币</strong></td>
+                    <td>BB数币钱包</td>
+                    <td>BB</td>
+                    <td>BB法币账户</td>
+                    <td>—</td>
+                    <td>❌ 否</td>
+                    <td>—</td>
+                </tr>
+                <tr>
+                    <td><strong>② BB→收款人(BB)</strong></td>
+                    <td>BB数币钱包</td>
+                    <td>BB</td>
+                    <td>收款人银行</td>
+                    <td>BB</td>
+                    <td>❌ 否</td>
+                    <td>无收款人 / 有收款人</td>
+                </tr>
+                <tr>
+                    <td><strong>③ BB→IPL法币</strong></td>
+                    <td>BB数币钱包</td>
+                    <td>BB</td>
+                    <td>IPL法币账户</td>
+                    <td>—</td>
+                    <td>✅ 是（BB→IPL）</td>
+                    <td>—</td>
+                </tr>
+                <tr>
+                    <td><strong>④ BB→收款人(IPL)</strong></td>
+                    <td>BB数币钱包</td>
+                    <td>BB</td>
+                    <td>收款人银行</td>
+                    <td>IPL POBO</td>
+                    <td>✅ 是（BB→IPL）</td>
+                    <td>无收款人 / 有收款人</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="note-box note-info" style="margin-top:12px;">
+            <strong>核心原则：</strong><br>
+            • <strong>商户不感知SP</strong>：不管底层走BB还是IPL出款，商户看到的交互流程一致<br>
+            • <strong>承兑引擎固定BB</strong>：所有OffRamp的数币→法币承兑都由BB处理<br>
+            • <strong>出款路径由TP配置决定</strong>：BB优先→走场景①②，IPL优先→走场景③④<br>
+            • <strong>跨SP自动处理</strong>：BB→IPL的法币划转由系统自动完成<br>
+            • <strong>收款人状态分支</strong>：没有收款人→引导添加，有收款人→选择后继续
+        </div>
+    </div>
+
+    <!-- ===== OnRamp vs OffRamp 对比 ===== -->
+    <div class="card">
+        <h3>🔄 OnRamp vs OffRamp 对称关系</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>维度</th><th>OnRamp（法币→数币）</th><th>OffRamp（数币→法币）</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>方向</strong></td><td>法币 → USDT/USDC</td><td>USDT/USDC → 法币</td></tr>
+                <tr><td><strong>资金来源</strong></td><td>法币账户余额 / VA收款入金</td><td>BB数币钱包余额</td></tr>
+                <tr><td><strong>承兑引擎</strong></td><td>BB（固定）</td><td>BB（固定）</td></tr>
+                <tr><td><strong>目标</strong></td><td>BB数币钱包</td><td>法币账户 / 收款人银行</td></tr>
+                <tr><td><strong>跨SP场景</strong></td><td>IPL法币/VA → BB承兑</td><td>BB承兑 → IPL法币/POBO</td></tr>
+                <tr><td><strong>菜单位置</strong></td><td>Transfer In → OnRamp</td><td>Transfer Out → OffRamp</td></tr>
+                <tr><td><strong>编排层</strong></td><td>收→换→入账（钱进来换形态）</td><td>换→付（钱出去换形态）</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Placeholder pages -->
+<div class="page" id="page-fiat-accounts"><div class="page-header"><h1>🏦 Fiat Accounts</h1><p>不在本原型范围内</p></div></div>
+<div class="page" id="page-crypto-wallet"><div class="page-header"><h1>💎 Crypto Wallet</h1><p>不在本原型范围内</p></div></div>
+<div class="page" id="page-exchange"><div class="page-header"><h1>🔄 Exchange</h1><p>不在本原型范围内</p></div></div>
+<div class="page" id="page-collection-tools"><div class="page-header"><h1>🛠️ Collection Tools</h1><p>不在本原型范围内</p></div></div>
+<div class="page" id="page-payins"><div class="page-header"><h1>📥 Payins</h1><p>不在本原型范围内</p></div></div>
+<div class="page" id="page-onramp"><div class="page-header"><h1>⛓️ OnRamp</h1><p>请查看 mp-onramp-interaction.html</p></div></div>
+<div class="page" id="page-beneficiary"><div class="page-header"><h1>👤 Beneficiary</h1><p>不在本原型范围内</p></div></div>
+<div class="page" id="page-payouts"><div class="page-header"><h1>📤 Payouts</h1><p>不在本原型范围内</p></div></div>
+<div class="page" id="page-remittance"><div class="page-header"><h1>🔀 Remittance Orders</h1><p>不在本原型范围内</p></div></div>
+
+</div>
+
+<script>
+// Page navigation
+document.querySelectorAll('.menu-item').forEach(item => {
+    item.addEventListener('click', () => {
+        const pageId = item.dataset.page;
+        if (!pageId) return;
+        document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+        item.classList.add('active');
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        const page = document.getElementById('page-' + pageId);
+        if (page) page.classList.add('active');
+    });
+});
+
+// Scenario switching
+function switchScenario(id) {
+    document.querySelectorAll('.scenario-panel').forEach(p => p.classList.remove('active'));
+    const panel = document.getElementById('scenario-' + id);
+    if (panel) panel.classList.add('active');
+    // Update tabs
+    document.querySelectorAll('.card > .scenario-tabs > .scenario-tab').forEach(t => {
+        t.classList.remove('active');
+        if (t.getAttribute('onclick') && t.getAttribute('onclick').includes("'" + id + "'")) {
+            t.classList.add('active');
+        }
+    });
+}
+
+// Sub-scenario switching
+function switchSubScenario(prefix, state) {
+    // Find parent scenario panel
+    const allSubs = document.querySelectorAll('[id^="' + prefix + '-"]');
+    allSubs.forEach(s => {
+        if (s.classList.contains('sub-scenario')) {
+            s.classList.remove('active');
+            s.style.display = 'none';
+        }
+    });
+    const target = document.getElementById(prefix + '-' + state);
+    if (target) {
+        target.classList.add('active');
+        target.style.display = 'block';
+    }
+    // Update sub tabs
+    if (event && event.target) {
+        const parentTabs = event.target.closest('.scenario-tabs');
+        if (parentTabs) {
+            parentTabs.querySelectorAll('.scenario-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+    }
+}
+
+// Beneficiary selection
+function selectBene(el) {
+    const parent = el.closest('.flow-step') || el.parentElement;
+    parent.querySelectorAll('.bene-card').forEach(c => {
+        c.classList.remove('selected');
+        c.querySelector('.bene-check').textContent = '';
+    });
+    el.classList.add('selected');
+    el.querySelector('.bene-check').textContent = '✓';
+}
+</script>
+</body>
+</html>
