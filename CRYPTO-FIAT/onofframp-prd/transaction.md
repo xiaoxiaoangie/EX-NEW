@@ -21,6 +21,13 @@
 3. [业务侧定义与交易引擎](#业务侧定义与交易引擎)
 4. [各交易类型详细流程](#各交易类型详细流程)
 5. [承兑的两种模式](#承兑的两种模式)
+   - 5.1 [模式A：纯BB承兑](#51-模式a纯bb承兑单sp内部账户划转)
+   - 5.2 [模式B：IPL-BB打通承兑](#52-模式bipl-bb打通承兑双sp中间户划转)
+   - 5.2.1 [模式B补充：IPL侧同名收款](#521-模式b补充bb数币ipl法币承兑ipl侧为同名收款)
+   - 5.2.2 [IPL/BB间法币账户互转](#522-iplbb间法币账户互转)
+   - 5.2.3 [BB Off-Ramp通过IPL出款](#523-bb-off-ramp-通过ipl出款3笔交易单)
+   - 5.2.4 [IPL On-Ramp到BB](#524-ipl-on-ramp-到bb3笔交易单)
+   - 5.3 [出金（调用外部渠道）](#53-出金调用外部渠道)
 6. [退款流程](#退款流程)
 7. [状态设计](#状态设计)
 
@@ -1495,6 +1502,310 @@ sequenceDiagram
   - IPL视角：这是一笔合规的同名入账，需走IPL收款合规流程
 - **IPL清算可追踪**：IPL侧产生完整的收款交易记录，可在清算中心对账
 - **风控差异**：IPL侧走收款合规流程（AML检查），不是简单的自动通过
+
+---
+
+### 5.2.2 IPL/BB间法币账户互转
+
+**场景：** 商户在IPL和BB都有法币账户，需要在两个SP之间转移法币余额（如IPL USD → BB USD，或BB USD → IPL USD）。
+
+**单据结构：**
+
+```
+商户单 M001 (USD互转, IPL→BB)  ← BB和IPL共享
+    ├── 交易单 T001 (IPL): 出款侧 — IPL商户USD账户扣款，入到BB中间户(在IPL)
+    └── 交易单 T002 (BB): 入款侧 — IPL中间户(在BB)扣款，入到BB商户USD账户
+```
+
+```mermaid
+sequenceDiagram
+    participant WP as 白牌/API
+    participant HUB as EX HUB
+    participant BL as 业务层
+    participant TE as 交易引擎
+    participant IPL_Risk as IPL风控
+    participant BB_Risk as BB风控
+    participant IPL_Account as IPL账户服务
+    participant BB_Account as BB账户服务
+  
+    WP->>HUB: 1. 申请互转(IPL USD → BB USD)
+  
+    rect rgb(240, 248, 255)
+        Note over HUB,BB_Account: 阶段1：创建商户单
+        HUB->>HUB: 2. 创建商户单(BB和IPL共享)
+    end
+  
+    rect rgb(255, 250, 240)
+        Note over HUB,BB_Account: 阶段2：业务校验
+        HUB->>BL: 3. 请求业务校验
+        BL->>BL: 4. 基础校验(IPL USD余额、BB账户状态、权限)
+        BL->>BL: 5. 产品配置(限额)
+    end
+  
+    rect rgb(255, 250, 240)
+        Note over HUB,BB_Account: 阶段3：创建双交易单
+        par 并行创建
+            BL->>TE: 6a. 创建交易单(IPL-出款侧)
+            TE->>TE: 7a. 交易单T001(IPL)
+        and
+            BL->>TE: 6b. 创建交易单(BB-入款侧)
+            TE->>TE: 7b. 交易单T002(BB)
+        end
+    end
+  
+    rect rgb(230, 240, 255)
+        Note over HUB,BB_Account: 阶段4：双侧风控
+        par 并行风控
+            TE->>IPL_Risk: 8a. IPL出款风控
+            IPL_Risk-->>TE: 9a. 通过
+        and
+            TE->>BB_Risk: 8b. BB入款风控
+            BB_Risk-->>TE: 9b. 通过
+        end
+    end
+  
+    rect rgb(255, 240, 245)
+        Note over HUB,BB_Account: 阶段5：记账(中间户划转)
+        par IPL侧
+            TE->>IPL_Account: 10a. 扣款(商户IPL USD账户-)
+            TE->>IPL_Account: 11a. 入账(BB中间户(在IPL)+)
+        and BB侧
+            TE->>BB_Account: 10b. 扣款(IPL中间户(在BB)-)
+            TE->>BB_Account: 11b. 入账(商户BB USD账户+)
+        end
+        TE->>TE: 12. 更新双交易单状态(SUCCESS)
+    end
+  
+    rect rgb(240, 248, 255)
+        Note over HUB,BB_Account: 阶段6：聚合+通知
+        TE->>HUB: 13. 通知完成
+        HUB->>HUB: 14. 更新商户单(SUCCESS)
+        HUB-->>WP: 15. 返回互转结果
+    end
+```
+
+**说明：**
+
+- **商户发起，1个商户单，2笔交易单**（IPL出款1笔 + BB入款1笔）
+- **双侧风控**：IPL出款风控 + BB入款风控，各自独立
+- **中间户划转**：通过IPL/BB各自的中间户完成跨SP资金流转
+- **反向互转**（BB→IPL）逻辑相同，方向相反
+
+---
+
+### 5.2.3 BB Off-Ramp 通过IPL出款（3笔交易单）
+
+**场景：** 商户持有BB USDT，要Off-Ramp换成USD并通过IPL法币付款出去。
+
+**单据结构（3笔交易单）：**
+
+```
+商户单 M001 (Off-Ramp: USDT→USD→付款)  ← BB和IPL共享
+    ├── 交易单 T001 (BB): 承兑 — BB USDT→USD承兑
+    ├── 交易单 T002 (IPL): 入账 — 承兑后USD入到IPL法币账户
+    └── 交易单 T003 (IPL): 付款 — IPL USD付款给收款人
+```
+
+```mermaid
+sequenceDiagram
+    participant WP as 白牌/API
+    participant HUB as EX HUB
+    participant BL as 业务层
+    participant TE as 交易引擎
+    participant FX as 汇率服务
+    participant Pricing as 计费服务
+    participant BB_Risk as BB风控
+    participant IPL_Risk as IPL风控
+    participant BB_Account as BB账户服务
+    participant IPL_Account as IPL账户服务
+    participant Router as 路由引擎
+    participant CO as 渠道服务
+    participant Channel as 渠道/银行
+  
+    WP->>HUB: 1. 申请Off-Ramp(USDT→USD→付款)
+  
+    rect rgb(240, 248, 255)
+        Note over HUB,Channel: 阶段1：创建商户单
+        HUB->>HUB: 2. 创建商户单(BB和IPL共享)
+    end
+  
+    rect rgb(255, 250, 240)
+        Note over HUB,Channel: 阶段2：业务校验
+        HUB->>BL: 3. 请求业务校验
+        BL->>BL: 4. 基础校验(BB USDT余额、IPL账户状态、收款人信息)
+        BL->>BL: 5. 产品配置(限额、货币对)
+    end
+  
+    rect rgb(255, 250, 240)
+        Note over HUB,Channel: 阶段3：创建3笔交易单
+        BL->>TE: 6a. 创建交易单T001(BB-承兑)
+        BL->>TE: 6b. 创建交易单T002(IPL-入账)
+        BL->>TE: 6c. 创建交易单T003(IPL-付款)
+    end
+  
+    rect rgb(240, 255, 240)
+        Note over HUB,Channel: 阶段4：计费+汇率
+        par 并行
+            TE->>Pricing: 7a. 计算承兑费用+付款费用
+            Pricing-->>TE: 8a. 返回费用
+        and
+            TE->>FX: 7b. 查询汇率(USDT/USD)
+            FX-->>TE: 8b. 返回汇率
+        end
+    end
+  
+    rect rgb(255, 245, 238)
+        Note over HUB,Channel: 阶段5：冻结+风控
+        TE->>BB_Account: 9. 冻结商户BB USDT余额
+        par 风控
+            TE->>BB_Risk: 10a. BB承兑风控
+            BB_Risk-->>TE: 11a. 通过
+        and
+            TE->>IPL_Risk: 10b. IPL付款风控(收款人AML)
+            IPL_Risk-->>TE: 11b. 通过
+        end
+    end
+  
+    rect rgb(255, 240, 245)
+        Note over HUB,Channel: 阶段6：T001 BB承兑(USDT→USD)
+        TE->>BB_Account: 12. 确认扣款(商户BB USDT钱包-)
+        TE->>BB_Account: 13. 入账(IPL中间户(在BB) USD+)
+        TE->>TE: 14. T001状态=SUCCESS
+    end
+  
+    rect rgb(240, 248, 255)
+        Note over HUB,Channel: 阶段7：T002 IPL入账
+        TE->>IPL_Account: 15. 扣款(IPL中间户-)
+        TE->>IPL_Account: 16. 入账(商户IPL USD账户+)
+        TE->>TE: 17. T002状态=SUCCESS
+    end
+  
+    rect rgb(230, 240, 255)
+        Note over HUB,Channel: 阶段8：T003 IPL付款(调用外部渠道)
+        TE->>Router: 18. 路由选择付款渠道
+        Router-->>TE: 19. 返回渠道
+        TE->>IPL_Account: 20. 扣款(商户IPL USD账户-)
+        TE->>CO: 21. 创建渠道单+调用渠道
+        CO->>Channel: 22. 发起付款
+        Channel-->>CO: 23. 付款结果
+        CO-->>TE: 24. 渠道回调
+        TE->>TE: 25. T003状态=SUCCESS
+    end
+  
+    rect rgb(240, 248, 255)
+        Note over HUB,Channel: 阶段9：聚合+通知
+        TE->>HUB: 26. 通知3笔交易单完成
+        HUB->>HUB: 27. 更新商户单(SUCCESS)
+        HUB-->>WP: 28. 返回Off-Ramp结果
+    end
+```
+
+**说明：**
+
+- **商户发起，1个商户单，3笔交易单**：BB承兑1笔 + IPL入账1笔 + IPL付款1笔
+- **T001(BB承兑)**：BB USDT→USD，通过中间户划转到IPL
+- **T002(IPL入账)**：中间户→商户IPL USD账户
+- **T003(IPL付款)**：商户IPL USD账户→外部收款人，调用外部渠道，有渠道单
+- **风控**：BB承兑风控 + IPL付款风控（收款人AML），各自独立
+- **T001→T002串行**（承兑完才能入账），**T003依赖T002**（入账后才能付款）
+
+---
+
+### 5.2.4 IPL On-Ramp 到BB（3笔交易单）
+
+**场景：** 商户通过IPL VA收款收到USD，然后On-Ramp换成USDT到BB数币钱包。
+
+**单据结构（3笔交易单）：**
+
+```
+商户单 M001 (On-Ramp: VA收款→USD→USDT)  ← BB和IPL共享
+    ├── 交易单 T001 (IPL): VA同名充值/收款 — 外部USD入到IPL法币账户
+    ├── 交易单 T002 (IPL): 同名提现转出 — IPL USD转到BB
+    └── 交易单 T003 (BB): 承兑 — BB USD→USDT承兑
+```
+
+```mermaid
+sequenceDiagram
+    participant Channel as 渠道/银行
+    participant CO as 渠道服务
+    participant TE as 交易引擎
+    participant IPL_Risk as IPL风控
+    participant BB_Risk as BB风控
+    participant IPL_Account as IPL账户服务
+    participant BB_Account as BB账户服务
+    participant FX as 汇率服务
+    participant Pricing as 计费服务
+    participant HUB as EX HUB
+    participant WP as 白牌/API
+  
+    Note over Channel,WP: 商户已下预约单（On-Ramp: USD→USDT）
+  
+    rect rgb(240, 255, 240)
+        Note over Channel,WP: 阶段1：T001 IPL VA收款（渠道通知触发）
+        Channel->>CO: 1. VA入账通知(USD)
+        CO->>TE: 2. 创建渠道单+交易单T001(IPL-VA收款)
+        TE->>IPL_Risk: 3. IPL收款风控(汇款人AML)
+        IPL_Risk-->>TE: 4. 风控通过
+        TE->>Pricing: 5. 计费
+        TE->>IPL_Account: 6. 入账(商户IPL USD账户+)
+        TE->>TE: 7. T001状态=SUCCESS
+    end
+  
+    rect rgb(240, 248, 255)
+        Note over Channel,WP: 阶段2：匹配预约单，触发后续流程
+        TE->>HUB: 8. T001完成，匹配预约单
+        HUB->>HUB: 9. 创建商户单(BB和IPL共享)
+    end
+  
+    rect rgb(255, 250, 240)
+        Note over Channel,WP: 阶段3：业务校验
+        HUB->>TE: 10. 业务校验(IPL USD余额、BB账户状态)
+    end
+  
+    rect rgb(255, 240, 245)
+        Note over Channel,WP: 阶段4：T002 IPL同名提现转出到BB
+        TE->>TE: 11. 创建交易单T002(IPL-同名提现)
+        TE->>IPL_Risk: 12. IPL出款风控
+        IPL_Risk-->>TE: 13. 通过
+        TE->>IPL_Account: 14. 扣款(商户IPL USD账户-)
+        TE->>IPL_Account: 15. 入账(BB中间户(在IPL)+)
+        TE->>TE: 16. T002状态=SUCCESS
+    end
+  
+    rect rgb(230, 240, 255)
+        Note over Channel,WP: 阶段5：T003 BB承兑(USD→USDT)
+        TE->>TE: 17. 创建交易单T003(BB-承兑)
+        par 并行
+            TE->>FX: 18a. 查询汇率(USD/USDT)
+            FX-->>TE: 19a. 返回汇率
+        and
+            TE->>Pricing: 18b. 计算承兑费用
+            Pricing-->>TE: 19b. 返回费用
+        end
+        TE->>BB_Risk: 20. BB承兑风控
+        BB_Risk-->>TE: 21. 通过
+        TE->>BB_Account: 22. 扣款(IPL中间户(在BB) USD-)
+        TE->>BB_Account: 23. 入账(商户BB USDT钱包+)
+        TE->>TE: 24. T003状态=SUCCESS
+    end
+  
+    rect rgb(240, 248, 255)
+        Note over Channel,WP: 阶段6：聚合+通知
+        TE->>HUB: 25. 通知3笔交易单完成
+        HUB->>HUB: 26. 更新商户单(SUCCESS)
+        HUB-->>WP: 27. 返回On-Ramp结果
+    end
+```
+
+**说明：**
+
+- **1个商户单，3笔交易单**：IPL VA收款1笔 + IPL同名提现转出1笔 + BB承兑1笔
+- **T001(IPL VA收款)**：渠道通知触发，外部USD入到商户IPL法币账户，走IPL收款风控
+- **T002(IPL同名提现)**：商户IPL USD→BB中间户，走IPL出款风控
+- **T003(BB承兑)**：BB中间户USD→商户BB USDT钱包，走BB承兑风控
+- **预约单模式**：商户先下预约单，VA收款到账后自动触发T002+T003
+- **T001→T002→T003串行**：收款完成才能提现，提现完成才能承兑
+- **每笔交易单各自独立风控**
 
 ---
 
