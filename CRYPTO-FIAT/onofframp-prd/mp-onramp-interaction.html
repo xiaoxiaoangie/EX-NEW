@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MP 商户端 — OnRamp 交互原型</title>
+<style>
+:root {
+    --bg: #f0f2f5; --card-bg: #fff; --border: #e2e8f0; --border-light: #f1f5f9;
+    --text: #1a1f36; --text-s: #6b7294; --text-m: #a5aac4;
+    --primary: #4f46e5; --primary-light: #eef2ff; --primary-dark: #3730a3;
+    --green: #10b981; --green-bg: #ecfdf5; --green-border: #a7f3d0;
+    --orange: #f59e0b; --orange-bg: #fffbeb; --orange-border: #fde68a;
+    --red: #ef4444; --red-bg: #fef2f2;
+    --blue: #3b82f6; --blue-bg: #eff6ff; --blue-border: #93c5fd;
+    --purple: #7c3aed; --purple-bg: #f5f3ff;
+    --sidebar-w: 250px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', sans-serif; background: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; -webkit-font-smoothing: antialiased; }
+
+.sidebar { width: var(--sidebar-w); background: var(--card-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; }
+.sidebar-logo { padding: 20px 16px; font-size: 16px; font-weight: 700; color: var(--primary); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+.sidebar-logo .logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, var(--primary), #6366f1); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; font-weight: 700; }
+.menu-group { padding: 12px 8px 4px; }
+.menu-group-label { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 0 8px 6px; display: flex; align-items: center; gap: 6px; }
+.menu-group-label .dot { width: 6px; height: 6px; border-radius: 50%; }
+.menu-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; color: var(--text-s); transition: all .15s; user-select: none; }
+.menu-item:hover { background: var(--bg); color: var(--text); }
+.menu-item.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
+.menu-item .icon { width: 18px; text-align: center; font-size: 14px; }
+
+.main { flex: 1; overflow-y: auto; padding: 28px 36px; }
+.page { display: none; }
+.page.active { display: block; }
+.breadcrumb { font-size: 12px; color: var(--text-m); margin-bottom: 6px; }
+.breadcrumb span { color: var(--primary); font-weight: 500; }
+.page-header { margin-bottom: 24px; }
+.page-header h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+.page-header p { color: var(--text-s); font-size: 13px; }
+
+.card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); padding: 24px; margin-bottom: 16px; }
+.card h3 { font-size: 15px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+.tag-active { background: var(--green-bg); color: var(--green); }
+.tag-pending { background: var(--orange-bg); color: var(--orange); }
+.tag-bb { background: #dbeafe; color: #1e40af; }
+.tag-ipl { background: var(--orange-bg); color: var(--orange); }
+.tag-xpay { background: var(--purple-bg); color: var(--purple); }
+
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all .15s; }
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-outline { background: white; color: var(--primary); border: 1px solid var(--primary); }
+.btn-outline:hover { background: var(--primary-light); }
+.btn-sm { padding: 5px 12px; font-size: 12px; border-radius: 6px; }
+.btn-ghost { background: transparent; color: var(--primary); padding: 4px 8px; }
+
+.note-box { border-radius: 8px; padding: 14px 16px; font-size: 13px; line-height: 1.6; margin-bottom: 12px; }
+.note-warn { background: var(--orange-bg); border: 1px solid var(--orange-border); color: #92400e; }
+.note-info { background: var(--blue-bg); border: 1px solid var(--blue-border); color: #1e40af; }
+.note-green { background: var(--green-bg); border: 1px solid var(--green-border); color: #065f46; }
+.note-purple { background: var(--purple-bg); border: 1px solid #c4b5fd; color: #5b21b6; }
+
+.divider { height: 1px; background: var(--border); margin: 16px 0; }
+
+/* Scenario tabs */
+.scenario-tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 20px; overflow-x: auto; }
+.scenario-tab { padding: 10px 18px; font-size: 12px; font-weight: 500; color: var(--text-s); background: none; border: none; border-bottom: 2px solid transparent; margin-bottom: -2px; cursor: pointer; transition: all .15s; white-space: nowrap; }
+.scenario-tab:hover { color: var(--text); }
+.scenario-tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+.scenario-panel { display: none; }
+.scenario-panel.active { display: block; }
+
+/* Flow steps */
+.flow-container { position: relative; }
+.flow-step { display: flex; gap: 16px; margin-bottom: 0; padding: 16px 0; position: relative; }
+.flow-step:not(:last-child) { border-left: 2px solid var(--border); margin-left: 15px; padding-left: 28px; }
+.flow-step:last-child { margin-left: 15px; padding-left: 28px; }
+.flow-step .step-dot { position: absolute; left: -8px; top: 16px; width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--primary); background: white; z-index: 1; flex-shrink: 0; }
+.flow-step .step-dot.done { background: var(--green); border-color: var(--green); }
+.flow-step .step-dot.current { background: var(--primary); border-color: var(--primary); }
+.flow-step .step-dot.pending { background: white; border-color: var(--border); }
+.flow-step .step-content { flex: 1; }
+.flow-step .step-title { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+.flow-step .step-desc { font-size: 13px; color: var(--text-s); line-height: 1.6; }
+
+/* Account card */
+.account-card { background: var(--border-light); border-radius: 10px; padding: 16px; margin-bottom: 10px; border-left: 4px solid var(--blue); }
+.account-card.ipl { border-left-color: var(--orange); }
+.account-card.xpay { border-left-color: var(--purple); }
+.account-card .ac-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.account-card .ac-name { font-weight: 700; font-size: 14px; }
+.account-card .ac-balance { font-size: 12px; color: var(--text-s); }
+.account-card .ac-detail { font-size: 12px; color: var(--text-s); line-height: 1.6; }
+
+/* VA info box */
+.va-info { background: #f8fafc; border: 1px dashed var(--border); border-radius: 8px; padding: 14px; margin: 8px 0; font-size: 12px; }
+.va-info .va-row { display: flex; gap: 8px; padding: 3px 0; }
+.va-info .va-label { color: var(--text-m); min-width: 100px; }
+.va-info .va-value { font-weight: 600; font-family: monospace; }
+
+/* Empty state */
+.empty-state { text-align: center; padding: 40px 20px; }
+.empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state .empty-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+.empty-state .empty-desc { font-size: 13px; color: var(--text-s); margin-bottom: 16px; line-height: 1.6; }
+
+/* Interaction mockup */
+.mock-form { background: var(--border-light); border-radius: 10px; padding: 16px; margin: 10px 0; }
+.mock-form .form-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.mock-form .form-row:last-child { margin-bottom: 0; }
+.mock-form label { font-size: 13px; font-weight: 600; min-width: 100px; }
+.mock-form select, .mock-form input[type="text"], .mock-form input[type="number"] {
+    padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; background: white; flex: 1; max-width: 300px;
+}
+
+/* Status badge */
+.status-pending { background: var(--orange-bg); color: var(--orange); border: 1px solid var(--orange-border); border-radius: 8px; padding: 8px 14px; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; }
+.status-none { background: var(--border-light); color: var(--text-m); border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; }
+
+/* Scenario card */
+.scenario-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 14px; }
+.scenario-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.scenario-card .sc-tags { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+
+/* Data table */
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.data-table th { text-align: left; padding: 10px 12px; background: var(--border-light); font-weight: 600; font-size: 12px; color: var(--text-s); border-bottom: 2px solid var(--border); }
+.data-table td { padding: 10px 12px; border-bottom: 1px solid var(--border-light); vertical-align: top; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-icon">MP</div>
+        Merchant Portal
+    </div>
+
+    <div class="menu-group">
+        <div class="menu-group-label" style="color:#10b981"><span class="dot" style="background:#10b981"></span> ASSETS</div>
+        <div class="menu-item" data-page="fiat-accounts"><span class="icon">🏦</span> Fiat Accounts</div>
+        <div class="menu-item" data-page="crypto-wallet"><span class="icon">💎</span> Crypto Wallet</div>
+        <div class="menu-item" data-page="exchange"><span class="icon">🔄</span> Exchange</div>
+    </div>
+
+    <div class="menu-group">
+        <div class="menu-group-label" style="color:#3b82f6"><span class="dot" style="background:#3b82f6"></span> TRANSFER IN</div>
+        <div class="menu-item" data-page="collection-tools"><span class="icon">🛠️</span> Collection Tools</div>
+        <div class="menu-item" data-page="remitter"><span class="icon">🧑</span> Remitter</div>
+        <div class="menu-item" data-page="payins"><span class="icon">📥</span> Payins</div>
+        <div class="menu-item active" data-page="onramp"><span class="icon">⛓️</span> OnRamp</div>
+    </div>
+
+    <div class="menu-group">
+        <div class="menu-group-label" style="color:#f59e0b"><span class="dot" style="background:#f59e0b"></span> TRANSFER OUT</div>
+        <div class="menu-item" data-page="beneficiary"><span class="icon">👤</span> Beneficiary</div>
+        <div class="menu-item" data-page="payouts"><span class="icon">📤</span> Payouts</div>
+        <div class="menu-item" data-page="offramp"><span class="icon">💱</span> OffRamp</div>
+        <div class="menu-item" data-page="remittance"><span class="icon">🔀</span> Remittance Orders</div>
+    </div>
+
+    <div class="menu-group">
+        <div class="menu-group-label" style="color:#64748b"><span class="dot" style="background:#64748b"></span> OTHER</div>
+        <div class="menu-item"><span class="icon">📊</span> Reports</div>
+        <div class="menu-item"><span class="icon">⚙️</span> Settings</div>
+    </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<!-- ==================== OnRamp 主页面 ==================== -->
+<div class="page active" id="page-onramp">
+    <div class="page-header">
+        <div class="breadcrumb">Transfer In / <span>OnRamp</span></div>
+        <h1>OnRamp（法币→数币）</h1>
+        <p>从法币账户或VA收款开始，将法币兑换为USDT/USDC，入账到数币钱包</p>
+    </div>
+
+    <div class="card">
+        <h3>📋 OnRamp 概览</h3>
+        <div class="note-box note-info">
+            <strong>OnRamp = 法币→数币承兑</strong><br>
+            • <strong>资金来源：</strong>法币账户余额（BB/IPL）或 VA收款入金<br>
+            • <strong>承兑引擎：</strong>BB（固定）<br>
+            • <strong>目标：</strong>USDT/USDC 入账到 BB数币钱包<br>
+            • <strong>商户不感知SP：</strong>商户只看到"法币账户"和"数币钱包"，不知道底层是BB还是IPL
+        </div>
+
+        <div style="display:flex; gap:10px; margin-bottom:16px;">
+            <button class="btn btn-primary" onclick="switchScenario('bb-fiat')">+ 发起 OnRamp</button>
+            <button class="btn btn-outline">📋 OnRamp 订单列表</button>
+        </div>
+    </div>
+
+    <!-- ===== 场景选择 ===== -->
+    <div class="card">
+        <h3>🔀 OnRamp 场景交互（按资金来源分）</h3>
+        <div class="scenario-tabs">
+            <button class="scenario-tab active" onclick="switchScenario('bb-fiat')">① BB法币账户</button>
+            <button class="scenario-tab" onclick="switchScenario('bb-collection')">② BB代收付账户</button>
+            <button class="scenario-tab" onclick="switchScenario('bb-xpay-va')">③ BB-XPAY VA</button>
+            <button class="scenario-tab" onclick="switchScenario('ipl-fiat')">④ IPL法币账户</button>
+            <button class="scenario-tab" onclick="switchScenario('ipl-va')">⑤ IPL VA</button>
+        </div>
+
+        <!-- ===== 场景①：从BB法币账户OnRamp ===== -->
+        <div class="scenario-panel active" id="scenario-bb-fiat">
+            <div class="scenario-card">
+                <h4>① 从 BB 法币账户 OnRamp <span class="tag tag-bb">BB</span></h4>
+                <div class="sc-tags">
+                    <span class="tag tag-bb">资金来源: BB法币账户</span>
+                    <span class="tag tag-bb">承兑引擎: BB</span>
+                    <span class="tag tag-active">目标: BB数币钱包</span>
+                </div>
+
+                <div class="note-box note-green">
+                    <strong>场景说明：</strong>商户BB法币账户已有USD余额，直接用余额发起OnRamp，BB内部完成法币→数币承兑，USDT入账到BB数币钱包。<br>
+                    <strong>底层：</strong>BB内部账户划转，无需跨SP。
+                </div>
+
+                <div class="divider"></div>
+                <h4>交互流程</h4>
+
+                <div class="flow-container">
+                    <div class="flow-step">
+                        <div class="step-dot done"></div>
+                        <div class="step-content">
+                            <div class="step-title">Step 1：选择资金来源</div>
+                            <div class="step-desc">
+                                商户进入OnRamp页面，选择"从法币账户余额"发起。<br>
+                                系统展示可用法币账户余额（按币种合计，不展示SP）。
+                            </div>
+                            <div class="mock-form">
+                                <div class="form-row">
+                                    <label>资金来源</label>
+                                    <select>
+                                        <option>💰 法币账户余额</option>
+                                        <option>🏦 VA收款入金</option>
+                                    </select>
+                                </div>
+                                <div class="form-row">
+                                    <label>扣款币种</label>
+                                    <select>
+                                        <option>USD — 可用余额 $15,000.00</option>
+                                        <option>EUR — 可用余额 €3,200.00</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="note-box note-info" style="margin-top:8px;">
+                                <strong>底层逻辑（商户不可见）：</strong>USD $15,000 = BB法币账户 $10,000 + IPL法币账户 $5,000。系统根据TP配置的优先级（BB优先）自动从BB法币账户扣款。
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-step">
+                        <div class="step-dot done"></div>
+                        <div class="step-content">
+                            <div class="step-title">Step 2：输入承兑信息</div>
+                            <div class="step-desc">商户输入要兑换的金额，系统实时显示汇率和预计到账数量。</div>
+                            <div class="mock-form">
+                                <div class="form-row">
+                                    <label>兑换金额</label>
+                                    <input type="number" value="5000" style="max-width:150px;"> <span style="font-size:13px; color:var(--text-s);">USD</span>
+                                </div>
+                                <div class="form-row">
+                                    <label>目标币种</label>
+                                    <select>
+                                        <option>USDT (TRC-20)</option>
+                                        <option>USDC (ERC-20)</option>
+                                    </select>
+                                </div>
+                                <div class="form-row">
+                                    <label>实时汇率</label>
+                                    <span style="font-size:14px; font-weight:700; color:var(--green);">1 USD = 0.9995 USDT</span>
+                                </div>
+                                <div class="form-row">
+                                    <label>预计到账</label>
+                                    <span style="font-size:14px; font-weight:700;">≈ 4,997.50 USDT</span>
+                                </div>
+                                <div class="form-row">
+                                    <label>手续费</label>
+                                    <span style="font-size:13px; color:var(--text-s);">$25.00 (0.5%)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-step">
+                        <div class="step-dot done"></div>
+                        <div class="step-content">
+                            <div class="step-title">Step 3：确认并提交</div>
+                            <div class="step-desc">商户确认兑换详情，二次验证后提交。</div>
+                            <div class="mock-form">
+                                <div style="background:white; border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:10px;">
+                                    <div style="font-size:12px; color:var(--text-m); margin-bottom:8px;">确认兑换详情</div>
+                                    <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span>扣款</span><strong>5,000.00 USD</strong></div>
+                                    <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span>手续费</span><strong>25.00 USD</strong></div>
+                                    <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span>汇率</span><strong>1:0.9995</strong></div>
+                                    <div style="height:1px; background:var(--border); margin:8px 0;"></div>
+                                    <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:14px; font-weight:700;"><span>预计到账</span><span style="color:var(--green);">4,997.50 USDT</span></div>
+                                </div>
+                                <button class="btn btn-primary" style="width:100%;">🔐 确认兑换（需二次验证）</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-step">
+                        <div class="step-dot current"></div>
+                        <div class="step-content">
+                            <div class="step-title">Step 4：承兑处理 & 入账</div>
+                            <div class="step-desc">
+                                BB承兑引擎处理：BB法币账户扣款USD → BB承兑 → USDT入账到BB数币钱包。<br>
+                                商户在OnRamp订单详情中看到全链路状态。
+                            </div>
+                            <div class="note-box note-green">
+                                <strong>全链路视图：</strong><br>
+                                ① 法币扣款（BB法币账户 -$5,025） ✅ 完成<br>
+                                ② 承兑处理（USD→USDT） ⏳ 处理中<br>
+                                ③ 数币入账（BB数币钱包 +4,997.50 USDT） ⏳ 等待
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 场景②：从BB代收付账户OnRamp ===== -->
+        <div class="scenario-panel" id="scenario-bb-collection">
+            <div class="scenario-card">
+                <h4>② 从 BB 代收付账户 OnRamp <span class="tag tag-bb">BB</span></h4>
+                <div class="sc-tags">
+                    <span class="tag tag-bb">资金来源: BB代收付账户入金</span>
+                    <span class="tag tag-bb">承兑引擎: BB</span>
+                    <span class="tag tag-active">目标: BB数币钱包</span>
+                </div>
+
+                <div class="note-box note-info">
+                    <strong>场景说明：</strong>汇款人通过BB代收付账户（BB自有渠道）向商户转账法币，收到法币后自动触发OnRamp承兑，USDT入账到BB数币钱包。<br>
+                    <strong>底层：</strong>BB代收付账户是BB自有的法币收款渠道，商户不感知。<br>
+                    <strong>与场景①的区别：</strong>场景①是用已有余额，场景②是外部汇款人新入金后自动触发承兑。
+                </div>
+
+                <div class="divider"></div>
+                <h4>交互流程</h4>
+
+                <div class="flow-container">
+                    <div class="flow-step">
+                        <div class="step-dot done"></div>
+                        <div class="step-content">
+                            <div class="step-title">Step 1：配置自动OnRamp规则</div>
+                            <div class="step-desc">
+                                商户在OnRamp配置页面，设置"收到法币入金后自动触发OnRamp"规则。<br>
+                                也可以选择手动模式：收到法币后先入账到法币账户，再手动发起OnRamp（同场景①）。
+                            </div>
+                            <div class="mock-form">
+                                <div class="form-row">
+                                    <label>OnRamp模式</label>
+                                    <select>
+                                        <option>🔄 自动模式 — 收到法币自动承兑为USDT</option>
+                                        <option>✋ 手动模式 — 收到法币先入账，手动发起承兑</option>
+                                    </select>
+                                </div>
+                                <div class="form-row">
+                                    <label>目标币种</label>
+                                    <select>
+                                        <option>USDT (TRC-20)</option>
+                                        <option>USDC (ERC-20)</option>
+                                    </select>
+                                </div>
+                                <div class="form-row">
+                                    <label>汇率策略</label>
+                                    <select>
+                                        <option>实时汇率（收到入金时的市场价）</option>
+                                        <option>锁定汇率（提前锁定，有效期30分钟）</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-step">
+                        <div class="step-dot done"></div>
+                        <div class="step-content">
+                            <div class="step-title">Step 2：获取收款信息</div>
+                            <div class="step-desc">
+                                系统提供BB代收付账户的收款信息，商户将此信息提供给汇款人。<br>
+                                <strong>商户不感知这是"BB代收付账户"</strong>，只看到"收款账户信息"。
+                            </div>
+                            <div class="va-info">
+                                <div style="font-weight:700; margin-bottom:8px;">📋 收款账户信息</div>
+                                <div class="va-row"><span class="va-label">Account Name</span><span class="va-value">BB PAYMENT LTD - CLIENT</span></div>
+                                <div class="va-row"><span class="va-label">Account No.</span><span class="va-value">8812 3456 7890</span></div>
+                                <div class="va-row"><span class="va-label">Bank Name</span><span class="va-value">XX Bank</span></div>
+                                <div class="va-row"><span class="va-label">SWIFT</span><span class="va-value">XXBKSGSG</span></div>
+                                <div class="va-row"><span class="va-label">Reference</span><span class="va-value">ONR-M001-20260212</span></div>
+                            </div>
+                            <div class="note-box note-warn" style="margin-top:8px;">
+                                <strong>⚠️ 汇款人需在备注中填写Reference</strong>，系统通过Reference自动匹配入金到对应商户。
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-step">
+                        <div class="step-dot current"></div>
+                        <div class="step-content">
+                            <div class="step-title">Step 3：等待入金 → 自动承兑</div>
+                            <div class="step-desc">
+                                汇款人完成银行转账后，BB代收付账户收到法币 → 系统自动匹配商户 → 触发OnRamp承兑 → USDT入账到BB数币钱包。
+                            </div>
+                            <div class="note-box note-green">
+                                <strong>全链路视图（自动模式）：</strong><br>
+                                ① 等待汇款人转账 ⏳<br>
+                                ② BB代收付账户收到 $5,000 → 自动匹配商户 M001<br>
+                                ③ 触发OnRamp承兑（USD→USDT）<br>
+                                ④ USDT入账到BB数币钱包
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 场景③：从BB-XPAY VA OnRamp ===== -->
+        <div class="scenario-panel" id="scenario-bb-xpay-va">
+            <div class="scenario-card">
+                <h4>③ 从 BB-XPAY VA 账户 OnRamp <span class="tag tag-bb">BB</span> <span class="tag tag-xpay">XPAY渠道</span></h4>
+                <div class="sc-tags">
+                    <span class="tag tag-xpay">资金来源: BB底层XPAY渠道VA收款</span>
+                    <span class="tag tag-bb">承兑引擎: BB</span>
+                    <span class="tag tag-active">目标: BB数币钱包</span>
+                </div>
+
+                <div class="note-box note-purple">
+                    <strong>场景说明：</strong>BB底层对接了XPAY渠道，具备VA收款能力。汇款人通过XPAY VA转账法币入金，收到后触发OnRamp。<br>
+                    <strong>关键：</strong>XPAY是BB的底层Channel，<strong>商户和TP都看不到XPAY</strong>，只看到"VA收款"。BB内部决定用代收付账户还是XPAY VA。<br>
+                    <strong>与场景②的区别：</strong>场景②用BB代收付账户（Reference匹配），场景③用XPAY VA（专属VA号匹配）。
+                </div>
+
+                <div class="divider"></div>
+
+                <!-- 子场景：VA状态分支 -->
+                <div class="scenario-tabs" style="margin-bottom:16px;">
+                    <button class="scenario-tab active" onclick="switchSubScenario('xpay', 'no-va')">没有VA</button>
+                    <button class="scenario-tab" onclick="switchSubScenario('xpay', 'va-pending')">VA申请中</button>
+                    <button class="scenario-tab" onclick="switchSubScenario('xpay', 'va-active')">有可用VA</button>
+                </div>
+
+                <!-- 没有VA -->
+                <div class="sub-scenario active" id="xpay-no-va">
+                    <div class="scenario-card" style="border:1px dashed var(--orange-border); background:var(--orange-bg);">
+                        <h4>⚠️ 还没有VA — 需先申请</h4>
+                        <div class="empty-state">
+                            <div class="empty-icon">🏦</div>
+                            <div class="empty-title">暂无可用的VA收款账户</div>
+                            <div class="empty-desc">
+                                您还没有VA（虚拟账户），无法通过VA收款方式发起OnRamp。<br>
+                                请先前往 <strong>Collection Tools</strong> 申请VA，审核通过后即可使用。
+                            </div>
+                            <button class="btn btn-primary">🛠️ 前往申请VA →</button>
+                        </div>
+                        <div class="note-box note-info">
+                            <strong>交互说明：</strong><br>
+                            • 商户选择"通过VA收款发起OnRamp"时，系统检测到没有可用VA<br>
+                            • 展示空状态引导，提供跳转到 Collection Tools 的入口<br>
+                            • 商户也可以选择其他资金来源（法币账户余额/代收付账户）继续OnRamp
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VA申请中 -->
+                <div class="sub-scenario" id="xpay-va-pending" style="display:none;">
+                    <div class="scenario-card" style="border:1px dashed var(--orange-border); background:var(--orange-bg);">
+                        <h4>⏳ VA 申请中 — 等待审核</h4>
+                        <div class="account-card xpay" style="opacity:.7;">
+                            <div class="ac-header">
+                                <div class="ac-name">🏦 VA 收款账户 (USD)</div>
+                                <span class="tag tag-pending">⏳ 申请中</span>
+                            </div>
+                            <div class="ac-detail">
+                                申请时间: 2026-02-10 09:30 · 预计审核: 1-3个工作日<br>
+                                VA账号: <span style="color:var(--text-m);">待分配</span>
+                            </div>
+                        </div>
+                        <div class="note-box note-warn">
+                            <strong>交互说明：</strong><br>
+                            • 商户已申请VA但尚未审核通过，VA状态为"申请中"<br>
+                            • 此VA<strong>不可用于收款</strong>，OnRamp入口置灰或提示"VA审核中，暂不可用"<br>
+                            • 商户可以选择其他资金来源继续OnRamp<br>
+                            • VA审核通过后系统发送通知，商户即可使用
+                        </div>
+                        <div style="margin-top:12px;">
+                            <button class="btn btn-outline btn-sm" disabled style="opacity:.5; cursor:not-allowed;">🏦 通过VA收款发起OnRamp（VA审核中，暂不可用）</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 有可用VA -->
+                <div class="sub-scenario" id="xpay-va-active" style="display:none;">
+                    <div class="scenario-card">
+                        <h4>✅ 有可用VA — 正常OnRamp流程</h4>
+
+                        <div class="account-card xpay">
+                            <div class="ac-header">
+                                <div class="ac-name">🏦 VA 收款账户 (USD)</div>
+                                <span class="tag tag-active">可用</span>
+                            </div>
+                            <div class="ac-detail">累计收款: $125,000.00 · 开通时间: 2026-01-15</div>
+                        </div>
+
+                        <div class="divider"></div>
+                        <h4>交互流程</h4>
+
+                        <div class="flow-container">
+                            <div class="flow-step">
+                                <div class="step-dot done"></div>
+                                <div class="step-content">
+                                    <div class="step-title">Step 1：选择VA收款 + 配置OnRamp规则</div>
+                                    <div class="step-desc">商户选择通过VA收款发起OnRamp，配置自动/手动模式。</div>
+                                    <div class="mock-form">
+                                        <div class="form-row">
+                                            <label>资金来源</label>
+                                            <select>
+                                                <option>🏦 VA收款入金（通过VA接收汇款人转账）</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>选择VA</label>
+                                            <select>
+                                                <option>USD VA — ****7890 (可用)</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>OnRamp模式</label>
+                                            <select>
+                                                <option>🔄 自动 — VA收到法币自动承兑为USDT</option>
+                                                <option>✋ 手动 — VA收到法币先入账，手动承兑</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flow-step">
+                                <div class="step-dot done"></div>
+                                <div class="step-content">
+                                    <div class="step-title">Step 2：获取VA收款信息</div>
+                                    <div class="step-desc">系统展示VA详细信息，商户提供给汇款人。</div>
+                                    <div class="va-info">
+                                        <div style="font-weight:700; margin-bottom:8px;">📋 VA 收款账户信息</div>
+                                        <div class="va-row"><span class="va-label">Account Name</span><span class="va-value">ABC TRADING CO.</span></div>
+                                        <div class="va-row"><span class="va-label">Account No.</span><span class="va-value">XPAY-VA-USD-7890</span></div>
+                                        <div class="va-row"><span class="va-label">Bank Name</span><span class="va-value">XPAY Partner Bank</span></div>
+                                        <div class="va-row"><span class="va-label">SWIFT</span><span class="va-value">XPAYSGSG</span></div>
+                                        <div class="va-row"><span class="va-label">IBAN</span><span class="va-value">SG12 XPAY 0000 1234 5678 90</span></div>
+                                    </div>
+                                    <div class="note-box note-purple" style="margin-top:8px;">
+                                        <strong>商户不感知XPAY：</strong>商户只看到"VA收款账户"，不知道底层是BB的XPAY渠道。VA账户名显示商户自己的公司名。
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flow-step">
+                                <div class="step-dot current"></div>
+                                <div class="step-content">
+                                    <div class="step-title">Step 3：等待入金 → 自动承兑</div>
+                                    <div class="step-desc">汇款人转账到VA → VA收到法币 → 自动触发OnRamp → USDT入账。</div>
+                                    <div class="note-box note-green">
+                                        <strong>全链路视图：</strong><br>
+                                        ① 等待汇款人转账到VA ⏳<br>
+                                        ② VA收到 $8,000（XPAY渠道确认，商户不可见）<br>
+                                        ③ 法币入账到BB法币账户（内部划转）<br>
+                                        ④ 触发OnRamp承兑（USD→USDT）<br>
+                                        ⑤ USDT入账到BB数币钱包
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 场景④：从IPL法币账户OnRamp ===== -->
+        <div class="scenario-panel" id="scenario-ipl-fiat">
+            <div class="scenario-card">
+                <h4>④ 从 IPL 法币账户 OnRamp <span class="tag tag-ipl">IPL</span> → <span class="tag tag-bb">BB</span></h4>
+                <div class="sc-tags">
+                    <span class="tag tag-ipl">资金来源: IPL法币账户</span>
+                    <span class="tag tag-bb">承兑引擎: BB</span>
+                    <span class="tag tag-active">目标: BB数币钱包</span>
+                </div>
+
+                <div class="note-box note-warn">
+                    <strong>场景说明：</strong>商户IPL法币账户已有USD余额，要发起OnRamp。<br>
+                    <strong>关键：</strong>承兑引擎在BB，但资金在IPL → 需要<strong>跨SP资金划转</strong>：IPL法币 → BB法币 → BB承兑 → BB数币钱包。<br>
+                    <strong>商户不感知：</strong>商户只看到"从法币账户余额发起OnRamp"，不知道底层涉及IPL→BB的资金划转。
+                </div>
+
+                <div class="divider"></div>
+                <h4>交互流程</h4>
+
+                <div class="flow-container">
+                    <div class="flow-step">
+                        <div class="step-dot done"></div>
+                        <div class="step-content">
+                            <div class="step-title">Step 1：选择资金来源</div>
+                            <div class="step-desc">
+                                商户选择法币账户余额，系统根据TP配置的优先级自动选择扣款的SP账户。<br>
+                                如果TP配置"IPL优先"，则从IPL法币账户扣款。
+                            </div>
+                            <div class="mock-form">
+                                <div class="form-row">
+                                    <label>资金来源</label>
+                                    <select><option>💰 法币账户余额</option></select>
+                                </div>
+                                <div class="form-row">
+                                    <label>扣款币种</label>
+                                    <select><option>USD — 可用余额 $15,000.00</option></select>
+                                </div>
+                                <div class="form-row">
+                                    <label>兑换金额</label>
+                                    <input type="number" value="5000" style="max-width:150px;"> <span style="font-size:13px; color:var(--text-s);">USD</span>
+                                </div>
+                                <div class="form-row">
+                                    <label>目标币种</label>
+                                    <select><option>USDT (TRC-20)</option></select>
+                                </div>
+                            </div>
+                            <div class="note-box note-info" style="margin-top:8px;">
+                                <strong>底层逻辑（商户不可见）：</strong><br>
+                                TP配置IPL优先 → 系统从IPL法币账户扣款 $5,000<br>
+                                → IPL法币 划转到 BB法币（SP间互转）<br>
+                                → BB承兑引擎处理 USD→USDT<br>
+                                → USDT入账到BB数币钱包
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-step">
+                        <div class="step-dot done"></div>
+                        <div class="step-content">
+                            <div class="step-title">Step 2：确认兑换详情</div>
+                            <div class="step-desc">与场景①相同的确认页面，商户看到的信息完全一致。</div>
+                            <div class="mock-form">
+                                <div style="background:white; border:1px solid var(--border); border-radius:8px; padding:14px;">
+                                    <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span>扣款</span><strong>5,000.00 USD</strong></div>
+                                    <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span>手续费</span><strong>25.00 USD</strong></div>
+                                    <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span>汇率</span><strong>1:0.9995</strong></div>
+                                    <div style="height:1px; background:var(--border); margin:8px 0;"></div>
+                                    <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:14px; font-weight:700;"><span>预计到账</span><span style="color:var(--green);">4,997.50 USDT</span></div>
+                                </div>
+                                <button class="btn btn-primary" style="width:100%; margin-top:10px;">🔐 确认兑换</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-step">
+                        <div class="step-dot current"></div>
+                        <div class="step-content">
+                            <div class="step-title">Step 3：跨SP处理 & 入账</div>
+                            <div class="step-desc">系统自动完成跨SP资金划转和承兑。</div>
+                            <div class="note-box note-green">
+                                <strong>全链路视图（商户看到简化版）：</strong><br>
+                                ① 法币扣款 -$5,025 ✅ 完成<br>
+                                ② 承兑处理（USD→USDT） ⏳ 处理中<br>
+                                ③ 数币入账（+4,997.50 USDT） ⏳ 等待
+                            </div>
+                            <div class="note-box note-info">
+                                <strong>底层全链路（商户不可见，TP可在交易中心查看）：</strong><br>
+                                ① IPL法币账户扣款 -$5,025 ✅<br>
+                                ② IPL→BB 法币划转 $5,025 ✅<br>
+                                ③ BB法币账户入账 +$5,025 ✅<br>
+                                ④ BB承兑引擎处理 USD→USDT ⏳<br>
+                                ⑤ BB数币钱包入账 +4,997.50 USDT ⏳
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 场景⑤：从IPL VA OnRamp ===== -->
+        <div class="scenario-panel" id="scenario-ipl-va">
+            <div class="scenario-card">
+                <h4>⑤ 从 IPL VA OnRamp <span class="tag tag-ipl">IPL</span> → <span class="tag tag-bb">BB</span></h4>
+                <div class="sc-tags">
+                    <span class="tag tag-ipl">资金来源: IPL VA收款</span>
+                    <span class="tag tag-bb">承兑引擎: BB</span>
+                    <span class="tag tag-active">目标: BB数币钱包</span>
+                </div>
+
+                <div class="note-box note-warn">
+                    <strong>场景说明：</strong>汇款人通过IPL的VA转账法币入金，收到后触发OnRamp。<br>
+                    <strong>关键：</strong>VA在IPL侧，承兑在BB侧 → 需要跨SP：IPL VA收款 → IPL法币入账 → 划转到BB → BB承兑 → BB数币钱包。<br>
+                    <strong>适用客户：</strong>有贸易背景的合规客户，IPL VA适合需要正规银行VA的场景。
+                </div>
+
+                <div class="divider"></div>
+
+                <!-- 子场景：VA状态分支 -->
+                <div class="scenario-tabs" style="margin-bottom:16px;">
+                    <button class="scenario-tab active" onclick="switchSubScenario('ipl', 'no-va')">没有VA</button>
+                    <button class="scenario-tab" onclick="switchSubScenario('ipl', 'va-pending')">VA申请中</button>
+                    <button class="scenario-tab" onclick="switchSubScenario('ipl', 'va-active')">有可用VA</button>
+                </div>
+
+                <!-- 没有VA -->
+                <div class="sub-scenario active" id="ipl-no-va">
+                    <div class="scenario-card" style="border:1px dashed var(--orange-border); background:var(--orange-bg);">
+                        <h4>⚠️ 还没有IPL VA — 需先申请</h4>
+                        <div class="empty-state">
+                            <div class="empty-icon">🏦</div>
+                            <div class="empty-title">暂无可用的IPL VA收款账户</div>
+                            <div class="empty-desc">
+                                您还没有IPL VA（虚拟账户），无法通过IPL VA收款方式发起OnRamp。<br>
+                                请先前往 <strong>Collection Tools</strong> 申请VA。<br>
+                                <span style="color:var(--red);">⚠️ 前提：您需要已开通IPL法币账户（产品开通时勾选）</span>
+                            </div>
+                            <div style="display:flex; gap:10px; justify-content:center;">
+                                <button class="btn btn-primary">🛠️ 前往申请VA →</button>
+                                <button class="btn btn-outline">💰 改用法币余额OnRamp</button>
+                            </div>
+                        </div>
+                        <div class="note-box note-info">
+                            <strong>前置条件检查：</strong><br>
+                            • 商户是否已开通IPL法币账户？<br>
+                            &nbsp;&nbsp;— 是 → 可以申请IPL VA<br>
+                            &nbsp;&nbsp;— 否 → 提示"请先在产品开通中勾选IPL法币账户"<br>
+                            • IPL VA申请需IPL审核，审核通过后可用
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VA申请中 -->
+                <div class="sub-scenario" id="ipl-va-pending" style="display:none;">
+                    <div class="scenario-card" style="border:1px dashed var(--orange-border); background:var(--orange-bg);">
+                        <h4>⏳ IPL VA 申请中 — 等待审核</h4>
+                        <div class="account-card ipl" style="opacity:.7;">
+                            <div class="ac-header">
+                                <div class="ac-name">🏦 IPL VA 收款账户 (USD)</div>
+                                <span class="tag tag-pending">⏳ 申请中</span>
+                            </div>
+                            <div class="ac-detail">
+                                申请时间: 2026-02-08 11:00 · 预计审核: 1-3个工作日<br>
+                                VA账号: <span style="color:var(--text-m);">待分配</span>
+                            </div>
+                        </div>
+                        <div class="note-box note-warn">
+                            <strong>交互说明：</strong><br>
+                            • IPL VA正在审核中，<strong>不可用于收款</strong><br>
+                            • OnRamp入口提示"IPL VA审核中，暂不可用"<br>
+                            • 商户可选择其他方式：BB法币余额 / BB代收付账户 / BB-XPAY VA<br>
+                            • IPL VA审核通过后系统发送通知
+                        </div>
+                        <div style="margin-top:12px;">
+                            <button class="btn btn-outline btn-sm" disabled style="opacity:.5; cursor:not-allowed;">🏦 通过IPL VA收款发起OnRamp（审核中）</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 有可用VA -->
+                <div class="sub-scenario" id="ipl-va-active" style="display:none;">
+                    <div class="scenario-card">
+                        <h4>✅ 有可用IPL VA — 正常OnRamp流程</h4>
+
+                        <div class="account-card ipl">
+                            <div class="ac-header">
+                                <div class="ac-name">🏦 IPL VA 收款账户 (USD)</div>
+                                <span class="tag tag-active">可用</span>
+                            </div>
+                            <div class="ac-detail">累计收款: $85,000.00 · 开通时间: 2026-01-20</div>
+                        </div>
+
+                        <div class="divider"></div>
+                        <h4>交互流程</h4>
+
+                        <div class="flow-container">
+                            <div class="flow-step">
+                                <div class="step-dot done"></div>
+                                <div class="step-content">
+                                    <div class="step-title">Step 1：选择IPL VA + 配置OnRamp</div>
+                                    <div class="mock-form">
+                                        <div class="form-row">
+                                            <label>资金来源</label>
+                                            <select><option>🏦 VA收款入金</option></select>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>选择VA</label>
+                                            <select><option>USD VA — IPL-VA-****5678 (可用)</option></select>
+                                        </div>
+                                        <div class="form-row">
+                                            <label>OnRamp模式</label>
+                                            <select>
+                                                <option>🔄 自动 — VA收到法币自动承兑为USDT</option>
+                                                <option>✋ 手动</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flow-step">
+                                <div class="step-dot done"></div>
+                                <div class="step-content">
+                                    <div class="step-title">Step 2：获取IPL VA收款信息</div>
+                                    <div class="va-info">
+                                        <div style="font-weight:700; margin-bottom:8px;">📋 IPL VA 收款账户信息</div>
+                                        <div class="va-row"><span class="va-label">Account Name</span><span class="va-value">ABC TRADING CO.</span></div>
+                                        <div class="va-row"><span class="va-label">Account No.</span><span class="va-value">IPL-VA-USD-5678</span></div>
+                                        <div class="va-row"><span class="va-label">Bank Name</span><span class="va-value">IPL Partner Bank</span></div>
+                                        <div class="va-row"><span class="va-label">SWIFT</span><span class="va-value">IPLBSGSG</span></div>
+                                        <div class="va-row"><span class="va-label">IBAN</span><span class="va-value">SG88 IPLB 0000 5678 1234 56</span></div>
+                                    </div>
+                                    <div class="note-box note-info" style="margin-top:8px;">
+                                        <strong>商户不感知SP：</strong>商户只看到"VA收款账户"，不知道这是IPL的VA。
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flow-step">
+                                <div class="step-dot current"></div>
+                                <div class="step-content">
+                                    <div class="step-title">Step 3：等待入金 → 跨SP承兑</div>
+                                    <div class="note-box note-green">
+                                        <strong>全链路视图（商户看到简化版）：</strong><br>
+                                        ① 等待汇款人转账到VA ⏳<br>
+                                        ② VA收到 $8,000 ✅<br>
+                                        ③ 承兑处理（USD→USDT） ⏳<br>
+                                        ④ 数币入账（+7,996 USDT） ⏳
+                                    </div>
+                                    <div class="note-box note-info">
+                                        <strong>底层全链路（商户不可见）：</strong><br>
+                                        ① IPL VA收到 $8,000（IPL确认入账）✅<br>
+                                        ② 入账到IPL法币账户 +$8,000 ✅<br>
+                                        ③ IPL→BB 法币划转 $8,000（SP间互转）⏳<br>
+                                        ④ BB法币账户入账 +$8,000 ✅<br>
+                                        ⑤ BB承兑引擎处理 USD→USDT ⏳<br>
+                                        ⑥ BB数币钱包入账 +7,996 USDT ⏳
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== OnRamp 场景汇总表 ===== -->
+    <div class="card">
+        <h3>📊 OnRamp 五大场景汇总</h3>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>场景</th>
+                    <th>资金来源</th>
+                    <th>承兑引擎</th>
+                    <th>是否跨SP</th>
+                    <th>VA状态分支</th>
+                    <th>商户感知</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>① BB法币账户</strong></td>
+                    <td>BB法币余额</td>
+                    <td>BB</td>
+                    <td>❌ 否（BB内部）</td>
+                    <td>—</td>
+                    <td>选币种+金额→确认→完成</td>
+                </tr>
+                <tr>
+                    <td><strong>② BB代收付账户</strong></td>
+                    <td>BB代收付入金</td>
+                    <td>BB</td>
+                    <td>❌ 否（BB内部）</td>
+                    <td>—</td>
+                    <td>获取收款信息→等待入金→自动承兑</td>
+                </tr>
+                <tr>
+                    <td><strong>③ BB-XPAY VA</strong></td>
+                    <td>XPAY VA收款</td>
+                    <td>BB</td>
+                    <td>❌ 否（BB内部Channel）</td>
+                    <td>无VA / 申请中 / 可用</td>
+                    <td>选VA→获取VA信息→等待入金→自动承兑</td>
+                </tr>
+                <tr>
+                    <td><strong>④ IPL法币账户</strong></td>
+                    <td>IPL法币余额</td>
+                    <td>BB</td>
+                    <td>✅ 是（IPL→BB划转）</td>
+                    <td>—</td>
+                    <td>同场景①（商户不感知跨SP）</td>
+                </tr>
+                <tr>
+                    <td><strong>⑤ IPL VA</strong></td>
+                    <td>IPL VA收款</td>
+                    <td>BB</td>
+                    <td>✅ 是（IPL→BB划转）</td>
+                    <td>无VA / 申请中 / 可用</td>
+                    <td>选VA→获取VA信息→等待入金→自动承兑</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="note-box note-info" style="margin-top:12px;">
+            <strong>核心原则：</strong><br>
+            • <strong>商户不感知SP</strong>：不管底层走BB还是IPL，商户看到的交互流程一致<br>
+            • <strong>承兑引擎固定BB</strong>：所有OnRamp最终都由BB承兑引擎处理<br>
+            • <strong>跨SP自动处理</strong>：IPL资金→BB的划转由系统自动完成，商户无感<br>
+            • <strong>VA状态分支</strong>：没有VA→引导申请，申请中→置灰提示，可用→正常流程
+        </div>
+    </div>
+</div>
+
+<!-- Placeholder pages -->
+<div class="page" id="page-fiat-accounts"><div class="page-header"><h1>🏦 Fiat Accounts</h1><p>不在本原型范围内，请参考 mp-menu-structure-1.html</p></div></div>
+<div class="page" id="page-crypto-wallet"><div class="page-header"><h1>💎 Crypto Wallet</h1><p>不在本原型范围内</p></div></div>
+<div class="page" id="page-exchange"><div class="page-header"><h1>🔄 Exchange</h1><p>不在本原型范围内</p></div></div>
+<div class="page" id="page-collection-tools"><div class="page-header"><h1>🛠️ Collection Tools</h1><p>不在本原型范围内</p></div></div>
+<div class="page" id="page-remitter"><div class="page-header"><h1>🧑 Remitter</h1><p>不在本原型范围内</p></div></div>
+<div class="page" id="page-payins"><div class="page-header"><h1>📥 Payins</h1><p>不在本原型范围内</p></div></div>
+<div class="page" id="page-beneficiary"><div class="page-header"><h1>👤 Beneficiary</h1><p>不在本原型范围内</p></div></div>
+<div class="page" id="page-payouts"><div class="page-header"><h1>📤 Payouts</h1><p>不在本原型范围内</p></div></div>
+<div class="page" id="page-offramp"><div class="page-header"><h1>💱 OffRamp</h1><p>请查看 mp-offramp-interaction.html</p></div></div>
+<div class="page" id="page-remittance"><div class="page-header"><h1>🔀 Remittance Orders</h1><p>不在本原型范围内</p></div></div>
+
+</div>
+
+<script>
+// Page navigation
+document.querySelectorAll('.menu-item').forEach(item => {
+    item.addEventListener('click', () => {
+        const pageId = item.dataset.page;
+        if (!pageId) return;
+        document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+        item.classList.add('active');
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        const page = document.getElementById('page-' + pageId);
+        if (page) page.classList.add('active');
+    });
+});
+
+// Scenario switching
+function switchScenario(id) {
+    document.querySelectorAll('.scenario-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.scenario-tab').forEach(t => t.classList.remove('active'));
+    const panel = document.getElementById('scenario-' + id);
+    if (panel) panel.classList.add('active');
+    // Find and activate the matching tab
+    document.querySelectorAll('.scenario-tab').forEach(t => {
+        if (t.getAttribute('onclick') && t.getAttribute('onclick').includes(id)) {
+            t.classList.add('active');
+        }
+    });
+}
+
+// Sub-scenario switching (for VA states)
+function switchSubScenario(prefix, state) {
+    const parent = document.getElementById('scenario-' + prefix + (prefix === 'bb-xpay' ? '-va' : (prefix === 'ipl' ? '-va' : '')));
+    if (!parent) {
+        // Try alternate IDs
+        const altParent = prefix === 'xpay' ? document.getElementById('scenario-bb-xpay-va') : document.getElementById('scenario-ipl-va');
+        if (altParent) {
+            altParent.querySelectorAll('.sub-scenario').forEach(s => s.style.display = 'none');
+            const target = document.getElementById(prefix + '-' + state);
+            if (target) target.style.display = 'block';
+            // Update sub tabs
+            altParent.querySelectorAll('.scenario-tabs .scenario-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+        return;
+    }
+    parent.querySelectorAll('.sub-scenario').forEach(s => s.style.display = 'none');
+    const target = document.getElementById(prefix + '-' + state);
+    if (target) target.style.display = 'block';
+}
+</script>
+</body>
+</html>

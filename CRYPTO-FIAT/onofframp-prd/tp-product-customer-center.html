@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TP 产品中心 & 客户中心 — 承兑产品交互原型</title>
+<style>
+:root {
+    --bg: #f0f2f5; --card-bg: #fff; --border: #e2e8f0; --border-light: #f1f5f9;
+    --text: #1a1f36; --text-s: #6b7294; --text-m: #a5aac4;
+    --primary: #4f46e5; --primary-light: #eef2ff; --primary-dark: #3730a3;
+    --green: #10b981; --green-bg: #ecfdf5; --green-border: #a7f3d0;
+    --orange: #f59e0b; --orange-bg: #fffbeb; --orange-border: #fde68a;
+    --red: #ef4444; --red-bg: #fef2f2;
+    --blue: #3b82f6; --blue-bg: #eff6ff; --blue-border: #93c5fd;
+    --purple: #7c3aed; --purple-bg: #f5f3ff;
+    --sidebar-w: 240px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', sans-serif; background: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; -webkit-font-smoothing: antialiased; }
+
+/* Sidebar */
+.sidebar { width: var(--sidebar-w); background: var(--card-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; }
+.sidebar-logo { padding: 20px 16px; font-size: 16px; font-weight: 700; color: var(--primary); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+.sidebar-logo .logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, var(--primary), #6366f1); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; font-weight: 700; }
+.menu-group { padding: 12px 8px 4px; }
+.menu-group-label { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 0 8px 6px; color: var(--text-m); }
+.menu-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; color: var(--text-s); transition: all .15s; user-select: none; }
+.menu-item:hover { background: var(--bg); color: var(--text); }
+.menu-item.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
+.menu-item .icon { width: 18px; text-align: center; font-size: 14px; }
+.sidebar-user { margin-top: auto; padding: 14px 16px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 10px; font-size: 12px; }
+.sidebar-user .avatar { width: 32px; height: 32px; background: linear-gradient(135deg, #6366f1, #a78bfa); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 600; }
+
+/* Main */
+.main { flex: 1; overflow-y: auto; padding: 28px 36px; }
+.page { display: none; }
+.page.active { display: block; }
+.breadcrumb { font-size: 12px; color: var(--text-m); margin-bottom: 6px; }
+.breadcrumb span { color: var(--primary); font-weight: 500; }
+.page-header { margin-bottom: 24px; }
+.page-header h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+.page-header p { color: var(--text-s); font-size: 13px; }
+
+/* Cards */
+.card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); padding: 24px; margin-bottom: 16px; }
+.card h3 { font-size: 15px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.card h3 .badge { font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 500; }
+
+/* Tags */
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+.tag-active { background: var(--green-bg); color: var(--green); }
+.tag-pending { background: var(--orange-bg); color: var(--orange); }
+.tag-default { background: var(--blue-bg); color: var(--blue); }
+.tag-optional { background: var(--purple-bg); color: var(--purple); }
+.tag-sp { background: #dbeafe; color: #1e40af; }
+
+/* Table */
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.data-table th { text-align: left; padding: 10px 12px; background: var(--border-light); font-weight: 600; font-size: 12px; color: var(--text-s); border-bottom: 2px solid var(--border); }
+.data-table td { padding: 10px 12px; border-bottom: 1px solid var(--border-light); vertical-align: middle; }
+.data-table tr:hover td { background: #fafbfc; }
+.data-table .product-name { font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.data-table .product-name .p-icon { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all .15s; }
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-outline { background: white; color: var(--primary); border: 1px solid var(--primary); }
+.btn-outline:hover { background: var(--primary-light); }
+.btn-sm { padding: 5px 12px; font-size: 12px; border-radius: 6px; }
+.btn-ghost { background: transparent; color: var(--primary); }
+.btn-ghost:hover { background: var(--primary-light); }
+
+/* Note box */
+.note-box { border-radius: 8px; padding: 14px 16px; font-size: 13px; line-height: 1.6; margin-top: 12px; }
+.note-box strong { font-weight: 700; }
+.note-warn { background: var(--orange-bg); border: 1px solid var(--orange-border); color: #92400e; }
+.note-info { background: var(--blue-bg); border: 1px solid var(--blue-border); color: #1e40af; }
+.note-green { background: var(--green-bg); border: 1px solid var(--green-border); color: #065f46; }
+
+/* Tabs */
+.tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 20px; }
+.tab-btn { padding: 10px 20px; font-size: 13px; font-weight: 500; color: var(--text-s); background: none; border: none; border-bottom: 2px solid transparent; margin-bottom: -2px; cursor: pointer; transition: all .15s; }
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* Config form */
+.config-section { margin-bottom: 20px; }
+.config-section h4 { font-size: 14px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.config-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--border-light); border-radius: 8px; margin-bottom: 8px; font-size: 13px; }
+.config-row label { font-weight: 600; min-width: 140px; }
+.config-row .value { color: var(--text-s); flex: 1; }
+.config-row select, .config-row input[type="text"] { padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; background: white; }
+.config-row select { min-width: 180px; }
+
+/* Toggle */
+.toggle { position: relative; width: 40px; height: 22px; background: #cbd5e1; border-radius: 11px; cursor: pointer; transition: background .2s; flex-shrink: 0; }
+.toggle.on { background: var(--green); }
+.toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; background: white; border-radius: 50%; transition: transform .2s; box-shadow: 0 1px 3px rgba(0,0,0,.15); }
+.toggle.on::after { transform: translateX(18px); }
+
+/* Checkbox */
+.checkbox-row { display: flex; align-items: center; gap: 8px; padding: 8px 0; font-size: 13px; cursor: pointer; }
+.checkbox-row input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--primary); }
+
+/* Status steps */
+.status-flow { display: flex; align-items: center; gap: 4px; margin: 12px 0; }
+.status-step { padding: 4px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; background: var(--border-light); color: var(--text-m); }
+.status-step.current { background: var(--primary); color: white; }
+.status-step.done { background: var(--green-bg); color: var(--green); }
+.status-arrow { color: var(--text-m); font-size: 12px; }
+
+/* Product card grid */
+.product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+.product-card { background: var(--border-light); border-radius: 10px; padding: 16px; border-left: 4px solid var(--primary); }
+.product-card .pc-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.product-card .pc-name { font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 6px; }
+.product-card .pc-desc { font-size: 12px; color: var(--text-s); line-height: 1.5; }
+.product-card.bb { border-left-color: var(--blue); }
+.product-card.ipl { border-left-color: var(--orange); }
+.product-card.locked { border-left-color: var(--text-m); opacity: .7; }
+
+/* Divider */
+.divider { height: 1px; background: var(--border); margin: 16px 0; }
+
+/* Modal overlay */
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,.4); z-index: 100; align-items: center; justify-content: center; }
+.modal-overlay.show { display: flex; }
+.modal { background: white; border-radius: 16px; width: 680px; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.2); }
+.modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.modal-header h2 { font-size: 18px; font-weight: 700; }
+.modal-close { width: 32px; height: 32px; border-radius: 8px; border: none; background: var(--border-light); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+.modal-body { padding: 24px; }
+.modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
+
+/* Merchant list */
+.merchant-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--border-light); border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: all .15s; }
+.merchant-row:hover { background: var(--primary-light); }
+.merchant-row .m-avatar { width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, #6366f1, #a78bfa); display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 600; }
+.merchant-row .m-info { flex: 1; }
+.merchant-row .m-name { font-weight: 600; font-size: 13px; }
+.merchant-row .m-mid { font-size: 11px; color: var(--text-m); }
+.merchant-row .m-status { display: flex; gap: 6px; }
+
+/* SP review status */
+.sp-status-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--border-light); border-radius: 8px; margin-bottom: 8px; }
+.sp-status-row .sp-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: white; }
+.sp-status-row .sp-icon.bb { background: var(--blue); }
+.sp-status-row .sp-icon.ipl { background: var(--orange); }
+.sp-status-row .sp-info { flex: 1; }
+.sp-status-row .sp-name { font-weight: 600; font-size: 13px; }
+.sp-status-row .sp-products { font-size: 11px; color: var(--text-s); }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-icon">TP</div>
+        Tenant Portal
+    </div>
+
+    <div class="menu-group">
+        <div class="menu-group-label">产品中心</div>
+        <div class="menu-item" data-page="product-market">
+            <span class="icon">🏪</span> SP产品市场
+        </div>
+        <div class="menu-item active" data-page="signed-products">
+            <span class="icon">📋</span> 已签约产品
+        </div>
+        <div class="menu-item" data-page="product-config">
+            <span class="icon">⚙️</span> 入网规则配置
+        </div>
+    </div>
+
+    <div class="menu-group">
+        <div class="menu-group-label">客户中心</div>
+        <div class="menu-item" data-page="merchant-list">
+            <span class="icon">👥</span> 商户/会员列表
+        </div>
+        <div class="menu-item" data-page="merchant-product-open">
+            <span class="icon">🔓</span> 产品开通
+        </div>
+        <div class="menu-item" data-page="merchant-product-config">
+            <span class="icon">🔧</span> 商户产品配置
+        </div>
+    </div>
+
+    <div class="menu-group">
+        <div class="menu-group-label">其他</div>
+        <div class="menu-item" data-page="placeholder">
+            <span class="icon">📊</span> 交易中心
+        </div>
+        <div class="menu-item" data-page="placeholder">
+            <span class="icon">💰</span> 清结算中心
+        </div>
+        <div class="menu-item" data-page="placeholder">
+            <span class="icon">⚙️</span> 设置中心
+        </div>
+    </div>
+
+    <div class="sidebar-user">
+        <div class="avatar">TC</div>
+        <div>
+            <div style="font-weight:600; color:var(--text);">环球租户</div>
+            <div style="color:var(--text-m); font-size:11px;">Tenant Admin</div>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+    <!-- ==================== 产品中心：已签约产品 ==================== -->
+    <div class="page active" id="page-signed-products">
+        <div class="page-header">
+            <div class="breadcrumb">产品中心 / <span>已签约产品</span></div>
+            <h1>已签约产品</h1>
+            <p>查看租户已与SP签约的所有产品，管理入网规则配置</p>
+        </div>
+
+        <div class="card">
+            <h3>📋 已签约产品列表</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>产品名称</th>
+                        <th>SP</th>
+                        <th>签约状态</th>
+                        <th>签约时间</th>
+                        <th>入网规则</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="product-name">
+                                <div class="p-icon" style="background:#dbeafe; color:#1e40af;">🔄</div>
+                                承兑产品（On/Off-Ramp）
+                            </div>
+                        </td>
+                        <td><span class="tag tag-sp">BB</span></td>
+                        <td><span class="tag tag-active">已生效</span></td>
+                        <td>2026-02-01</td>
+                        <td><span class="tag tag-active">已配置</span></td>
+                        <td>
+                            <button class="btn btn-ghost btn-sm" onclick="showPage('product-config')">查看配置 →</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="product-name">
+                                <div class="p-icon" style="background:#ecfdf5; color:#10b981;">💎</div>
+                                数币钱包（Crypto Wallet）
+                            </div>
+                        </td>
+                        <td><span class="tag tag-sp">BB</span></td>
+                        <td><span class="tag tag-active">已生效</span></td>
+                        <td>2026-02-01</td>
+                        <td><span class="tag" style="background:#e2e8f0; color:#64748b;">默认开通</span></td>
+                        <td><span style="font-size:12px; color:var(--text-m);">随承兑产品默认开通</span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="product-name">
+                                <div class="p-icon" style="background:#dbeafe; color:#3b82f6;">🏦</div>
+                                BB法币账户（Fiat Account）
+                            </div>
+                        </td>
+                        <td><span class="tag tag-sp">BB</span></td>
+                        <td><span class="tag tag-active">已生效</span></td>
+                        <td>2026-02-01</td>
+                        <td><span class="tag" style="background:#e2e8f0; color:#64748b;">默认开通</span></td>
+                        <td><span style="font-size:12px; color:var(--text-m);">随承兑产品默认开通</span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="product-name">
+                                <div class="p-icon" style="background:var(--orange-bg); color:var(--orange);">🏦</div>
+                                IPL法币账户（Fiat Account）
+                            </div>
+                        </td>
+                        <td><span class="tag" style="background:var(--orange-bg); color:var(--orange);">IPL</span></td>
+                        <td><span class="tag tag-active">已生效</span></td>
+                        <td>2026-02-01</td>
+                        <td><span class="tag tag-optional">商户可选</span></td>
+                        <td>
+                            <button class="btn btn-ghost btn-sm" onclick="showPage('product-config')">查看配置 →</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="note-box note-info">
+                <strong>产品依赖关系：</strong><br>
+                • 商户开通<strong>承兑产品</strong>时，<strong>BB数币钱包 + BB法币账户</strong>默认开通（固定，不需选择）<br>
+                • <strong>IPL法币账户</strong>为商户可选项 — 租户已配置"允许商户额外使用IPL法币账户"<br>
+                • BB和IPL审核独立，各自通过各自可用
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>🔗 产品→SP映射关系（本期1:1）</h3>
+            <div class="product-grid">
+                <div class="product-card bb">
+                    <div class="pc-header">
+                        <div class="pc-name">🔄 承兑产品</div>
+                        <span class="tag tag-sp">BB</span>
+                    </div>
+                    <div class="pc-desc">
+                        U→USD 承兑，商户选择开通<br>
+                        <strong>开通时默认捆绑：</strong>BB数币钱包 + BB法币账户
+                    </div>
+                </div>
+                <div class="product-card bb">
+                    <div class="pc-header">
+                        <div class="pc-name">💎 数币钱包</div>
+                        <span class="tag tag-sp">BB</span>
+                    </div>
+                    <div class="pc-desc">USDT/USDC 托管钱包<br><span class="tag" style="background:#e2e8f0; color:#64748b; margin-top:4px;">🔄 默认开通</span></div>
+                </div>
+                <div class="product-card bb">
+                    <div class="pc-header">
+                        <div class="pc-name">🏦 BB法币账户</div>
+                        <span class="tag tag-sp">BB</span>
+                    </div>
+                    <div class="pc-desc">BB代收付账户 + XPAY VA能力<br><span class="tag" style="background:#e2e8f0; color:#64748b; margin-top:4px;">🔄 默认开通</span></div>
+                </div>
+                <div class="product-card ipl">
+                    <div class="pc-header">
+                        <div class="pc-name">🏦 IPL法币账户</div>
+                        <span class="tag" style="background:var(--orange-bg); color:var(--orange);">IPL</span>
+                    </div>
+                    <div class="pc-desc">VA收款 + POBO出款<br><span class="tag tag-optional" style="margin-top:4px;">☐ 商户可选</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 产品中心：入网规则配置 ==================== -->
+    <div class="page" id="page-product-config">
+        <div class="page-header">
+            <div class="breadcrumb">产品中心 / <span>入网规则配置</span></div>
+            <h1>承兑产品 — 入网规则配置</h1>
+            <p>配置承兑产品的入网推送规则、法币账户选择、交易路由优先级</p>
+        </div>
+
+        <div class="card">
+            <h3>⚙️ 承兑产品签约配置 <span class="badge tag-active">已生效</span></h3>
+
+            <div class="config-section">
+                <h4>📌 基础配置（不可修改）</h4>
+                <div class="config-row">
+                    <label>承兑能力提供方</label>
+                    <div class="value"><span class="tag tag-sp">BB</span> — 固定，BB专做承兑</div>
+                </div>
+                <div class="config-row">
+                    <label>默认开通产品</label>
+                    <div class="value">
+                        <span class="tag tag-sp" style="margin-right:4px;">BB 数币钱包</span>
+                        <span class="tag tag-sp">BB 法币账户</span>
+                        — 商户开通承兑时自动开通
+                    </div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="config-section">
+                <h4>🔧 租户可配置项</h4>
+
+                <div class="config-row">
+                    <label>允许商户使用IPL法币账户</label>
+                    <div class="value" style="display:flex; align-items:center; gap:12px;">
+                        <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+                        <span style="font-size:12px; color:var(--text-s);">开启后，商户开通承兑产品时可勾选"额外使用IPL法币账户"</span>
+                    </div>
+                </div>
+
+                <div class="config-row">
+                    <label>法币账户优先级</label>
+                    <div class="value" style="display:flex; align-items:center; gap:12px;">
+                        <select>
+                            <option>BB 优先</option>
+                            <option>IPL 优先</option>
+                        </select>
+                        <span style="font-size:12px; color:var(--text-s);">商户同时开通BB+IPL时，交易默认路由到哪个SP</span>
+                    </div>
+                </div>
+
+                <div class="config-row">
+                    <label>BB代收付账户</label>
+                    <div class="value" style="display:flex; align-items:center; gap:12px;">
+                        <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+                        <span style="font-size:12px; color:var(--text-s);">BB自有代收付账户能力（当前主要方式）</span>
+                    </div>
+                </div>
+
+                <div class="config-row">
+                    <label>BB-XPAY VA能力</label>
+                    <div class="value" style="display:flex; align-items:center; gap:12px;">
+                        <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+                        <span style="font-size:12px; color:var(--text-s);">BB底层Channel XPAY的VA收款+POBO出款能力（对商户透明）</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="config-section">
+                <h4>📋 入网推送规则（自动，不可修改）</h4>
+                <div class="note-box note-green">
+                    <strong>规则极简：</strong><br>
+                    1. 承兑产品 + BB数币钱包 + BB法币账户 → <strong>固定推送BB审核</strong>（默认，无需配置）<br>
+                    2. IPL法币账户 → <strong>商户勾选了才推送IPL审核</strong>，没勾选就不推送<br>
+                    3. BB和IPL审核<strong>独立</strong>，互不依赖<br><br>
+                    <strong>判断条件只有一个：</strong>商户是否选择了IPL法币账户？是→推送IPL，否→不推送IPL
+                </div>
+            </div>
+
+            <div class="config-section">
+                <h4>🔀 交易路由规则（自动，基于上方优先级配置）</h4>
+                <div class="note-box note-info">
+                    <strong>规则极简：</strong><br>
+                    • 商户只开通了BB（没选IPL）→ 直接走BB，无需路由<br>
+                    • 商户同时开通了BB和IPL → 看上方配置的<strong>法币账户优先级</strong><br>
+                    • 本期不按金额/币种/国家等条件路由，不需要商户级路由调整
+                </div>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:16px;">
+                <button class="btn btn-primary">💾 保存配置</button>
+                <button class="btn btn-outline">↩️ 恢复默认</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>📊 法币账户选择 — 三种模式对比</h3>
+            <table class="data-table">
+                <thead>
+                    <tr><th>模式</th><th>法币账户</th><th>承兑后资金去向</th><th>商户体验</th><th>适用场景</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>仅BB</strong></td>
+                        <td>BB法币账户</td>
+                        <td>承兑后USD入到BB账户</td>
+                        <td>商户无需选择，自动入BB</td>
+                        <td>TP只签约了BB法币账户</td>
+                    </tr>
+                    <tr>
+                        <td><strong>仅IPL</strong></td>
+                        <td>IPL法币账户</td>
+                        <td>承兑后USD入到IPL账户</td>
+                        <td>商户无需选择，自动入IPL</td>
+                        <td>TP只签约了IPL法币账户</td>
+                    </tr>
+                    <tr style="background:var(--primary-light);">
+                        <td><strong>IPL + BB ✅ 当前</strong></td>
+                        <td>两者都有</td>
+                        <td>商户自行选择入到哪个账户</td>
+                        <td>商户在承兑时选择目标账户</td>
+                        <td>TP同时签约了IPL和BB</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ==================== 产品中心：SP产品市场 ==================== -->
+    <div class="page" id="page-product-market">
+        <div class="page-header">
+            <div class="breadcrumb">产品中心 / <span>SP产品市场</span></div>
+            <h1>SP产品市场</h1>
+            <p>浏览可签约的SP产品，申请签约</p>
+        </div>
+        <div class="card">
+            <h3>🏪 可签约产品</h3>
+            <div class="product-grid">
+                <div class="product-card bb">
+                    <div class="pc-header">
+                        <div class="pc-name">🔄 承兑产品（On/Off-Ramp）</div>
+                        <span class="tag tag-active">已签约</span>
+                    </div>
+                    <div class="pc-desc">BB提供 · U→USD承兑 · 支持USDT/USDC · 金额100-100,000 USD</div>
+                </div>
+                <div class="product-card bb">
+                    <div class="pc-header">
+                        <div class="pc-name">💎 数币钱包</div>
+                        <span class="tag tag-active">已签约</span>
+                    </div>
+                    <div class="pc-desc">BB提供 · USDT/USDC/BTC托管 · 随承兑默认开通</div>
+                </div>
+                <div class="product-card ipl">
+                    <div class="pc-header">
+                        <div class="pc-name">🏦 IPL法币账户</div>
+                        <span class="tag tag-active">已签约</span>
+                    </div>
+                    <div class="pc-desc">IPL提供 · VA收款+POBO出款 · 适合有贸易背景客户</div>
+                </div>
+                <div class="product-card locked">
+                    <div class="pc-header">
+                        <div class="pc-name">💳 发卡服务</div>
+                        <span class="tag" style="background:#e2e8f0; color:#64748b;">未签约</span>
+                    </div>
+                    <div class="pc-desc">XX SP提供 · 虚拟卡/实体卡 · 即将上线</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 客户中心：商户列表 ==================== -->
+    <div class="page" id="page-merchant-list">
+        <div class="page-header">
+            <div class="breadcrumb">客户中心 / <span>商户/会员列表</span></div>
+            <h1>商户/会员列表</h1>
+            <p>管理所有商户，查看入网状态和产品开通情况</p>
+        </div>
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <h3 style="margin-bottom:0;">👥 商户列表</h3>
+                <div style="display:flex; gap:8px;">
+                    <input type="text" placeholder="搜索商户名称/MID..." style="padding:6px 12px; border:1px solid var(--border); border-radius:6px; font-size:13px; width:240px;">
+                    <button class="btn btn-primary btn-sm">+ 新增商户</button>
+                </div>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr><th>商户名称</th><th>MID</th><th>承兑产品</th><th>BB审核</th><th>IPL审核</th><th>注册时间</th><th>操作</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>ABC Trading Co.</strong></td>
+                        <td style="font-family:monospace; font-size:12px;">M202602030001</td>
+                        <td><span class="tag tag-active">已开通</span></td>
+                        <td><span class="tag tag-active">通过</span></td>
+                        <td><span class="tag tag-active">通过</span></td>
+                        <td>2026-02-03</td>
+                        <td><button class="btn btn-ghost btn-sm" onclick="showPage('merchant-product-config')">配置 →</button></td>
+                    </tr>
+                    <tr>
+                        <td><strong>XYZ Global Ltd.</strong></td>
+                        <td style="font-family:monospace; font-size:12px;">M202602050002</td>
+                        <td><span class="tag tag-pending">审核中</span></td>
+                        <td><span class="tag tag-pending">审核中</span></td>
+                        <td><span class="tag tag-pending">审核中</span></td>
+                        <td>2026-02-05</td>
+                        <td><button class="btn btn-ghost btn-sm" onclick="showPage('merchant-product-open')">查看 →</button></td>
+                    </tr>
+                    <tr>
+                        <td><strong>DEF Commerce Inc.</strong></td>
+                        <td style="font-family:monospace; font-size:12px;">M202602080003</td>
+                        <td><span class="tag tag-active">已开通</span></td>
+                        <td><span class="tag tag-active">通过</span></td>
+                        <td><span class="tag" style="background:#e2e8f0; color:#64748b;">未选择</span></td>
+                        <td>2026-02-08</td>
+                        <td><button class="btn btn-ghost btn-sm" onclick="showPage('merchant-product-config')">配置 →</button></td>
+                    </tr>
+                    <tr>
+                        <td><strong>GHI Web3 Studio</strong></td>
+                        <td style="font-family:monospace; font-size:12px;">M202602100004</td>
+                        <td><span class="tag" style="background:var(--red-bg); color:var(--red);">BB拒绝</span></td>
+                        <td><span class="tag" style="background:var(--red-bg); color:var(--red);">拒绝</span></td>
+                        <td><span class="tag" style="background:#e2e8f0; color:#64748b;">未选择</span></td>
+                        <td>2026-02-10</td>
+                        <td><button class="btn btn-ghost btn-sm">查看 →</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ==================== 客户中心：产品开通（承兑产品示例） ==================== -->
+    <div class="page" id="page-merchant-product-open">
+        <div class="page-header">
+            <div class="breadcrumb">客户中心 / 产品开通 / <span>XYZ Global Ltd.</span></div>
+            <h1>产品开通 — XYZ Global Ltd.</h1>
+            <p>MID: M202602050002 · 查看产品开通申请详情和SP审核进度</p>
+        </div>
+
+        <div class="card">
+            <h3>📋 开通申请概览</h3>
+            <div class="config-row">
+                <label>申请产品</label>
+                <div class="value"><strong>承兑产品（On/Off-Ramp）</strong></div>
+            </div>
+            <div class="config-row">
+                <label>申请时间</label>
+                <div class="value">2026-02-05 14:30:00</div>
+            </div>
+            <div class="config-row">
+                <label>默认开通</label>
+                <div class="value">
+                    <span class="tag tag-sp" style="margin-right:4px;">BB 数币钱包</span>
+                    <span class="tag tag-sp">BB 法币账户</span>
+                </div>
+            </div>
+            <div class="config-row">
+                <label>商户额外选择</label>
+                <div class="value"><span class="tag tag-optional">✅ IPL法币账户</span> — 商户勾选了，已推送IPL审核</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>🔍 SP审核进度（独立审核，互不依赖）</h3>
+
+            <div class="sp-status-row">
+                <div class="sp-icon bb">BB</div>
+                <div class="sp-info">
+                    <div class="sp-name">BB — 承兑产品 + 数币钱包 + BB法币账户</div>
+                    <div class="sp-products">推送时间: 2026-02-05 14:31 · SP商户ID: 待分配</div>
+                </div>
+                <span class="tag tag-pending">⏳ 审核中</span>
+            </div>
+            <div class="status-flow">
+                <div class="status-step done">提交</div>
+                <div class="status-arrow">→</div>
+                <div class="status-step current">BB审核中</div>
+                <div class="status-arrow">→</div>
+                <div class="status-step">通过/拒绝</div>
+            </div>
+
+            <div style="height:12px;"></div>
+
+            <div class="sp-status-row">
+                <div class="sp-icon ipl">IPL</div>
+                <div class="sp-info">
+                    <div class="sp-name">IPL — IPL法币账户</div>
+                    <div class="sp-products">推送时间: 2026-02-05 14:31 · SP商户ID: 待分配</div>
+                </div>
+                <span class="tag tag-pending">⏳ 审核中</span>
+            </div>
+            <div class="status-flow">
+                <div class="status-step done">提交</div>
+                <div class="status-arrow">→</div>
+                <div class="status-step current">IPL审核中</div>
+                <div class="status-arrow">→</div>
+                <div class="status-step">通过/拒绝</div>
+            </div>
+
+            <div class="note-box note-warn">
+                <strong>审核独立规则：</strong><br>
+                • BB审核通过 → BB可用（承兑+数币钱包+BB法币账户），不等IPL<br>
+                • IPL审核通过 → IPL可用（IPL法币账户），不等BB<br>
+                • 任一方拒绝不影响另一方
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>📄 商户提交的KYC/KYB资料</h3>
+            <table class="data-table">
+                <thead>
+                    <tr><th>资料项</th><th>文件名</th><th>状态</th><th>上传时间</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>营业执照</td><td>business_license.pdf</td><td><span class="tag tag-active">已上传</span></td><td>2026-02-05 14:28</td></tr>
+                    <tr><td>法人身份证</td><td>id_card_front.jpg / id_card_back.jpg</td><td><span class="tag tag-active">已上传</span></td><td>2026-02-05 14:29</td></tr>
+                    <tr><td>公司地址证明</td><td>address_proof.pdf</td><td><span class="tag tag-active">已上传</span></td><td>2026-02-05 14:29</td></tr>
+                    <tr><td>业务类型</td><td>跨境电商</td><td><span class="tag tag-active">已填写</span></td><td>2026-02-05 14:30</td></tr>
+                    <tr><td>预计月交易量</td><td>$50,000</td><td><span class="tag tag-active">已填写</span></td><td>2026-02-05 14:30</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ==================== 客户中心：商户产品配置（已开通商户） ==================== -->
+    <div class="page" id="page-merchant-product-config">
+        <div class="page-header">
+            <div class="breadcrumb">客户中心 / 商户产品配置 / <span>ABC Trading Co.</span></div>
+            <h1>商户产品配置 — ABC Trading Co.</h1>
+            <p>MID: M202602030001 · 管理已开通产品的配置</p>
+        </div>
+
+        <div class="card">
+            <h3>✅ 已开通产品状态</h3>
+            <table class="data-table">
+                <thead>
+                    <tr><th>产品</th><th>SP</th><th>状态</th><th>SP商户ID</th><th>开通时间</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>🔄 承兑产品</strong></td>
+                        <td><span class="tag tag-sp">BB</span></td>
+                        <td><span class="tag tag-active">ACTIVE</span></td>
+                        <td style="font-family:monospace; font-size:12px;">BB_M001</td>
+                        <td>2026-02-04</td>
+                    </tr>
+                    <tr>
+                        <td><strong>💎 数币钱包</strong></td>
+                        <td><span class="tag tag-sp">BB</span></td>
+                        <td><span class="tag tag-active">ACTIVE</span></td>
+                        <td style="font-family:monospace; font-size:12px;">BB_M001</td>
+                        <td>2026-02-04</td>
+                    </tr>
+                    <tr>
+                        <td><strong>🏦 BB法币账户</strong></td>
+                        <td><span class="tag tag-sp">BB</span></td>
+                        <td><span class="tag tag-active">ACTIVE</span></td>
+                        <td style="font-family:monospace; font-size:12px;">BB_M001</td>
+                        <td>2026-02-04</td>
+                    </tr>
+                    <tr>
+                        <td><strong>🏦 IPL法币账户</strong></td>
+                        <td><span class="tag" style="background:var(--orange-bg); color:var(--orange);">IPL</span></td>
+                        <td><span class="tag tag-active">ACTIVE</span></td>
+                        <td style="font-family:monospace; font-size:12px;">IPL_M001</td>
+                        <td>2026-02-05</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h3>⚙️ 承兑产品配置</h3>
+
+            <div class="config-section">
+                <h4>🔄 承兑能力配置</h4>
+                <div class="config-row">
+                    <label>承兑方向</label>
+                    <div class="value">On-Ramp（法币→数币）+ Off-Ramp（数币→法币）</div>
+                </div>
+                <div class="config-row">
+                    <label>支持币对</label>
+                    <div class="value">USDT/USD · USDC/USD</div>
+                </div>
+                <div class="config-row">
+                    <label>单笔限额</label>
+                    <div class="value">$100 ~ $100,000</div>
+                </div>
+                <div class="config-row">
+                    <label>承兑费率</label>
+                    <div class="value">0.5%（跟随TP费率方案）</div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="config-section">
+                <h4>🏦 法币账户配置</h4>
+                <div class="config-row">
+                    <label>BB法币账户</label>
+                    <div class="value" style="display:flex; align-items:center; gap:12px;">
+                        <span class="tag tag-active">已开通</span>
+                        <span style="font-size:12px;">BB代收付账户 — 代收代付能力</span>
+                    </div>
+                </div>
+                <div class="config-row">
+                    <label>BB-XPAY VA</label>
+                    <div class="value" style="display:flex; align-items:center; gap:12px;">
+                        <span class="tag tag-active">已开通</span>
+                        <span style="font-size:12px;">BB底层XPAY渠道 — VA收款+POBO出款（对商户透明）</span>
+                    </div>
+                </div>
+                <div class="config-row">
+                    <label>IPL法币账户</label>
+                    <div class="value" style="display:flex; align-items:center; gap:12px;">
+                        <span class="tag tag-active">已开通</span>
+                        <span style="font-size:12px;">IPL VA收款+POBO出款 — 适合贸易背景客户</span>
+                    </div>
+                </div>
+                <div class="config-row">
+                    <label>Off-Ramp目标账户</label>
+                    <div class="value" style="display:flex; align-items:center; gap:12px;">
+                        <select>
+                            <option>商户自行选择（BB或IPL）</option>
+                            <option>仅BB法币账户</option>
+                            <option>仅IPL法币账户</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="config-section">
+                <h4>🔀 交易路由（继承TP配置）</h4>
+                <div class="config-row">
+                    <label>法币账户优先级</label>
+                    <div class="value">
+                        <span class="tag tag-sp">BB 优先</span>
+                        <span style="font-size:12px; color:var(--text-s); margin-left:8px;">继承自TP配置，本期不支持商户级调整</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="note-box note-info">
+                <strong>配置说明：</strong><br>
+                • 承兑费率跟随TP费率方案，不在此处单独配置<br>
+                • 法币账户优先级继承TP配置，本期不支持逐商户定制<br>
+                • BB内部Channel（代收付账户 vs XPAY）由BB自动决策，TP/商户不可见
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:16px;">
+                <button class="btn btn-primary">💾 保存配置</button>
+                <button class="btn btn-outline">↩️ 恢复默认</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Placeholder -->
+    <div class="page" id="page-placeholder">
+        <div class="page-header">
+            <h1>🚧 其他模块</h1>
+            <p>此模块不在本次交互原型范围内</p>
+        </div>
+    </div>
+
+</div>
+
+<script>
+function showPage(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const page = document.getElementById('page-' + pageId);
+    if (page) page.classList.add('active');
+
+    document.querySelectorAll('.menu-item').forEach(m => {
+        m.classList.remove('active');
+        if (m.dataset.page === pageId) m.classList.add('active');
+    });
+}
+
+document.querySelectorAll('.menu-item').forEach(item => {
+    item.addEventListener('click', () => {
+        const pageId = item.dataset.page;
+        if (pageId) showPage(pageId);
+    });
+});
+</script>
+</body>
+</html>
