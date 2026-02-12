@@ -31,6 +31,22 @@
    - 5.2.6 [BB自己On-Ramp直接入金](#526-bb自己on-ramp直接入金2笔交易单)
    - 5.3 [出金（调用外部渠道）](#53-出金调用外部渠道)
 6. [退款流程](#退款流程)
+   - 7.1 [付款退款流程](#71-付款退款流程)
+     - 7.1.1 [IPL法币出款退款](#711-ipl法币出款退款)
+     - 7.1.2 [BB提币退款](#712-bb提币退款)
+     - 7.1.3 [BB数币钱包付款退款](#713-bb数币钱包付款退款usdc→usd退款)
+     - 7.1.4 [IPL-BB模式Off-Ramp付款退款](#714-ipl-bb模式off-ramp付款退款)
+   - 7.2 [收款退款流程](#72-收款退款流程)
+     - 7.2.1 [IPL法币收款退款](#721-ipl法币收款退款)
+     - 7.2.2 [BB收币退款](#722-bb收币退款)
+     - 7.2.3 [BB收法币退款](#723-bb收法币退款)
+     - 7.2.4 [IPL-BB模式On-Ramp收款失败退款](#724-ipl-bb模式on-ramp收款失败退款)
+   - 7.3 [承兑退款（独立）](#73-承兑退款独立)
+     - 7.3.1 [承兑退回币种规则](#731-承兑退回币种规则)
+     - 7.3.2 [Off-Ramp承兑失败退款](#732-off-ramp承兑失败退款)
+     - 7.3.3 [On-Ramp承兑失败退款](#733-on-ramp承兑失败退款)
+     - 7.3.4 [承兑渠道成功后退回](#734-承兑渠道成功后退回)
+   - 7.4 [退款流程汇总](#74-退款流程汇总)
 7. [状态设计](#状态设计)
 
 ---
@@ -977,165 +993,6 @@ sequenceDiagram
 
 ---
 
-### 4.8 BB数币钱包直接付款（商户主动发起）
-
-**场景：** 商户用BB数币钱包中的USDC，直接付款USD给收款人银行账户。系统自动完成承兑+法币出款，商户一笔操作完成。
-
-**单据结构：**
-
-```
-商户单 M001 (USDC→USD, 付款给收款人)
-    └── 交易主单 T001 (BB, USDC→USD)
-            ├── 交易子单 T001-1: 承兑 (USDC→USD, BB内部账户划转)
-            └── 交易子单 T001-2: 法币出款 (USD→收款人银行, 通过XPAY渠道)
-                    └── 渠道单 C001 (BB→XPAY→银行)
-```
-
-**与现有付款流程的区别：**
-
-| 对比项           | 4.6 法币付款/提现 | 4.8 BB数币钱包直接付款     |
-| ---------------- | ----------------- | -------------------------- |
-| **源资金** | 法币账户余额(USD) | 数币钱包余额(USDC)         |
-| **交易单** | 1笔交易单         | 1笔交易主单 + 2笔交易子单  |
-| **承兑**   | 不需要            | 子单1：USDC→USD承兑       |
-| **出款**   | 直接法币出款      | 子单2：承兑后USD出款(XPAY) |
-| **渠道**   | 银行/PSP          | XPAY渠道(BB内部Channel)    |
-
-**单据流转：** 商户单 → 交易主单 → 子单1(承兑) + 子单2(法币出款) → 渠道单
-
-```mermaid
-sequenceDiagram
-    participant WP as 白牌/API
-    participant HUB as EX HUB
-    participant BL as 业务层
-    participant TE as 交易引擎
-    participant Pricing as 计费服务
-    participant FX as 汇率服务
-    participant Account as BB账户服务
-    participant Risk as 风控服务
-    participant Router as 路由引擎
-    participant CO as 渠道服务
-    participant XPAY as XPAY渠道
-    participant Payee as 收款方
-  
-    WP->>HUB: 1. 申请付款(源:USDC, 目标:USD, 收款人ID)
-  
-    Note over WP,HUB: 白牌已预计费、预汇率、预路由
-  
-    rect rgb(240, 248, 255)
-        Note over HUB,Payee: 阶段1：创建商户单(聚合层)
-        HUB->>HUB: 2. 创建商户单(USDC→USD)
-    end
-  
-    rect rgb(255, 250, 240)
-        Note over HUB,Payee: 阶段2：业务层校验
-        HUB->>BL: 3. 请求业务校验
-    end
-  
-    rect rgb(250, 250, 250)
-        Note over HUB,Payee: 阶段3：业务层-基础校验
-        BL->>BL: 4. 基础校验(USDC余额、账户状态、权限、产品启用、有效期)
-    end
-  
-    rect rgb(245, 245, 245)
-        Note over HUB,Payee: 阶段4：业务层-产品配置检查
-        BL->>BL: 5. 产品配置(限额、货币对支持、收款人状态)
-        BL-->>HUB: 6. 校验通过
-    end
-  
-    rect rgb(255, 250, 240)
-        Note over HUB,Payee: 阶段5：交易引擎创建交易主单+子单
-        HUB->>TE: 7. 请求创建交易单
-        TE->>TE: 8a. 创建交易主单(BB, USDC→USD)
-        TE->>TE: 8b. 创建交易子单1(承兑: USDC→USD)
-        TE->>TE: 8c. 创建交易子单2(法币出款: USD→收款人)
-    end
-  
-    rect rgb(240, 255, 240)
-        Note over HUB,Payee: 阶段6：交易引擎执行-计费∥汇率(并行)
-        par 并行执行
-            TE->>Pricing: 9a. 计算费用(承兑费+出款费)
-            Pricing-->>TE: 10a. 返回费用明细
-        and
-            TE->>FX: 9b. 查询实时汇率(USDC/USD)
-            FX-->>TE: 10b. 返回商户汇率
-        end
-        TE->>TE: 11. 更新交易主单+子单(费用/汇率)
-    end
-  
-    rect rgb(255, 245, 238)
-        Note over HUB,Payee: 阶段7：交易引擎执行-记账(冻结USDC)
-        TE->>Account: 12. 冻结商户USDC钱包余额(本金+手续费)
-        Account-->>TE: 13. 冻结成功
-        TE->>TE: 14. 更新交易主单(冻结信息)
-    end
-  
-    rect rgb(230, 240, 255)
-        Note over HUB,Payee: 阶段8：交易引擎执行-风控
-        TE->>Risk: 15. 风控检查(收款人/AML)
-        Risk-->>TE: 16. 风控通过
-        TE->>TE: 17. 更新交易主单(风控通过)
-    end
-  
-    rect rgb(255, 240, 245)
-        Note over HUB,Payee: ══════ 子单1：承兑(USDC→USD) ══════
-        Note over HUB,Payee: 阶段9：执行承兑(BB内部账户划转)
-        TE->>Account: 18. 确认扣款(商户USDC钱包-)
-        TE->>Account: 19. 入账(BB内部USD临时户+)
-        Account-->>TE: 20. 承兑划转成功
-        TE->>TE: 21. 更新子单1状态(SUCCESS)
-    end
-  
-    rect rgb(240, 248, 255)
-        Note over HUB,Payee: ══════ 子单2：法币出款(USD→收款人) ══════
-        Note over HUB,Payee: 阶段10：路由+渠道调用(通过XPAY)
-        TE->>Router: 22. 请求路由(USD出款)
-        Router-->>TE: 23. 返回目标渠道(XPAY)
-        TE->>CO: 24. 创建渠道单
-        CO-->>TE: 25. 返回渠道单ID
-        CO->>XPAY: 26. 调用XPAY渠道执行付款
-        XPAY->>Payee: 27. 银行转账到收款方
-        XPAY-->>CO: 28. 返回付款结果
-        CO->>CO: 29. 更新渠道单状态(SUCCESS)
-        CO-->>TE: 30. 返回渠道结果
-    end
-  
-    rect rgb(255, 245, 238)
-        Note over HUB,Payee: 阶段11：确认记账
-        TE->>Account: 31. 确认扣款(BB内部USD临时户-)
-        Account-->>TE: 32. 记账成功
-        TE->>TE: 33. 更新子单2状态(SUCCESS)
-        TE->>TE: 34. 更新交易主单状态(SUCCESS)
-    end
-  
-    rect rgb(255, 250, 240)
-        Note over HUB,Payee: 阶段12：聚合到商户单+通知
-        TE->>HUB: 35. 通知交易完成
-        HUB->>HUB: 36. 更新商户单状态(SUCCESS)
-        HUB-->>WP: 37. 返回付款结果
-        Note over HUB,Payee: 数据同步到TP Portal和PP Portal
-    end
-```
-
-**说明：**
-
-- **交易主单+子单模型**：1笔交易主单(USDC→USD)拆为2笔子单，子单1承兑、子单2出款，串行执行
-- **子单1（承兑）**：BB内部账户划转，USDC钱包→BB内部USD临时户，无需渠道单
-- **子单2（法币出款）**：通过XPAY渠道出款到收款人银行账户，有渠道单
-- **XPAY是BB内部Channel**：对EX/TP/商户透明，商户只看到"付款成功"
-- **冻结在主单层面**：冻结商户USDC余额，子单1承兑成功后资金转到BB内部USD临时户，子单2出款成功后从临时户扣除
-- **风控在主单层面**：收款人风控检查在承兑前完成，避免承兑后出款被拒
-
-**与4.6法币付款的关系：**
-
-商户在MP端看到的都是Payouts（付款），区别在于源资金：
-
-- 法币账户余额付款 → 走4.6流程（单交易单）
-- 数币钱包余额付款 → 走4.8流程（主单+2子单，自动承兑+出款）
-- 商户无需感知底层差异，系统根据源账户类型自动选择流程
-
----
-
 ## 承兑的两种模式
 
 ### 5.1 模式A：纯BB承兑（单SP内部账户划转）
@@ -1220,6 +1077,198 @@ sequenceDiagram
 - **无需渠道单**：不调用外部渠道，只是账户服务内部划转
 - **无需风控**：内部账户划转，不涉及外部交易
 - **计费和汇率并行**：提升性能，汇率实时性更好
+
+---
+
+### 5.1.1 BB自己Off-Ramp直接出款（2笔交易单）
+
+**场景：** 商户持有BB USDT，Off-Ramp承兑为USD后，直接通过BB的法币通道（XPAY等）付款出去，全程在BB内部完成，不经过IPL。
+
+**单据结构（2笔交易单）：**
+
+```
+商户单 M001 (Off-Ramp: USDT→USD→付款)  ← 仅BB
+    ├── 交易单 T001 (BB): 承兑 — BB USDT→USD
+    └── 交易单 T002 (BB): 付款 — BB USD付款给收款人（调用XPAY等外部渠道）
+```
+
+```mermaid
+sequenceDiagram
+    participant WP as 白牌/API
+    participant HUB as EX HUB
+    participant BL as 业务层
+    participant TE as 交易引擎
+    participant FX as 汇率服务
+    participant Pricing as 计费服务
+    participant Risk as BB风控服务
+    participant Account as BB账户服务
+    participant Router as 路由引擎
+    participant CO as 渠道服务
+    participant Channel as XPAY等渠道
+  
+    WP->>HUB: 1. 申请Off-Ramp(USDT→USD→付款)
+  
+    rect rgb(240, 248, 255)
+        Note over HUB,Channel: 阶段1：创建商户单
+        HUB->>HUB: 2. 创建商户单
+    end
+  
+    rect rgb(255, 250, 240)
+        Note over HUB,Channel: 阶段2：业务校验
+        HUB->>BL: 3. 请求业务校验
+        BL->>BL: 4. 基础校验(BB USDT余额、账户状态、权限、产品启用、有效期)
+        BL->>BL: 5. 产品配置(限额、货币对、收款人信息校验)
+    end
+  
+    rect rgb(255, 250, 240)
+        Note over HUB,Channel: 阶段3：创建2笔交易单
+        BL->>TE: 6a. 创建交易单T001(BB-承兑)
+        BL->>TE: 6b. 创建交易单T002(BB-付款)
+    end
+  
+    rect rgb(240, 255, 240)
+        Note over HUB,Channel: 阶段4：计费+汇率（并行）
+        par 并行
+            TE->>Pricing: 7a. 计算承兑费用+付款费用
+            Pricing-->>TE: 8a. 返回费用明细
+        and
+            TE->>FX: 7b. 查询汇率(USDT/USD)
+            FX-->>TE: 8b. 返回商户汇率
+        end
+        TE->>TE: 9. 更新交易单(费用/汇率)
+    end
+  
+    rect rgb(255, 245, 238)
+        Note over HUB,Channel: 阶段5：冻结+风控
+        TE->>Account: 10. 冻结商户BB USDT余额
+        Account-->>TE: 11. 冻结成功
+        TE->>Risk: 12. BB风控检查(承兑+付款+收款人AML)
+        Risk-->>TE: 13. 风控通过
+    end
+  
+    rect rgb(255, 240, 245)
+        Note over HUB,Channel: 阶段6：T001 BB承兑(USDT→USD)
+        TE->>Account: 14. 确认扣款(商户BB USDT钱包-)
+        TE->>Account: 15. 入账(商户BB USD账户+)
+        TE->>TE: 16. T001状态=SUCCESS
+    end
+  
+    rect rgb(230, 240, 255)
+        Note over HUB,Channel: 阶段7：T002 BB付款(调用外部渠道)
+        TE->>Router: 17. 路由选择付款渠道
+        Router-->>TE: 18. 返回渠道(XPAY)
+        TE->>Account: 19. 扣款(商户BB USD账户-)
+        TE->>CO: 20. 创建渠道单+调用渠道
+        CO->>Channel: 21. 发起付款
+        Channel-->>CO: 22. 付款结果
+        CO-->>TE: 23. 渠道回调
+        TE->>TE: 24. T002状态=SUCCESS
+    end
+  
+    rect rgb(240, 248, 255)
+        Note over HUB,Channel: 阶段8：聚合+通知
+        TE->>HUB: 25. 通知2笔交易单完成
+        HUB->>HUB: 26. 更新商户单(SUCCESS)
+        HUB-->>WP: 27. 返回Off-Ramp结果
+    end
+```
+
+**说明：**
+
+- **商户发起，1个商户单，2笔交易单**：BB承兑1笔 + BB付款1笔，全程BB内部
+- **T001(BB承兑)**：BB USDT→USD，内部账户划转（钱包→法币账户）
+- **T002(BB付款)**：BB USD→外部收款人，调用XPAY等外部渠道，有渠道单
+- **业务校验**：余额、账户状态、权限、产品启用、限额、收款人信息
+- **风控**：BB统一风控（承兑风控+付款风控+收款人AML）
+- **计费**：承兑费用+付款费用分别计算
+- **T001→T002串行**：承兑完成后才能付款
+
+---
+
+### 5.1.2 BB自己On-Ramp直接入金（2笔交易单）
+
+**场景：** 商户通过BB的法币通道（XPAY等）收到USD，然后On-Ramp承兑为USDT到BB数币钱包，全程在BB内部完成，不经过IPL。
+
+**单据结构（2笔交易单）：**
+
+```
+商户单 M001 (On-Ramp: 收款USD→USDT)  ← 仅BB
+    ├── 交易单 T001 (BB): 收款 — 外部USD入到BB法币账户（渠道通知触发）
+    └── 交易单 T002 (BB): 承兑 — BB USD→USDT
+```
+
+```mermaid
+sequenceDiagram
+    participant Channel as XPAY等渠道
+    participant CO as 渠道服务
+    participant TE as 交易引擎
+    participant Risk as BB风控服务
+    participant Pricing as 计费服务
+    participant FX as 汇率服务
+    participant Account as BB账户服务
+    participant HUB as EX HUB
+    participant WP as 白牌/API
+  
+    Note over Channel,WP: 商户已下预约单（On-Ramp: USD→USDT）
+  
+    rect rgb(240, 255, 240)
+        Note over Channel,WP: 阶段1：T001 BB收款（渠道通知触发）
+        Channel->>CO: 1. 入账通知(USD)
+        CO->>TE: 2. 创建渠道单+交易单T001(BB-收款)
+        TE->>Risk: 3. BB收款风控(汇款人AML)
+        Risk-->>TE: 4. 风控通过
+        TE->>Pricing: 5. 计费(收款手续费)
+        Pricing-->>TE: 6. 返回费用
+        TE->>Account: 7. 入账(商户BB USD账户+)
+        TE->>TE: 8. T001状态=SUCCESS
+    end
+  
+    rect rgb(240, 248, 255)
+        Note over Channel,WP: 阶段2：匹配预约单，触发承兑
+        TE->>HUB: 9. T001完成，匹配预约单
+        HUB->>HUB: 10. 创建商户单
+    end
+  
+    rect rgb(255, 250, 240)
+        Note over Channel,WP: 阶段3：业务校验
+        HUB->>TE: 11. 业务校验(BB USD余额、钱包状态、权限、产品启用、限额)
+    end
+  
+    rect rgb(230, 240, 255)
+        Note over Channel,WP: 阶段4：T002 BB承兑(USD→USDT)
+        TE->>TE: 12. 创建交易单T002(BB-承兑)
+        par 并行
+            TE->>FX: 13a. 查询汇率(USD/USDT)
+            FX-->>TE: 14a. 返回汇率
+        and
+            TE->>Pricing: 13b. 计算承兑费用
+            Pricing-->>TE: 14b. 返回费用
+        end
+        TE->>Risk: 15. BB承兑风控
+        Risk-->>TE: 16. 风控通过
+        TE->>Account: 17. 扣款(商户BB USD账户-)
+        TE->>Account: 18. 入账(商户BB USDT钱包+)
+        TE->>TE: 19. T002状态=SUCCESS
+    end
+  
+    rect rgb(240, 248, 255)
+        Note over Channel,WP: 阶段5：聚合+通知
+        TE->>HUB: 20. 通知2笔交易单完成
+        HUB->>HUB: 21. 更新商户单(SUCCESS)
+        HUB-->>WP: 22. 返回On-Ramp结果
+    end
+```
+
+**说明：**
+
+- **1个商户单，2笔交易单**：BB收款1笔 + BB承兑1笔，全程BB内部
+- **T001(BB收款)**：渠道通知触发，外部USD入到商户BB法币账户，走BB收款风控（汇款人AML）
+- **T002(BB承兑)**：BB USD→USDT，内部账户划转（法币账户→钱包），走BB承兑风控
+- **预约单模式**：商户先下预约单，收款到账后自动触发T002承兑
+- **业务校验**：余额、钱包状态、权限、产品启用、限额
+- **风控**：T001收款风控 + T002承兑风控，各自独立
+- **计费**：收款手续费 + 承兑费用分别计算
+- **T001→T002串行**：收款完成后才能承兑
 
 ---
 
@@ -1811,208 +1860,6 @@ sequenceDiagram
 
 ---
 
-### 5.2.5 BB自己Off-Ramp直接出款（2笔交易单）
-
-**场景：** 商户持有BB USDT，Off-Ramp承兑为USD后，直接通过BB的法币通道（XPAY等）付款出去，全程在BB内部完成，不经过IPL。
-
-**单据结构（2笔交易单）：**
-
-```
-商户单 M001 (Off-Ramp: USDT→USD→付款)  ← 仅BB
-    ├── 交易单 T001 (BB): 承兑 — BB USDT→USD
-    └── 交易单 T002 (BB): 付款 — BB USD付款给收款人（调用XPAY等外部渠道）
-```
-
-```mermaid
-sequenceDiagram
-    participant WP as 白牌/API
-    participant HUB as EX HUB
-    participant BL as 业务层
-    participant TE as 交易引擎
-    participant FX as 汇率服务
-    participant Pricing as 计费服务
-    participant Risk as BB风控服务
-    participant Account as BB账户服务
-    participant Router as 路由引擎
-    participant CO as 渠道服务
-    participant Channel as XPAY等渠道
-  
-    WP->>HUB: 1. 申请Off-Ramp(USDT→USD→付款)
-  
-    rect rgb(240, 248, 255)
-        Note over HUB,Channel: 阶段1：创建商户单
-        HUB->>HUB: 2. 创建商户单
-    end
-  
-    rect rgb(255, 250, 240)
-        Note over HUB,Channel: 阶段2：业务校验
-        HUB->>BL: 3. 请求业务校验
-        BL->>BL: 4. 基础校验(BB USDT余额、账户状态、权限、产品启用、有效期)
-        BL->>BL: 5. 产品配置(限额、货币对、收款人信息校验)
-    end
-  
-    rect rgb(255, 250, 240)
-        Note over HUB,Channel: 阶段3：创建2笔交易单
-        BL->>TE: 6a. 创建交易单T001(BB-承兑)
-        BL->>TE: 6b. 创建交易单T002(BB-付款)
-    end
-  
-    rect rgb(240, 255, 240)
-        Note over HUB,Channel: 阶段4：计费+汇率（并行）
-        par 并行
-            TE->>Pricing: 7a. 计算承兑费用+付款费用
-            Pricing-->>TE: 8a. 返回费用明细
-        and
-            TE->>FX: 7b. 查询汇率(USDT/USD)
-            FX-->>TE: 8b. 返回商户汇率
-        end
-        TE->>TE: 9. 更新交易单(费用/汇率)
-    end
-  
-    rect rgb(255, 245, 238)
-        Note over HUB,Channel: 阶段5：冻结+风控
-        TE->>Account: 10. 冻结商户BB USDT余额
-        Account-->>TE: 11. 冻结成功
-        TE->>Risk: 12. BB风控检查(承兑+付款+收款人AML)
-        Risk-->>TE: 13. 风控通过
-    end
-  
-    rect rgb(255, 240, 245)
-        Note over HUB,Channel: 阶段6：T001 BB承兑(USDT→USD)
-        TE->>Account: 14. 确认扣款(商户BB USDT钱包-)
-        TE->>Account: 15. 入账(商户BB USD账户+)
-        TE->>TE: 16. T001状态=SUCCESS
-    end
-  
-    rect rgb(230, 240, 255)
-        Note over HUB,Channel: 阶段7：T002 BB付款(调用外部渠道)
-        TE->>Router: 17. 路由选择付款渠道
-        Router-->>TE: 18. 返回渠道(XPAY)
-        TE->>Account: 19. 扣款(商户BB USD账户-)
-        TE->>CO: 20. 创建渠道单+调用渠道
-        CO->>Channel: 21. 发起付款
-        Channel-->>CO: 22. 付款结果
-        CO-->>TE: 23. 渠道回调
-        TE->>TE: 24. T002状态=SUCCESS
-    end
-  
-    rect rgb(240, 248, 255)
-        Note over HUB,Channel: 阶段8：聚合+通知
-        TE->>HUB: 25. 通知2笔交易单完成
-        HUB->>HUB: 26. 更新商户单(SUCCESS)
-        HUB-->>WP: 27. 返回Off-Ramp结果
-    end
-```
-
-**说明：**
-
-- **商户发起，1个商户单，2笔交易单**：BB承兑1笔 + BB付款1笔，全程BB内部
-- **T001(BB承兑)**：BB USDT→USD，内部账户划转（钱包→法币账户）
-- **T002(BB付款)**：BB USD→外部收款人，调用XPAY等外部渠道，有渠道单
-- **业务校验**：余额、账户状态、权限、产品启用、限额、收款人信息
-- **风控**：BB统一风控（承兑风控+付款风控+收款人AML）
-- **计费**：承兑费用+付款费用分别计算
-- **T001→T002串行**：承兑完成后才能付款
-
----
-
-### 5.2.6 BB自己On-Ramp直接入金（2笔交易单）
-
-**场景：** 商户通过BB的法币通道（XPAY等）收到USD，然后On-Ramp承兑为USDT到BB数币钱包，全程在BB内部完成，不经过IPL。
-
-**单据结构（2笔交易单）：**
-
-```
-商户单 M001 (On-Ramp: 收款USD→USDT)  ← 仅BB
-    ├── 交易单 T001 (BB): 收款 — 外部USD入到BB法币账户（渠道通知触发）
-    └── 交易单 T002 (BB): 承兑 — BB USD→USDT
-```
-
-```mermaid
-sequenceDiagram
-    participant Channel as XPAY等渠道
-    participant CO as 渠道服务
-    participant TE as 交易引擎
-    participant Risk as BB风控服务
-    participant Pricing as 计费服务
-    participant FX as 汇率服务
-    participant Account as BB账户服务
-    participant HUB as EX HUB
-    participant WP as 白牌/API
-  
-    Note over Channel,WP: 商户已下预约单（On-Ramp: USD→USDT）
-  
-    rect rgb(240, 255, 240)
-        Note over Channel,WP: 阶段1：T001 BB收款（渠道通知触发）
-        Channel->>CO: 1. 入账通知(USD)
-        CO->>TE: 2. 创建渠道单+交易单T001(BB-收款)
-        TE->>Risk: 3. BB收款风控(汇款人AML)
-        Risk-->>TE: 4. 风控通过
-        TE->>Pricing: 5. 计费(收款手续费)
-        Pricing-->>TE: 6. 返回费用
-        TE->>Account: 7. 入账(商户BB USD账户+)
-        TE->>TE: 8. T001状态=SUCCESS
-    end
-  
-    rect rgb(240, 248, 255)
-        Note over Channel,WP: 阶段2：匹配预约单，触发承兑
-        TE->>HUB: 9. T001完成，匹配预约单
-        HUB->>HUB: 10. 创建商户单
-    end
-  
-    rect rgb(255, 250, 240)
-        Note over Channel,WP: 阶段3：业务校验
-        HUB->>TE: 11. 业务校验(BB USD余额、钱包状态、权限、产品启用、限额)
-    end
-  
-    rect rgb(230, 240, 255)
-        Note over Channel,WP: 阶段4：T002 BB承兑(USD→USDT)
-        TE->>TE: 12. 创建交易单T002(BB-承兑)
-        par 并行
-            TE->>FX: 13a. 查询汇率(USD/USDT)
-            FX-->>TE: 14a. 返回汇率
-        and
-            TE->>Pricing: 13b. 计算承兑费用
-            Pricing-->>TE: 14b. 返回费用
-        end
-        TE->>Risk: 15. BB承兑风控
-        Risk-->>TE: 16. 风控通过
-        TE->>Account: 17. 扣款(商户BB USD账户-)
-        TE->>Account: 18. 入账(商户BB USDT钱包+)
-        TE->>TE: 19. T002状态=SUCCESS
-    end
-  
-    rect rgb(240, 248, 255)
-        Note over Channel,WP: 阶段5：聚合+通知
-        TE->>HUB: 20. 通知2笔交易单完成
-        HUB->>HUB: 21. 更新商户单(SUCCESS)
-        HUB-->>WP: 22. 返回On-Ramp结果
-    end
-```
-
-**说明：**
-
-- **1个商户单，2笔交易单**：BB收款1笔 + BB承兑1笔，全程BB内部
-- **T001(BB收款)**：渠道通知触发，外部USD入到商户BB法币账户，走BB收款风控（汇款人AML）
-- **T002(BB承兑)**：BB USD→USDT，内部账户划转（法币账户→钱包），走BB承兑风控
-- **预约单模式**：商户先下预约单，收款到账后自动触发T002承兑
-- **业务校验**：余额、钱包状态、权限、产品启用、限额
-- **风控**：T001收款风控 + T002承兑风控，各自独立
-- **计费**：收款手续费 + 承兑费用分别计算
-- **T001→T002串行**：收款完成后才能承兑
-
----
-
-### 5.3 出金（调用外部渠道）
-
-**说明：**
-
-- **出金需要调用外部渠道**：银行/PSP
-- **有渠道单**：记录外部渠道调用信息
-- **流程与法币付款类似**：计费→记账(冻结)→风控→路由→渠道→确认记账
-
----
-
 ## 退款流程
 
 ### 7.1 付款退款流程
@@ -2106,7 +1953,6 @@ sequenceDiagram
 
 退票线下处理；
 
-
 #### 7.1.3 BB数币钱包付款退款（USDC→USD退款）
 
 退回：客户可选退款到法币/ 数币；
@@ -2186,6 +2032,84 @@ sequenceDiagram
 
 ---
 
+#### 7.1.4 IPL-BB模式Off-Ramp付款退款
+
+**场景：** BB Off-Ramp通过IPL出款（5.2.3流程），IPL法币付款失败（银行退回/收款人信息错误等），需退款。
+
+**退款路径：** IPL付款失败 → 退回IPL法币账户 → IPL法币退回BB法币账户
+
+**退款单据：** 1笔退款商户单，2笔退款交易单（IPL退款 + IPL→BB退回）
+
+**退回币种规则：**
+
+| 环节 | 退回目标 | 币种 | 说明 |
+| --- | --- | --- | --- |
+| IPL付款失败 | 商户IPL法币账户 | 原币种(USD) | 原路退回 |
+| IPL法币→BB法币 | 商户BB法币账户 | USD | 同币种直接划转 |
+| 如涉及跨币种 | 商户BB法币账户 | 按实时汇率换算 | 默认按退款时实时汇率退回 |
+
+```mermaid
+sequenceDiagram
+    participant Channel as 渠道/银行
+    participant CO as 渠道服务
+    participant TE as 交易引擎
+    participant IPL_Account as IPL账户服务
+    participant BB_Account as BB账户服务
+    participant FX as 汇率服务
+    participant HUB as EX HUB
+    participant WP as 白牌/API
+  
+    alt 情况1：渠道退回（银行拒绝/退汇）
+        Channel->>CO: 1. 退款通知(原渠道单号)
+        CO->>CO: 2. 更新渠道单状态(REFUNDED)
+        CO->>TE: 3. 通知渠道退回
+    else 情况2：商户申请退款
+        WP->>HUB: 1. 申请退款(原商户单号)
+        HUB->>HUB: 2. 创建退款商户单
+        HUB->>TE: 3. 请求创建退款交易单
+    end
+  
+    rect rgb(240, 255, 240)
+        Note over Channel,WP: 阶段1：退款交易单RT001 — IPL付款退回IPL法币账户
+        TE->>TE: 4. 创建退款交易单RT001(IPL-退款入账)
+        TE->>IPL_Account: 5. 退款入账(商户IPL USD账户+)
+        IPL_Account-->>TE: 6. 入账成功
+        TE->>TE: 7. RT001状态=SUCCESS
+    end
+  
+    rect rgb(230, 240, 255)
+        Note over Channel,WP: 阶段2：退款交易单RT002 — IPL法币退回BB法币账户
+        TE->>TE: 8. 创建退款交易单RT002(IPL→BB退回)
+        opt 跨币种退回
+            TE->>FX: 9. 查询实时汇率
+            FX-->>TE: 10. 返回实时汇率
+            TE->>TE: 11. 按实时汇率计算退回金额
+        end
+        TE->>IPL_Account: 12. 扣款(商户IPL USD账户- → IPL中间户)
+        TE->>BB_Account: 13. 入账(BB中间户 → 商户BB法币账户+)
+        BB_Account-->>TE: 14. 划转成功
+        TE->>TE: 15. RT002状态=SUCCESS
+    end
+  
+    rect rgb(255, 250, 240)
+        Note over Channel,WP: 阶段3：聚合+通知
+        TE->>HUB: 16. 通知退款完成
+        HUB->>HUB: 17. 更新退款商户单状态(SUCCESS)
+        HUB->>HUB: 18. 更新原商户单状态(REFUNDED)
+        HUB-->>WP: 19. 退款通知(Webhook)
+    end
+```
+
+**说明：**
+
+- **1笔退款商户单，2笔退款交易单**：RT001(IPL退款入账) + RT002(IPL→BB法币退回)
+- **退回法币都退到BB法币账户**：IPL法币账户只是中转，最终退到商户BB法币账户
+- **跨币种退回**：如涉及IPL跨币种，默认按退款时实时汇率换算退回，汇率差由商户承担
+- **同币种退回**：USD→USD直接划转，无汇率损失
+- **RT001→RT002串行**：IPL退款入账后才能划转到BB
+
+---
+
 ### 7.2 收款退款流程
 
 #### 7.2.1 IPL法币收款退款
@@ -2256,7 +2180,6 @@ sequenceDiagram
 1） 渠道1通知：线下手动退；
 
 2）渠道2不通知：线下登录网银退款；
-
 
 ```
 情况1：渠道直接拦截 → 退回原地址（当天处理）
@@ -2462,19 +2385,252 @@ sequenceDiagram
 
 ---
 
-### 7.3 退款流程汇总
+#### 7.2.4 IPL-BB模式On-Ramp收款失败退款
+
+**场景：** IPL On-Ramp到BB（5.2.4流程）过程中，收款成功但后续环节失败，需退款。
+
+**失败环节与退款路径：**
+
+| 失败环节 | 退款路径 | 退回目标 | 说明 |
+| --- | --- | --- | --- |
+| IPL VA收款成功 → BB转账失败 | 退回到商户IPL法币账户 | 商户IPL USD账户 | IPL内部退回 |
+| BB法币账户收到 → BB承兑失败 | 原金额退回到商户BB法币账户 | 商户BB USD账户 | BB内部退回 |
+| BB承兑渠道成功后又退回 | **线下处理** | - | 涉及链上/渠道退回，需人工介入 |
+
+**退款审批流程（需合规审核）：**
+
+客户补充资料 → 合规审核拒绝 → 运营发起退款 → 合规审核 → 清算审核 → 财务操作退款
+
+```mermaid
+sequenceDiagram
+    participant MP as 商户(MP)
+    participant Ops as 运营
+    participant Compliance as 合规
+    participant Settlement as 清算
+    participant Finance as 财务
+    participant TE as 交易引擎
+    participant IPL_Account as IPL账户服务
+    participant BB_Account as BB账户服务
+    participant HUB as EX HUB
+  
+    Note over MP,HUB: 前提：IPL VA收款已成功(T001=SUCCESS)，后续环节失败
+  
+    rect rgb(255, 250, 240)
+        Note over MP,HUB: 阶段1：补充资料+合规审核
+        Compliance->>MP: 1. 通知商户补充资料(KYC/交易证明等)
+        MP->>Compliance: 2. 提交补充资料
+        Compliance->>Compliance: 3. 合规审核
+        Compliance->>Compliance: 4. 合规审核拒绝
+    end
+  
+    rect rgb(240, 248, 255)
+        Note over MP,HUB: 阶段2：运营发起退款
+        Compliance->>Ops: 5. 通知运营：合规拒绝，需退款
+        Ops->>HUB: 6. 发起退款申请(原商户单号, 退款原因)
+        HUB->>HUB: 7. 创建退款商户单
+    end
+  
+    rect rgb(255, 245, 238)
+        Note over MP,HUB: 阶段3：退款审批链
+        HUB->>Compliance: 8. 提交合规审核
+        Compliance->>Compliance: 9. 合规审核退款(确认退款合规性)
+        Compliance-->>HUB: 10. 合规审核通过
+        HUB->>Settlement: 11. 提交清算审核
+        Settlement->>Settlement: 12. 清算审核(金额、原交易、账户余额)
+        Settlement-->>HUB: 13. 清算审核通过
+    end
+  
+    rect rgb(240, 255, 240)
+        Note over MP,HUB: 阶段4：财务执行退款
+        HUB->>Finance: 14. 通知财务执行退款
+        Finance->>TE: 15. 确认执行退款
+    end
+  
+    alt 失败环节A：IPL→BB转账失败 → 退回IPL法币账户
+        rect rgb(230, 240, 255)
+            Note over MP,HUB: 退回到商户IPL法币账户
+            TE->>TE: 16a. 创建退款交易单RT001(IPL-退款)
+            TE->>IPL_Account: 17a. 退款入账(商户IPL USD账户+)
+            IPL_Account-->>TE: 18a. 入账成功
+            TE->>TE: 19a. RT001状态=SUCCESS
+        end
+  
+    else 失败环节B：BB承兑失败 → 原金额退回BB法币账户
+        rect rgb(230, 240, 255)
+            Note over MP,HUB: 原金额退回到商户BB法币账户
+            TE->>TE: 16b. 创建退款交易单RT001(BB-退款)
+            TE->>BB_Account: 17b. 退款入账(商户BB USD账户+, 原金额)
+            BB_Account-->>TE: 18b. 入账成功
+            TE->>TE: 19b. RT001状态=SUCCESS
+        end
+    end
+  
+    rect rgb(255, 250, 240)
+        Note over MP,HUB: 阶段5：聚合+通知
+        TE->>HUB: 20. 通知退款完成
+        HUB->>HUB: 21. 更新退款商户单状态(SUCCESS)
+        HUB->>HUB: 22. 更新原商户单状态(REFUNDED)
+        Note over MP,HUB: 数据同步到TP Portal和PP Portal
+    end
+```
+
+**说明：**
+
+- **退款审批链**：运营发起 → 合规审核 → 清算审核 → 财务操作，4步审批
+- **失败环节A（IPL→BB转账失败）**：USD退回到商户IPL法币账户，不再尝试转到BB
+- **失败环节B（BB承兑失败）**：原金额USD退回到商户BB法币账户，不涉及汇率换算
+- **承兑渠道成功后退回**：已完成链上/渠道操作，需线下人工处理，不走系统退款流程
+- **补充资料流程**：合规要求商户补充KYC/交易证明等，补充后仍拒绝才走退款
+
+---
+
+### 7.3 承兑退款（独立）
+
+> **承兑退款从付款/收款退款中独立出来，因为承兑涉及币种转换，退款需要明确退回币种规则。**
+
+#### 7.3.1 承兑退回币种规则
+
+**产品维度配置：** 承兑产品需配置退款时的退回币种
+
+| 场景 | 原交易方向 | 失败环节 | 退回币种 | 退回目标 | 说明 |
+| --- | --- | --- | --- | --- | --- |
+| Off-Ramp付款失败 | USDT→USD→付款 | 付款失败(渠道退回) | **法币(USD)** | BB法币账户 | 承兑已完成，退回法币 |
+| Off-Ramp承兑失败 | USDT→USD | 承兑失败 | **数币(USDT)** | BB USDT钱包 | 承兑未完成，原路退回数币 |
+| On-Ramp承兑失败 | USD→USDT | 承兑失败 | **法币(USD)** | BB法币账户 | 承兑未完成，原路退回法币 |
+| On-Ramp承兑成功后退回 | USD→USDT | 承兑渠道成功后退回 | **线下处理** | - | 需人工介入 |
+
+**核心规则：**
+
+- **退回法币都退到BB法币账户**（不管原交易经过IPL还是BB）
+- **承兑未完成**：原路退回（USDT退USDT，USD退USD）
+- **承兑已完成，后续环节失败**：退回到承兑后的币种（已经是法币就退法币）
+- **承兑渠道成功后又退回**：线下处理
+
+---
+
+#### 7.3.2 Off-Ramp承兑失败退款
+
+**场景：** 商户发起Off-Ramp（USDT→USD），承兑环节失败（如汇率异常、风控拒绝等）
+
+**退款路径：** 承兑失败 → 原金额USDT退回BB USDT钱包
+
+```mermaid
+sequenceDiagram
+    participant TE as 交易引擎
+    participant Account as BB账户服务
+    participant HUB as EX HUB
+    participant WP as 白牌/API
+  
+    Note over TE,WP: 承兑交易单T001执行失败（风控拒绝/汇率异常等）
+  
+    rect rgb(240, 255, 240)
+        Note over TE,WP: 退款处理：原金额USDT退回
+        TE->>TE: 1. T001状态=FAILED
+        TE->>Account: 2. 解冻(商户BB USDT钱包, 解除冻结)
+        Account-->>TE: 3. 解冻成功
+        Note over TE: 冻结的USDT原路退回，无汇率损失
+    end
+  
+    rect rgb(255, 250, 240)
+        Note over TE,WP: 聚合+通知
+        TE->>HUB: 4. 通知承兑失败
+        HUB->>HUB: 5. 更新商户单状态(FAILED)
+        HUB-->>WP: 6. 失败通知(Webhook)
+    end
+```
+
+**说明：**
+
+- **承兑未完成**：USDT还在冻结状态，直接解冻退回，无需创建退款交易单
+- **无汇率损失**：原金额USDT原路退回
+- **不收手续费**：承兑失败不收费
+
+---
+
+#### 7.3.3 On-Ramp承兑失败退款
+
+**场景：** 商户发起On-Ramp（USD→USDT），收款成功但承兑环节失败
+
+**退款路径：** BB承兑失败 → 原金额USD退回BB法币账户
+
+```mermaid
+sequenceDiagram
+    participant TE as 交易引擎
+    participant Account as BB账户服务
+    participant HUB as EX HUB
+    participant WP as 白牌/API
+  
+    Note over TE,WP: BB承兑交易单执行失败（风控拒绝/汇率异常等）
+  
+    rect rgb(240, 255, 240)
+        Note over TE,WP: 退款处理：原金额USD退回BB法币账户
+        TE->>TE: 1. 承兑交易单状态=FAILED
+        TE->>TE: 2. 创建退款交易单RT001
+        TE->>Account: 3. 退款入账(商户BB USD账户+, 原金额)
+        Account-->>TE: 4. 入账成功
+        TE->>TE: 5. RT001状态=SUCCESS
+    end
+  
+    rect rgb(255, 250, 240)
+        Note over TE,WP: 聚合+通知
+        TE->>HUB: 6. 通知承兑失败+退款完成
+        HUB->>HUB: 7. 更新商户单状态(FAILED/REFUNDED)
+        HUB-->>WP: 8. 退款通知(Webhook)
+    end
+```
+
+**说明：**
+
+- **BB承兑失败**：原金额USD退回到商户BB法币账户
+- **不涉及汇率换算**：承兑未完成，退回原币种原金额
+- **不收手续费**：承兑失败不收费
+
+---
+
+#### 7.3.4 承兑渠道成功后退回
+
+**场景：** 承兑已通过渠道完成（链上转账/换汇渠道已执行），但后续出现问题需退回
+
+**处理方式：线下处理**
+
+```
+承兑渠道成功后退回 → 线下处理
+┌─────────────────────────────────────────────────────────────┐
+│  ⚠️ 不走系统退款流程                                         │
+│                                                              │
+│  原因：                                                      │
+│  1. 链上交易不可逆（数币承兑场景）                            │
+│  2. 换汇渠道已执行，退回涉及渠道协调                          │
+│  3. 汇率已变动，退回金额需人工确认                            │
+│                                                              │
+│  处理流程：                                                   │
+│  1. 运营发现问题 → 提交工单                                   │
+│  2. 合规审核 → 确认退回方案                                   │
+│  3. 财务线下操作 → 手动调账                                   │
+│  4. 系统补录退款记录                                          │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+### 7.4 退款流程汇总
 
 | 退款类型                        | 原交易      | 退款方式         | 退回目标     | 发起方            | 审批     |
 | ------------------------------- | ----------- | ---------------- | ------------ | ----------------- | -------- |
 | IPL法币出款退款                 | 4.6法币付款 | 原路退回法币账户 | 商户法币账户 | 渠道退回/商户申请 | -        |
 | BB提币退款                      | 4.5提币     | 原路退回数币钱包 | 商户USDT钱包 | 渠道失败自动退回  | -        |
 | BB数币钱包付款退款              | 4.8数币付款 | 实时汇率退回USDT | 商户USDT钱包 | 渠道退回/商户申请 | -        |
+| **IPL-BB Off-Ramp付款退款** | 5.2.3流程   | IPL退回→BB法币  | 商户BB USD账户 | 渠道退回/商户申请 | -        |
 | IPL法币收款退款                 | 4.2 VA收款  | 退回原汇款人     | 原汇款人银行 | 销售(EX代发起)    | 清算确认 |
 | BB收币退款-渠道拦截             | 4.4充币     | 渠道直接退回     | 原地址       | 合规(渠道后台)    | 当天处理 |
 | BB收币退款-合规拦截(原地址)     | 4.4充币     | 链上退回         | 原地址       | 合规+销售确认     | 当天处理 |
 | BB收币退款-合规拦截(非原地址)   | 4.4充币     | 链上退回         | 非原地址     | 合规+销售确认     | 停留1周  |
 | BB收法币退款-渠道拦截           | BB法币收款  | 联系渠道退回     | 原汇款人     | 销售联系渠道      | 视渠道   |
 | BB收法币退款-合规拒绝(原汇款人) | BB法币收款  | 退回原汇款人     | 原汇款人银行 | 合规+销售确认     | 当天处理 |
+| **IPL-BB On-Ramp收款失败退款** | 5.2.4流程 | 退回IPL/BB法币账户 | 商户IPL/BB USD账户 | 运营发起 | 合规→清算→财务 |
+| **Off-Ramp承兑失败退款** | 承兑(Off-Ramp) | 解冻原USDT | 商户BB USDT钱包 | 系统自动 | - |
+| **On-Ramp承兑失败退款** | 承兑(On-Ramp) | 原金额退回法币 | 商户BB USD账户 | 系统自动 | - |
+| **承兑渠道成功后退回** | 承兑 | 线下处理 | - | 运营工单 | 合规+财务 |
 | BB收法币退款-合规拒绝(其他人)   | BB法币收款  | 待定             | 其他人       | 待定              | 待定     |
 
 ---
