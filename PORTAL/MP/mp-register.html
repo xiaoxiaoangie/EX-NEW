@@ -81,6 +81,7 @@ body {
 .topbar-right a:hover {
     background: var(--accent);
     color: #fff;
+    box-shadow: 0 2px 6px rgba(26,115,232,.25);
 }
 
 /* ===== Main layout ===== */
@@ -101,16 +102,16 @@ body {
 .card {
     background: var(--card);
     border: 1px solid var(--border-light);
-    border-radius: 12px;
+    border-radius: 16px;
     padding: 40px 44px;
-    box-shadow: 0 1px 3px rgba(0,0,0,.04), 0 4px 12px rgba(0,0,0,.02);
+    box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 4px 16px rgba(0,0,0,.04), 0 12px 32px rgba(0,0,0,.02);
 }
 
 /* ===== Typography ===== */
 h1 {
-    font-size: 24px;
+    font-size: 26px;
     font-weight: 700;
-    letter-spacing: -.3px;
+    letter-spacing: -.4px;
     margin-bottom: 8px;
     color: var(--text);
 }
@@ -177,6 +178,7 @@ h1 {
 .field-input:focus {
     border-color: var(--accent);
     box-shadow: 0 0 0 3px var(--accent-light);
+    background: #fff;
 }
 .field-input::placeholder { color: #bdc1c6; }
 
@@ -257,45 +259,65 @@ h1 {
 .pwd-meter i.s { background: var(--green); }
 .pwd-hint { font-size: 12px; color: var(--text3); margin-top: 4px; font-weight: 500; }
 
-/* ===== Method radio list ===== */
-.methods { margin-bottom: 24px; }
+/* ===== Method card selector ===== */
+.methods { margin-bottom: 24px; display: flex; flex-direction: column; gap: 10px; }
 .mth {
     display: flex;
     align-items: center;
     gap: 14px;
-    padding: 14px 16px;
+    padding: 14px 18px;
     cursor: pointer;
-    border-radius: var(--radius);
-    transition: all .15s;
-    margin-bottom: 2px;
-    border: 1px solid transparent;
+    border-radius: 10px;
+    transition: all .2s cubic-bezier(.4,0,.2,1);
+    border: 1.5px solid var(--border-light);
+    background: var(--card);
+    position: relative;
 }
-.mth:hover { background: #f1f3f4; }
+.mth:hover {
+    border-color: #c4c9cf;
+    box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
 .mth.on {
-    background: var(--accent-light);
-    border-color: rgba(26,115,232,.15);
+    border-color: var(--accent);
+    background: linear-gradient(135deg, rgba(26,115,232,.04), rgba(26,115,232,.08));
+    box-shadow: 0 0 0 3px rgba(26,115,232,.1), 0 2px 8px rgba(26,115,232,.06);
 }
-.mth .radio {
+.mth .mth-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    background: #f1f3f4;
+    transition: all .2s;
+}
+.mth .mth-icon svg { width: 20px; height: 20px; stroke: var(--text2); stroke-width: 1.8; fill: none; transition: stroke .2s; }
+.mth.on .mth-icon {
+    background: var(--accent);
+}
+.mth.on .mth-icon svg { stroke: #fff; }
+.mth .mth-check {
     width: 20px; height: 20px;
     border-radius: 50%;
     border: 2px solid var(--border);
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
-    transition: all .15s;
+    transition: all .2s;
+    margin-left: auto;
 }
-.mth.on .radio {
+.mth.on .mth-check {
     border-color: var(--accent);
     background: var(--accent);
 }
-.mth.on .radio::after {
+.mth.on .mth-check::after {
     content: '';
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: #fff;
+    width: 5px; height: 9px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) translateY(-1px);
 }
-.mth .mth-body { flex: 1; }
-.mth .mth-title { font-size: 14px; font-weight: 600; color: var(--text); }
-.mth .mth-desc { font-size: 12px; color: var(--text3); margin-top: 2px; }
+.mth .mth-body { flex: 1; min-width: 0; }
+.mth .mth-title { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.mth .mth-desc { font-size: 12px; color: var(--text3); margin-top: 3px; line-height: 1.4; }
 
 /* ===== Agreement ===== */
 .agree {
@@ -307,8 +329,10 @@ h1 {
 .agree input[type=checkbox] {
     margin-top: 2px;
     accent-color: var(--accent);
-    width: 16px; height: 16px;
+    width: 18px; height: 18px;
     flex-shrink: 0;
+    cursor: pointer;
+    border-radius: 4px;
 }
 .agree label {
     font-size: 13px;
@@ -325,21 +349,22 @@ h1 {
 /* ===== Buttons ===== */
 .btn {
     width: 100%;
-    padding: 12px 24px;
-    border-radius: var(--radius);
-    font-size: 14px;
+    padding: 13px 24px;
+    border-radius: 10px;
+    font-size: 15px;
     font-weight: 600;
     cursor: pointer;
     border: none;
     font-family: inherit;
-    transition: all .15s;
+    transition: all .2s cubic-bezier(.4,0,.2,1);
 }
 .btn-primary {
     background: var(--accent);
     color: #fff;
+    box-shadow: 0 1px 2px rgba(26,115,232,.2);
 }
-.btn-primary:hover { background: var(--accent-hover); box-shadow: 0 1px 3px rgba(26,115,232,.3); }
-.btn-primary:active { transform: scale(.99); }
+.btn-primary:hover { background: var(--accent-hover); box-shadow: 0 2px 8px rgba(26,115,232,.35); transform: translateY(-0.5px); }
+.btn-primary:active { transform: translateY(0) scale(.995); box-shadow: 0 1px 2px rgba(26,115,232,.2); }
 .btn-text {
     background: none;
     color: var(--accent);
@@ -441,11 +466,82 @@ h1 {
 .page-footer {
     text-align: center;
     padding: 24px;
+    padding-bottom: 120px;
     font-size: 12px;
     color: var(--text3);
 }
 .page-footer a { color: var(--text3); text-decoration: none; margin: 0 12px; }
 .page-footer a:hover { color: var(--text2); }
+
+/* ===== Error message ===== */
+.err-msg {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: rgba(234,67,53,.08);
+    border: 1px solid rgba(234,67,53,.2);
+    border-radius: var(--radius);
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: var(--red);
+    line-height: 1.5;
+}
+.err-msg.show { display: flex; }
+.err-msg .err-icon { font-size: 16px; flex-shrink: 0; }
+
+/* ===== Demo bar ===== */
+.demo-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--card);
+    border-top: 1px solid var(--border-light);
+    padding: 10px 32px;
+    z-index: 100;
+    box-shadow: 0 -2px 8px rgba(0,0,0,.04);
+}
+.demo-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+}
+.demo-row:last-child { margin-bottom: 0; }
+.demo-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    white-space: nowrap;
+    min-width: 64px;
+}
+.demo-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+.demo-btn {
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text2);
+    font-family: inherit;
+    transition: all .15s;
+    white-space: nowrap;
+}
+.demo-btn:hover { border-color: var(--accent); color: var(--accent); }
+.demo-btn.on {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+.demo-desc {
+    font-size: 11px;
+    color: var(--text3);
+    line-height: 1.4;
+    margin-left: 8px;
+}
 </style>
 </head>
 <body>
@@ -472,6 +568,11 @@ h1 {
                 <h1>注册</h1>
                 <div class="desc"></div>
 
+                <div class="err-msg" id="errDup">
+                    <span class="err-icon">⚠</span>
+                    <span id="errDupText">该邮箱已注册，请直接登录</span>
+                </div>
+
                 <div class="tabs">
                     <button class="tab on" onclick="sw(this,'email')">邮箱</button>
                     <button class="tab" onclick="sw(this,'phone')">手机号</button>
@@ -493,30 +594,6 @@ h1 {
                     </div>
                 </div>
 
-                <div class="methods">
-                    <div class="mth on" data-m="code" onclick="pick(this)">
-                        <div class="radio"></div>
-                        <div class="mth-body">
-                            <div class="mth-title">验证码注册</div>
-                            <div class="mth-desc">发送验证码到邮箱/手机，验证后即完成注册</div>
-                        </div>
-                    </div>
-                    <div class="mth" data-m="pwd" onclick="pick(this)">
-                        <div class="radio"></div>
-                        <div class="mth-body">
-                            <div class="mth-title">密码注册</div>
-                            <div class="mth-desc">设置登录密码，通过邮件或短信确认身份</div>
-                        </div>
-                    </div>
-                    <div class="mth" data-m="otp" onclick="pick(this)">
-                        <div class="radio"></div>
-                        <div class="mth-body">
-                            <div class="mth-title">OTP 动态令牌</div>
-                            <div class="mth-desc">绑定 Google Authenticator，每次登录使用动态码</div>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="agree">
                     <input type="checkbox" id="ck" checked>
                     <label for="ck">我已阅读并同意 <a href="#">《会员服务协议》</a>、<a href="#">《支付服务协议》</a> 和 <a href="#">《授权协议》</a></label>
@@ -531,6 +608,11 @@ h1 {
             <div class="card">
                 <h1>输入验证码</h1>
                 <div class="desc">6 位验证码已发送至 <b id="t-code">—</b></div>
+
+                <div class="err-msg" id="errCode1">
+                    <span class="err-icon">⚠</span>
+                    <span>验证码错误，请重新输入</span>
+                </div>
 
                 <div class="otp-row" id="otp1"></div>
                 <div class="resend-row">
@@ -569,25 +651,26 @@ h1 {
             </div>
         </div>
 
-        <!-- ==================== 2-B-2. 密码注册 → 验证邮件/短信 ==================== -->
+        <!-- ==================== 2-B-2. 密码注册 → 验证码验证 ==================== -->
         <div class="v" id="v-pwd-verify">
             <div class="card">
                 <h1>验证您的账户</h1>
-                <div class="desc">我们已发送验证信息到您的邮箱/手机</div>
+                <div class="desc">6 位验证码已发送至 <b id="t-pwd-v">—</b></div>
 
-                <div class="verify-banner">
-                    <div class="vb-icon">✉️</div>
-                    <p>请查收发送至 <span class="vb-addr" id="t-pwd-v">—</span> 的验证链接，<br>点击链接完成注册。</p>
+                <div class="err-msg" id="errCode3">
+                    <span class="err-icon">⚠</span>
+                    <span>验证码错误，请重新输入</span>
                 </div>
 
-                <div class="resend-row" style="justify-content:center;gap:6px">
-                    <span>没有收到？</span>
+                <div class="otp-row" id="otp3"></div>
+                <div class="resend-row">
+                    <span>有效期 10 分钟</span>
                     <button id="rs2" onclick="cd(this)">重新发送</button>
                 </div>
 
-                <div class="action-row" style="margin-top:16px">
+                <div class="action-row">
                     <button class="btn btn-outline" onclick="go('v-start')">返回</button>
-                    <button class="btn btn-primary" onclick="finish()">我已验证</button>
+                    <button class="btn btn-primary" onclick="finish()">验证并注册</button>
                 </div>
             </div>
         </div>
@@ -597,6 +680,11 @@ h1 {
             <div class="card">
                 <h1>验证邮箱/手机</h1>
                 <div class="desc">绑定动态令牌前，请先验证 <b id="t-otp-v">—</b></div>
+
+                <div class="err-msg" id="errCode2">
+                    <span class="err-icon">⚠</span>
+                    <span>验证码错误，请重新输入</span>
+                </div>
 
                 <div class="otp-row" id="otp2"></div>
                 <div class="resend-row">
@@ -666,12 +754,82 @@ h1 {
     <a href="#">帮助中心</a>
 </div>
 
-<script>
-let ct = 'email', rm = 'code';
+<!-- ===== Demo bar (prototype only) ===== -->
+<div class="demo-bar">
+    <div class="demo-row">
+        <span class="demo-label">地区模拟</span>
+        <div class="demo-btns">
+            <button class="demo-btn" onclick="demoRegion('CN',this)">🇨🇳 中国大陆</button>
+            <button class="demo-btn" onclick="demoRegion('HK',this)">🇭🇰 香港</button>
+            <button class="demo-btn" onclick="demoRegion('US',this)">🌍 海外</button>
+        </div>
+        <span class="demo-desc" id="demoRegionDesc">当前：自动检测</span>
+    </div>
+    <div class="demo-row">
+        <span class="demo-label">注册方式</span>
+        <div class="demo-btns">
+            <button class="demo-btn on" id="dmPwd" onclick="demoMethod('pwd',this)">密码注册</button>
+            <button class="demo-btn" id="dmOtp" onclick="demoMethod('otp',this)">OTP 动态令牌</button>
+            <button class="demo-btn" id="dmCode" onclick="demoMethod('code',this)">验证码注册</button>
+        </div>
+        <span class="demo-desc" id="demoMethodDesc">手机号→密码注册（CN/HK默认）</span>
+    </div>
+    <div class="demo-row">
+        <span class="demo-label">异常场景</span>
+        <div class="demo-btns">
+            <button class="demo-btn on" onclick="demoEdge('none',this)">正常流程</button>
+            <button class="demo-btn" onclick="demoEdge('dup',this)">邮箱/手机已注册</button>
+            <button class="demo-btn" onclick="demoEdge('code_err',this)">验证码错误</button>
+            <button class="demo-btn" onclick="demoEdge('pwd_weak',this)">密码强度不足</button>
+        </div>
+    </div>
+</div>
 
+<script>
+/* ===== State ===== */
+let ct = 'email', rm = 'otp';
+let edgeCase = 'none'; // none | dup | code_err | pwd_weak
+
+/* ===== IP-based region detection → auto-select tab & method ===== */
+(function initRegion() {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+    let region = 'other';
+    if (tz.startsWith('Asia/Shanghai') || tz.startsWith('Asia/Chongqing') || tz.startsWith('Asia/Urumqi')) region = 'CN';
+    else if (tz.startsWith('Asia/Hong_Kong')) region = 'HK';
+
+    if (region === 'CN' || region === 'HK') {
+        ct = 'phone'; rm = 'pwd';
+    } else {
+        ct = 'email'; rm = 'otp';
+    }
+
+    setTimeout(() => {
+        applyTabAndMethod(region);
+        syncDemoBar();
+    }, 0);
+})();
+
+function applyTabAndMethod(region) {
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(t => t.classList.remove('on'));
+    if (ct === 'phone') {
+        tabs[1].classList.add('on');
+        document.getElementById('f-email').style.display = 'none';
+        document.getElementById('f-phone').style.display = '';
+    } else {
+        tabs[0].classList.add('on');
+        document.getElementById('f-email').style.display = '';
+        document.getElementById('f-phone').style.display = 'none';
+    }
+    if (region === 'CN') document.getElementById('ccSel').value = '+86';
+    else if (region === 'HK') document.getElementById('ccSel').value = '+852';
+}
+
+/* ===== Navigation ===== */
 function go(id) {
     document.querySelectorAll('.v').forEach(v => v.classList.remove('on'));
     document.getElementById(id).classList.add('on');
+    clearAllErrors();
 }
 
 function sw(el, m) {
@@ -680,12 +838,8 @@ function sw(el, m) {
     el.classList.add('on');
     document.getElementById('f-email').style.display = m === 'email' ? '' : 'none';
     document.getElementById('f-phone').style.display = m === 'phone' ? '' : 'none';
-}
-
-function pick(el) {
-    document.querySelectorAll('.mth').forEach(c => c.classList.remove('on'));
-    el.classList.add('on');
-    rm = el.dataset.m;
+    rm = (m === 'phone') ? 'pwd' : 'otp';
+    syncDemoBar();
 }
 
 function val() {
@@ -694,6 +848,7 @@ function val() {
         : (document.getElementById('inPhone').value || '手机号');
 }
 
+/* ===== OTP input builder ===== */
 function buildOtp(id) {
     const w = document.getElementById(id);
     if (w.children.length) return;
@@ -707,14 +862,36 @@ function buildOtp(id) {
     setTimeout(() => w.children[0].focus(), 100);
 }
 
+/* ===== Main flow ===== */
 function goNext() {
+    clearAllErrors();
     const c = val();
+
+    // Edge case: duplicate account
+    if (edgeCase === 'dup') {
+        const errEl = document.getElementById('errDup');
+        const errText = document.getElementById('errDupText');
+        errText.textContent = ct === 'email'
+            ? '该邮箱已注册，请直接登录'
+            : '该手机号已注册，请直接登录';
+        errEl.classList.add('show');
+        return;
+    }
+
     if (rm === 'code') {
         document.getElementById('t-code').textContent = c;
         go('v-code'); buildOtp('otp1'); cd(document.getElementById('rs1'));
     } else if (rm === 'pwd') {
         document.getElementById('t-pwd').textContent = c;
         go('v-pwd');
+        // Edge case: pre-fill weak password
+        if (edgeCase === 'pwd_weak') {
+            setTimeout(() => {
+                const pwdInput = document.getElementById('inPwd');
+                pwdInput.value = '123';
+                meter('123');
+            }, 200);
+        }
     } else {
         document.getElementById('t-otp-v').textContent = c;
         go('v-otp-verify'); buildOtp('otp2'); cd(document.getElementById('rs3'));
@@ -722,12 +899,25 @@ function goNext() {
 }
 
 function otpVerified() {
+    if (edgeCase === 'code_err') {
+        document.getElementById('errCode2').classList.add('show');
+        return;
+    }
     go('v-otp-bind');
 }
 
 function pwdSubmit() {
+    // Edge case: password too weak
+    if (edgeCase === 'pwd_weak') {
+        const pwdInput = document.getElementById('inPwd');
+        if (!pwdInput.value || pwdInput.value.length < 8) {
+            meter(pwdInput.value || '');
+            return;
+        }
+    }
     document.getElementById('t-pwd-v').textContent = val();
     go('v-pwd-verify');
+    buildOtp('otp3');
     cd(document.getElementById('rs2'));
 }
 
@@ -740,6 +930,15 @@ function cd(btn) {
 }
 
 function finish() {
+    // Edge case: verification code error
+    if (edgeCase === 'code_err') {
+        // Show error on whichever verification view is active
+        ['errCode1', 'errCode3'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el && el.closest('.v.on')) el.classList.add('show');
+        });
+        return;
+    }
     go('v-done');
     let s = 5; const el = document.getElementById('sec');
     const t = setInterval(() => {
@@ -750,6 +949,7 @@ function finish() {
 
 function goLogin() { alert('跳转到登录页…'); }
 
+/* ===== Password meter ===== */
 function meter(p) {
     const ss = ['s1','s2','s3','s4'].map(id => document.getElementById(id));
     const h = document.getElementById('pwdH');
@@ -768,6 +968,71 @@ function meter(p) {
     ];
     for (let i = 0; i < sc; i++) ss[i].classList.add(mp[sc-1].c);
     h.textContent = mp[sc-1].t; h.style.color = mp[sc-1].cl;
+}
+
+/* ===== Error helpers ===== */
+function clearAllErrors() {
+    document.querySelectorAll('.err-msg').forEach(e => e.classList.remove('show'));
+}
+
+/* ===== Demo bar: Region ===== */
+function demoRegion(region, btn) {
+    btn.parentElement.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+
+    if (region === 'CN') {
+        ct = 'phone'; rm = 'pwd';
+        document.getElementById('demoRegionDesc').textContent = '中国大陆 → 手机号 + 密码注册';
+    } else if (region === 'HK') {
+        ct = 'phone'; rm = 'pwd';
+        document.getElementById('demoRegionDesc').textContent = '香港 → 手机号 + 密码注册';
+    } else {
+        ct = 'email'; rm = 'otp';
+        document.getElementById('demoRegionDesc').textContent = '海外 → 邮箱 + OTP 动态令牌注册';
+    }
+
+    applyTabAndMethod(region);
+    syncDemoBar();
+    go('v-start');
+}
+
+/* ===== Demo bar: Method ===== */
+function demoMethod(method, btn) {
+    btn.parentElement.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    rm = method;
+
+    const descs = {
+        pwd: '密码注册：设置密码 → 验证码验证 → 完成',
+        otp: 'OTP 注册：验证邮箱/手机 → 绑定 Authenticator → 完成',
+        code: '验证码注册：输入验证码 → 直接完成'
+    };
+    document.getElementById('demoMethodDesc').textContent = descs[method];
+    go('v-start');
+}
+
+/* ===== Demo bar: Edge cases ===== */
+function demoEdge(edge, btn) {
+    btn.parentElement.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    edgeCase = edge;
+    clearAllErrors();
+    go('v-start');
+}
+
+/* ===== Sync demo bar buttons with current state ===== */
+function syncDemoBar() {
+    // Sync method buttons
+    document.getElementById('dmPwd').classList.toggle('on', rm === 'pwd');
+    document.getElementById('dmOtp').classList.toggle('on', rm === 'otp');
+    document.getElementById('dmCode').classList.toggle('on', rm === 'code');
+
+    const descs = {
+        pwd: '密码注册：设置密码 → 验证码验证 → 完成',
+        otp: 'OTP 注册：验证邮箱/手机 → 绑定 Authenticator → 完成',
+        code: '验证码注册：输入验证码 → 直接完成'
+    };
+    document.getElementById('demoMethodDesc').textContent = descs[rm];
 }
 </script>
 </body>

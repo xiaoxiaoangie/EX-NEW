@@ -312,15 +312,51 @@ h1 {
     box-shadow: 0 1px 3px rgba(0,0,0,.08);
 }
 
-/* ===== CAPTCHA area ===== */
-.captcha-area {
-    margin-bottom: 24px;
+/* ===== CAPTCHA overlay modal ===== */
+.captcha-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,.4);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn .15s ease;
 }
-.captcha-box {
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius);
+.captcha-overlay.show { display: flex; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.captcha-modal {
+    background: var(--card);
+    border-radius: 16px;
+    width: 400px;
+    max-width: 90vw;
+    box-shadow: 0 20px 60px rgba(0,0,0,.15);
     overflow: hidden;
-    background: #f8f9fa;
+    animation: slideUp .2s ease;
+}
+@keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+.captcha-modal-header {
+    padding: 20px 24px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.captcha-modal-header h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+}
+.captcha-modal-header .close-btn {
+    background: none; border: none;
+    font-size: 20px; cursor: pointer;
+    color: var(--text3); padding: 4px 8px;
+    border-radius: 6px; line-height: 1;
+}
+.captcha-modal-header .close-btn:hover { background: #f1f3f4; }
+.captcha-modal-desc {
+    padding: 4px 24px 16px;
+    font-size: 13px;
+    color: var(--text3);
 }
 .captcha-img {
     width: 100%;
@@ -334,28 +370,25 @@ h1 {
     gap: 8px;
     color: var(--text3);
     font-size: 13px;
-    position: relative;
 }
 .captcha-img .puzzle-icon { font-size: 40px; opacity: .4; }
 .captcha-slider {
-    padding: 12px 16px;
-    background: var(--card);
-    border-top: 1px solid var(--border-light);
+    padding: 16px 24px 20px;
 }
 .slider-track {
-    height: 40px;
+    height: 44px;
     background: #f1f3f4;
-    border-radius: 20px;
+    border-radius: 22px;
     position: relative;
     cursor: pointer;
     display: flex;
     align-items: center;
 }
 .slider-thumb {
-    width: 44px; height: 36px;
+    width: 48px; height: 40px;
     background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 18px;
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
     display: flex; align-items: center; justify-content: center;
     cursor: grab;
     position: absolute;
@@ -363,7 +396,7 @@ h1 {
     transition: left .3s, background .2s, border-color .2s;
     font-size: 16px;
     color: var(--text3);
-    box-shadow: 0 1px 3px rgba(0,0,0,.08);
+    box-shadow: 0 2px 6px rgba(0,0,0,.1);
     user-select: none;
 }
 .slider-thumb:hover { border-color: var(--accent); color: var(--accent); }
@@ -371,7 +404,7 @@ h1 {
     background: var(--green);
     border-color: var(--green);
     color: #fff;
-    left: calc(100% - 46px);
+    left: calc(100% - 50px);
 }
 .slider-text {
     width: 100%;
@@ -434,32 +467,82 @@ h1 {
 }
 .forgot-link a:hover { text-decoration: underline; }
 
-/* ===== Lock screen ===== */
+/* ===== Lock/Frozen screen ===== */
 .lock-icon {
-    width: 72px; height: 72px;
-    margin: 0 auto 20px;
+    width: 88px; height: 88px;
+    margin: 0 auto 24px;
     border-radius: 50%;
-    background: var(--red-light);
+    background: linear-gradient(135deg, #fef2f2, #fee2e2);
     display: flex; align-items: center; justify-content: center;
-    font-size: 32px;
+    font-size: 36px;
+    box-shadow: 0 4px 16px rgba(234,67,53,.1);
 }
 .lock-body { text-align: center; }
-.lock-body h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; color: var(--red); }
-.lock-body p { font-size: 14px; color: var(--text2); line-height: 1.6; margin-bottom: 4px; }
+.lock-body h2 { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text); letter-spacing: -.3px; }
+.lock-body p { font-size: 14px; color: var(--text2); line-height: 1.7; margin-bottom: 4px; }
 .lock-timer {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    background: #fef7f6;
-    border: 1px solid rgba(234,67,53,.15);
-    border-radius: 20px;
-    padding: 8px 20px;
-    margin: 20px 0;
-    font-size: 14px;
+    gap: 8px;
+    background: #fef2f2;
+    border: 1px solid rgba(234,67,53,.12);
+    border-radius: 12px;
+    padding: 14px 28px;
+    margin: 24px 0;
+    font-size: 15px;
     color: var(--red);
-    font-weight: 600;
+    font-weight: 700;
     font-variant-numeric: tabular-nums;
+    letter-spacing: .5px;
 }
+.lock-timer .timer-label {
+    font-weight: 500;
+    font-size: 13px;
+    color: #b91c1c;
+    letter-spacing: 0;
+}
+.lock-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-top: 28px;
+}
+.lock-actions a {
+    font-size: 14px;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: background .15s;
+}
+.lock-actions a:hover {
+    background: var(--accent-light);
+}
+.lock-actions .lock-divider {
+    width: 1px;
+    height: 16px;
+    background: var(--border-light);
+}
+.lock-actions-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.lock-back {
+    font-size: 13px;
+    color: var(--text3);
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-family: inherit;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: all .15s;
+}
+.lock-back:hover { color: var(--text2); background: #f1f3f4; }
 
 /* ===== Risk level demo selector ===== */
 .demo-bar {
@@ -599,34 +682,6 @@ h1 {
             </div>
         </div>
 
-        <!-- ==================== 2. CAPTCHA 图形验证 (L1+) ==================== -->
-        <div class="v" id="v-captcha">
-            <div class="card">
-                <h1>安全验证</h1>
-                <div class="desc">检测到新的登录环境，请完成以下验证</div>
-
-                <div class="captcha-area">
-                    <div class="captcha-box">
-                        <div class="captcha-img">
-                            <div class="puzzle-icon">🧩</div>
-                            <span>滑动拼图验证区域</span>
-                        </div>
-                        <div class="captcha-slider">
-                            <div class="slider-track" id="sliderTrack" onclick="completeCaptcha()">
-                                <div class="slider-thumb" id="sliderThumb">→</div>
-                                <span class="slider-text">向右滑动完成验证</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="action-row">
-                    <button class="btn btn-outline" onclick="go('v-start')">返回</button>
-                    <button class="btn btn-primary" id="captchaNext" onclick="afterCaptcha()" disabled style="opacity:.5">验证后继续</button>
-                </div>
-            </div>
-        </div>
-
         <!-- ==================== 3-A. 密码输入 ==================== -->
         <div class="v" id="v-pwd">
             <div class="card">
@@ -703,7 +758,7 @@ h1 {
             </div>
         </div>
 
-        <!-- ==================== 4. 二次验证 (L2) ==================== -->
+        <!-- ==================== 4. 二次验证 (2FA，用户开启后触发) ==================== -->
         <div class="v" id="v-mfa">
             <div class="card">
                 <h1>安全验证</h1>
@@ -727,23 +782,27 @@ h1 {
             </div>
         </div>
 
-        <!-- ==================== 5. 账户锁定 (L3) ==================== -->
+        <!-- ==================== 5. 账户冻结 (L2) ==================== -->
         <div class="v" id="v-locked">
             <div class="card">
-                <div class="lock-icon">🔒</div>
+                <div class="lock-icon">�️</div>
                 <div class="lock-body">
                     <h2>账户已冻结</h2>
-                    <p>为保护您的账户安全，登录功能已暂时冻结 24 小时。</p>
-                    <p>我们已向您的注册邮箱/手机发送了安全通知。</p>
+                    <p>为保护您的账户安全，登录功能已暂时冻结。</p>
+                    <p style="font-size:13px;color:var(--text3);margin-top:8px">我们已向您的注册邮箱/手机发送了安全通知，<br>如非本人操作，请立即修改密码。</p>
                     <div class="lock-timer">
-                        剩余冻结时间：<span id="lockTime">23:59:59</span>
+                        <span class="timer-label">剩余冻结时间</span>
+                        <span id="lockTime">23:59:59</span>
                     </div>
                 </div>
-                <div class="action-row" style="margin-top:24px">
-                    <button class="btn btn-outline" onclick="alert('发送解锁邮件…')">通过邮件解锁</button>
-                    <button class="btn btn-outline" onclick="alert('联系客服…')">联系客服</button>
+                <div class="lock-actions">
+                    <div class="lock-actions-row">
+                        <a href="#" onclick="alert('发送解冻邮件…'); return false;">通过邮件解冻</a>
+                        <span class="lock-divider"></span>
+                        <a href="#" onclick="alert('联系客服…'); return false;">联系客服</a>
+                    </div>
+                    <button class="lock-back" onclick="go('v-start')">← 返回登录</button>
                 </div>
-                <button class="btn btn-text" onclick="go('v-start')">返回登录</button>
             </div>
         </div>
 
@@ -836,6 +895,27 @@ h1 {
     </div>
 </div>
 
+<!-- ===== CAPTCHA Overlay Modal ===== -->
+<div class="captcha-overlay" id="captchaOverlay">
+    <div class="captcha-modal">
+        <div class="captcha-modal-header">
+            <h3>安全验证</h3>
+            <button class="close-btn" onclick="closeCaptcha()">✕</button>
+        </div>
+        <div class="captcha-modal-desc">检测到新的登录环境，请完成以下验证</div>
+        <div class="captcha-img">
+            <div class="puzzle-icon">🧩</div>
+            <span>滑动拼图验证区域</span>
+        </div>
+        <div class="captcha-slider">
+            <div class="slider-track" id="sliderTrack" onclick="completeCaptcha()">
+                <div class="slider-thumb" id="sliderThumb">→</div>
+                <span class="slider-text">向右滑动完成验证</span>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- ===== Footer ===== -->
 <div class="page-footer">
     <span id="footerBrand">&copy; 2026</span>
@@ -849,11 +929,11 @@ h1 {
     <span class="demo-label">风险等级模拟</span>
     <div class="demo-btns">
         <button class="demo-btn on" data-r="0" onclick="setRisk(0,this)">L0 无风险</button>
-        <button class="demo-btn" data-r="1" onclick="setRisk(1,this)">L1 低风险</button>
-        <button class="demo-btn" data-r="2" onclick="setRisk(2,this)">L2 高风险</button>
-        <button class="demo-btn" data-r="e" onclick="setRisk('e',this)">密码错误 3 次</button>
+        <button class="demo-btn" data-r="1" onclick="setRisk(1,this)">L1 设备/IP变化</button>
+        <button class="demo-btn" data-r="e3" onclick="setRisk('e3',this)">L2 密码错误3次</button>
+        <button class="demo-btn" data-r="e5" onclick="setRisk('e5',this)">密码错误5次→冻结</button>
     </div>
-    <span class="demo-desc" id="demoDesc">常用设备 + 常用 IP → 直接输入凭证登录</span>
+    <span class="demo-desc" id="demoDesc">同设备 + 同 IP → 直接输入凭证登录，无额外验证</span>
 </div>
 
 <script>
@@ -865,10 +945,10 @@ let errCount = 0;
 let captchaPassed = false;
 
 const riskDescs = {
-    0: '常用设备 + 常用 IP → 直接输入凭证登录',
-    1: '新设备 / 新浏览器 → 需先完成图形验证码',
-    2: '连续错误 ≥5 次 / 异地新设备 → 冻结账户 24 小时',
-    'e': '模拟密码连续输入错误 3 次，触发图形验证码'
+    0: '同设备 + 同 IP → 直接输入凭证登录，无额外验证',
+    1: '新设备（同 IP）或 同设备（不同 IP）→ 需先完成图形验证码',
+    'e3': '同设备 + 同 IP + 密码错误 3 次 → 触发图形验证码',
+    'e5': '密码连续错误 5 次 → 直接冻结账户 24 小时'
 };
 
 /* ===== IP-based default login method ===== */
@@ -933,9 +1013,12 @@ function maskAcct(a) {
 function setRisk(r, btn) {
     document.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('on'));
     btn.classList.add('on');
-    if (r === 'e') {
+    if (r === 'e3') {
         riskLevel = 0;
         errCount = 3;
+    } else if (r === 'e5') {
+        riskLevel = 0;
+        errCount = 5;
     } else {
         riskLevel = r;
         errCount = 0;
@@ -943,6 +1026,10 @@ function setRisk(r, btn) {
     document.getElementById('demoDesc').textContent = riskDescs[r];
     captchaPassed = false;
     resetCaptcha();
+    // If simulating 5 errors, go directly to frozen
+    if (r === 'e5') {
+        go('v-start');
+    }
 }
 
 /* ===== Main flow ===== */
@@ -951,26 +1038,21 @@ function goNext() {
     captchaPassed = false;
     resetCaptcha();
 
-    // L2 → frozen 24h
-    if (riskLevel >= 2) {
+    // 5+ errors → frozen
+    if (errCount >= 5) {
         go('v-locked');
         startLockTimer();
         return;
     }
 
-    // L1 or errCount>=3 → CAPTCHA first
-    if (riskLevel >= 1 || errCount >= 3) {
-        go('v-captcha');
+    // L1 (new device / diff IP) → CAPTCHA overlay
+    if (riskLevel >= 1) {
+        showCaptcha();
         return;
     }
 
     // L0 → go directly to credential
     goToCredential(acct);
-}
-
-function afterCaptcha() {
-    if (!captchaPassed) return;
-    goToCredential(getAcct());
 }
 
 function goToCredential(acct) {
@@ -991,15 +1073,26 @@ function goToCredential(acct) {
     }
 }
 
-/* ===== CAPTCHA ===== */
+/* ===== CAPTCHA overlay ===== */
+function showCaptcha() {
+    document.getElementById('captchaOverlay').classList.add('show');
+}
+
+function closeCaptcha() {
+    document.getElementById('captchaOverlay').classList.remove('show');
+    resetCaptcha();
+}
+
 function completeCaptcha() {
     captchaPassed = true;
     const thumb = document.getElementById('sliderThumb');
     thumb.classList.add('done');
     thumb.textContent = '✓';
-    const btn = document.getElementById('captchaNext');
-    btn.disabled = false;
-    btn.style.opacity = '1';
+    // Auto-close overlay and proceed after a brief delay
+    setTimeout(() => {
+        closeCaptcha();
+        goToCredential(getAcct());
+    }, 500);
 }
 
 function resetCaptcha() {
@@ -1009,30 +1102,36 @@ function resetCaptcha() {
         thumb.classList.remove('done');
         thumb.textContent = '→';
     }
-    const btn = document.getElementById('captchaNext');
-    if (btn) {
-        btn.disabled = true;
-        btn.style.opacity = '.5';
-    }
 }
 
 /* ===== Submit handlers ===== */
 function submitPwd() {
-    // Simulate: if errCount demo, show error
+    // Simulate password error flow
     if (errCount > 0 && errCount < 5) {
         errCount++;
         const el = document.getElementById('pwdErr');
         const txt = document.getElementById('pwdErrText');
         el.classList.add('show');
+
         if (errCount >= 5) {
-            txt.textContent = '连续错误 ' + errCount + ' 次，账户已临时锁定';
+            // 5 errors → freeze account
+            txt.textContent = '连续错误 ' + errCount + ' 次，账户已冻结 24 小时';
             setTimeout(() => { go('v-locked'); startLockTimer(); }, 1500);
             return;
         } else if (errCount >= 3) {
-            txt.textContent = '密码错误（第 ' + errCount + ' 次），请完成安全验证后重试';
+            // 3 errors → require CAPTCHA for next attempt
+            txt.textContent = '密码错误（第 ' + errCount + ' 次），请完成图形验证后重试';
+            setTimeout(() => { showCaptcha(); }, 800);
         } else {
-            txt.textContent = '密码错误，请重试（第 ' + errCount + ' 次）';
+            txt.textContent = '密码错误，请重试（第 ' + errCount + ' 次，连续错误 5 次将冻结账户）';
         }
+        return;
+    }
+
+    // If errCount is already at 5 (from demo), freeze directly
+    if (errCount >= 5) {
+        go('v-locked');
+        startLockTimer();
         return;
     }
 
