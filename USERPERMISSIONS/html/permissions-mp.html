@@ -427,8 +427,16 @@
             background: #f8fafc;
         }
 
+        /* Compact header */
+        .rp-compact-header { margin-bottom: 16px; }
+        .rp-header-top { display: flex; align-items: flex-end; justify-content: space-between; }
+        .rp-header-title-row { display: flex; align-items: baseline; gap: 8px; }
+        .rp-header-title-row h2 { font-size: 18px; font-weight: 700; margin: 0; color: var(--text); }
+        .rp-header-sep { color: var(--text-muted); font-size: 16px; }
+        .rp-header-desc { font-size: 13px; color: var(--text-muted); }
+
         /* Tabs */
-        .tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 24px; }
+        .rp-tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 20px; margin-top: 10px; }
         .tab-btn {
             padding: 10px 24px;
             font-size: 14px;
@@ -494,20 +502,22 @@
         .rp-b-no { background: #f1f3f5; color: #a5aac4; }
 
         /* Module permission row */
-        .rp-mod { display: flex; align-items: center; padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 6px; transition: all .12s; }
+        .rp-mod { padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 6px; transition: all .12s; }
         .rp-mod.on { border-color: var(--primary); background: #fafbff; }
-        .rp-mod .rp-mod-ck { width: 20px; height: 20px; border: 2px solid #d1d5db; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: transparent; cursor: pointer; flex-shrink: 0; margin-right: 14px; transition: all .12s; }
+        .rp-mod-head { display: flex; align-items: center; cursor: pointer; }
+        .rp-mod .rp-mod-ck { width: 20px; height: 20px; border: 2px solid #d1d5db; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: transparent; flex-shrink: 0; margin-right: 14px; transition: all .12s; }
         .rp-mod.on .rp-mod-ck { background: var(--primary); border-color: var(--primary); color: #fff; }
         .rp-mod .rp-mod-info { flex: 1; min-width: 0; }
         .rp-mod .rp-mod-name { font-size: 14px; font-weight: 600; color: var(--text); }
         .rp-mod .rp-mod-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
-        .rp-mod .rp-mod-op { display: none; margin-left: auto; flex-shrink: 0; }
-        .rp-mod.on .rp-mod-op { display: flex; }
-        .rp-op-btn { padding: 4px 14px; font-size: 12px; font-weight: 600; border: 1px solid var(--border); background: #fff; color: var(--text-muted); cursor: pointer; transition: all .12s; }
-        .rp-op-btn:first-child { border-radius: 6px 0 0 6px; border-right: none; }
-        .rp-op-btn:last-child { border-radius: 0 6px 6px 0; }
-        .rp-op-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
-        .rp-op-btn:hover:not(.active) { background: var(--bg); color: var(--text); }
+        .rp-mod-opts { display: none; margin-top: 10px; padding-left: 34px; }
+        .rp-mod.on .rp-mod-opts { display: block; }
+        /* Checkbox row */
+        .rp-ck-row { display: flex; align-items: center; gap: 18px; margin-bottom: 6px; flex-wrap: wrap; }
+        .rp-ck-item { display: flex; align-items: center; gap: 5px; cursor: pointer; user-select: none; font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+        .rp-ck-item input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer; }
+        /* Global verification config */
+        .rp-veri-global { padding: 12px 16px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; }
 
         /* Permission tag */
         .rp-perm-tag { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 10px; font-size: 11px; font-weight: 500; margin: 2px; }
@@ -1565,16 +1575,21 @@
     </div>
 
     <div class="page" id="page-roles-permissions">
-        <div class="page-header">
-            <div class="breadcrumb">Settings / <span>Roles & Permissions</span></div>
-            <h1>Roles & Permissions（角色权限）</h1>
-            <p>管理角色、配置权限、邀请和管理用户</p>
-        </div>
-
-        <!-- Tabs: Roles / Users -->
-        <div class="rp-tabs">
-            <button class="rp-tab active" onclick="rpSwitchTab('roles')">🔐 Roles</button>
-            <button class="rp-tab" onclick="rpSwitchTab('users')">👥 Users</button>
+        <div class="rp-compact-header">
+            <div class="rp-header-top">
+                <div class="rp-header-left">
+                    <div class="breadcrumb" style="margin-bottom:2px">Settings / <span>Roles & Permissions</span></div>
+                    <div class="rp-header-title-row">
+                        <h2>Roles & Permissions</h2>
+                        <span class="rp-header-sep">·</span>
+                        <span class="rp-header-desc">管理角色、配置权限、邀请和管理用户</span>
+                    </div>
+                </div>
+            </div>
+            <div class="rp-tabs" style="margin-top:0;border-top:none">
+                <button class="rp-tab active" onclick="rpSwitchTab('roles')">🔐 Roles</button>
+                <button class="rp-tab" onclick="rpSwitchTab('users')">👥 Users</button>
+            </div>
         </div>
 
         <!-- ========== ROLES TAB ========== -->
@@ -1628,11 +1643,26 @@
                 <div class="content-section">
                     <h3>Module Permissions</h3>
                     <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">
-                        选择该角色可访问的模块，并为每个模块设置操作级别。<br>
-                        <strong>仅查阅</strong> = 只能查看列表和详情 &nbsp;|&nbsp; <strong>可操作</strong> = 可以创建/编辑/删除/导出
+                        选择该角色可访问的模块，并为每个模块勾选操作权限（可多选）。<br>
+                        <strong>查阅</strong> = 查看列表和详情 &nbsp;|&nbsp; <strong>操作</strong> = 创建/编辑/删除 &nbsp;|&nbsp; <strong>导出</strong> = 导出 CSV/Excel/PDF
                     </p>
                     <div id="rpModuleList">
                         <!-- filled by JS -->
+                    </div>
+                </div>
+
+                <!-- Global Security Verification -->
+                <div class="content-section" id="rpVeriSection" style="display:none">
+                    <h3>🔒 安全验证方式</h3>
+                    <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">
+                        该角色拥有交易模块的操作权限，请选择执行资金操作时的安全验证方式。<br>
+                        指定手机号由 Account Holder 在 Settings → Security 中统一配置。
+                    </p>
+                    <div class="rp-veri-global">
+                        <select id="rpVeriSelect" style="padding:8px 14px;border:1px solid var(--border);border-radius:6px;font-size:13px;background:#fff;outline:none;min-width:280px">
+                            <option value="self">Self — 验证码发给操作人自己</option>
+                            <option value="designated">Designated — 验证码发给指定安全手机号</option>
+                        </select>
                     </div>
                 </div>
 
@@ -1979,32 +2009,56 @@ document.addEventListener('click', e => {
 });
 
 // ================================================================
-// ROLES & PERMISSIONS PAGE
+// ROLES & PERMISSIONS PAGE — v2.3
+// 操作权限：查阅 / 操作 / 导出（三选多选）
+// 交易模块安全验证：Self / Designated
 // ================================================================
 
+// txn: true = 交易模块，有操作权限时需配置安全验证方式
 const RP_MODULES = [
-    { id:'assets',       name:'Assets',         sub:'Fiat Accounts / Crypto Wallet / Exchange' },
+    { id:'assets',       name:'Assets',         sub:'Fiat Accounts / Crypto Wallet / Exchange', txn:true },
     { id:'transfer_in',  name:'Transfer In',    sub:'Collection Tools / Remitter / Payins / Onramp' },
     { id:'checkout',     name:'Checkout',        sub:'Online Payment / Invoice / Subscription' },
-    { id:'transfer_out', name:'Transfer Out',    sub:'Beneficiary / Payouts / OffRamp / Remittance Orders' },
-    { id:'cards',        name:'Cards',           sub:'Cards Management / Card Transactions' },
+    { id:'transfer_out', name:'Transfer Out',    sub:'Beneficiary / Payouts / OffRamp / Remittance Orders', txn:true },
+    { id:'cards',        name:'Cards',           sub:'Cards Management / Card Transactions', txn:true },
     { id:'trade_docs',   name:'Trade Documents', sub:'Trade Documents / Order Files / Shop Management' },
     { id:'reports',      name:'Reports',         sub:'Reports / Downloads' },
     { id:'developer',    name:'Developer',       sub:'API Keys / Webhooks' },
     { id:'settings',     name:'Settings',        sub:'Company Profile / Roles & Permissions / Notifications' }
 ];
 
+// modules: { module_id: { view:bool, operate:bool, export:bool } }
+// verification: 'self'|'designated' — role-level global setting (applies when any txn module has operate)
+const ALL_PERMS = {view:true, operate:true, export:true};
 let rpRoles = [
-    { id:'holder', name:'Account Holder', desc:'开户人 · 固有全部模块可操作', type:'holder', status:'active',
-      modules: Object.fromEntries(RP_MODULES.map(m=>[m.id,'operable'])) },
-    { id:'r1', name:'财务主管', desc:'负责资金管理和出入金操作，可查看报表', type:'custom', status:'active',
-      modules:{ assets:'operable', transfer_in:'operable', checkout:'view_only', transfer_out:'operable', reports:'view_only' } },
-    { id:'r2', name:'运营专员', desc:'负责收款和收单业务，管理贸易单据', type:'custom', status:'active',
-      modules:{ assets:'view_only', transfer_in:'operable', checkout:'operable', trade_docs:'operable', reports:'view_only' } },
-    { id:'r3', name:'卡业务管理员', desc:'专门负责发卡和卡交易', type:'custom', status:'active',
-      modules:{ assets:'view_only', cards:'operable', reports:'view_only' } },
-    { id:'r4', name:'技术对接', desc:'负责 API 集成和 Webhook 配置', type:'custom', status:'active',
-      modules:{ developer:'operable' } }
+    { id:'holder', name:'Account Holder', desc:'开户人 · 固有全部模块全部权限', type:'holder', status:'active', verification:'self',
+      modules: Object.fromEntries(RP_MODULES.map(m=>[m.id, {...ALL_PERMS}])) },
+    { id:'r1', name:'财务主管', desc:'负责资金管理和出入金操作，可查看报表', type:'custom', status:'active', verification:'designated',
+      modules:{
+        assets:      {view:true, operate:true, export:true},
+        transfer_in: {view:true, operate:true, export:true},
+        checkout:    {view:true, operate:false, export:false},
+        transfer_out:{view:true, operate:true, export:true},
+        reports:     {view:true, operate:false, export:false}
+      }},
+    { id:'r2', name:'运营专员', desc:'负责收款和收单业务，管理贸易单据', type:'custom', status:'active', verification:'self',
+      modules:{
+        assets:      {view:true, operate:false, export:false},
+        transfer_in: {view:true, operate:true, export:true},
+        checkout:    {view:true, operate:true, export:true},
+        trade_docs:  {view:true, operate:true, export:true},
+        reports:     {view:true, operate:false, export:false}
+      }},
+    { id:'r3', name:'卡业务管理员', desc:'专门负责发卡和卡交易', type:'custom', status:'active', verification:'self',
+      modules:{
+        assets:  {view:true, operate:false, export:false},
+        cards:   {view:true, operate:true, export:true},
+        reports: {view:true, operate:false, export:false}
+      }},
+    { id:'r4', name:'技术对接', desc:'负责 API 集成和 Webhook 配置', type:'custom', status:'active', verification:'self',
+      modules:{
+        developer: {view:true, operate:true, export:false}
+      }}
 ];
 
 let rpUsers = [
@@ -2050,11 +2104,21 @@ function rpSwitchTab(tab) {
     }
 }
 
-// ============ OP BADGE HTML ============
-function rpOpBadge(op) {
-    if (op==='operable') return '<span class="rp-badge rp-b-op">✅ 可操作</span>';
-    if (op==='view_only') return '<span class="rp-badge rp-b-view">👁 仅查阅</span>';
-    return '<span class="rp-badge rp-b-no">❌ No access</span>';
+// ============ PERMISSION BADGES ============
+function rpPermBadges(p) {
+    if (!p) return '<span class="rp-badge rp-b-no">❌ No access</span>';
+    let h = '';
+    if (p.view)    h += '<span class="rp-badge rp-b-view" style="margin:1px">👁 查阅</span>';
+    if (p.operate) h += '<span class="rp-badge rp-b-op" style="margin:1px">✏️ 操作</span>';
+    if (p.export)  h += '<span class="rp-badge rp-b-custom" style="margin:1px">📥 导出</span>';
+    if (!p.view && !p.operate && !p.export) h = '<span class="rp-badge rp-b-no">❌ No access</span>';
+    return h;
+}
+function rpRoleVeriBadge(role) {
+    const hasTxnOp = RP_MODULES.some(m => m.txn && role.modules[m.id] && role.modules[m.id].operate);
+    if (!hasTxnOp) return '';
+    if (role.verification === 'designated') return ' <span class="rp-badge rp-b-holder" style="margin:1px">🔒 Designated</span>';
+    return ' <span class="rp-badge rp-b-member" style="margin:1px">🔓 Self</span>';
 }
 
 // ============ ROLES LIST ============
@@ -2094,9 +2158,19 @@ function rpViewRole(roleId) {
     document.getElementById('rpDetailDeleteBtn').style.display = r.type==='holder'?'none':'';
     const modBody = document.getElementById('rpDetailModBody'); modBody.innerHTML='';
     RP_MODULES.forEach(m => {
-        const op = r.modules[m.id];
-        modBody.innerHTML += `<tr${!op?' style="opacity:.4"':''}><td class="rp-nm">${m.name}</td><td class="rp-sub">${m.sub}</td><td style="text-align:center">${rpOpBadge(op)}</td></tr>`;
+        const p = r.modules[m.id];
+        const hasPerm = p && (p.view||p.operate||p.export);
+        modBody.innerHTML += `<tr${!hasPerm?' style="opacity:.4"':''}>
+            <td class="rp-nm">${m.name}</td>
+            <td class="rp-sub">${m.sub}</td>
+            <td style="text-align:center">${rpPermBadges(p)}</td>
+        </tr>`;
     });
+    // Show role-level verification badge
+    const veriBadge = rpRoleVeriBadge(r);
+    if (veriBadge) {
+        modBody.innerHTML += `<tr><td colspan="3" style="text-align:right;padding-top:8px;border-top:2px solid var(--border)"><strong style="font-size:12px;color:var(--text-muted)">安全验证方式：</strong>${veriBadge}</td></tr>`;
+    }
 }
 
 // ============ CREATE / EDIT ROLE ============
@@ -2108,6 +2182,8 @@ function rpShowCreateRole() {
     document.getElementById('rpRoleEditTitle').textContent='Create New Role';
     document.getElementById('rpRoleName').value='';
     document.getElementById('rpRoleDesc').value='';
+    document.getElementById('rpVeriSelect').value='self';
+    document.getElementById('rpVeriSection').style.display='none';
     rpBuildModuleList({});
 }
 function rpEditExistingRole() {
@@ -2117,25 +2193,51 @@ function rpEditExistingRole() {
     document.getElementById('rpRoleEditTitle').textContent='Edit: '+r.name;
     document.getElementById('rpRoleName').value=r.name;
     document.getElementById('rpRoleDesc').value=r.desc;
+    document.getElementById('rpVeriSelect').value=r.verification||'self';
     rpBuildModuleList(r.modules);
+    rpUpdateVeriVisibility();
 }
 function rpBuildModuleList(modules) {
     const c = document.getElementById('rpModuleList'); c.innerHTML='';
     RP_MODULES.forEach(m => {
-        const isOn = modules[m.id]!=null;
-        const op = modules[m.id]||'operable';
-        c.innerHTML += `<div class="rp-mod ${isOn?'on':''}" data-mid="${m.id}" onclick="rpToggleMod(this)">
-            <div class="rp-mod-ck">✓</div>
-            <div class="rp-mod-info"><div class="rp-mod-name">${m.name}</div><div class="rp-mod-sub">${m.sub}</div></div>
-            <div class="rp-mod-op" onclick="event.stopPropagation()">
-                <button class="rp-op-btn ${op==='view_only'?'active':''}" onclick="rpSetOp(this,'view_only')">仅查阅</button>
-                <button class="rp-op-btn ${op==='operable'?'active':''}" onclick="rpSetOp(this,'operable')">可操作</button>
+        const p = modules[m.id];
+        const isOn = p!=null;
+        const v = p?p.view:true, o = p?p.operate:false, e = p?p.export:false;
+        c.innerHTML += `<div class="rp-mod ${isOn?'on':''}" data-mid="${m.id}" data-txn="${m.txn?'1':'0'}">
+            <div class="rp-mod-head" onclick="rpToggleMod(this.parentElement)">
+                <div class="rp-mod-ck">✓</div>
+                <div class="rp-mod-info"><div class="rp-mod-name">${m.name}</div><div class="rp-mod-sub">${m.sub}</div></div>
+            </div>
+            <div class="rp-mod-opts" onclick="event.stopPropagation()">
+                <div class="rp-ck-row">
+                    <label class="rp-ck-item"><input type="checkbox" data-perm="view" ${v?'checked':''} onchange="rpCkChange(this)"> 查阅</label>
+                    <label class="rp-ck-item"><input type="checkbox" data-perm="operate" ${o?'checked':''} onchange="rpCkChange(this)"> 操作（增删改）</label>
+                    <label class="rp-ck-item"><input type="checkbox" data-perm="export" ${e?'checked':''} onchange="rpCkChange(this)"> 导出</label>
+                </div>
             </div>
         </div>`;
     });
+    rpUpdateVeriVisibility();
 }
-function rpToggleMod(el) { el.classList.toggle('on'); }
-function rpSetOp(btn) { btn.parentElement.querySelectorAll('.rp-op-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }
+function rpToggleMod(el) { el.classList.toggle('on'); rpUpdateVeriVisibility(); }
+function rpCkChange(cb) {
+    const row = cb.closest('.rp-ck-row');
+    const viewCb = row.querySelector('[data-perm="view"]');
+    const opCb = row.querySelector('[data-perm="operate"]');
+    const exCb = row.querySelector('[data-perm="export"]');
+    if ((opCb.checked || exCb.checked) && !viewCb.checked) viewCb.checked = true;
+    if (cb.dataset.perm === 'view' && !cb.checked) { opCb.checked = false; exCb.checked = false; }
+    rpUpdateVeriVisibility();
+}
+// Show global verification section only when any txn module has operate checked
+function rpUpdateVeriVisibility() {
+    let hasTxnOp = false;
+    document.querySelectorAll('#rpModuleList .rp-mod.on[data-txn="1"]').forEach(mod => {
+        const opCb = mod.querySelector('[data-perm="operate"]');
+        if (opCb && opCb.checked) hasTxnOp = true;
+    });
+    document.getElementById('rpVeriSection').style.display = hasTxnOp ? 'block' : 'none';
+}
 
 function rpSaveRole() {
     const name = document.getElementById('rpRoleName').value.trim();
@@ -2144,16 +2246,21 @@ function rpSaveRole() {
     const modules = {};
     document.querySelectorAll('#rpModuleList .rp-mod.on').forEach(row => {
         const mid = row.dataset.mid;
-        const ab = row.querySelector('.rp-op-btn.active');
-        modules[mid] = ab&&ab.textContent.trim()==='仅查阅' ? 'view_only' : 'operable';
+        const ckRow = row.querySelector('.rp-ck-row');
+        const v = ckRow.querySelector('[data-perm="view"]').checked;
+        const o = ckRow.querySelector('[data-perm="operate"]').checked;
+        const e = ckRow.querySelector('[data-perm="export"]').checked;
+        if (!v && !o && !e) return;
+        modules[mid] = {view:v, operate:o, export:e};
     });
-    if(!Object.keys(modules).length) { rpToast('Select at least one module','err'); return; }
+    if(!Object.keys(modules).length) { rpToast('Select at least one module with permissions','err'); return; }
+    const verification = document.getElementById('rpVeriSelect').value;
     if(rpEditingRoleId) {
         const r = rpRoles.find(x=>x.id===rpEditingRoleId);
-        if(r) { const old=r.name; r.name=name; r.desc=desc; r.modules=modules; if(old!==name) rpUsers.forEach(u=>{u.roles=u.roles.map(rn=>rn===old?name:rn);}); }
+        if(r) { const old=r.name; r.name=name; r.desc=desc; r.modules=modules; r.verification=verification; if(old!==name) rpUsers.forEach(u=>{u.roles=u.roles.map(rn=>rn===old?name:rn);}); }
         rpToast('Role "'+name+'" updated!','ok');
     } else {
-        rpNextId++; rpRoles.push({id:'r'+rpNextId, name, desc, type:'custom', status:'active', modules});
+        rpNextId++; rpRoles.push({id:'r'+rpNextId, name, desc, type:'custom', status:'active', verification, modules});
         rpToast('Role "'+name+'" created!','ok');
     }
     rpBackToRolesList();
@@ -2208,28 +2315,42 @@ function rpViewUser(userId) {
     document.getElementById('rpUserDetailUID').textContent = u.uid + ' · MID-001 (ABC Trading)';
     document.getElementById('rpUserDetailRoleType').innerHTML = u.roleType==='holder' ? '<span class="rp-badge rp-b-holder">Account Holder</span>' : '<span class="rp-badge rp-b-member">Member</span>';
     document.getElementById('rpUserDetailRoles').innerHTML = u.roles.map(r=>`<span class="rp-badge rp-b-custom">${r}</span>`).join(' ');
-    // Hide actions for Account Holder
     document.getElementById('rpUserActions').style.display = u.roleType==='holder'?'none':'block';
     document.getElementById('rpUserDisableBtn').textContent = u.status==='disabled'?'▶ Enable User':'⏸ Disable User';
-    // Build combined module permissions
     rpBuildUserModules(u);
 }
 
 function rpBuildUserModules(u) {
+    // Merge all roles: view/operate/export 取并集, verification 取最严格 (designated > self)
     const combined = {};
+    let mergedVeri = 'self';
     u.roles.forEach(rn => {
         const role = rpRoles.find(r=>r.name===rn); if(!role) return;
-        Object.entries(role.modules).forEach(([mid,op]) => {
-            if(!combined[mid] || (combined[mid]==='view_only' && op==='operable')) combined[mid]=op;
+        if (role.verification === 'designated') mergedVeri = 'designated';
+        Object.entries(role.modules).forEach(([mid, p]) => {
+            if (!combined[mid]) combined[mid] = {view:false, operate:false, export:false};
+            if (p.view) combined[mid].view = true;
+            if (p.operate) combined[mid].operate = true;
+            if (p.export) combined[mid].export = true;
         });
     });
-    // Account Holder gets all
-    if(u.roleType==='holder') RP_MODULES.forEach(m=>{combined[m.id]='operable';});
+    if (u.roleType==='holder') { RP_MODULES.forEach(m=>{ combined[m.id] = {...ALL_PERMS}; }); mergedVeri = 'self'; }
     const body = document.getElementById('rpUserDetailModBody'); body.innerHTML='';
     RP_MODULES.forEach(m => {
-        const op = combined[m.id];
-        body.innerHTML += `<tr${!op?' style="opacity:.4"':''}><td class="rp-nm">${m.name}</td><td class="rp-sub">${m.sub}</td><td style="text-align:center">${rpOpBadge(op)}</td></tr>`;
+        const p = combined[m.id];
+        const hasPerm = p && (p.view||p.operate||p.export);
+        body.innerHTML += `<tr${!hasPerm?' style="opacity:.4"':''}>
+            <td class="rp-nm">${m.name}</td>
+            <td class="rp-sub">${m.sub}</td>
+            <td style="text-align:center">${rpPermBadges(p)}</td>
+        </tr>`;
     });
+    // Show merged verification at bottom
+    const hasTxnOp = RP_MODULES.some(m => m.txn && combined[m.id] && combined[m.id].operate);
+    if (hasTxnOp) {
+        const vBadge = mergedVeri === 'designated' ? '<span class="rp-badge rp-b-holder" style="margin:1px">🔒 Designated</span>' : '<span class="rp-badge rp-b-member" style="margin:1px">🔓 Self</span>';
+        body.innerHTML += `<tr><td colspan="3" style="text-align:right;padding-top:8px;border-top:2px solid var(--border)"><strong style="font-size:12px;color:var(--text-muted)">安全验证方式：</strong>${vBadge}</td></tr>`;
+    }
 }
 
 function rpToggleUserStatus() {
@@ -2288,7 +2409,6 @@ function rpSaveUserRoles() {
     const u = rpUsers.find(x=>x.id===rpViewingUserId); if(!u) return;
     const newRoles = [];
     document.querySelectorAll('#rpEditUserRoleGroup .rp-tg.on').forEach(t=>newRoles.push(t.textContent));
-    // Keep Account Holder if present
     if(u.roles.includes('Account Holder')) newRoles.unshift('Account Holder');
     u.roles = newRoles;
     rpCloseModal('rpEditUserRolesModal');
