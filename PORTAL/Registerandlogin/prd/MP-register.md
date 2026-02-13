@@ -629,6 +629,126 @@ flowchart TD
 | SMS               | 短信发送到**绑定手机号**                       | 手机号用户   |
 | Email             | 邮件发送到**绑定邮箱**                         | 邮箱用户     |
 
+### 7.6 Payment PIN（交易密码）
+
+交易密码是 **Identity 级** 的安全设置，用于在执行资金操作时快速验证身份，替代短信/邮件验证码。
+
+**核心规则：**
+
+- **层级**：Identity 级（全局一个 PIN，所有 MID 通用）
+- **格式**：6 位数字
+- **可选性**：非强制，用户可选择设置
+- **适用场景**：仅在角色验证方式为 **Self** 时生效；Designated 模式下不适用（验证对象是指定手机号，不是操作人）
+- **未设置时**：回退到手机号/邮箱验证码
+
+**设置流程：**
+
+```mermaid
+flowchart TD
+    A[Settings → Security → Payment PIN] --> B{当前状态}
+    
+    B -->|未设置| C[点击 Set up]
+    B -->|已设置| D[点击 Change / Reset]
+    
+    C --> E[Step 1: 身份验证]
+    D --> E
+    
+    E --> E1{验证方式}
+    E1 -->|有密码| E2[输入当前登录密码]
+    E1 -->|无密码| E3[发送验证码到绑定凭证]
+    
+    E2 --> F[Step 2: 设置 PIN]
+    E3 --> F
+    
+    F --> F1[输入 6 位数字 PIN]
+    F1 --> F2[确认 PIN（再次输入）]
+    F2 --> F3{两次一致}
+    F3 -->|一致| G[PIN 设置成功]
+    F3 -->|不一致| F1
+```
+
+**PIN 安全规则：**
+
+- 不能是连续数字（如 123456）或重复数字（如 111111）
+- 连续输入错误 5 次，PIN 锁定 30 分钟
+- 锁定期间可通过验证码方式继续操作（回退机制）
+- PIN 存储使用与登录密码相同的加密标准（bcrypt/argon2）
+
+### 7.7 Designated Phone（安全验证手机号）
+
+安全验证手机号是 **MID 级** 的设置，仅 **Account Holder** 可配置。当角色验证方式为 Designated 时，资金操作的验证码将发送到此手机号。
+
+**核心规则：**
+
+- **层级**：MID 级（每个 MID 独立配置）
+- **可见性**：仅 Account Holder 可见和编辑
+- **用途**：角色验证方式为 Designated 时，验证码发到此号码
+- **默认值**：Account Holder 自己的手机号（如已绑定）
+
+**设置流程：**
+
+```mermaid
+flowchart TD
+    A[Settings → Security → Designated Phone<br/>仅 Account Holder 可见] --> B{当前状态}
+    
+    B -->|未设置| C[点击 Set up]
+    B -->|已设置| D[点击 Change]
+    
+    C --> E[Step 1: 身份验证<br/>验证 Account Holder 身份]
+    D --> E
+    
+    E --> F[Step 2: 输入指定手机号<br/>选择区号 + 输入号码]
+    F --> G[向该手机号发送验证码]
+    G --> H[输入验证码确认]
+    H --> I{验证通过}
+    I -->|通过| J[Designated Phone 设置成功]
+    I -->|失败| H1[提示验证码错误]
+```
+
+> **注意：** Designated Phone 可以是 Account Holder 自己的手机号，也可以是其他人的手机号（如财务总监）。关键是 Account Holder 必须能获取该手机号的验证码来完成设置。
+
+### 7.8 资金操作验证流程（完整）
+
+当用户执行资金操作（如发起交易、兑换、卡充值等）时，系统根据角色验证方式和用户安全设置决定验证方式：
+
+```mermaid
+flowchart TD
+    A[用户发起资金操作] --> B{该角色的验证方式}
+    
+    B -->|Designated| C[验证码发到 MID 的 Designated Phone]
+    C --> D[输入验证码]
+    D --> E{验证通过}
+    E -->|通过| OK[操作执行]
+    E -->|失败| D
+    
+    B -->|Self| F{用户是否设置了 Payment PIN}
+    F -->|已设置| G[输入 6 位 PIN]
+    G --> H{PIN 正确}
+    H -->|正确| OK
+    H -->|错误| H1[错误次数 +1]
+    H1 --> H2{累计错误}
+    H2 -->|< 5 次| G
+    H2 -->|≥ 5 次| H3[PIN 锁定 30 分钟<br/>回退到验证码方式]
+    H3 --> I
+    
+    F -->|未设置| I[验证码发到操作人自己的手机号/邮箱]
+    I --> J[输入验证码]
+    J --> K{验证通过}
+    K -->|通过| OK
+    K -->|失败| J
+```
+
+**Security 页面展示逻辑：**
+
+| 设置项 | 层级 | 可见条件 | 说明 |
+|--------|------|----------|------|
+| Login Password | Identity | 所有用户 | 登录密码 |
+| Authenticator App (2FA) | Identity | 所有用户 | TOTP 动态令牌 |
+| SMS 2FA | Identity | 已绑定手机号 | 短信二次验证 |
+| Email 2FA | Identity | 已绑定邮箱 | 邮件二次验证 |
+| **Payment PIN** | **Identity** | **用户在任一 MID 有交易模块操作权限** | **交易密码，6位数字** |
+| **Designated Phone** | **MID** | **仅 Account Holder** | **安全验证手机号** |
+
 ---
 
 ## 8. Identity-User-MID 关系模型
@@ -1071,5 +1191,5 @@ EXPIRED（超过7天未处理）
 ---
 
 *最后更新：2026-02-13*
-*文档版本：v2.2*
+*文档版本：v2.3*
 *作者：EX Product Team*

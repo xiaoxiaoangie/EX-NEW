@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Center — Profile & Security</title>
+<style>
+/* ===== Reset & Variables ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+    --accent:#4285f4;--accent-light:#e8f0fe;--accent-dark:#1a73e8;
+    --green:#1e8e3e;--green-bg:#e6f4ea;--red:#d93025;--red-bg:#fce8e6;
+    --amber:#e37400;--amber-bg:#fef7e0;--purple:#7c3aed;--purple-bg:#f3e8fd;
+    --text:#202124;--text2:#5f6368;--text3:#9aa0a6;
+    --bg:#f8f9fa;--card:#fff;--border:#dadce0;--border-light:#e8eaed;
+    --radius:8px;--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
+}
+body{font-family:'Google Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh;}
+
+/* ===== Top bar ===== */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:56px;background:var(--card);border-bottom:1px solid var(--border-light);position:sticky;top:0;z-index:50;}
+.topbar-logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);}
+.topbar-logo .mark{width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,var(--accent),#7c4dff);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;}
+.topbar-logo .brand{font-weight:700;font-size:15px;letter-spacing:-.3px;}
+.topbar-right{display:flex;align-items:center;gap:16px;}
+.topbar-user{display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 8px;border-radius:var(--radius);transition:background .15s;}
+.topbar-user:hover{background:var(--bg);}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
+.topbar-nick{font-size:13px;font-weight:600;color:var(--text);}
+
+/* ===== Layout ===== */
+.page-wrap{max-width:760px;margin:0 auto;padding:32px 24px 120px;}
+.page-title{font-size:24px;font-weight:700;margin-bottom:4px;}
+.page-sub{font-size:14px;color:var(--text2);margin-bottom:24px;}
+
+/* ===== Tabs ===== */
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--border-light);margin-bottom:28px;}
+.tab{padding:10px 24px;font-size:14px;font-weight:600;color:var(--text3);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;font-family:inherit;}
+.tab:hover{color:var(--text2);}
+.tab.on{color:var(--accent);border-bottom-color:var(--accent);}
+
+/* ===== Card ===== */
+.card{background:var(--card);border:1px solid var(--border-light);border-radius:12px;padding:28px 32px;margin-bottom:20px;box-shadow:var(--shadow);}
+.card-title{font-size:16px;font-weight:700;margin-bottom:2px;}
+.card-sub{font-size:13px;color:var(--text3);margin-bottom:20px;}
+
+/* ===== Info row ===== */
+.info-row{display:flex;align-items:center;padding:18px 0;border-bottom:1px solid var(--border-light);}
+.info-row:last-child{border-bottom:none;}
+.info-label{width:140px;font-size:14px;color:var(--text2);flex-shrink:0;}
+.info-value{flex:1;font-size:14px;font-weight:500;color:var(--text);display:flex;align-items:center;gap:8px;}
+.info-action{margin-left:auto;flex-shrink:0;}
+.badge{display:inline-flex;align-items:center;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:600;}
+.badge.verified{background:var(--green-bg);color:var(--green);}
+.badge.unverified{background:var(--red-bg);color:var(--red);}
+.badge.not-set{background:#f1f3f4;color:var(--text3);}
+.link-btn{font-size:13px;font-weight:600;color:var(--accent);cursor:pointer;border:none;background:none;font-family:inherit;padding:6px 14px;border-radius:6px;transition:background .15s;}
+.link-btn:hover{background:var(--accent-light);}
+
+/* ===== Security item ===== */
+.sec-item{display:flex;align-items:center;gap:16px;padding:18px 0;border-bottom:1px solid var(--border-light);}
+.sec-item:last-child{border-bottom:none;}
+.sec-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.sec-icon.blue{background:var(--accent-light);}
+.sec-icon.green{background:var(--green-bg);}
+.sec-icon.amber{background:var(--amber-bg);}
+.sec-icon.purple{background:var(--purple-bg);}
+.sec-body{flex:1;min-width:0;}
+.sec-name{font-size:14px;font-weight:600;color:var(--text);}
+.sec-desc{font-size:12px;color:var(--text3);margin-top:2px;line-height:1.4;}
+.sec-status{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:10px;}
+.sec-status.on{background:var(--green-bg);color:var(--green);}
+.sec-status.off{background:var(--red-bg);color:var(--red);}
+.sec-btn{padding:7px 18px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--accent);font-family:inherit;transition:all .15s;white-space:nowrap;}
+.sec-btn:hover{border-color:var(--accent);background:var(--accent-light);}
+.sec-group{margin-bottom:24px;}
+.sec-group-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--border-light);}
+.sec-note{font-size:12px;color:var(--text3);line-height:1.5;padding:10px 14px;background:#f8f9fa;border-radius:var(--radius);margin-top:6px;}
+.sec-highlight{margin:0 -16px;padding:16px;border-radius:10px;}
+.sec-highlight.amber-hl{background:#fffbeb;border:1px solid #fde68a;}
+.sec-highlight.purple-hl{background:#faf5ff;border:1px solid #d8b4fe;}
+
+/* ===== Tab panes ===== */
+.pane{display:none;}
+.pane.on{display:block;}
+
+/* ===== Modal ===== */
+.modal-mask{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:200;align-items:center;justify-content:center;}
+.modal-mask.show{display:flex;}
+.modal{background:var(--card);border-radius:14px;padding:32px;width:420px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,.15);animation:modalIn .2s ease;}
+@keyframes modalIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.modal h2{font-size:18px;font-weight:700;margin-bottom:4px;}
+.modal .m-sub{font-size:13px;color:var(--text2);margin-bottom:20px;}
+.modal .field{margin-bottom:16px;}
+.modal .field-label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;}
+.modal .field-input{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius);font-size:14px;font-family:inherit;outline:none;transition:border-color .15s;}
+.modal .field-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light);}
+.modal .phone-row{display:flex;gap:8px;}
+.modal .phone-row select{padding:10px 8px;border:1px solid var(--border);border-radius:var(--radius);font-size:14px;font-family:inherit;background:#fff;outline:none;min-width:80px;}
+.modal .phone-row .field-input{flex:1;}
+.modal .btn-row{display:flex;gap:10px;margin-top:20px;}
+.modal .btn{flex:1;padding:10px 0;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .15s;}
+.modal .btn-primary{background:var(--accent);color:#fff;}
+.modal .btn-primary:hover{background:var(--accent-dark);}
+.modal .btn-outline{background:#fff;color:var(--text2);border:1px solid var(--border);}
+.modal .btn-outline:hover{border-color:var(--text3);}
+.modal .otp-row{display:flex;gap:8px;justify-content:center;margin:12px 0;}
+.modal .otp-row input{width:40px;height:44px;text-align:center;font-size:18px;font-weight:700;border:1px solid var(--border);border-radius:var(--radius);outline:none;font-family:inherit;}
+.modal .otp-row input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light);}
+.modal .resend{font-size:12px;color:var(--text3);text-align:center;margin-top:8px;}
+.modal .resend button{border:none;background:none;color:var(--accent);font-weight:600;cursor:pointer;font-family:inherit;font-size:12px;}
+.modal .resend button:disabled{color:var(--text3);cursor:default;}
+.modal .step-label{font-size:13px;color:var(--text2);text-align:center;margin-bottom:12px;}
+.modal .err{display:none;align-items:center;gap:6px;padding:8px 12px;background:rgba(234,67,53,.08);border:1px solid rgba(234,67,53,.2);border-radius:var(--radius);font-size:12px;color:var(--red);margin-bottom:12px;}
+.modal .err.show{display:flex;}
+
+/* PIN row */
+.pin-row{display:flex;gap:8px;justify-content:center;margin:12px 0;}
+.pin-row input{width:44px;height:48px;text-align:center;font-size:20px;font-weight:700;border:1px solid var(--border);border-radius:var(--radius);outline:none;color:var(--text);font-family:inherit;transition:border-color .15s;-webkit-text-security:disc;}
+.pin-row input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light);}
+
+/* Password rules */
+.pwd-rules{margin-top:8px;}
+.pwd-rule{font-size:12px;color:var(--text3);padding:2px 0;display:flex;align-items:center;gap:6px;}
+.pwd-rule .ri{font-size:11px;width:16px;text-align:center;}
+.pwd-rule.pass{color:var(--green);}
+.pwd-rule.pass .ri{color:var(--green);}
+
+/* QR box for Authenticator */
+.qr-box{width:180px;height:180px;margin:0 auto 14px;border-radius:12px;background:#f1f3f4;border:1px solid var(--border-light);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;color:var(--text3);font-size:13px;}
+.qr-box .qr-icon{font-size:44px;opacity:.3;}
+.secret-key{display:inline-block;background:#f1f3f4;padding:5px 14px;border-radius:6px;font-family:'SF Mono','Roboto Mono',Menlo,monospace;font-size:14px;color:var(--text);letter-spacing:2px;font-weight:600;border:1px solid var(--border-light);}
+/* Manage actions */
+.manage-actions{display:flex;flex-direction:column;gap:8px;margin-top:16px;}
+.manage-action{display:flex;align-items:center;gap:12px;padding:12px 16px;border:1px solid var(--border-light);border-radius:var(--radius);cursor:pointer;transition:all .15s;}
+.manage-action:hover{border-color:var(--accent);background:var(--accent-light);}
+.manage-action .ma-icon{font-size:18px;flex-shrink:0;}
+.manage-action .ma-body{flex:1;}
+.manage-action .ma-title{font-size:13px;font-weight:600;color:var(--text);}
+.manage-action .ma-desc{font-size:11px;color:var(--text3);margin-top:1px;}
+.manage-action.danger{border-color:rgba(234,67,53,.2);}
+.manage-action.danger:hover{border-color:var(--red);background:var(--red-bg);}
+.manage-action.danger .ma-title{color:var(--red);}
+
+/* ===== Demo bar ===== */
+.demo-bar{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--border-light);padding:10px 32px;z-index:100;box-shadow:0 -2px 8px rgba(0,0,0,.04);}
+.demo-row{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+.demo-row:last-child{margin-bottom:0;}
+.demo-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;min-width:64px;}
+.demo-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.demo-btn{padding:5px 12px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--text2);font-family:inherit;transition:all .15s;white-space:nowrap;}
+.demo-btn:hover{border-color:var(--accent);color:var(--accent);}
+.demo-btn.on{background:var(--accent);color:#fff;border-color:var(--accent);}
+.demo-desc{font-size:11px;color:var(--text3);line-height:1.4;margin-left:8px;}
+</style>
+</head>
+<body>
+
+<!-- ===== Top bar ===== -->
+<div class="topbar">
+    <a class="topbar-logo" href="#">
+        <div class="mark">EX</div>
+        <span class="brand">EX Platform</span>
+    </a>
+    <div class="topbar-right">
+        <div class="topbar-user">
+            <div class="avatar">JD</div>
+            <span class="topbar-nick">John Doe</span>
+        </div>
+    </div>
+</div>
+
+<!-- ===== Page ===== -->
+<div class="page-wrap">
+    <div class="page-title">Account Settings</div>
+    <div class="page-sub">管理您的个人信息和安全设置</div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab on" onclick="switchTab('profile',this)">Profile</button>
+        <button class="tab" onclick="switchTab('security',this)">Security</button>
+    </div>
+
+    <!-- ==================== Profile Tab ==================== -->
+    <div class="pane on" id="pane-profile">
+
+        <!-- Basic Info (上方) -->
+        <div class="card">
+            <div class="card-title">Basic info</div>
+            <div class="card-sub">Your personal information.</div>
+
+            <div class="info-row">
+                <div class="info-label">Nickname</div>
+                <div class="info-value" id="valNick">john</div>
+                <div class="info-action"><button class="link-btn" onclick="openEditNick()">Edit</button></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Language</div>
+                <div class="info-value" id="valLang">English</div>
+                <div class="info-action"><button class="link-btn" onclick="openEditLang()">Edit</button></div>
+            </div>
+        </div>
+
+        <!-- Contact Info (下方) -->
+        <div class="card">
+            <div class="card-title">Contact info</div>
+            <div class="card-sub">Manage your email and mobile.</div>
+
+            <div class="info-row">
+                <div class="info-label">Email</div>
+                <div class="info-value">
+                    <span id="valEmail">liuxiaoxiaoangie@gmail.com</span>
+                    <span class="badge verified" id="badgeEmail">Verified</span>
+                </div>
+                <div class="info-action"><button class="link-btn" id="btnEmail" onclick="openEditEmail()">Edit</button></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Mobile</div>
+                <div class="info-value">
+                    <span id="valMobile">+852 96412374</span>
+                    <span class="badge verified" id="badgeMobile">Verified</span>
+                </div>
+                <div class="info-action"><button class="link-btn" id="btnMobile" onclick="openEditMobile()">Edit</button></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Login Method</div>
+                <div class="info-value">
+                    <span id="valLoginMethod">Email</span>
+                </div>
+                <div class="info-action"><button class="link-btn" onclick="openEditLoginMethod()">Edit</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== Security Tab ==================== -->
+    <div class="pane" id="pane-security">
+
+        <!-- Identity Level -->
+        <div class="card">
+            <div class="card-title">Login & Authentication</div>
+            <div class="card-sub">Identity 级 — 全局设置，所有 MID 通用</div>
+
+            <!-- Password -->
+            <div class="sec-item">
+                <div class="sec-icon blue">🔑</div>
+                <div class="sec-body">
+                    <div class="sec-name">Login Password</div>
+                    <div class="sec-desc">登录密码，用于密码方式登录</div>
+                </div>
+                <span class="sec-status on" id="secPwdStatus">● Set</span>
+                <button class="sec-btn" id="secPwdBtn" onclick="openChangePwd()">Change</button>
+            </div>
+
+            <!-- Authenticator App -->
+            <div class="sec-item">
+                <div class="sec-icon green">📱</div>
+                <div class="sec-body">
+                    <div class="sec-name">Authenticator App (2FA)</div>
+                    <div class="sec-desc">Google Authenticator / Authy 动态令牌</div>
+                </div>
+                <span class="sec-status on" id="secAuthStatus">● Enabled · Default</span>
+                <button class="sec-btn" id="secAuthBtn" onclick="openManageAuth()">Manage</button>
+            </div>
+
+            <!-- SMS 2FA -->
+            <div class="sec-item">
+                <div class="sec-icon blue">💬</div>
+                <div class="sec-body">
+                    <div class="sec-name">SMS 2FA</div>
+                    <div class="sec-desc" id="secSmsDesc">短信验证码发送到 +852 9641****</div>
+                </div>
+                <span class="sec-status on" id="secSmsStatus">● Enabled</span>
+                <button class="sec-btn" id="secSmsBtn" onclick="openManageSms()">Manage</button>
+            </div>
+
+            <!-- Email 2FA -->
+            <div class="sec-item">
+                <div class="sec-icon blue">✉️</div>
+                <div class="sec-body">
+                    <div class="sec-name">Email 2FA</div>
+                    <div class="sec-desc" id="secEmailDesc">邮件验证码发送到 liux***@gmail.com</div>
+                </div>
+                <span class="sec-status off" id="secEmail2faStatus">● Not set</span>
+                <button class="sec-btn" id="secEmail2faBtn" onclick="openSetupEmail2fa()">Set up</button>
+            </div>
+        </div>
+
+        <!-- Payment PIN -->
+        <div class="card">
+            <div class="card-title">Transaction Verification</div>
+            <div class="card-sub">资金操作验证方式</div>
+
+            <div class="sec-item sec-highlight amber-hl">
+                <div class="sec-icon amber">🔒</div>
+                <div class="sec-body">
+                    <div class="sec-name">Payment PIN（交易密码）</div>
+                    <div class="sec-desc">6 位数字 PIN，执行资金操作时快速验证，无需等待验证码</div>
+                    <div class="sec-note">
+                        💡 设置后，Self 模式下的资金操作（兑换、付款、卡充值等）输入 PIN 即可完成验证。<br>
+                        未设置时回退到手机号/邮箱验证码。Designated 模式下不适用。
+                    </div>
+                </div>
+                <span class="sec-status off" id="pinStatus">● Not set</span>
+                <button class="sec-btn" id="pinBtn" onclick="openSetPin()">Set up</button>
+            </div>
+        </div>
+
+        <!-- MID Level: Designated Phone -->
+        <div class="card" id="cardMidSec">
+            <div class="card-title">Designated Phone（安全验证手机号）</div>
+            <div class="card-sub" id="dpCardSub">MID 级 — 仅 Account Holder 可编辑 · 当前: ABC Trading / MID-001</div>
+
+            <!-- AH view: full control -->
+            <div id="dpViewAH">
+                <div class="sec-item sec-highlight purple-hl">
+                    <div class="sec-icon purple">📞</div>
+                    <div class="sec-body">
+                        <div class="sec-name">Designated Phone</div>
+                        <div class="sec-desc" id="dpDesc">当前: +86 138****5678</div>
+                        <div class="sec-note">
+                            🔒 角色验证方式为 Designated 时，资金操作的验证码将发送到此手机号。<br>
+                            可以是您自己的手机号，也可以是指定的安全负责人手机号。
+                        </div>
+                    </div>
+                    <span class="sec-status on" id="dpStatus">● Set</span>
+                    <button class="sec-btn" id="dpBtn" onclick="openSetDP()">Change</button>
+                </div>
+            </div>
+
+            <!-- Member view: read-only status -->
+            <div id="dpViewMember" style="display:none">
+                <div class="sec-item sec-highlight purple-hl">
+                    <div class="sec-icon purple">📞</div>
+                    <div class="sec-body">
+                        <div class="sec-name">Designated Phone</div>
+                        <div class="sec-desc" id="dpDescMember">状态: 已设置</div>
+                        <div class="sec-note" id="dpNoteMember">
+                            🔒 角色验证方式为 Designated 时，资金操作的验证码将发送到此手机号。<br>
+                            仅 Account Holder 可查看和修改具体号码。
+                        </div>
+                    </div>
+                    <span class="sec-status on" id="dpStatusMember">● Set</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== Modals ==================== -->
+
+<!-- Edit Nickname -->
+<div class="modal-mask" id="modalNick">
+    <div class="modal">
+        <h2>Edit Nickname</h2>
+        <div class="m-sub">2-30 个字符，支持中文/英文/数字/下划线</div>
+        <div class="field">
+            <label class="field-label">Nickname</label>
+            <input class="field-input" id="inNick" maxlength="30">
+        </div>
+        <div class="btn-row">
+            <button class="btn btn-outline" onclick="closeModal('modalNick')">Cancel</button>
+            <button class="btn btn-primary" onclick="saveNick()">Save</button>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Language -->
+<div class="modal-mask" id="modalLang">
+    <div class="modal">
+        <h2>Language Preference</h2>
+        <div class="m-sub">修改后立即生效</div>
+        <div class="field">
+            <label class="field-label">Language</label>
+            <select class="field-input" id="inLang">
+                <option value="English">English</option>
+                <option value="简体中文">简体中文</option>
+                <option value="繁體中文">繁體中文</option>
+            </select>
+        </div>
+        <div class="btn-row">
+            <button class="btn btn-outline" onclick="closeModal('modalLang')">Cancel</button>
+            <button class="btn btn-primary" onclick="saveLang()">Save</button>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Email (2-step: verify identity → new email) -->
+<div class="modal-mask" id="modalEmail">
+    <div class="modal">
+        <h2 id="modalEmailTitle">Edit Email</h2>
+        <div class="m-sub" id="modalEmailSub">Step 1: 验证当前身份</div>
+        <div class="err" id="errEmail"><span>⚠</span><span id="errEmailText">验证码错误</span></div>
+
+        <!-- Step 1: verify current credential -->
+        <div id="emailStep1">
+            <div class="step-label">验证码已发送至 <b id="emailVerifyTarget">+852 9641****</b></div>
+            <div class="otp-row" id="emailOtp1"></div>
+            <div class="resend"><span>有效期 5 分钟</span> · <button id="emailResend1" onclick="startCountdown(this)">重新发送</button></div>
+            <div class="btn-row">
+                <button class="btn btn-outline" onclick="closeModal('modalEmail')">Cancel</button>
+                <button class="btn btn-primary" onclick="emailVerifyStep1()">验证</button>
+            </div>
+        </div>
+
+        <!-- Step 2: enter new email -->
+        <div id="emailStep2" style="display:none">
+            <div class="field">
+                <label class="field-label">New Email</label>
+                <input class="field-input" type="email" placeholder="name@company.com" id="inNewEmail">
+            </div>
+            <div class="btn-row">
+                <button class="btn btn-outline" onclick="closeModal('modalEmail')">Cancel</button>
+                <button class="btn btn-primary" onclick="emailSendNewCode()">发送验证码</button>
+            </div>
+        </div>
+
+        <!-- Step 3: verify new email -->
+        <div id="emailStep3" style="display:none">
+            <div class="step-label">验证码已发送至 <b id="emailNewTarget"></b></div>
+            <div class="otp-row" id="emailOtp2"></div>
+            <div class="resend"><span>有效期 5 分钟</span> · <button id="emailResend2" onclick="startCountdown(this)">重新发送</button></div>
+            <div class="btn-row">
+                <button class="btn btn-outline" onclick="closeModal('modalEmail')">Cancel</button>
+                <button class="btn btn-primary" onclick="emailVerifyStep3()">验证并保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Mobile (2-step: verify identity → new mobile) -->
+<div class="modal-mask" id="modalMobile">
+    <div class="modal">
+        <h2 id="modalMobileTitle">Edit Mobile</h2>
+        <div class="m-sub" id="modalMobileSub">Step 1: 验证当前身份</div>
+        <div class="err" id="errMobile"><span>⚠</span><span id="errMobileText">验证码错误</span></div>
+
+        <!-- Step 1: verify current credential -->
+        <div id="mobileStep1">
+            <div class="step-label">验证码已发送至 <b id="mobileVerifyTarget">liux***@gmail.com</b></div>
+            <div class="otp-row" id="mobileOtp1"></div>
+            <div class="resend"><span>有效期 5 分钟</span> · <button id="mobileResend1" onclick="startCountdown(this)">重新发送</button></div>
+            <div class="btn-row">
+                <button class="btn btn-outline" onclick="closeModal('modalMobile')">Cancel</button>
+                <button class="btn btn-primary" onclick="mobileVerifyStep1()">验证</button>
+            </div>
+        </div>
+
+        <!-- Step 2: enter new mobile -->
+        <div id="mobileStep2" style="display:none">
+            <div class="field">
+                <label class="field-label">New Mobile</label>
+                <div class="phone-row">
+                    <select id="mobileCC"><option>+86</option><option>+852</option><option>+1</option><option>+44</option><option>+81</option><option>+65</option></select>
+                    <input class="field-input" type="tel" placeholder="输入手机号" id="inNewMobile">
+                </div>
+            </div>
+            <div class="btn-row">
+                <button class="btn btn-outline" onclick="closeModal('modalMobile')">Cancel</button>
+                <button class="btn btn-primary" onclick="mobileSendNewCode()">发送验证码</button>
+            </div>
+        </div>
+
+        <!-- Step 3: verify new mobile -->
+        <div id="mobileStep3" style="display:none">
+            <div class="step-label">验证码已发送至 <b id="mobileNewTarget"></b></div>
+            <div class="otp-row" id="mobileOtp2"></div>
+            <div class="resend"><span>有效期 5 分钟</span> · <button id="mobileResend2" onclick="startCountdown(this)">重新发送</button></div>
+            <div class="btn-row">
+                <button class="btn btn-outline" onclick="closeModal('modalMobile')">Cancel</button>
+                <button class="btn btn-primary" onclick="mobileVerifyStep3()">验证并保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Login Method -->
+<div class="modal-mask" id="modalLoginMethod">
+    <div class="modal">
+        <h2>Login Method</h2>
+        <div class="m-sub">选择默认登录方式（仅已验证凭证可选）</div>
+        <div class="field">
+            <label class="field-label">Default Login Method</label>
+            <select class="field-input" id="inLoginMethod">
+                <option value="Email">Email</option>
+                <option value="Mobile">Mobile</option>
+            </select>
+        </div>
+        <div class="btn-row">
+            <button class="btn btn-outline" onclick="closeModal('modalLoginMethod')">Cancel</button>
+            <button class="btn btn-primary" onclick="saveLoginMethod()">Save</button>
+        </div>
+    </div>
+</div>
+
+<!-- Change Password -->
+<div class="modal-mask" id="modalPwd">
+    <div class="modal">
+        <h2 id="modalPwdTitle">Change Password</h2>
+        <div class="m-sub" id="modalPwdSub">修改登录密码</div>
+        <div class="err" id="errPwd"><span>⚠</span><span id="errPwdText">当前密码错误</span></div>
+
+        <div id="pwdStepCurrent">
+            <div class="field">
+                <label class="field-label">Current Password</label>
+                <input class="field-input" type="password" id="inCurPwd" placeholder="输入当前密码">
+            </div>
+        </div>
+
+        <div class="field">
+            <label class="field-label">New Password</label>
+            <input class="field-input" type="password" id="inNewPwd" placeholder="至少 8 位，含字母、数字和特殊字符" oninput="checkPwdRules(this.value)">
+            <div class="pwd-rules">
+                <div class="pwd-rule" id="pr-len"><span class="ri">✓</span>至少 8 位字符</div>
+                <div class="pwd-rule" id="pr-letter"><span class="ri">✓</span>包含字母 (a-z)</div>
+                <div class="pwd-rule" id="pr-digit"><span class="ri">✓</span>包含数字 (0-9)</div>
+                <div class="pwd-rule" id="pr-special"><span class="ri">✓</span>包含特殊字符 (!@#$%...)</div>
+            </div>
+        </div>
+        <div class="field">
+            <label class="field-label">Confirm New Password</label>
+            <input class="field-input" type="password" id="inNewPwd2" placeholder="再次输入新密码">
+        </div>
+        <div class="btn-row">
+            <button class="btn btn-outline" onclick="closeModal('modalPwd')">Cancel</button>
+            <button class="btn btn-primary" onclick="savePwd()">Save</button>
+        </div>
+    </div>
+</div>
+
+<!-- Set Payment PIN -->
+<div class="modal-mask" id="modalPin">
+    <div class="modal">
+        <h2>设置交易密码</h2>
+        <div class="m-sub">设置 6 位数字 PIN，用于快速验证资金操作</div>
+        <div class="err" id="errPin"><span>⚠</span><span id="errPinText">两次输入不一致</span></div>
+
+        <div id="pinPhase1">
+            <div class="step-label">输入 6 位数字 PIN</div>
+            <div class="pin-row" id="pinRow1"></div>
+        </div>
+        <div id="pinPhase2" style="display:none">
+            <div class="step-label">再次输入确认</div>
+            <div class="pin-row" id="pinRow2"></div>
+        </div>
+        <div class="btn-row">
+            <button class="btn btn-outline" onclick="closeModal('modalPin')">Cancel</button>
+            <button class="btn btn-primary" id="pinSubmitBtn" onclick="pinNext()">下一步</button>
+        </div>
+    </div>
+</div>
+
+<!-- Set Designated Phone -->
+<div class="modal-mask" id="modalDP">
+    <div class="modal">
+        <h2>设置安全验证手机号</h2>
+        <div class="m-sub">Designated 模式下，资金操作验证码将发送到此号码</div>
+        <div class="err" id="errDP"><span>⚠</span><span id="errDPText">验证码错误</span></div>
+
+        <div id="dpPhase1">
+            <div class="field">
+                <label class="field-label">手机号</label>
+                <div class="phone-row">
+                    <select id="dpCC"><option>+86</option><option>+852</option><option>+1</option><option>+44</option></select>
+                    <input class="field-input" type="tel" placeholder="输入手机号" id="dpPhone">
+                </div>
+            </div>
+            <div class="btn-row">
+                <button class="btn btn-outline" onclick="closeModal('modalDP')">Cancel</button>
+                <button class="btn btn-primary" onclick="dpSendCode()">发送验证码</button>
+            </div>
+        </div>
+        <div id="dpPhase2" style="display:none">
+            <div class="step-label">验证码已发送至 <b id="dpTarget"></b></div>
+            <div class="otp-row" id="dpOtpRow"></div>
+            <div class="resend"><span>有效期 5 分钟</span> · <button id="dpResend" onclick="startCountdown(this)">重新发送</button></div>
+            <div class="btn-row">
+                <button class="btn btn-outline" onclick="closeModal('modalDP')">Cancel</button>
+                <button class="btn btn-primary" onclick="dpVerify()">验证并设置</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Authenticator App: Setup -->
+<div class="modal-mask" id="modalAuthSetup">
+    <div class="modal">
+        <h2>Set up Authenticator App</h2>
+        <div class="m-sub" id="authSetupSub">Step 1: 使用 Authenticator App 扫描二维码</div>
+        <div class="err" id="errAuth"><span>⚠</span><span id="errAuthText">验证码错误</span></div>
+
+        <div id="authStep1">
+            <div class="qr-box">
+                <div class="qr-icon">📱</div>
+                <span>扫描绑定</span>
+            </div>
+            <div style="text-align:center;font-size:13px;color:var(--text2);margin-bottom:8px;">无法扫码？手动输入密钥</div>
+            <div style="text-align:center;margin-bottom:16px;"><span class="secret-key">JBSW Y3DP EHPK 3PXP</span></div>
+            <div class="btn-row">
+                <button class="btn btn-outline" onclick="closeModal('modalAuthSetup')">Cancel</button>
+                <button class="btn btn-primary" onclick="authGoStep2()">下一步</button>
+            </div>
+        </div>
+
+        <div id="authStep2" style="display:none">
+            <div class="step-label">输入 Authenticator App 上显示的 6 位动态码</div>
+            <div class="otp-row" id="authOtp"></div>
+            <div class="btn-row">
+                <button class="btn btn-outline" onclick="closeModal('modalAuthSetup')">Cancel</button>
+                <button class="btn btn-primary" onclick="authVerify()">验证并启用</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Authenticator App: Manage -->
+<div class="modal-mask" id="modalAuthManage">
+    <div class="modal">
+        <h2>Manage Authenticator App</h2>
+        <div class="m-sub">当前状态: <b id="authManageStatus">Enabled · Default</b></div>
+
+        <div class="manage-actions">
+            <div class="manage-action" id="maAuthDefault" onclick="authSetDefault()">
+                <span class="ma-icon">⭐</span>
+                <div class="ma-body">
+                    <div class="ma-title">Set as Default</div>
+                    <div class="ma-desc">登录时默认使用 Authenticator App 验证</div>
+                </div>
+            </div>
+            <div class="manage-action" onclick="authRegenerate()">
+                <span class="ma-icon">🔄</span>
+                <div class="ma-body">
+                    <div class="ma-title">Regenerate Secret Key</div>
+                    <div class="ma-desc">重新生成密钥，需要重新扫码绑定</div>
+                </div>
+            </div>
+            <div class="manage-action danger" onclick="authDisable()">
+                <span class="ma-icon">🚫</span>
+                <div class="ma-body">
+                    <div class="ma-title">Disable</div>
+                    <div class="ma-desc">关闭 Authenticator App 二次验证</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="btn-row" style="margin-top:20px;">
+            <button class="btn btn-outline" onclick="closeModal('modalAuthManage')">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- SMS 2FA: Setup -->
+<div class="modal-mask" id="modalSmsSetup">
+    <div class="modal">
+        <h2>Set up SMS 2FA</h2>
+        <div class="m-sub" id="smsSetupSub">向已绑定手机号发送验证码</div>
+        <div class="err" id="errSms"><span>⚠</span><span id="errSmsText">验证码错误</span></div>
+
+        <div id="smsSetupStep1">
+            <div class="step-label">验证码将发送至 <b id="smsSetupTarget">+852 9641****</b></div>
+            <div class="btn-row">
+                <button class="btn btn-outline" onclick="closeModal('modalSmsSetup')">Cancel</button>
+                <button class="btn btn-primary" onclick="smsSendCode()">发送验证码</button>
+            </div>
+        </div>
+
+        <div id="smsSetupStep2" style="display:none">
+            <div class="step-label">6 位验证码已发送至 <b id="smsSetupTarget2">+852 9641****</b></div>
+            <div class="otp-row" id="smsOtp"></div>
+            <div class="resend"><span>有效期 5 分钟</span> · <button id="smsResend" onclick="startCountdown(this)">重新发送</button></div>
+            <div class="btn-row">
+                <button class="btn btn-outline" onclick="closeModal('modalSmsSetup')">Cancel</button>
+                <button class="btn btn-primary" onclick="smsVerify()">验证并启用</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SMS 2FA: Manage -->
+<div class="modal-mask" id="modalSmsManage">
+    <div class="modal">
+        <h2>Manage SMS 2FA</h2>
+        <div class="m-sub">当前状态: <b id="smsManageStatus">Enabled</b></div>
+
+        <div class="manage-actions">
+            <div class="manage-action" id="maSmsDefault" onclick="smsSetDefault()">
+                <span class="ma-icon">⭐</span>
+                <div class="ma-body">
+                    <div class="ma-title">Set as Default</div>
+                    <div class="ma-desc">登录时默认使用短信验证码验证</div>
+                </div>
+            </div>
+            <div class="manage-action danger" onclick="smsDisable()">
+                <span class="ma-icon">🚫</span>
+                <div class="ma-body">
+                    <div class="ma-title">Disable</div>
+                    <div class="ma-desc">关闭短信二次验证</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="btn-row" style="margin-top:20px;">
+            <button class="btn btn-outline" onclick="closeModal('modalSmsManage')">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- Email 2FA: Setup -->
+<div class="modal-mask" id="modalEmail2faSetup">
+    <div class="modal">
+        <h2>Set up Email 2FA</h2>
+        <div class="m-sub" id="email2faSetupSub">向已绑定邮箱发送验证码</div>
+        <div class="err" id="errEmail2fa"><span>⚠</span><span id="errEmail2faText">验证码错误</span></div>
+
+        <div id="email2faStep1">
+            <div class="step-label">验证码将发送至 <b id="email2faTarget">liux***@gmail.com</b></div>
+            <div class="btn-row">
+                <button class="btn btn-outline" onclick="closeModal('modalEmail2faSetup')">Cancel</button>
+                <button class="btn btn-primary" onclick="email2faSendCode()">发送验证码</button>
+            </div>
+        </div>
+
+        <div id="email2faStep2" style="display:none">
+            <div class="step-label">6 位验证码已发送至 <b id="email2faTarget2">liux***@gmail.com</b></div>
+            <div class="otp-row" id="email2faOtp"></div>
+            <div class="resend"><span>有效期 5 分钟</span> · <button id="email2faResend" onclick="startCountdown(this)">重新发送</button></div>
+            <div class="btn-row">
+                <button class="btn btn-outline" onclick="closeModal('modalEmail2faSetup')">Cancel</button>
+                <button class="btn btn-primary" onclick="email2faVerify()">验证并启用</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Email 2FA: Manage -->
+<div class="modal-mask" id="modalEmail2faManage">
+    <div class="modal">
+        <h2>Manage Email 2FA</h2>
+        <div class="m-sub">当前状态: <b id="email2faManageStatus">Enabled</b></div>
+
+        <div class="manage-actions">
+            <div class="manage-action" id="maEmail2faDefault" onclick="email2faSetDefault()">
+                <span class="ma-icon">⭐</span>
+                <div class="ma-body">
+                    <div class="ma-title">Set as Default</div>
+                    <div class="ma-desc">登录时默认使用邮件验证码验证</div>
+                </div>
+            </div>
+            <div class="manage-action danger" onclick="email2faDisable()">
+                <span class="ma-icon">🚫</span>
+                <div class="ma-body">
+                    <div class="ma-title">Disable</div>
+                    <div class="ma-desc">关闭邮件二次验证</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="btn-row" style="margin-top:20px;">
+            <button class="btn btn-outline" onclick="closeModal('modalEmail2faManage')">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== Demo bar ===== -->
+<div class="demo-bar">
+    <div class="demo-row">
+        <span class="demo-label">用户角色</span>
+        <div class="demo-btns">
+            <button class="demo-btn on" onclick="demoRole('ah',this)">Account Holder</button>
+            <button class="demo-btn" onclick="demoRole('settings',this)">有Settings权限成员</button>
+            <button class="demo-btn" onclick="demoRole('member',this)">普通成员</button>
+        </div>
+        <span class="demo-desc" id="demoRoleDesc">AH: 可编辑 Designated Phone</span>
+    </div>
+    <div class="demo-row">
+        <span class="demo-label">DP 状态</span>
+        <div class="demo-btns">
+            <button class="demo-btn on" onclick="demoDpState('set',this)">已设置</button>
+            <button class="demo-btn" onclick="demoDpState('unset',this)">未设置</button>
+        </div>
+        <span class="demo-desc" id="demoDpDesc">Designated Phone 已设置</span>
+    </div>
+    <div class="demo-row">
+        <span class="demo-label">凭证状态</span>
+        <div class="demo-btns">
+            <button class="demo-btn on" onclick="demoCred('both',this)">邮箱+手机号</button>
+            <button class="demo-btn" onclick="demoCred('email_only',this)">仅邮箱</button>
+            <button class="demo-btn" onclick="demoCred('phone_only',this)">仅手机号</button>
+        </div>
+        <span class="demo-desc" id="demoCredDesc">两个凭证均已绑定</span>
+    </div>
+    <div class="demo-row">
+        <span class="demo-label">PIN 状态</span>
+        <div class="demo-btns">
+            <button class="demo-btn on" onclick="demoPin('off',this)">未设置</button>
+            <button class="demo-btn" onclick="demoPin('on',this)">已设置</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ===== Tab switching ===== */
+function switchTab(name, el) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+    el.classList.add('on');
+    document.querySelectorAll('.pane').forEach(p => p.classList.remove('on'));
+    document.getElementById('pane-' + name).classList.add('on');
+}
+
+/* ===== Modal helpers ===== */
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) {
+    document.getElementById(id).classList.remove('show');
+    document.querySelectorAll('.err').forEach(e => e.classList.remove('show'));
+}
+
+/* ===== OTP builder ===== */
+function buildOtp(id) {
+    const w = document.getElementById(id); w.innerHTML = '';
+    for (let i = 0; i < 6; i++) {
+        const inp = document.createElement('input');
+        inp.maxLength = 1; inp.type = 'text';
+        inp.oninput = function() { if (this.value && i < 5) w.children[i + 1].focus(); };
+        inp.onkeydown = function(e) { if (e.key === 'Backspace' && !this.value && i > 0) w.children[i - 1].focus(); };
+        w.appendChild(inp);
+    }
+    setTimeout(() => w.children[0].focus(), 100);
+}
+
+/* ===== PIN builder ===== */
+function buildPinRow(id) {
+    const w = document.getElementById(id); w.innerHTML = '';
+    for (let i = 0; i < 6; i++) {
+        const inp = document.createElement('input');
+        inp.maxLength = 1; inp.type = 'text'; inp.inputMode = 'numeric'; inp.pattern = '[0-9]';
+        inp.oninput = function() { this.value = this.value.replace(/\D/g, ''); if (this.value && i < 5) w.children[i + 1].focus(); };
+        inp.onkeydown = function(e) { if (e.key === 'Backspace' && !this.value && i > 0) w.children[i - 1].focus(); };
+        w.appendChild(inp);
+    }
+    setTimeout(() => w.children[0].focus(), 100);
+}
+function getPinVal(id) { return Array.from(document.getElementById(id).querySelectorAll('input')).map(i => i.value).join(''); }
+
+/* ===== Countdown ===== */
+function startCountdown(btn) {
+    btn.disabled = true; let s = 60; btn.textContent = s + 's';
+    const t = setInterval(() => {
+        if (--s <= 0) { clearInterval(t); btn.disabled = false; btn.textContent = '重新发送'; }
+        else btn.textContent = s + 's';
+    }, 1000);
+}
+
+/* ===== Profile: Edit Nickname ===== */
+function openEditNick() {
+    document.getElementById('inNick').value = document.getElementById('valNick').textContent;
+    openModal('modalNick');
+}
+function saveNick() {
+    const v = document.getElementById('inNick').value.trim();
+    if (v.length < 2 || v.length > 30) { alert('昵称需 2-30 个字符'); return; }
+    document.getElementById('valNick').textContent = v;
+    closeModal('modalNick');
+}
+
+/* ===== Profile: Edit Language ===== */
+function openEditLang() {
+    document.getElementById('inLang').value = document.getElementById('valLang').textContent;
+    openModal('modalLang');
+}
+function saveLang() {
+    document.getElementById('valLang').textContent = document.getElementById('inLang').value;
+    closeModal('modalLang');
+}
+
+/* ===== Profile: Edit Email (3-step) ===== */
+function openEditEmail() {
+    document.getElementById('emailStep1').style.display = '';
+    document.getElementById('emailStep2').style.display = 'none';
+    document.getElementById('emailStep3').style.display = 'none';
+    document.getElementById('modalEmailSub').textContent = 'Step 1: 验证当前身份';
+    document.querySelectorAll('#modalEmail .err').forEach(e => e.classList.remove('show'));
+    buildOtp('emailOtp1');
+    startCountdown(document.getElementById('emailResend1'));
+    openModal('modalEmail');
+}
+function emailVerifyStep1() {
+    document.getElementById('emailStep1').style.display = 'none';
+    document.getElementById('emailStep2').style.display = '';
+    document.getElementById('modalEmailSub').textContent = 'Step 2: 输入新邮箱地址';
+}
+function emailSendNewCode() {
+    const v = document.getElementById('inNewEmail').value.trim();
+    if (!v || !v.includes('@')) { alert('请输入有效邮箱'); return; }
+    document.getElementById('emailNewTarget').textContent = v;
+    document.getElementById('emailStep2').style.display = 'none';
+    document.getElementById('emailStep3').style.display = '';
+    document.getElementById('modalEmailSub').textContent = 'Step 3: 验证新邮箱';
+    buildOtp('emailOtp2');
+    startCountdown(document.getElementById('emailResend2'));
+}
+function emailVerifyStep3() {
+    const v = document.getElementById('inNewEmail').value.trim();
+    document.getElementById('valEmail').textContent = v;
+    document.getElementById('badgeEmail').textContent = 'Verified';
+    document.getElementById('badgeEmail').className = 'badge verified';
+    closeModal('modalEmail');
+}
+
+/* ===== Profile: Edit Mobile (3-step) ===== */
+function openEditMobile() {
+    document.getElementById('mobileStep1').style.display = '';
+    document.getElementById('mobileStep2').style.display = 'none';
+    document.getElementById('mobileStep3').style.display = 'none';
+    document.getElementById('modalMobileSub').textContent = 'Step 1: 验证当前身份';
+    document.querySelectorAll('#modalMobile .err').forEach(e => e.classList.remove('show'));
+    buildOtp('mobileOtp1');
+    startCountdown(document.getElementById('mobileResend1'));
+    openModal('modalMobile');
+}
+function mobileVerifyStep1() {
+    document.getElementById('mobileStep1').style.display = 'none';
+    document.getElementById('mobileStep2').style.display = '';
+    document.getElementById('modalMobileSub').textContent = 'Step 2: 输入新手机号';
+}
+function mobileSendNewCode() {
+    const cc = document.getElementById('mobileCC').value;
+    const v = document.getElementById('inNewMobile').value.trim();
+    if (!v) { alert('请输入手机号'); return; }
+    document.getElementById('mobileNewTarget').textContent = cc + ' ' + v;
+    document.getElementById('mobileStep2').style.display = 'none';
+    document.getElementById('mobileStep3').style.display = '';
+    document.getElementById('modalMobileSub').textContent = 'Step 3: 验证新手机号';
+    buildOtp('mobileOtp2');
+    startCountdown(document.getElementById('mobileResend2'));
+}
+function mobileVerifyStep3() {
+    const cc = document.getElementById('mobileCC').value;
+    const v = document.getElementById('inNewMobile').value.trim();
+    document.getElementById('valMobile').textContent = cc + ' ' + v;
+    document.getElementById('badgeMobile').textContent = 'Verified';
+    document.getElementById('badgeMobile').className = 'badge verified';
+    closeModal('modalMobile');
+}
+
+/* ===== Profile: Login Method ===== */
+function openEditLoginMethod() {
+    document.getElementById('inLoginMethod').value = document.getElementById('valLoginMethod').textContent;
+    openModal('modalLoginMethod');
+}
+function saveLoginMethod() {
+    document.getElementById('valLoginMethod').textContent = document.getElementById('inLoginMethod').value;
+    closeModal('modalLoginMethod');
+}
+
+/* ===== Security: Change Password ===== */
+function openChangePwd() {
+    document.getElementById('inCurPwd').value = '';
+    document.getElementById('inNewPwd').value = '';
+    document.getElementById('inNewPwd2').value = '';
+    document.querySelectorAll('.pwd-rule').forEach(r => r.classList.remove('pass'));
+    document.querySelectorAll('#modalPwd .err').forEach(e => e.classList.remove('show'));
+    openModal('modalPwd');
+}
+function checkPwdRules(p) {
+    const rules = [
+        { id: 'pr-len', test: p => p.length >= 8 },
+        { id: 'pr-letter', test: p => /[a-zA-Z]/.test(p) },
+        { id: 'pr-digit', test: p => /\d/.test(p) },
+        { id: 'pr-special', test: p => /[^a-zA-Z0-9]/.test(p) }
+    ];
+    rules.forEach(r => {
+        const el = document.getElementById(r.id);
+        if (p && r.test(p)) el.classList.add('pass');
+        else el.classList.remove('pass');
+    });
+}
+function savePwd() {
+    const cur = document.getElementById('inCurPwd').value;
+    const p = document.getElementById('inNewPwd').value;
+    const p2 = document.getElementById('inNewPwd2').value;
+    if (!cur) { showErr('errPwd', '请输入当前密码'); return; }
+    const allPass = p.length >= 8 && /[a-zA-Z]/.test(p) && /\d/.test(p) && /[^a-zA-Z0-9]/.test(p);
+    if (!allPass) { showErr('errPwd', '新密码不满足强度要求'); return; }
+    if (p !== p2) { showErr('errPwd', '两次密码不一致'); return; }
+    if (p === cur) { showErr('errPwd', '新密码不能与当前密码相同'); return; }
+    closeModal('modalPwd');
+    alert('✅ 密码修改成功');
+}
+
+/* ===== Security: Payment PIN ===== */
+let pinPhase = 1;
+function openSetPin() {
+    pinPhase = 1;
+    document.getElementById('pinPhase1').style.display = '';
+    document.getElementById('pinPhase2').style.display = 'none';
+    document.getElementById('pinSubmitBtn').textContent = '下一步';
+    document.querySelectorAll('#modalPin .err').forEach(e => e.classList.remove('show'));
+    buildPinRow('pinRow1');
+    openModal('modalPin');
+}
+function pinNext() {
+    document.querySelectorAll('#modalPin .err').forEach(e => e.classList.remove('show'));
+    if (pinPhase === 1) {
+        const v = getPinVal('pinRow1');
+        if (v.length < 6) return;
+        if (/^(.)\1{5}$/.test(v) || v === '123456' || v === '654321') {
+            showErr('errPin', '不能使用连续或重复数字'); return;
+        }
+        pinPhase = 2;
+        document.getElementById('pinPhase2').style.display = '';
+        document.getElementById('pinSubmitBtn').textContent = '确认设置';
+        buildPinRow('pinRow2');
+    } else {
+        const v1 = getPinVal('pinRow1'), v2 = getPinVal('pinRow2');
+        if (v2.length < 6) return;
+        if (v1 !== v2) { showErr('errPin', '两次输入不一致，请重新设置'); return; }
+        document.getElementById('pinStatus').className = 'sec-status on';
+        document.getElementById('pinStatus').textContent = '● Set';
+        document.getElementById('pinBtn').textContent = 'Change';
+        closeModal('modalPin');
+        alert('✅ Payment PIN 设置成功！');
+    }
+}
+
+/* ===== Security: Designated Phone ===== */
+function openSetDP() {
+    document.getElementById('dpPhase1').style.display = '';
+    document.getElementById('dpPhase2').style.display = 'none';
+    document.getElementById('dpPhone').value = '';
+    document.querySelectorAll('#modalDP .err').forEach(e => e.classList.remove('show'));
+    openModal('modalDP');
+}
+function dpSendCode() {
+    const phone = document.getElementById('dpPhone').value.trim();
+    if (!phone) { alert('请输入手机号'); return; }
+    const cc = document.getElementById('dpCC').value;
+    document.getElementById('dpTarget').textContent = cc + ' ' + phone;
+    document.getElementById('dpPhase1').style.display = 'none';
+    document.getElementById('dpPhase2').style.display = '';
+    buildOtp('dpOtpRow');
+    startCountdown(document.getElementById('dpResend'));
+}
+function dpVerify() {
+    const cc = document.getElementById('dpCC').value;
+    const phone = document.getElementById('dpPhone').value.trim();
+    const masked = phone.slice(0, 3) + '****' + phone.slice(-4);
+    document.getElementById('dpDesc').textContent = '当前: ' + cc + ' ' + masked;
+    document.getElementById('dpStatus').className = 'sec-status on';
+    document.getElementById('dpStatus').textContent = '● Set';
+    document.getElementById('dpBtn').textContent = 'Change';
+    closeModal('modalDP');
+    alert('✅ Designated Phone 设置成功！');
+}
+
+/* ===== 2FA State ===== */
+const tfa = {
+    auth: { enabled: true, isDefault: true },
+    sms:  { enabled: true, isDefault: false },
+    email:{ enabled: false, isDefault: false }
+};
+
+function refreshSecurityUI() {
+    // Auth
+    const authS = document.getElementById('secAuthStatus');
+    const authB = document.getElementById('secAuthBtn');
+    if (tfa.auth.enabled) {
+        authS.className = 'sec-status on';
+        authS.textContent = tfa.auth.isDefault ? '● Enabled · Default' : '● Enabled';
+        authB.textContent = 'Manage';
+        authB.onclick = function(){ openManageAuth(); };
+    } else {
+        authS.className = 'sec-status off';
+        authS.textContent = '● Not set';
+        authB.textContent = 'Set up';
+        authB.onclick = function(){ openSetupAuth(); };
+    }
+    // SMS
+    const smsS = document.getElementById('secSmsStatus');
+    const smsB = document.getElementById('secSmsBtn');
+    if (tfa.sms.enabled) {
+        smsS.className = 'sec-status on';
+        smsS.textContent = tfa.sms.isDefault ? '● Enabled · Default' : '● Enabled';
+        smsB.textContent = 'Manage';
+        smsB.onclick = function(){ openManageSms(); };
+    } else {
+        smsS.className = 'sec-status off';
+        smsS.textContent = '● Not set';
+        smsB.textContent = 'Set up';
+        smsB.onclick = function(){ openSetupSms(); };
+    }
+    // Email
+    const emS = document.getElementById('secEmail2faStatus');
+    const emB = document.getElementById('secEmail2faBtn');
+    if (tfa.email.enabled) {
+        emS.className = 'sec-status on';
+        emS.textContent = tfa.email.isDefault ? '● Enabled · Default' : '● Enabled';
+        emB.textContent = 'Manage';
+        emB.onclick = function(){ openManageEmail2fa(); };
+    } else {
+        emS.className = 'sec-status off';
+        emS.textContent = '● Not set';
+        emB.textContent = 'Set up';
+        emB.onclick = function(){ openSetupEmail2fa(); };
+    }
+}
+
+function clearDefault() { tfa.auth.isDefault = false; tfa.sms.isDefault = false; tfa.email.isDefault = false; }
+
+/* ===== Authenticator App: Setup ===== */
+function openSetupAuth() {
+    document.getElementById('authStep1').style.display = '';
+    document.getElementById('authStep2').style.display = 'none';
+    document.getElementById('authSetupSub').textContent = 'Step 1: 使用 Authenticator App 扫描二维码';
+    document.querySelectorAll('#modalAuthSetup .err').forEach(e => e.classList.remove('show'));
+    openModal('modalAuthSetup');
+}
+function authGoStep2() {
+    document.getElementById('authStep1').style.display = 'none';
+    document.getElementById('authStep2').style.display = '';
+    document.getElementById('authSetupSub').textContent = 'Step 2: 输入动态码验证';
+    buildOtp('authOtp');
+}
+function authVerify() {
+    const anyEnabled = tfa.auth.enabled || tfa.sms.enabled || tfa.email.enabled;
+    tfa.auth.enabled = true;
+    if (!anyEnabled) { clearDefault(); tfa.auth.isDefault = true; }
+    refreshSecurityUI();
+    closeModal('modalAuthSetup');
+}
+
+/* ===== Authenticator App: Manage ===== */
+function openManageAuth() {
+    document.getElementById('authManageStatus').textContent = tfa.auth.isDefault ? 'Enabled · Default' : 'Enabled';
+    document.getElementById('maAuthDefault').style.display = tfa.auth.isDefault ? 'none' : '';
+    openModal('modalAuthManage');
+}
+function authSetDefault() {
+    clearDefault(); tfa.auth.isDefault = true;
+    refreshSecurityUI(); closeModal('modalAuthManage');
+}
+function authRegenerate() {
+    closeModal('modalAuthManage');
+    openSetupAuth();
+}
+function authDisable() {
+    const wasDefault = tfa.auth.isDefault;
+    tfa.auth.enabled = false; tfa.auth.isDefault = false;
+    if (wasDefault) {
+        if (tfa.sms.enabled) tfa.sms.isDefault = true;
+        else if (tfa.email.enabled) tfa.email.isDefault = true;
+    }
+    refreshSecurityUI(); closeModal('modalAuthManage');
+}
+
+/* ===== SMS 2FA: Setup ===== */
+function openSetupSms() {
+    const mobile = document.getElementById('valMobile').textContent;
+    if (!mobile || mobile === '—') { alert('请先在 Profile 中绑定并验证手机号'); return; }
+    document.getElementById('smsSetupStep1').style.display = '';
+    document.getElementById('smsSetupStep2').style.display = 'none';
+    document.querySelectorAll('#modalSmsSetup .err').forEach(e => e.classList.remove('show'));
+    const masked = mobile.replace(/(\d{4})\d+/, '$1****');
+    document.getElementById('smsSetupTarget').textContent = masked;
+    document.getElementById('smsSetupTarget2').textContent = masked;
+    openModal('modalSmsSetup');
+}
+function smsSendCode() {
+    document.getElementById('smsSetupStep1').style.display = 'none';
+    document.getElementById('smsSetupStep2').style.display = '';
+    buildOtp('smsOtp');
+    startCountdown(document.getElementById('smsResend'));
+}
+function smsVerify() {
+    const anyEnabled = tfa.auth.enabled || tfa.sms.enabled || tfa.email.enabled;
+    tfa.sms.enabled = true;
+    if (!anyEnabled) { clearDefault(); tfa.sms.isDefault = true; }
+    refreshSecurityUI(); closeModal('modalSmsSetup');
+}
+
+/* ===== SMS 2FA: Manage ===== */
+function openManageSms() {
+    document.getElementById('smsManageStatus').textContent = tfa.sms.isDefault ? 'Enabled · Default' : 'Enabled';
+    document.getElementById('maSmsDefault').style.display = tfa.sms.isDefault ? 'none' : '';
+    openModal('modalSmsManage');
+}
+function smsSetDefault() {
+    clearDefault(); tfa.sms.isDefault = true;
+    refreshSecurityUI(); closeModal('modalSmsManage');
+}
+function smsDisable() {
+    const wasDefault = tfa.sms.isDefault;
+    tfa.sms.enabled = false; tfa.sms.isDefault = false;
+    if (wasDefault) {
+        if (tfa.auth.enabled) tfa.auth.isDefault = true;
+        else if (tfa.email.enabled) tfa.email.isDefault = true;
+    }
+    refreshSecurityUI(); closeModal('modalSmsManage');
+}
+
+/* ===== Email 2FA: Setup ===== */
+function openSetupEmail2fa() {
+    const email = document.getElementById('valEmail').textContent;
+    if (!email || email === '—') { alert('请先在 Profile 中绑定并验证邮箱'); return; }
+    document.getElementById('email2faStep1').style.display = '';
+    document.getElementById('email2faStep2').style.display = 'none';
+    document.querySelectorAll('#modalEmail2faSetup .err').forEach(e => e.classList.remove('show'));
+    const masked = email.replace(/^(.{4}).*(@.*)$/, '$1***$2');
+    document.getElementById('email2faTarget').textContent = masked;
+    document.getElementById('email2faTarget2').textContent = masked;
+    openModal('modalEmail2faSetup');
+}
+function email2faSendCode() {
+    document.getElementById('email2faStep1').style.display = 'none';
+    document.getElementById('email2faStep2').style.display = '';
+    buildOtp('email2faOtp');
+    startCountdown(document.getElementById('email2faResend'));
+}
+function email2faVerify() {
+    const anyEnabled = tfa.auth.enabled || tfa.sms.enabled || tfa.email.enabled;
+    tfa.email.enabled = true;
+    if (!anyEnabled) { clearDefault(); tfa.email.isDefault = true; }
+    refreshSecurityUI(); closeModal('modalEmail2faSetup');
+}
+
+/* ===== Email 2FA: Manage ===== */
+function openManageEmail2fa() {
+    document.getElementById('email2faManageStatus').textContent = tfa.email.isDefault ? 'Enabled · Default' : 'Enabled';
+    document.getElementById('maEmail2faDefault').style.display = tfa.email.isDefault ? 'none' : '';
+    openModal('modalEmail2faManage');
+}
+function email2faSetDefault() {
+    clearDefault(); tfa.email.isDefault = true;
+    refreshSecurityUI(); closeModal('modalEmail2faManage');
+}
+function email2faDisable() {
+    const wasDefault = tfa.email.isDefault;
+    tfa.email.enabled = false; tfa.email.isDefault = false;
+    if (wasDefault) {
+        if (tfa.auth.enabled) tfa.auth.isDefault = true;
+        else if (tfa.sms.enabled) tfa.sms.isDefault = true;
+    }
+    refreshSecurityUI(); closeModal('modalEmail2faManage');
+}
+
+/* ===== Error helper ===== */
+function showErr(id, msg) {
+    const el = document.getElementById(id);
+    el.querySelector('span:last-child').textContent = msg;
+    el.classList.add('show');
+}
+
+/* ===== Demo bar ===== */
+let currentRole = 'ah';
+let dpIsSet = true;
+
+function demoRole(role, btn) {
+    btn.parentElement.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    currentRole = role;
+    refreshDpView();
+    const desc = document.getElementById('demoRoleDesc');
+    if (role === 'ah') desc.textContent = 'AH: 可编辑 Designated Phone';
+    else if (role === 'settings') desc.textContent = '有 Settings 权限: 可见 DP 状态，不可编辑';
+    else desc.textContent = '普通成员: 不可见 Designated Phone';
+}
+
+function demoDpState(state, btn) {
+    btn.parentElement.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    dpIsSet = (state === 'set');
+    refreshDpView();
+    document.getElementById('demoDpDesc').textContent = dpIsSet ? 'Designated Phone 已设置' : 'Designated Phone 未设置';
+}
+
+function refreshDpView() {
+    const card = document.getElementById('cardMidSec');
+    const ahView = document.getElementById('dpViewAH');
+    const memberView = document.getElementById('dpViewMember');
+
+    if (currentRole === 'member') {
+        card.style.display = 'none';
+        return;
+    }
+    card.style.display = '';
+
+    if (currentRole === 'ah') {
+        ahView.style.display = '';
+        memberView.style.display = 'none';
+        document.getElementById('dpCardSub').textContent = 'MID 级 — 仅 Account Holder 可编辑 · 当前: ABC Trading / MID-001';
+        if (dpIsSet) {
+            document.getElementById('dpStatus').className = 'sec-status on';
+            document.getElementById('dpStatus').textContent = '● Set';
+            document.getElementById('dpBtn').textContent = 'Change';
+            document.getElementById('dpDesc').textContent = '当前: +86 138****5678';
+        } else {
+            document.getElementById('dpStatus').className = 'sec-status off';
+            document.getElementById('dpStatus').textContent = '● Not set';
+            document.getElementById('dpBtn').textContent = 'Set up';
+            document.getElementById('dpDesc').textContent = '未设置安全验证手机号';
+        }
+    } else {
+        /* settings member: read-only */
+        ahView.style.display = 'none';
+        memberView.style.display = '';
+        document.getElementById('dpCardSub').textContent = 'MID 级 · 当前: ABC Trading / MID-001';
+        if (dpIsSet) {
+            document.getElementById('dpStatusMember').className = 'sec-status on';
+            document.getElementById('dpStatusMember').textContent = '● Set';
+            document.getElementById('dpDescMember').textContent = '状态: 已设置';
+            document.getElementById('dpNoteMember').innerHTML = '🔒 角色验证方式为 Designated 时，资金操作的验证码将发送到此手机号。<br>仅 Account Holder 可查看和修改具体号码。';
+        } else {
+            document.getElementById('dpStatusMember').className = 'sec-status off';
+            document.getElementById('dpStatusMember').textContent = '● Not set';
+            document.getElementById('dpDescMember').textContent = '状态: 未设置';
+            document.getElementById('dpNoteMember').innerHTML = '⚠️ <b>Designated Phone 尚未配置，请联系 Account Holder 设置。</b><br>角色验证方式为 Designated 的成员在执行资金操作时需要此手机号接收验证码。';
+        }
+    }
+}
+
+function demoCred(mode, btn) {
+    btn.parentElement.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    if (mode === 'both') {
+        document.getElementById('valEmail').textContent = 'liuxiaoxiaoangie@gmail.com';
+        document.getElementById('badgeEmail').textContent = 'Verified';
+        document.getElementById('badgeEmail').className = 'badge verified';
+        document.getElementById('btnEmail').textContent = 'Edit';
+        document.getElementById('valMobile').textContent = '+852 96412374';
+        document.getElementById('badgeMobile').textContent = 'Verified';
+        document.getElementById('badgeMobile').className = 'badge verified';
+        document.getElementById('btnMobile').textContent = 'Edit';
+        document.getElementById('demoCredDesc').textContent = '两个凭证均已绑定';
+    } else if (mode === 'email_only') {
+        document.getElementById('valEmail').textContent = 'liuxiaoxiaoangie@gmail.com';
+        document.getElementById('badgeEmail').textContent = 'Verified';
+        document.getElementById('badgeEmail').className = 'badge verified';
+        document.getElementById('btnEmail').textContent = 'Edit';
+        document.getElementById('valMobile').textContent = '—';
+        document.getElementById('badgeMobile').textContent = 'Not set';
+        document.getElementById('badgeMobile').className = 'badge not-set';
+        document.getElementById('btnMobile').textContent = 'Add';
+        document.getElementById('demoCredDesc').textContent = '仅邮箱，手机号未绑定';
+    } else {
+        document.getElementById('valEmail').textContent = '—';
+        document.getElementById('badgeEmail').textContent = 'Not set';
+        document.getElementById('badgeEmail').className = 'badge not-set';
+        document.getElementById('btnEmail').textContent = 'Add';
+        document.getElementById('valMobile').textContent = '+852 96412374';
+        document.getElementById('badgeMobile').textContent = 'Verified';
+        document.getElementById('badgeMobile').className = 'badge verified';
+        document.getElementById('btnMobile').textContent = 'Edit';
+        document.getElementById('demoCredDesc').textContent = '仅手机号，邮箱未绑定';
+    }
+}
+
+function demoPin(state, btn) {
+    btn.parentElement.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    if (state === 'on') {
+        document.getElementById('pinStatus').className = 'sec-status on';
+        document.getElementById('pinStatus').textContent = '● Set';
+        document.getElementById('pinBtn').textContent = 'Change';
+    } else {
+        document.getElementById('pinStatus').className = 'sec-status off';
+        document.getElementById('pinStatus').textContent = '● Not set';
+        document.getElementById('pinBtn').textContent = 'Set up';
+    }
+}
+</script>
+</body>
+</html>
