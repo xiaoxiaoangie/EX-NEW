@@ -2263,7 +2263,7 @@ function renderMemberProductRows() {
 
 // ========== 客户用户信息 ==========
 
-// 模拟操作日志数据
+// 模拟状态变更记录数据
 const userOpLogs = {
     'U20260213003': [
         { time: '2026-02-12 15:30', action: '冻结', operator: 'admin_wang', remark: '用户多次违规操作，触发风控规则' },
@@ -2291,7 +2291,7 @@ function showUserLog(uid, nickname) {
                 <td style="padding:10px 14px;font-size:13px;border-bottom:1px solid #f1f5f9;color:#475569;max-width:300px;white-space:normal;line-height:1.5;">${l.remark}</td>
             </tr>`;
         }).join('')
-        : '<tr><td colspan="4" style="padding:32px;text-align:center;color:#94a3b8;font-size:13px;">暂无操作日志</td></tr>';
+        : '<tr><td colspan="4" style="padding:32px;text-align:center;color:#94a3b8;font-size:13px;">暂无状态变更记录</td></tr>';
 
     const overlay = document.createElement('div');
     overlay.id = 'userLogOverlay';
@@ -2300,7 +2300,7 @@ function showUserLog(uid, nickname) {
         <div style="background:#fff;border-radius:12px;width:680px;max-width:90vw;max-height:80vh;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.15);display:flex;flex-direction:column;">
             <div style="padding:20px 24px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;">
                 <div>
-                    <h3 style="font-size:16px;font-weight:700;color:#1e293b;margin:0;">操作日志</h3>
+                    <h3 style="font-size:16px;font-weight:700;color:#1e293b;margin:0;">状态变更记录</h3>
                     <p style="font-size:13px;color:#94a3b8;margin:4px 0 0;">用户 ${uid}（${nickname}）</p>
                 </div>
                 <button onclick="document.getElementById('userLogOverlay').remove()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#94a3b8;padding:4px 8px;border-radius:6px;line-height:1;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='none'">✕</button>
@@ -2371,7 +2371,7 @@ function renderCustomerUsers() {
         const freezeBtn = u.status === 'frozen'
             ? `<button onclick="unfreezeUser('${u.uid}')" style="background:none;border:none;color:#10b981;cursor:pointer;font-size:13px;font-weight:500;">解冻</button>`
             : `<button onclick="freezeUser('${u.uid}')" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:13px;font-weight:500;">冻结</button>`;
-        const logBtn = `<button onclick="showUserLog('${u.uid}','${u.nickname}')" style="background:none;border:none;color:#4f46e5;cursor:pointer;font-size:13px;font-weight:500;">操作日志</button>`;
+        const logBtn = `<button onclick="showUserLog('${u.uid}','${u.nickname}')" style="background:none;border:none;color:#4f46e5;cursor:pointer;font-size:13px;font-weight:500;">状态变更记录</button>`;
         return `<tr>
             <td style="${tdStyle} font-family:monospace;color:#4f46e5;">${u.uid}</td>
             <td style="${tdStyle}">${u.nickname}</td>

@@ -2,15 +2,28 @@
 
 ## 文档概述
 
-本文档定义 EX Platform 的用户角色权限系统（RBAC），涵盖组织与商户的两层结构、自定义角色、三层权限模型（页面 + 操作 + 数据），以及用户管理功能。
+本文档定义 EX Platform 的用户角色权限系统（RBAC），涵盖 Identity → User → MID 三层身份模型、MID 级角色、两层权限模型（页面 + 操作），以及用户管理功能。
 
 **核心设计理念：**
 
-- ✅ **Organisation → MID 两层结构**：数据模型一步到位，功能分期交付
+- ✅ **三层身份模型**：Identity（自然人/凭证）→ User（MID 内身份/角色）→ MID（商户）
+- ✅ **权限给 User**：角色和权限挂在 User（UID）上，不在 Identity（IID）上
+- ✅ **扁平 MID 结构**：本期不引入 Organisation 层
 - ✅ **自定义角色**：本期只支持自定义角色，不提供预设角色模板
 - ✅ **多角色支持**：一个 User 在同一个 MID 下可拥有多个角色
-- ✅ **三层权限**：页面权限（模块级）+ 操作权限（仅查阅 / 可操作，V2升级为CRUD级）+ 数据权限（资源实例级）
-- ✅ **多企业**：一个 User 可被分配多个企业（MID）的权限
+- ✅ **两层权限**：页面权限（模块级）+ 操作权限（查阅 / 操作 / 导出，三选多选）
+- ✅ **安全验证方式**：交易模块可配置验证方式（Self 自己验证 / Designated 发给指定手机号）
+- ✅ **一个 Identity 多个 MID**：一个自然人可在多个 MID 下拥有不同 User，各自独立角色
+- ✅ **多端注册**：同一手机号/邮箱可分别注册 MP（商户端）和 TP（租户端），各自独立 Identity
+
+**Phase 2 规划（本期不做）：**
+
+- ❌ Organisation 层（Org → MID 两层结构）
+- ❌ 数据权限（资源实例级，在业务层处理）
+- ❌ 手机号/邮箱合并（多凭证合并到同一 Identity）
+- ❌ 操作权限细化（CRUD 级：Create/Edit/Delete/Manage 独立控制）
+- ❌ 预设角色模板
+- ❌ Maker-Checker 审批流（操作人提交 → 审批人验证）
 
 **关联文档：** [Users.md](./Users.md)（用户系统 PRD）
 
@@ -19,16 +32,15 @@
 ## 目录
 
 1. [系统架构概览](#1-系统架构概览)
-2. [模块总览与 Scope](#2-模块总览与-scope)
-3. [Organisation → MID 两层结构](#3-organisation--mid-两层结构)
+2. [Scope 与分期](#2-scope-与分期)
+3. [Identity-User-MID 关系](#3-identity-user-mid-关系)
 4. [角色体系](#4-角色体系)
-5. [三层权限模型](#5-三层权限模型)
+5. [两层权限模型](#5-两层权限模型)
 6. [权限配置流程](#6-权限配置流程)
 7. [用户管理](#7-用户管理)
-8. [Use Case](#8-use-case)
-9. [鉴权流程](#9-鉴权流程)
-10. [支付密码（Payment Password）](#10-支付密码payment-password)
-11. [状态机](#11-状态机)
+8. [鉴权流程](#8-鉴权流程)
+9. [支付密码（Payment Password）](#9-支付密码payment-password)
+10. [状态机](#10-状态机)
 
 ---
 
@@ -38,348 +50,381 @@
 
 ```mermaid
 graph TB
-    subgraph "用户层"
-        U[User]
+    subgraph "Identity 层（自然人）"
+        I[Identity<br/>IID / 凭证 / 密码 / 2FA]
     end
 
-    subgraph "组织层"
-        O[Organisation]
+    subgraph "User 层（MID 内身份）"
+        U1[User UID-001<br/>MID-001 / Account Holder]
+        U2[User UID-002<br/>MID-002 / Member]
     end
 
     subgraph "商户层"
-        M1[MID-001]
-        M2[MID-002]
-        M3[MID-003]
+        M1[MID-001 ABC Trading]
+        M2[MID-002 XYZ Corp]
     end
 
     subgraph "角色层"
-        OR[Org 级角色<br/>用户管理 / 角色管理]
-        MR1[MID-001 角色<br/>交易员 / 财务...]
-        MR2[MID-002 角色<br/>管理员 / 查看者...]
+        MR1[MID-001 角色<br/>管理员 / 交易员 / 财务...]
+        MR2[MID-002 角色<br/>查看者...]
     end
 
     subgraph "权限层"
         P1[页面权限<br/>模块可见性]
-        P2[操作权限<br/>Create / View / Edit / Delete]
-        P3[数据权限<br/>资源实例级]
+        P2[操作权限<br/>查阅 / 操作 / 导出（多选）]
     end
 
-    U --> O
-    O --> M1
-    O --> M2
-    O --> M3
+    I --> U1
+    I --> U2
 
-    U -->|拥有| OR
-    U -->|拥有| MR1
-    U -->|拥有| MR2
+    U1 --> M1
+    U2 --> M2
 
-    OR --> P1
-    OR --> P2
+    U1 -->|拥有| MR1
+    U2 -->|拥有| MR2
+
     MR1 --> P1
     MR1 --> P2
-    MR1 --> P3
+    MR2 --> P1
+    MR2 --> P2
 ```
 
-### 1.2 核心实体关系
+### 1.2 Identity-User-MID 关系模型
+
+![1770987980814](image/Users-Roles-Permissions/1770987980814.png)
 
 ```mermaid
 erDiagram
-    USER ||--o{ USER_ORG_ROLE : "拥有Org角色"
-    USER ||--o{ USER_MID_ROLE : "拥有MID角色"
-    ORGANISATION ||--o{ MID : "包含"
-    ORGANISATION ||--o{ ORG_ROLE : "定义"
-    MID ||--o{ MID_ROLE : "定义"
-    ORG_ROLE ||--o{ ORG_ROLE_PERMISSION : "包含权限"
-    MID_ROLE ||--o{ MID_ROLE_PERMISSION : "包含权限"
-    MID_ROLE_PERMISSION ||--o{ DATA_SCOPE : "关联数据范围"
+    IDENTITY ||--o{ CREDENTIAL : "拥有凭证"
+    IDENTITY ||--o{ USER : "在MID中的身份"
+    USER ||--o{ USER_ROLE : "拥有角色"
+    MID ||--o{ USER : "包含用户"
+    MID ||--o{ MID_ROLE : "定义角色"
+    MID_ROLE ||--o{ USER_ROLE : "被分配"
+    MID_ROLE ||--o{ ROLE_PERMISSION : "包含权限"
 
-    USER {
-        string user_id PK
-        string email
-        string mobile
-        string nickname
+    IDENTITY {
+        string identity_id PK "IID，全局唯一"
+        string nickname "昵称"
+        string password_hash "登录密码"
+        string totp_secret "2FA 密钥"
+        string status "ACTIVE / SUSPENDED"
     }
-    ORGANISATION {
-        string org_id PK
-        string org_name
-        string status
+    CREDENTIAL {
+        string credential_id PK
+        string identity_id FK
+        string type "email / mobile"
+        string value "atest.com / 86138xxxx"
+        boolean verified "是否已验证"
+    }
+    USER {
+        string user_id PK "UID，MID内唯一"
+        string identity_id FK "所属 Identity"
+        string mid_id FK "所属 MID"
+        string role_type "Account Holder / Member"
+        string status "ACTIVE / DISABLED"
     }
     MID {
         string mid_id PK
-        string org_id FK
         string mid_name
         string status
-    }
-    ORG_ROLE {
-        string role_id PK
-        string org_id FK
-        string role_name
-        string description
-        string scope "org"
     }
     MID_ROLE {
         string role_id PK
         string mid_id FK
         string role_name
         string description
-        string scope "mid"
+        string status "ACTIVE / DISABLED"
+    }
+    ROLE_PERMISSION {
+        string role_id FK
+        string module "模块标识"
+        boolean can_view "查阅权限"
+        boolean can_operate "操作权限（增删改）"
+        boolean can_export "导出权限"
+        string verification "self / designated（交易模块）"
+        string designated_phone "指定手机号（当 verification=designated）"
     }
 ```
 
+**三层职责划分：**
+
+| 层级                    | 实体       | 标识 | 职责                                                                                         | 状态                  |
+| ----------------------- | ---------- | ---- | -------------------------------------------------------------------------------------------- | --------------------- |
+| **Identity 层**   | Identity   | IID  | 代表一个自然人。拥有：登录凭证（邮箱/手机号）、密码、2FA、昵称、语言偏好                     | ACTIVE / SUSPENDED    |
+| **Credential 层** | Credential | —   | Identity 的登录凭证，一个 Identity 可有多个凭证（多邮箱/多手机号）                           | verified / unverified |
+| **User 层**       | User       | UID  | 代表该自然人在某个 MID 下的成员身份。承载：角色、权限。一个 Identity 加入一个 MID 时自动生成 | ACTIVE / DISABLED     |
+| **商户层**        | MID        | MID  | 商户/企业                                                                                    | —                    |
+
+**核心关系：**
+
+- Identity : User = **1 : N**（一个自然人可在多个 MID 下有不同 User）
+- User : MID = **N : 1**（每个 User 只属于一个 MID）
+- Identity : Credential = **1 : N**（一个 Identity 可有多个邮箱/手机号）
+- **权限挂在 User 上**，不在 Identity 上。Identity 只管登录和安全设置
+
+### 1.3 多端注册说明
+
+同一手机号/邮箱可以分别在 MP（商户端）和 TP（租户端）注册，各自创建独立的 Identity：
+
+```
+手机号 +86 138****5678
+├── MP 注册 → Identity IID-001 (MP)
+│   └── User UID-001 → MID-001 (ABC Trading) / Account Holder
+│
+└── TP 注册 → Identity IID-002 (TP)
+    └── User UID-010 → MID-T01 (Fulunited Limited) / Account Holder
+```
+
+- MP 和 TP 是**独立的 Identity**，各自有独立的密码、2FA
+- 登录时选择端（MP / TP），进入对应的 Identity 和 User 体系
+- 本期不支持 MP 和 TP 的 Identity 合并
+
 ---
 
-## 2. 模块总览与 Scope
+## 2. Scope 与分期
 
 ### 2.1 本期 Scope
 
-| 维度                | In Scope                                                                   | Out of Scope                                                           |
-| ------------------- | -------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| **组织结构**  | Organisation → MID 两层数据模型                                           | 多级组织树（Org → Sub-Org → MID）                                    |
-| **角色**      | 自定义角色（Org级 + MID级）``一个User可拥有多个角色``一个User可在多个MID下 | 预设角色模板（Owner/Admin/Member等）``角色继承（子角色继承父角色权限） |
-| **页面权限**  | 按模块控制可见性                                                           | 按子菜单/按钮级控制                                                    |
-| **操作权限**  | 按模块设置两级：“仅查阅”（View Only）/“可操作”（Operable）             | 细粒度 CRUD+Manage（Create/View/Edit/Delete/Manage）→ V2``字段级权限  |
-| **数据权限**  | 资源实例级（如指定共享账户）``区分"自己的"vs"所有"                         | 数据 Location 权限（按国家/地区过滤数据）``时间范围权限                |
-| **Org级权限** | 用户管理、角色管理                                                         | 创建MID、全局报表、全局设置（后期）                                    |
-| **用户管理**  | 邀请用户、分配角色、用户状态管理                                           | Department / Location / Employment type / Manager 字段``HRIS 集成      |
-| **工作台**    | 根据权限动态生成/配置                                                      | —                                                                     |
+| 维度               | In Scope                                                                           | Out of Scope（Phase 2）                         |
+| ------------------ | ---------------------------------------------------------------------------------- | ----------------------------------------------- |
+| **身份模型** | Identity → User → MID 三层；权限挂在 User（UID）上                               | Organisation 层（Org → MID）                   |
+| **角色**     | MID 级自定义角色；一个 User 可拥有多个角色；一个 Identity 可在多个 MID 有不同 User | 预设角色模板；角色继承                          |
+| **页面权限** | 按模块控制可见性                                                                   | 按子菜单/按钮级控制                             |
+| **操作权限** | 三项独立多选：查阅（View）/ 操作（Operate）/ 导出（Export）                        | 细粒度 CRUD（Create/Edit/Delete/Manage 独立控制） |
+| **安全验证** | 交易模块可配置验证方式：Self（自己验证）/ Designated（发给指定手机号）              | Maker-Checker 审批流                              |
+| **数据权限** | —（在业务层处理）                                                                 | 资源实例级（ALL/OWN/ASSIGNED）；Location 权限     |
+| **用户管理** | 邀请用户（Identity）、分配角色（User）、状态管理                                   | Department / Manager 字段；HRIS 集成              |
+| **账号合并** | —                                                                                 | 手机号/邮箱合并（多凭证合并到同一 Identity）    |
+| **工作台**   | 根据权限动态生成                                                                   | —                                              |
 
 ### 2.2 分期规划
 
 ```
-V1（本期）：
-├── Organisation → MID 两层数据模型
-├── 自定义角色（Org级 + MID级）
-├── 三层权限：页面（模块级）+ 操作（仅查阅/可操作）+ 数据
-├── Org级权限：用户管理、角色管理
-├── MID级权限：按模块配置（框架，模块列表待确定）
+Phase 1（本期）：
+├── Identity → User → MID 三层身份模型
+├── MID 级自定义角色（权限给 User）
+├── 两层权限：页面（模块级）+ 操作（查阅/操作/导出，三选多选）
+├── 安全验证方式：交易模块可配置 Self / Designated（指定手机号）
 ├── 用户管理：邀请、状态、角色分配
+├── 支付密码（按 User + MID 维度）
 └── 工作台根据权限动态生成
 
-V2（后期）：
-├── 操作权限细化：“可操作”拆分为 Create/Edit/Delete/Manage/Export
+Phase 2（后期）：
+├── Organisation 层（Org → MID 两层结构）
+├── 数据权限（ALL / OWN / ASSIGNED）
+├── 操作权限细化：操作 → Create/Edit/Delete/Manage 独立控制
+├── 手机号/邮箱合并（多凭证合并到同一 Identity）
 ├── 预设角色模板
-├── Org级权限扩展：创建MID、全局报表
-├── 更多数据权限场景
-├── 数据 Location 权限
-├── 审批流（操作审批）
+├── Maker-Checker 审批流（操作人提交 → 审批人验证）
 └── Department / Manager 等组织字段
 ```
 
 ---
 
-## 3. Organisation → MID 两层结构
+## 3. Identity-User-MID 关系
 
 ### 3.1 结构说明
 
-![1770875405364](image/Users-Roles-Permissions/1770875405364.png)
-
-```mermaid
+采用三层身份模型，无 Organisation 层：
 
 ```
-
-### 3.2 Org 级 vs MID 级
-
-| 维度               | Org 级                           | MID 级                           |
-| ------------------ | -------------------------------- | -------------------------------- |
-| **作用范围** | 跨所有 MID                       | 仅限当前 MID                     |
-| **本期权限** | 用户管理、角色管理               | 页面 + 操作 + 数据权限           |
-| **角色定义** | 在 Org 下创建                    | 在 MID 下创建                    |
-| **典型角色** | Org Admin（管理所有用户和角色）  | 交易员、财务、查看者等           |
-| **谁能配置** | Org 级角色中有"角色管理"权限的人 | MID 级角色中有"角色管理"权限的人 |
-
-### 3.3 User 在两层结构中的关系
+Identity（自然人）
+├── 拥有凭证：email atest.com, mobile 86138xxxx
+├── 拥有安全设置：密码、2FA
+│
+├── User UID-001 → MID-001 (ABC Trading) / Account Holder
+│   └── 角色: 管理员（所有模块可操作）
+│
+└── User UID-002 → MID-002 (XYZ Corp) / Member
+    └── 角色: 查看者（所有模块仅查阅）
+```
 
 ```mermaid
 graph LR
-    subgraph "User: 张三"
-        U1[user_id: U001]
-    end
-
-    subgraph "Org: Fulunited Limited"
-        OR1["Org角色: Org Admin<br/>权限: 用户管理 ✅ 角色管理 ✅"]
+    subgraph "Identity: 张三 (IID-001)"
+        I1["zhang@test.com<br/>+86 138****5678"]
     end
 
     subgraph "MID-001: ABC Trading"
-        MR1["MID角色: 交易管理员<br/>权限: 交易模块 ✅ 订单模块 ✅"]
-        MR1b["MID角色: VCC操作员<br/>权限: VCC模块 ✅ 数据: 共享账户A"]
+        U1["User UID-001 / Account Holder<br/>角色: 管理员 ✅ 可操作"]
     end
 
     subgraph "MID-002: XYZ Corp"
-        MR2["MID角色: 查看者<br/>权限: 所有模块 View Only"]
+        U2["User UID-002 / Member<br/>角色: 查看者 👁 仅查阅"]
     end
 
-    U1 --> OR1
-    U1 --> MR1
-    U1 --> MR1b
-    U1 --> MR2
+    I1 --> U1
+    I1 --> U2
 ```
 
-**说明：**
+**关键区别：**
 
-- 张三在 Org 级有 `Org Admin` 角色 → 可以管理用户和角色
-- 张三在 MID-001 下有两个角色：`交易管理员` + `VCC操作员` → 权限取并集
-- 张三在 MID-002 下有 `查看者` 角色 → 只能查看
-- 多角色权限合并规则：**取并集（Union）**，即任一角色有该权限就生效
+| 操作                          | 在哪一层              | 说明                                                            |
+| ----------------------------- | --------------------- | --------------------------------------------------------------- |
+| 登录、修改密码、修改凭证、2FA | **Identity 层** | 验证码发到 Identity 自己的凭证                                  |
+| 查看模块、执行操作、管理用户  | **User 层**     | 由 User 在该 MID 下的角色决定                                   |
+| 冻结/解冻成员                 | **User 层**     | Account Holder 可禁用某个 User（UID），不影响 Identity 全局状态 |
+| 封禁自然人                    | **Identity 层** | 平台级操作，Identity 被 SUSPENDED 后所有 User 均不可用          |
+
+### 3.2 Account Holder（开户人）
+
+每个 MID 注册时，注册人的 User 自动标记为 **Account Holder**（role_type = Account Holder）。Account Holder 是 User 上的特殊身份标记，拥有以下固有权限：
+
+| 能力                   | 说明                                            |
+| ---------------------- | ----------------------------------------------- |
+| **所有模块访问** | 可见所有模块，可操作                            |
+| **用户管理**     | 邀请/移除用户、分配角色                         |
+| **角色管理**     | 创建/编辑/删除角色                              |
+| **MID 设置**     | 企业信息、通知、系统配置                        |
+| **不可移除**     | Account Holder 不能被其他人移除或降级           |
+| **可转让**       | Account Holder 可将该身份转让给 MID 内其他 User |
+
+> Account Holder 之外的所有 User，权限完全由角色决定。
+
+### 3.3 一个 Identity 多个 MID
+
+一个自然人（Identity）加入多个 MID 时，系统为每个 MID 自动生成独立的 User（UID）：
+
+```
+Identity 张三 (IID-001, zhang@test.com)
+├── User UID-001 → MID-001: ABC Trading
+│   ├── role_type: Account Holder
+│   ├── 角色: 管理员（所有模块可操作）
+│   └── 角色: 财务（Assets + Transfer Out 可操作）
+│
+└── User UID-002 → MID-002: XYZ Corp
+    ├── role_type: Member
+    └── 角色: 查看者（所有模块仅查阅）
+
+→ 登录后（Identity 级），选择 MID，切换到对应 User
+→ 权限按当前 User 在该 MID 下的角色计算
+→ 多角色权限合并：取并集（Union）
+```
+
+### 3.4 多个 Identity 在同一 MID
+
+不同自然人加入同一个 MID，各自拥有独立的 User：
+
+```
+MID-001: ABC Trading
+├── User UID-001 (Identity A 张三) / Account Holder
+├── User UID-003 (Identity B 李四) / Member → 角色: Admin
+└── User UID-005 (Identity C 王五) / Member → 角色: 查看者
+```
+
+> **约束：** 一个 Identity 在同一个 MID 下只能有一个 User（1:1 per MID）。
 
 ---
 
-## 4. 角色体系
+## 4. 角色体系（MP 端）
+
+> 本章节先定义 MP（商户端）的角色和权限。TP 端角色后续补充。
 
 ### 4.1 角色分类
 
-| 分类                       | 说明                                        | 本期支持 |
-| -------------------------- | ------------------------------------------- | -------- |
-| **Org 级自定义角色** | 在 Organisation 下创建，控制 Org 级权限     | ✅       |
-| **MID 级自定义角色** | 在 MID 下创建，控制 MID 级权限              | ✅       |
-| **预设角色模板**     | 系统预设的角色（如 Owner / Admin / Viewer） | ❌ 后期  |
+| 分类                       | 说明                                | 本期支持   |
+| -------------------------- | ----------------------------------- | ---------- |
+| **Account Holder**   | MID 注册时自动创建，固有全部权限    | ✅（固有） |
+| **MID 级自定义角色** | 在 MID 下创建，控制页面 + 操作权限  | ✅         |
+| **预设角色模板**     | 系统预设的角色（如 Admin / Viewer） | ❌ Phase 2 |
 
-### 4.2 创建自定义角色流程
+### 4.2 角色属性
+
+| 属性                  | 说明                       |
+| --------------------- | -------------------------- |
+| **role_id**     | 唯一标识                   |
+| **mid_id**      | 所属 MID                   |
+| **role_name**   | 角色名称（如"交易管理员"） |
+| **description** | 角色描述（可选）           |
+| **permissions** | 该角色拥有的权限列表       |
+| **created_by**  | 创建人                     |
+| **created_at**  | 创建时间                   |
+| **status**      | Active / Disabled          |
+
+### 4.3 创建自定义角色流程
 
 ```mermaid
 flowchart TD
-    A[进入角色管理页面] --> B{创建哪个级别的角色}
+    A[Account Holder 或有角色管理权限的用户<br/>进入 Settings → Roles & Permissions] --> B[点击 创建角色]
 
-    B -->|Org 级| C1[Step 1 输入角色名称和描述]
-    B -->|MID 级| C2[Step 1 选择目标 MID 输入角色名称和描述]
+    B --> C[Step 1: 角色详情]
+    C --> C1[输入角色名称<br/>如: 交易管理员]
+    C1 --> C2[输入角色描述<br/>可选]
 
-    C1 --> D1[Step 2 配置 Org 级权限 用户管理 角色管理]
-    C2 --> D2[Step 2 配置页面权限 选择可访问的模块]
-
-    D1 --> E1[保存角色]
-
-    D2 --> F2[Step 3 配置操作权限<br/>每个模块选择 仅查阅 或可操作]
-    F2 --> G2[Step 4 配置数据权限<br/>可选 指定资源实例范围]
-    G2 --> E2[保存角色]
-```
-
-### 4.3 角色属性
-
-| 属性                      | 说明                       |
-| ------------------------- | -------------------------- |
-| **role_id**         | 唯一标识                   |
-| **role_name**       | 角色名称（如"交易管理员"） |
-| **description**     | 角色描述（可选）           |
-| **scope**           | `org` 或 `mid`         |
-| **org_id / mid_id** | 所属 Organisation 或 MID   |
-| **permissions**     | 该角色拥有的权限列表       |
-| **created_by**      | 创建人                     |
-| **created_at**      | 创建时间                   |
-| **status**          | Active / Disabled          |
-
-### 4.4 多角色权限合并
-
-一个 User 在同一个 MID 下可拥有多个角色，权限合并规则：
-
-```
-最终权限 = Org角色权限 ∪ MID角色1权限 ∪ MID角色2权限 ∪ ...
-```
-
-**示例：**
-
-```
-User 张三 在 MID-001 下有两个角色：
-
-角色A "交易员":
-  页面权限: 订单中心 ✅
-  操作权限: 订单中心 → 可操作
-  数据权限: 所有订单
-
-角色B "VCC查看者":
-  页面权限: VCC模块 ✅
-  操作权限: VCC模块 → 仅查阅
-  数据权限: 仅共享账户A
-
-合并后张三的权限:
-  页面权限: 订单中心 ✅, VCC模块 ✅
-  操作权限: 订单中心 → 可操作
-             VCC模块 → 仅查阅
-  数据权限: 订单 → 所有
-             VCC → 仅共享账户A
+    C2 --> D[Step 2: 配置权限]
+    D --> D1["选择可访问的模块（页面权限）"]
+    D1 --> D2["对每个已选模块勾选操作权限<br/>☑ 查阅 ☑ 操作 ☑ 导出（三选多选）"]
+    D2 --> D3{"该模块是否为交易模块？<br/>（涉及资金操作）"}
+    D3 -->|是| D4["配置安全验证方式<br/>Self（自己验证）/ Designated（指定手机号）"]
+    D3 -->|否| E
+    D4 --> E[保存角色]
 ```
 
 ---
 
-## 5. 三层权限模型
+## 5. 两层权限模型（MP 端）
 
 ### 5.1 权限层次
 
 ```mermaid
 graph TD
     subgraph "Layer 1: 页面权限（模块级）"
-        P1["用户能看到哪些模块/中心？"]
-        P1a["会员中心 ✅"]
-        P1b["订单中心 ✅"]
-        P1c["财资中心 ❌"]
-        P1d["清结算中心 ❌"]
+        P1["User 能看到哪些模块？"]
+        P1a["Assets ✅"]
+        P1b["Transfer In ✅"]
+        P1c["Transfer Out ❌"]
+        P1d["Cards ❌"]
     end
 
-    subgraph "Layer 2: 操作权限（两级）"
+    subgraph "Layer 2: 操作权限（三选多选）"
         P2["在可见模块内能做什么？"]
-        P2a["订单中心 → 可操作 ✅"]
-        P2b["会员中心 → 仅查阅 👁"]
+        P2a["Assets → ☑查阅 ☑操作 ☑导出"]
+        P2b["Transfer In → ☑查阅 ☐操作 ☐导出"]
     end
 
-    subgraph "Layer 3: 数据权限（实例级）"
-        P3["能看到/操作哪些数据？"]
-        P3a["VCC共享账户 → 仅账户A、账户B"]
-        P3b["商户单 → 仅自己创建的"]
+    subgraph "安全验证（交易模块）"
+        V1["有操作权限的交易模块"]
+        V1a["Assets → Self（自己验证）"]
+        V1b["Transfer Out → Designated（+86 138xxxx）"]
     end
 
-    P1 --> P2 --> P3
+    P1 --> P2
+    P2 --> V1
 ```
 
-### 5.2 Layer 1: 页面权限（模块级）
+> **数据权限** 不在 RBAC 层处理，由各业务模块在业务逻辑层自行实现（如按创建人过滤、按分配的资源过滤等）。
 
-控制用户能看到哪些模块/中心。不可见的模块在导航菜单中隐藏。
+### 5.2 Layer 1: 页面权限 — MP 端模块清单
 
-**权限粒度：模块/中心级**（不细到子菜单）
+控制 User 能看到哪些模块。不可见的模块在左侧导航菜单中隐藏。
 
-| 模块/中心    | 说明                                                                | 权限标识               | 角色级别 |
-| ------------ | ------------------------------------------------------------------- | ---------------------- | -------- |
-| 客户中心     | 商户管理、商户审核、产品配置、费率配置、返点管理                    | `module:client`      | MID      |
-| 交易中心     | VA账户、收付款单、换汇、Ramp、VCC、收单、交易监控、差错处理         | `module:transaction` | MID      |
-| 清结算中心   | 计费管理、汇率配置、对账、清分、结算、商户余额、账务核算            | `module:settlement`  | MID      |
-| 资金中心     | 资金账户、资金调拨、外汇管理、头寸、备付金                          | `module:treasury`    | MID      |
-| 渠道中心     | 渠道管理、路由规则、渠道费率、渠道监控                              | `module:channel`     | MID      |
-| 合作伙伴中心 | 销售代理、机构代理、代理返点、分佣结算、上游管理                    | `module:partner`     | MID      |
-| 开发者中心   | API文档、密钥管理、Webhooks、沙箱环境                               | `module:developer`   | MID      |
-| 工单中心     | 工单管理、审批流程、工单模板                                        | `module:ticket`      | MID      |
-| 数据中心     | 交易/商户/财务/渠道/代理报表、数据导出                              | `module:data`        | MID      |
-| 风控合规中心 | 交易风控、KYC/KYB、AML监控、合规报告、拒付管理                      | `module:risk`        | MID      |
-| Settings     | 企业信息、组织管理（部门/成员/角色/权限）、通知、系统配置、审计日志 | `module:settings`    | Org      |
-| 用户管理     | 用户和角色管理（Org级，包含在 Settings 中）                         | `module:user_mgmt`   | Org      |
+**权限粒度：菜单分组级**（不细到子菜单页面）
 
-> **注意：** 工作台（Dashboard）所有人都有，但内容根据权限动态生成。Settings 和用户管理属于 Org 级权限，其余模块属于 MID 级权限。
+> **Dashboard** 所有人都有，不受权限控制，但内容根据权限动态生成。
+
+| # | 模块分组                  | 包含子菜单                                            | 说明                                                                                              | 权限标识         |
+| - | ------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ---------------- |
+| 1 | **Assets**          | Fiat Accounts / Crypto Wallet / Exchange              | 自有资产管理：余额查看、同名充提、换汇（FX）、法转数（On-Ramp）、数转法（Off-Ramp）               | `assets`       |
+| 2 | **Transfer In**     | Collection Tools / Remitter / Payins / Onramp         | 转账收款：收款工具管理（Global Account/VA + 加密地址）、汇款人维护、所有入金记录、法币收款自动换U | `transfer_in`  |
+| 3 | **Checkout**        | Online Payment / Invoice / Subscription               | 收单：在线支付订单、账单支付、订阅支付                                                            | `checkout`     |
+| 4 | **Transfer Out**    | Beneficiary / Payouts / OffRamp / Remittance Orders   | 转账付款：收款人管理、所有出金（法币+链上+同名提现提币）、数币→法币直付、收→换→付一单到底      | `transfer_out` |
+| 5 | **Cards**           | Cards Management / Card Transactions                  | 发卡：开卡、充值、冻结、注销、卡交易记录                                                          | `cards`        |
+| 6 | **Trade Documents** | Trade Documents / Order Files / Shop Management       | 贸易单据：发票/合同/提单管理、订单文件、电商店铺绑定                                              | `trade_docs`   |
+| 7 | **Reports**         | Reports / Downloads                                   | 报表与下载中心                                                                                    | `reports`      |
+| 8 | **Developer**       | API Keys / Webhooks                                   | 开发者：API密钥管理、Webhook配置                                                                  | `developer`    |
+| 9 | **Settings**        | Company Profile / Roles & Permissions / Notifications | 设置：企业信息、角色权限管理、通知配置                                                            | `settings`     |
 
 ### 5.3 Layer 2: 操作权限（两级）
 
-在可见模块内，控制用户能执行的操作范围。
+在可见模块内，控制 User 能执行的操作范围。
 
-**本期操作权限为两级：**
+| 操作级别                      | 标识          | 说明                                                              |
+| ----------------------------- | ------------- | ----------------------------------------------------------------- |
+| **仅查阅（View Only）** | `view_only` | 只能查看列表、详情、报表。所有创建/编辑/删除/审批按钮均隐藏或置灰 |
+| **可操作（Operable）**  | `operable`  | 可执行该模块内的所有操作（创建、编辑、删除、导出等）              |
 
-| 操作级别                      | 标识          | 说明                                                                                    |
-| ----------------------------- | ------------- | --------------------------------------------------------------------------------------- |
-| **仅查阅（View Only）** | `view_only` | 只能查看列表、详情、报表，不能发起任何写操作。所有创建/编辑/删除/审批按钮均隐藏或置灰。 |
-| **可操作（Operable）**  | `operable`  | 可执行该模块内的所有操作（创建、编辑、删除、导出等）。                                  |
-
-> **V2 规划：** 后期将“可操作”进一步拆分为细粒度操作类型（Create / Edit / Delete / Manage / Export），并增加“可管理”级别。
-
-**操作权限配置示例：**
-
-```
-角色: 高级财务
-┌────────────────┬─────────────────┐
-│ 模块             │ 操作级别          │
-├────────────────┼─────────────────┤
-│ Assets           │ 可操作 ✅        │
-│ Transfer In      │ 仅查阅 👁        │
-│ Transfer Out     │ 可操作 ✅        │
-│ Checkout         │ 仅查阅 👁        │
-│ Reports          │ 仅查阅 👁        │
-└────────────────┴─────────────────┘
-```
-
-**“仅查阅”与“可操作”的具体区别：**
+**具体区别：**
 
 | 能力      | 仅查阅 | 可操作 |
 | --------- | ------ | ------ |
@@ -389,127 +434,202 @@ graph TD
 | 创建/发起 | ❌     | ✅     |
 | 编辑/修改 | ❌     | ✅     |
 | 删除/作废 | ❌     | ✅     |
-| 审核/分配 | ❌     | ✅     |
 
-**权限标识格式（本期）：** `{scope}:{module}:{op_level}`
+**权限标识格式：** `{module}:{op_level}`
 
 ```
 示例:
-mid:transaction:operable       — MID级，交易中心，可操作
-mid:transaction:view_only      — MID级，交易中心，仅查阅
-mid:settlement:view_only       — MID级，清结算中心，仅查阅
-org:user_mgmt:operable         — Org级，用户管理，可操作
+assets:operable          — Assets，可操作
+transfer_in:view_only    — Transfer In，仅查阅
+transfer_out:operable    — Transfer Out，可操作
+settings:operable        — Settings（含角色管理），可操作
 ```
 
-> **向后兼容：** V2 升级时，`operable` 将拆分为 `create` / `edit` / `delete` / `manage` / `export` 等细粒度标识。已配置为 `operable` 的角色将自动获得所有细粒度权限，无需重新配置。
+> **Phase 2 向后兼容：** `operable` 将拆分为 `create` / `edit` / `delete` / `manage` / `export`。
 
-### 5.4 Layer 3: 数据权限（实例级）
+### 5.4 MP 角色配置示例
 
-控制用户能访问哪些具体数据实例。
+#### 角色 1: 财务主管
 
-**本期支持的数据权限类型：**
-
-| 类型               | 说明                     | 示例                         |
-| ------------------ | ------------------------ | ---------------------------- |
-| **ALL**      | 可访问该资源的所有数据   | 查看所有商户单               |
-| **OWN**      | 只能访问自己创建的数据   | 只看自己创建的商户单         |
-| **ASSIGNED** | 只能访问被分配的特定实例 | 只能访问 VCC 共享账户 A 和 B |
-
-**数据权限配置示例：**
+负责资金管理和出入金操作，可查看报表。
 
 ```
-角色: VCC操作员
-├── 页面权限: VCC模块 ✅
-├── 操作权限: VCC → View ✅, Create ✅, Edit ✅
-└── 数据权限:
-    ├── 类型: ASSIGNED
-    └── 实例: [共享账户A, 共享账户B]
-
-角色: 订单查看者
-├── 页面权限: 订单中心 ✅
-├── 操作权限: 订单 → View ✅（其他全 ❌）
-└── 数据权限:
-    ├── 类型: OWN
-    └── 说明: 只能查看自己创建的订单
+┌──────────────────┬─────────────────┐
+│ 模块               │ 操作级别          │
+├──────────────────┼─────────────────┤
+│ Assets             │ ✅ 可操作        │  ← 充值/提现/换汇
+│ Transfer In        │ ✅ 可操作        │  ← 管理收款工具、查看入金
+│ Checkout           │ 👁 仅查阅        │  ← 只看收单订单
+│ Transfer Out       │ ✅ 可操作        │  ← 发起付款/汇款
+│ Cards              │ ❌               │
+│ Trade Documents    │ ❌               │
+│ Reports            │ 👁 仅查阅        │  ← 查看报表，不可导出
+│ Developer          │ ❌               │
+│ Settings           │ ❌               │
+└──────────────────┴─────────────────┘
 ```
 
-**数据权限配置流程：**
+#### 角色 2: 运营专员
 
-![1770875486282](image/Users-Roles-Permissions/1770875486282.png)
+负责收款和收单业务，管理贸易单据。
 
-```mermaid
-flowchart TD
-    A[配置角色的操作权限后] --> B{该资源是否需要数据权限}
-
-    B -->|不需要| C[默认 ALL<br/>可访问所有数据]
-    B -->|需要| D{选择数据权限类型}
-
-    D -->|ALL| C
-    D -->|OWN| E[只能访问自己创建的数据]
-    D -->|ASSIGNED| F[选择具体实例]
-
-    F --> G[从资源列表中勾选<br/>如: 选择共享账户A B]
-    G --> H[保存数据权限配置]
+```
+┌──────────────────┬─────────────────┐
+│ 模块               │ 操作级别          │
+├──────────────────┼─────────────────┤
+│ Assets             │ 👁 仅查阅        │  ← 只看余额
+│ Transfer In        │ ✅ 可操作        │  ← 管理收款工具、汇款人
+│ Checkout           │ ✅ 可操作        │  ← 管理收单订单
+│ Transfer Out       │ ❌               │
+│ Cards              │ ❌               │
+│ Trade Documents    │ ✅ 可操作        │  ← 管理贸易单据/店铺
+│ Reports            │ 👁 仅查阅        │
+│ Developer          │ ❌               │
+│ Settings           │ ❌               │
+└──────────────────┴─────────────────┘
 ```
 
-### 5.5 本期 Out of Scope 的数据权限
+#### 角色 3: 卡业务管理员
 
-| 场景          | 说明                                            | 状态    |
-| ------------- | ----------------------------------------------- | ------- |
-| 数据 Location | 按国家/地区过滤数据（如只看某些国家的牌照数据） | ❌ 后期 |
-| 时间范围      | 只能查看某时间段内的数据                        | ❌ 后期 |
-| 金额范围      | 只能操作某金额范围内的交易                      | ❌ 后期 |
-| 字段级        | 某些字段不可见或不可编辑                        | ❌ 后期 |
+专门负责发卡和卡交易。
+
+```
+┌──────────────────┬─────────────────┐
+│ 模块               │ 操作级别          │
+├──────────────────┼─────────────────┤
+│ Assets             │ 👁 仅查阅        │  ← 查看余额（卡充值需要）
+│ Transfer In        │ ❌               │
+│ Checkout           │ ❌               │
+│ Transfer Out       │ ❌               │
+│ Cards              │ ✅ 可操作        │  ← 开卡/充值/冻结/注销
+│ Trade Documents    │ ❌               │
+│ Reports            │ 👁 仅查阅        │
+│ Developer          │ ❌               │
+│ Settings           │ ❌               │
+└──────────────────┴─────────────────┘
+```
+
+#### 角色 4: 技术对接
+
+负责 API 集成和 Webhook 配置。
+
+```
+┌──────────────────┬─────────────────┐
+│ 模块               │ 操作级别          │
+├──────────────────┼─────────────────┤
+│ Assets             │ ❌               │
+│ Transfer In        │ ❌               │
+│ Checkout           │ ❌               │
+│ Transfer Out       │ ❌               │
+│ Cards              │ ❌               │
+│ Trade Documents    │ ❌               │
+│ Reports            │ ❌               │
+│ Developer          │ ✅ 可操作        │  ← API Keys / Webhooks
+│ Settings           │ ❌               │
+└──────────────────┴─────────────────┘
+```
+
+#### 角色 5: 全局查看者
+
+只读权限，查看所有模块但不能操作。
+
+```
+┌──────────────────┬─────────────────┐
+│ 模块               │ 操作级别          │
+├──────────────────┼─────────────────┤
+│ Assets             │ 👁 仅查阅        │
+│ Transfer In        │ 👁 仅查阅        │
+│ Checkout           │ 👁 仅查阅        │
+│ Transfer Out       │ 👁 仅查阅        │
+│ Cards              │ 👁 仅查阅        │
+│ Trade Documents    │ 👁 仅查阅        │
+│ Reports            │ 👁 仅查阅        │
+│ Developer          │ 👁 仅查阅        │
+│ Settings           │ 👁 仅查阅        │
+└──────────────────┴─────────────────┘
+```
+
+### 5.5 Account Holder 权限（固有）
+
+Account Holder 不通过角色配置权限，固有全部模块的可操作权限：
+
+```
+┌──────────────────┬─────────────────┐
+│ 模块               │ 操作级别          │
+├──────────────────┼─────────────────┤
+│ Assets             │ ✅ 可操作        │
+│ Transfer In        │ ✅ 可操作        │
+│ Checkout           │ ✅ 可操作        │
+│ Transfer Out       │ ✅ 可操作        │
+│ Cards              │ ✅ 可操作        │
+│ Trade Documents    │ ✅ 可操作        │
+│ Reports            │ ✅ 可操作        │
+│ Developer          │ ✅ 可操作        │
+│ Settings           │ ✅ 可操作        │  ← 含角色管理、用户管理
+└──────────────────┴─────────────────┘
+
++ 固有能力：邀请/移除用户、创建/删除角色、转让 Account Holder
+```
+
+### 5.6 多角色权限合并
+
+一个 User 在同一个 MID 下可拥有多个角色，权限合并规则：
+
+```
+最终权限 = 角色1权限 ∪ 角色2权限 ∪ ...
+```
+
+| 场景     | 规则                                                    |
+| -------- | ------------------------------------------------------- |
+| 页面权限 | 并集：任一角色有该模块权限即可见                        |
+| 操作权限 | 取最高级别：可操作 > 仅查阅（任一角色为"可操作"即生效） |
+
+**示例：**
+
+```
+User 张三 在 MID-001 下同时拥有"财务主管"和"运营专员"两个角色：
+
+财务主管:  Assets ✅可操作, Transfer In ✅可操作, Checkout 👁仅查阅, Transfer Out ✅可操作, Reports 👁仅查阅
+运营专员:  Assets 👁仅查阅, Transfer In ✅可操作, Checkout ✅可操作, Trade Docs ✅可操作, Reports 👁仅查阅
+
+合并后张三的权限:
+  Assets        → ✅ 可操作（取最高）
+  Transfer In   → ✅ 可操作
+  Checkout      → ✅ 可操作（取最高）
+  Transfer Out  → ✅ 可操作
+  Cards         → ❌
+  Trade Docs    → ✅ 可操作
+  Reports       → 👁 仅查阅
+  Developer     → ❌
+  Settings      → ❌
+```
 
 ---
 
 ## 6. 权限配置流程
 
-### 6.1 创建 Org 级角色
+### 6.1 创建角色
 
 ```mermaid
 flowchart TD
-    A[Org Admin 进入<br/>用户管理 角色管理] --> B[点击 创建角色]
+    A[Account Holder 或有权限的用户<br/>进入 Settings → 角色管理] --> B[点击 创建角色]
 
     B --> C[Step 1: 角色详情]
-    C --> C1[输入角色名称<br/>如: Org Admin]
+    C --> C1[输入角色名称]
     C1 --> C2[输入角色描述<br/>可选]
 
-    C2 --> D[Step 2: 配置 Org 级权限]
-    D --> D1["用户管理<br/>仅查阅 / 可操作"]
-    D1 --> D2["角色管理<br/>仅查阅 / 可操作"]
+    C2 --> D[Step 2: 配置权限]
+    D --> D1["选择可访问的模块<br/>☑ 交易中心 ☑ 客户中心 ☐ 清结算中心 ..."]
+    D1 --> D2["对每个已选模块设置操作级别<br/>仅查阅 / 可操作"]
 
     D2 --> E[保存角色]
 ```
 
-### 6.2 创建 MID 级角色
+### 6.2 分配角色给用户
 
 ```mermaid
 flowchart TD
-    A[有权限的用户进入<br/>MID 设置  角色管理] --> B[点击 创建角色 ]
-
-    B --> C[Step 1: 角色详情]
-    C --> C1[输入角色名称<br/>如: 交易管理员]
-    C1 --> C2[输入角色描述]
-
-    C2 --> D[Step 2: 页面权限]
-    D --> D1["选择可访问的模块<br/> 会员中心  订单中心 财资中心 ..."]
-
-    D1 --> E[Step 3: 操作权限]
-    E --> E1["对每个已选模块<br/>选择“仅查阅”或“可操作”"]
-
-    E1 --> F[Step 4: 数据权限]
-    F --> F1["对需要数据权限的资源 选择 ALL / OWN / ASSIGNED"]
-    F1 --> F2["如果 ASSIGNED 选择具体实例"]
-
-    F2 --> G[保存角色]
-```
-
-### 6.3 分配角色给用户
-
-```mermaid
-flowchart TD
-    A[进入用户管理] --> B{操作类型}
+    A[进入 Settings → 用户管理] --> B{操作类型}
 
     B -->|邀请新用户| C[输入邮箱/手机号]
     B -->|编辑现有用户| D[选择用户]
@@ -517,106 +637,45 @@ flowchart TD
     C --> E[分配角色]
     D --> E
 
-    E --> E1{分配哪个级别}
-    E1 -->|Org 级| F1[选择 Org 级角色<br/>可多选]
-    E1 -->|MID 级| F2[选择目标 MID]
-
-    F2 --> F3[选择该 MID 下的角色<br/>可多选]
-
-    F1 --> G[保存]
-    F3 --> G
+    E --> F[选择该 MID 下的角色<br/>可多选]
+    F --> G[保存]
 
     G --> H{是新用户吗}
     H -->|是| I[发送邀请<br/>邮件/短信]
     H -->|否| J[权限立即生效]
 ```
 
-### 6.4 权限配置 UI 示意
+### 6.3 权限配置 UI 示意
 
-**创建角色 - Step 2: 页面权限**
-
-```
-┌─────────────────────────────────────────────────────┐
-│  Create role                                    ✕   │
-│                                                     │
-│  ● Enter role details  ✓                            │
-│  ● Set up page permissions  ←                       │
-│  ○ Set up action permissions                        │
-│  ○ Set up data permissions                          │
-│                                                     │
-│  Select which modules this role can access:         │
-│                                                     │
-│  ☑ 客户中心       商户管理、产品配置、费率、返点        │
-│  ☑ 交易中心       VA、收付款、换汇、VCC、交易监控       │
-│  ☐ 清结算中心     计费、对账、清分、结算、账务           │
-│  ☐ 资金中心       资金账户、调拨、外汇、头寸             │
-│  ☐ 渠道中心       渠道管理、路由、监控                   │
-│  ☐ 合作伙伴中心   代理商、返点、分佣                     │
-│  ☐ 开发者中心     API、密钥、Webhooks、沙箱              │
-│  ☐ 工单中心       工单管理、审批流程                     │
-│  ☑ 数据中心       交易/商户/财务报表                     │
-│  ☐ 风控合规中心   风控规则、KYC、AML、拒付               │
-│                                                     │
-│                          [Back]  [Continue]          │
-└─────────────────────────────────────────────────────┘
-```
-
-**创建角色 - Step 3: 操作权限**
+**创建角色 - Step 2: 配置权限**
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│  Create role                                    ✕   │
+│  创建角色                                       ✕   │
 │                                                     │
-│  ● Enter role details  ✓                            │
-│  ● Set up page permissions  ✓                       │
-│  ● Set up action permissions  ←                     │
-│  ○ Set up data permissions                          │
+│  ● 角色详情  ✓                                      │
+│  ● 配置权限  ←                                      │
 │                                                     │
-│  Configure actions for each selected module:        │
+│  选择可访问的模块，并设置操作级别：                 │
 │                                                     │
-│  ┌────────────────┬─────────────────────────────────┐  │
-│  │ 模块             │ 操作级别                        │  │
-│  ├────────────────┼─────────────────────────────────┤  │
-│  │ 客户中心         │ [仅查阅]  ◉可操作○          │  │
-│  │ 交易中心         │ [仅查阅]  ◉可操作○          │  │
-│  │ 数据中心         │ ◉仅查阅○  [可操作]          │  │
-│  └────────────────┴─────────────────────────────────┘  │
+│  ┌────────────────┬──────────────────────────────┐  │
+│  │ 模块             │ 操作级别                     │  │
+│  ├────────────────┼──────────────────────────────┤  │
+│  │ ☑ Assets         │ ○ 仅查阅  ● 可操作          │  │
+│  │ ☑ Transfer In    │ ● 仅查阅  ○ 可操作          │  │
+│  │ ☑ Transfer Out   │ ○ 仅查阅  ● 可操作          │  │
+│  │ ☐ Checkout       │ —                            │  │
+│  │ ☐ Cards          │ —                            │  │
+│  │ ☑ Reports        │ ● 仅查阅  ○ 可操作          │  │
+│  │ ☐ Trade Docs     │ —                            │  │
+│  │ ☐ Developer      │ —                            │  │
+│  │ ☐ Settings       │ —                            │  │
+│  └────────────────┴──────────────────────────────┘  │
 │                                                     │
 │  💡 仅查阅 = 只能查看列表和详情                    │
 │     可操作 = 可执行所有操作（创建、编辑、删除等）  │
 │                                                     │
-│                          [Back]  [Continue]          │
-└─────────────────────────────────────────────────────┘
-```
-
-**创建角色 - Step 4: 数据权限**
-
-```
-┌─────────────────────────────────────────────────────┐
-│  Create role                                    ✕   │
-│                                                     │
-│  ● Enter role details  ✓                            │
-│  ● Set up page permissions  ✓                       │
-│  ● Set up action permissions  ✓                     │
-│  ● Set up data permissions  ←                       │
-│                                                     │
-│  Configure data access scope:                       │
-│                                                     │
-│  ── VCC ────────────────────────────────────         │
-│  VCC共享账户                                         │
-│  ○ All accounts    ● Assigned accounts               │
-│                                                     │
-│  Select accounts:                                   │
-│  ☑ 共享账户 A (SA-001)                               │
-│  ☑ 共享账户 B (SA-002)                               │
-│  ☐ 共享账户 C (SA-003)                               │
-│  ☐ 共享账户 D (SA-004)                               │
-│                                                     │
-│  ── 订单 ───────────────────────────────────         │
-│  商户单                                              │
-│  ○ All orders    ● Own orders only                   │
-│                                                     │
-│                          [Back]  [Save role]         │
+│                          [取消]  [保存角色]          │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -628,28 +687,21 @@ flowchart TD
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│  User Management                    [+ Invite user] │
+│  用户管理                           [+ 邀请用户]    │
 │                                                     │
-│  ┌──────────────┐ ┌──────────────┐ ┌──────────────┐│
-│  │ Invitation   │ │ User status  │ │              ││
-│  │ Ready    0   │ │ Active    3  │ │              ││
-│  │ Invited  1   │ │ Suspended 0  │ │              ││
-│  │ Expired  0   │ │ Removed   0  │ │              ││
-│  └──────────────┘ └──────────────┘ └──────────────┘│
-│                                                     │
-│  🔍 Search name or email                            │
-│  [Roles ▾]  [Status ▾]                              │
+│  🔍 搜索用户名或邮箱                                │
+│  [角色 ▾]  [状态 ▾]                                 │
 │                                                     │
 │  ┌─────────────────────────────────────────────────┐│
-│  │ User              Roles           MIDs     ··· ││
+│  │ 用户              角色              状态    ··· ││
 │  ├─────────────────────────────────────────────────┤│
-│  │ 张三              Org Admin       All      ··· ││
-│  │ zhang@test.com    交易管理员(M1)              ││
+│  │ 张三              Account Holder    Active  ··· ││
+│  │ zhang@test.com                                  ││
 │  ├─────────────────────────────────────────────────┤│
-│  │ 李四              VCC操作员(M1)   MID-001  ··· ││
-│  │ li@test.com       查看者(M2)     MID-002      ││
+│  │ 李四              交易管理员         Active  ··· ││
+│  │ li@test.com       财务                          ││
 │  ├─────────────────────────────────────────────────┤│
-│  │ 王五              [Invited]       —        ··· ││
+│  │ 王五              [已邀请]           Invited ··· ││
 │  │ wang@test.com                                   ││
 │  └─────────────────────────────────────────────────┘│
 └─────────────────────────────────────────────────────┘
@@ -659,27 +711,22 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    A[点击 Invite user] --> B[输入用户信息]
+    A[点击 邀请用户] --> B[输入邮箱或手机号]
+    B --> C[输入显示名称]
+    C --> D[选择角色<br/>可多选]
 
-    B --> C[输入邮箱或手机号]
-    C --> D[输入显示名称]
-    D --> E[分配角色]
+    D --> E[点击 发送邀请]
+    E --> F[系统发送邀请邮件/短信]
 
-    E --> E1[选择 Org 级角色<br/>可选,可多选]
-    E1 --> E2[选择 MID + MID 级角色<br/>可选多个MID,每个MID可多选角色]
+    F --> G{被邀请人是否已注册}
+    G -->|已注册| H[登录后在通知中看到邀请]
+    G -->|未注册| I[通过链接注册并登录]
 
-    E2 --> F[点击 Send invitation]
-    F --> G[系统发送邀请邮件/短信]
+    H --> J{接受邀请}
+    I --> J
 
-    G --> H{被邀请人是否已有 User ID}
-    H -->|已有| I[被邀请人登录后<br/>在通知中看到邀请]
-    H -->|没有| J[被邀请人通过链接<br/>注册并登录]
-
-    I --> K{接受邀请}
-    J --> K
-
-    K -->|接受| L[用户加入 Organisation<br/>获得分配的角色和权限]
-    K -->|拒绝| M[邀请失效]
+    J -->|接受| K[用户加入 MID<br/>获得分配的角色和权限]
+    J -->|拒绝| L[邀请失效]
 ```
 
 ### 7.3 用户状态管理
@@ -692,94 +739,27 @@ flowchart TD
 
 **邀请状态：**
 
-| 状态                         | 说明                 |
-| ---------------------------- | -------------------- |
-| **Ready to invite**    | 已创建但未发送邀请   |
-| **Invited**            | 已发送邀请，等待接受 |
-| **Invitation expired** | 邀请超过 7 天未接受  |
+| 状态               | 说明                 |
+| ------------------ | -------------------- |
+| **Invited**  | 已发送邀请，等待接受 |
+| **Accepted** | 已接受邀请           |
+| **Expired**  | 邀请超过 7 天未接受  |
 
-### 7.4 用户操作菜单（··· 按钮）
+### 7.4 用户操作菜单
 
 ```
 ┌────────────────────┐
-│ Edit roles         │
-│ Suspend user       │
-│ Remove user        │
+│ 修改角色           │
+│ 暂停用户           │
+│ 移除用户           │
 └────────────────────┘
 ```
 
 ---
 
-## 8. Use Case
+## 8. 鉴权流程
 
-### 8.1 角色管理 Use Case
-
-```mermaid
-graph LR
-    Admin((有权限的<br/>管理员))
-
-    subgraph "角色管理"
-        UC1[查看角色列表]
-        UC2[创建自定义角色<br/>Org级 / MID级]
-        UC3[编辑角色权限]
-        UC4[删除角色]
-        UC5[查看角色下的用户]
-    end
-
-    Admin --> UC1
-    Admin --> UC2
-    Admin --> UC3
-    Admin --> UC4
-    Admin --> UC5
-```
-
-### 8.2 用户管理 Use Case
-
-```mermaid
-graph LR
-    Admin((有权限的<br/>管理员))
-
-    subgraph "用户管理"
-        UC1[查看用户列表]
-        UC2[邀请新用户]
-        UC3[分配/修改角色]
-        UC4[暂停用户]
-        UC5[移除用户]
-        UC6[重新激活用户]
-    end
-
-    Admin --> UC1
-    Admin --> UC2
-    Admin --> UC3
-    Admin --> UC4
-    Admin --> UC5
-    Admin --> UC6
-```
-
-### 8.3 权限校验 Use Case
-
-```mermaid
-graph LR
-    User((普通用户))
-
-    subgraph "权限影响"
-        UC1[登录后看到<br/>有权限的模块菜单]
-        UC2[进入模块后<br/>只能执行有权限的操作]
-        UC3[查看数据时<br/>只能看到有权限的数据]
-        UC4[工作台根据<br/>权限动态展示]
-    end
-
-    User --> UC1
-    User --> UC2
-    User --> UC3
-    User --> UC4
-```
-
----
-
-## 9. 鉴权流程
-
-### 9.1 页面访问鉴权
+### 8.1 页面访问鉴权
 
 ```mermaid
 flowchart TD
@@ -791,7 +771,7 @@ flowchart TD
     D -->|否| F[拒绝访问<br/>显示无权限提示]
 ```
 
-### 9.2 操作鉴权
+### 8.2 操作鉴权
 
 ```mermaid
 flowchart TD
@@ -803,60 +783,39 @@ flowchart TD
     D -->|仅查阅| F[拒绝操作<br/>写操作按钮置灰或隐藏]
 ```
 
-### 9.3 数据鉴权
+### 8.3 完整鉴权链路
 
 ```mermaid
 flowchart TD
-    A[用户查询数据<br/>如: VCC共享账户列表] --> B[获取用户在当前 MID 下的所有角色]
-    B --> C[合并所有角色的数据权限]
-    C --> D{数据权限类型}
+    A[请求] --> B[身份认证<br/>JWT / Session → Identity IID]
+    B --> C[获取当前 MID]
+    C --> D[解析 User<br/>Identity + MID → User UID]
+    D --> E[获取 User 在当前 MID 的所有角色]
+    E --> F[合并所有角色权限<br/>取并集]
 
-    D -->|ALL| E[返回所有数据]
-    D -->|OWN| F[过滤: created_by = 当前用户]
-    D -->|ASSIGNED| G[过滤: resource_id IN 分配的实例列表]
+    F --> G{页面权限检查}
+    G -->|通过| H{操作权限检查}
+    G -->|不通过| X[403 Forbidden]
 
-    E --> H[返回结果]
-    F --> H
-    G --> H
-```
-
-### 9.4 完整鉴权链路
-
-```mermaid
-flowchart TD
-    A[用户请求] --> B[身份认证 JWT Session]
-    B --> C[获取当前 Organisation]
-    C --> D[获取当前 MID]
-    D --> E[获取用户的 Org 级角色]
-    E --> F[获取用户在当前 MID 的角色]
-    F --> G[合并所有权限 Org权限 U MID权限]
-
-    G --> H{页面权限检查}
-    H -->|通过| I{操作权限检查}
-    H -->|不通过| X[403 Forbidden]
-
-    I -->|通过| J{数据权限检查}
-    I -->|不通过| X
-
-    J -->|通过| K[执行请求 返回过滤后的数据]
-    J -->|不通过| X
+    H -->|通过| I[执行请求]
+    H -->|不通过| X
 ```
 
 ---
 
-## 10. 支付密码（Payment Password）
+## 9. 支付密码（Payment Password）
 
-### 10.1 概述
+### 9.1 概述
 
-支付密码是一个 **按 MID 维度** 设置的 6 位数字 PIN，用于在用户执行敏感资金操作（如发起付款、转账、提现等）时进行二次身份验证。
+支付密码是一个 **按 User（UID）+ MID 维度** 设置的 6 位数字 PIN，用于在用户执行敏感资金操作（如发起付款、转账、提现等）时进行二次身份验证。
 
 **核心规则：**
 
-- 支付密码按 MID 独立设置，同一用户在不同 MID 下可以有不同的支付密码
+- 支付密码按 User + MID 独立设置，同一 Identity 在不同 MID 下的不同 User 可以有不同的支付密码
 - 支付密码是 **可选的**，不强制设置
-- 支付密码的设置入口在 User Center → Security → Payment password
+- 支付密码的设置入口在 Settings → Security → Payment password
 
-### 10.2 设置前提条件
+### 9.2 设置前提条件
 
 用户必须 **同时满足** 以下条件，才能看到并设置某个 MID 的支付密码：
 
@@ -868,20 +827,20 @@ flowchart TD
 ```
 判断逻辑：
 
-IF user.hasMIDRole(mid)
+IF user.hasRole(mid)
    AND user.hasModulePermission(mid, [Payouts | Transfer Out | Exchange | ...])
-   AND user.getOperationLevel(mid, module) == "可操作"
+   AND user.getOperationLevel(mid, module) == "operable"
 THEN
    显示该 MID 的支付密码设置入口
 ELSE
    隐藏该 MID 的支付密码设置入口
 ```
 
-### 10.3 设置流程
+### 9.3 设置流程
 
 ```mermaid
 flowchart TD
-    A[用户进入 Security Payment password] --> B[系统列出用户有资金操作权限的 MID]
+    A[用户进入 Security → Payment password] --> B[系统列出用户有资金操作权限的 MID]
     B --> C[用户选择某个 MID 点击 Set up]
     C --> D[Step 1 验证登录密码]
     D --> E{验证通过}
@@ -893,7 +852,7 @@ flowchart TD
     I -->|否| K[提示不一致 重新输入]
 ```
 
-### 10.4 权限变更场景
+### 9.4 权限变更场景
 
 #### 场景 A：用户已设置支付密码，后续失去资金操作权限
 
@@ -922,7 +881,7 @@ flowchart TD
 | **用户体验** | 发起资金操作时，系统发送验证码到用户已验证的手机号或邮箱 |
 | **安全等级** | 可接受，但建议用户设置支付密码以获得更便捷的验证体验     |
 
-### 10.5 资金操作验证流程
+### 9.5 资金操作验证流程
 
 ```mermaid
 flowchart TD
@@ -943,11 +902,11 @@ flowchart TD
     D2 -->|否| D3[提示错误 可重试]
 ```
 
-### 10.6 数据模型
+### 9.6 数据模型
 
 ```
 PAYMENT_PASSWORD {
-    string user_id FK        -- 用户 ID
+    string user_id FK        -- User ID（UID，MID 内身份）
     string mid_id FK         -- MID ID
     string password_hash     -- 加密存储的 6 位 PIN
     datetime created_at      -- 创建时间
@@ -959,7 +918,7 @@ PAYMENT_PASSWORD {
 主键: (user_id, mid_id)
 ```
 
-### 10.7 安全规则
+### 9.7 安全规则
 
 | 规则                       | 说明                                            |
 | -------------------------- | ----------------------------------------------- |
@@ -971,9 +930,34 @@ PAYMENT_PASSWORD {
 
 ---
 
-## 11. 状态机
+## 10. 状态机
 
-### 11.1 角色状态
+### 10.1 Identity 状态
+
+```
+ACTIVE ←→ SUSPENDED（平台级封禁）
+```
+
+| 状态                | 说明                                         |
+| ------------------- | -------------------------------------------- |
+| **ACTIVE**    | 正常使用，可登录                             |
+| **SUSPENDED** | 平台级封禁，该 Identity 下所有 User 均不可用 |
+
+### 10.2 User 状态（MID 内）
+
+```
+ACTIVE ←→ DISABLED（Account Holder 操作）
+              ↓
+          REMOVED
+```
+
+| 状态               | 说明                                                             |
+| ------------------ | ---------------------------------------------------------------- |
+| **ACTIVE**   | 正常使用，权限生效                                               |
+| **DISABLED** | Account Holder 禁用该 User，权限不生效，不影响 Identity 全局状态 |
+| **REMOVED**  | 已从 MID 移除，角色清空                                          |
+
+### 10.3 角色状态
 
 ```
 ACTIVE ←→ DISABLED
@@ -989,27 +973,15 @@ ACTIVE ←→ DISABLED
 
 **删除角色规则：**
 
-- 如果角色下还有用户，需先移除所有用户或将用户迁移到其他角色
+- 如果角色下还有 User，需先移除所有 User 或将 User 迁移到其他角色
 - 删除后不可恢复
 
-### 11.2 用户-角色关联状态
+### 10.4 邀请状态
 
 ```
-ASSIGNED → ACTIVE
-              ↕
-          SUSPENDED
-              ↓
-          REMOVED
-```
-
-### 11.3 邀请状态
-
-```
-CREATED → SENT → ACCEPTED
-                    ↓
-               REJECTED
-                    ↓
-               EXPIRED（7天未处理）
+INVITED → ACCEPTED
+    ↓
+  EXPIRED（7天未处理）
 ```
 
 ---
@@ -1018,69 +990,51 @@ CREATED → SENT → ACCEPTED
 
 ### A. 权限标识命名规范
 
-**本期格式（两级操作权限）：**
+**本期格式：**
 
 ```
-格式: {scope}:{module}:{op_level}
+格式: {module}:{op_level}
 
-scope:    org | mid
-module:   client | transaction | settlement | treasury | channel | partner | developer | ticket | data | risk | settings | user_mgmt
+MP 端 module:
+  assets | transfer_in | checkout | transfer_out | cards | trade_docs | reports | developer | settings
+
+TP 端 module（后续补充）:
+  client | transaction | settlement | treasury | channel | partner | developer | ticket | data | risk | settings
+
 op_level: view_only | operable
 
-示例:
-org:user_mgmt:operable               — Org级，用户管理，可操作
-org:settings:view_only               — Org级，设置，仅查阅
-mid:client:operable                  — MID级，客户中心，可操作
-mid:transaction:view_only            — MID级，交易中心，仅查阅
-mid:settlement:operable              — MID级，清结算中心，可操作
-mid:partner:view_only                — MID级，合作伙伴中心，仅查阅
+示例（MP）:
+assets:operable          — Assets，可操作
+transfer_in:view_only    — Transfer In，仅查阅
+transfer_out:operable    — Transfer Out，可操作
+cards:view_only          — Cards，仅查阅
+settings:operable        — Settings，可操作
 ```
 
-**V2 格式（细粒度 CRUD）：**
+**Phase 2 格式（细粒度 CRUD）：**
 
 ```
-格式: {scope}:{module}:{resource}:{action}
+格式: {module}:{resource}:{action}
 
 resource: 具体资源名（snake_case）
 action:   view | create | edit | delete | manage | export
 
 示例:
-mid:transaction:payin_order:create   — MID级，交易中心，收款单，创建
-mid:transaction:vcc_order:edit       — MID级，交易中心，VCC单，编辑
+transfer_out:payout:create       — Transfer Out，付款单，创建
+assets:exchange:operable         — Assets，换汇，可操作
 ```
 
-### B. 多角色权限合并规则
-
-| 场景     | 规则                                                      |
-| -------- | --------------------------------------------------------- |
-| 页面权限 | 并集：任一角色有该模块权限即可见                          |
-| 操作权限 | 取最高级别：可操作 > 仅查阅（任一角色为“可操作”即生效） |
-| 数据权限 | 并集：ALL > ASSIGNED > OWN（取最宽范围）                  |
-
-**数据权限合并示例：**
-
-```
-角色A: VCC数据权限 = ASSIGNED [账户A, 账户B]
-角色B: VCC数据权限 = ASSIGNED [账户B, 账户C]
-合并后: ASSIGNED [账户A, 账户B, 账户C]
-
-角色A: 订单数据权限 = OWN
-角色B: 订单数据权限 = ALL
-合并后: ALL（取最宽）
-```
-
-### C. 错误提示
+### B. 错误提示
 
 | 场景       | 提示                                                           |
 | ---------- | -------------------------------------------------------------- |
 | 无页面权限 | "You don't have permission to access this module."             |
 | 无操作权限 | "You don't have permission to perform this action."            |
-| 无数据权限 | "You don't have access to this resource."                      |
 | 角色被禁用 | "Your role has been disabled. Contact your administrator."     |
 | 用户被暂停 | "Your account has been suspended. Contact your administrator." |
 
 ---
 
-*最后更新：2026-02-12*
-*文档版本：v1.2*
+*最后更新：2026-02-13*
+*文档版本：v2.2（MP 端角色 & 权限）*
 *作者：EX Product Team*
