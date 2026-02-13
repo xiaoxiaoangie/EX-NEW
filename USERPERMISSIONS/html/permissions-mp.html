@@ -562,6 +562,11 @@
         /* Alert box */
         .rp-alert { padding: 12px 16px; border-radius: 8px; font-size: 13px; line-height: 1.6; margin-bottom: 16px; display: flex; gap: 10px; align-items: flex-start; }
         .rp-alert-info { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+
+        /* Invite tab toggle */
+        .rp-invite-tab { background: #fff !important; color: var(--text-secondary) !important; font-weight: 500 !important; padding: 9px 12px !important; transition: all .15s; }
+        .rp-invite-tab:hover { background: #f8fafc !important; }
+        .rp-invite-tab.active { background: var(--primary) !important; color: #fff !important; font-weight: 600 !important; }
     </style>
 </head>
 <body>
@@ -1800,11 +1805,36 @@
     <!-- Invite User Modal -->
     <div class="rp-ov" id="rpInviteModal"><div class="rp-modal"><button class="rp-modal-x" onclick="rpCloseModal('rpInviteModal')">×</button>
         <h3>Invite User</h3>
-        <p class="rp-mdesc">邀请新成员加入 ABC Trading (MID-001)。被邀请人会收到邀请链接。</p>
-        <div class="rp-fg">
+        <p class="rp-mdesc">邀请新成员加入 ABC Trading (MID-001)。被邀请人会收到邀请通知。</p>
+
+        <!-- Invite method toggle -->
+        <div style="display:flex;gap:0;margin-bottom:16px;border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+            <button class="rp-btn rp-btn-sec rp-invite-tab active" id="rpInvTabEmail" onclick="rpSwitchInviteTab('email')" style="flex:1;border:none;border-radius:0;margin:0;font-size:13px;">✉️ Email</button>
+            <button class="rp-btn rp-btn-sec rp-invite-tab" id="rpInvTabPhone" onclick="rpSwitchInviteTab('phone')" style="flex:1;border:none;border-radius:0;margin:0;border-left:1px solid var(--border);font-size:13px;">📱 Phone</button>
+        </div>
+
+        <!-- Email input -->
+        <div class="rp-fg" id="rpInviteEmailGroup">
             <label class="rp-fl">Email address</label>
             <input class="rp-fi" id="rpInviteEmail" placeholder="user@example.com">
         </div>
+
+        <!-- Phone input -->
+        <div class="rp-fg" id="rpInvitePhoneGroup" style="display:none">
+            <label class="rp-fl">Phone number</label>
+            <div style="display:flex;gap:8px;">
+                <select class="rp-fi" id="rpInviteCC" style="width:110px;flex-shrink:0;">
+                    <option value="+86">+86 🇨🇳</option>
+                    <option value="+852">+852 🇭🇰</option>
+                    <option value="+1">+1 🇺🇸</option>
+                    <option value="+44">+44 🇬🇧</option>
+                    <option value="+65">+65 🇸🇬</option>
+                    <option value="+81">+81 🇯🇵</option>
+                </select>
+                <input class="rp-fi" id="rpInvitePhone" placeholder="138 0000 0000" style="flex:1;">
+            </div>
+        </div>
+
         <div class="rp-fg">
             <label class="rp-fl">Assign roles</label>
             <div class="rp-tg-group" id="rpInviteRoleGroup">
@@ -1812,12 +1842,13 @@
             </div>
             <div class="rp-fi-hint">多角色权限合并：取并集。</div>
         </div>
-        <div class="rp-alert rp-alert-info">
+        <div class="rp-alert rp-alert-info" id="rpInviteInfo">
             <span style="font-size:14px;flex-shrink:0;">🔒</span>
-            <div>
+            <div id="rpInviteInfoText">
                 链接 7 天有效，只能使用一次。<br>
                 未注册 → 引导注册（创建 Identity + User）。<br>
-                已注册 → 登录后接受邀请（创建 User）。
+                已注册 → 登录后接受邀请（创建 User）。<br>
+                <span style="color:var(--text-muted);font-size:11px;">邮件链接即为邮箱所有权验证，无需额外验证码。</span>
             </div>
         </div>
         <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;">
@@ -2373,25 +2404,60 @@ function rpBackToUsersList() {
 }
 
 // ============ INVITE USER ============
+let rpInviteMode = 'email';
+
 function rpShowInviteUser() {
-    document.getElementById('rpInviteEmail').value='';
+    rpInviteMode = 'email';
+    document.getElementById('rpInviteEmail').value = '';
+    document.getElementById('rpInvitePhone') && (document.getElementById('rpInvitePhone').value = '');
+    rpSwitchInviteTab('email');
     const group = document.getElementById('rpInviteRoleGroup'); group.innerHTML='';
     rpRoles.filter(r=>r.type==='custom').forEach(r=>{
         group.innerHTML += `<div class="rp-tg" onclick="this.classList.toggle('on')">${r.name}</div>`;
     });
     rpOpenModal('rpInviteModal');
 }
+
+function rpSwitchInviteTab(mode) {
+    rpInviteMode = mode;
+    document.getElementById('rpInvTabEmail').classList.toggle('active', mode === 'email');
+    document.getElementById('rpInvTabPhone').classList.toggle('active', mode === 'phone');
+    document.getElementById('rpInviteEmailGroup').style.display = mode === 'email' ? '' : 'none';
+    document.getElementById('rpInvitePhoneGroup').style.display = mode === 'phone' ? '' : 'none';
+    const infoText = document.getElementById('rpInviteInfoText');
+    if (mode === 'email') {
+        infoText.innerHTML = '链接 7 天有效，只能使用一次。<br>' +
+            '未注册 → 引导注册（创建 Identity + User）。<br>' +
+            '已注册 → 登录后接受邀请（创建 User）。<br>' +
+            '<span style="color:var(--text-muted);font-size:11px;">邮件链接即为邮箱所有权验证，无需额外验证码。</span>';
+    } else {
+        infoText.innerHTML = '短信通知可在手机端接收，接受邀请需在 <b>MP 端（Web）</b> 操作。<br>' +
+            '未注册 → 前往 MP 端用该手机号注册并登录。<br>' +
+            '已注册 → 前往 MP 端登录，通知中心显示待接受邀请。<br>' +
+            '接受时需 <b>输入短信验证码</b> 确认手机号所有权。<br>' +
+            '<span style="color:var(--text-muted);font-size:11px;">短信明文传输存在截获风险，需额外验证码保障安全。本期不支持手机端直接操作。</span>';
+    }
+}
+
 function rpSendInvite() {
-    const email = document.getElementById('rpInviteEmail').value.trim();
-    if(!email) { rpToast('Please enter an email','err'); return; }
+    let contact;
+    if (rpInviteMode === 'email') {
+        contact = document.getElementById('rpInviteEmail').value.trim();
+        if (!contact || !contact.includes('@')) { rpToast('Please enter a valid email', 'err'); return; }
+    } else {
+        const cc = document.getElementById('rpInviteCC').value;
+        const phone = document.getElementById('rpInvitePhone').value.trim();
+        if (!phone) { rpToast('Please enter a phone number', 'err'); return; }
+        contact = cc + ' ' + phone;
+    }
     const roles = [];
-    document.querySelectorAll('#rpInviteRoleGroup .rp-tg.on').forEach(t=>roles.push(t.textContent));
-    if(!roles.length) { rpToast('Please select at least one role','err'); return; }
+    document.querySelectorAll('#rpInviteRoleGroup .rp-tg.on').forEach(t => roles.push(t.textContent));
+    if (!roles.length) { rpToast('Please select at least one role', 'err'); return; }
     rpNextId++;
-    rpUsers.push({ id:'u'+rpNextId, name:'—', email, iid:'—', uid:'—', roleType:'member', roles, status:'invited' });
+    rpUsers.push({ id: 'u' + rpNextId, name: '—', email: contact, iid: '—', uid: '—', roleType: 'member', roles, status: 'invited' });
     rpCloseModal('rpInviteModal');
     rpRenderUsersList();
-    rpToast('Invitation sent to '+email,'ok');
+    rpToast('Invitation sent to ' + contact, 'ok');
 }
 
 // ============ EDIT USER ROLES ============
