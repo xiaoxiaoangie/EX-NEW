@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>创建账户</title>
+<style>
+:root {
+    --bg: #f8f9fa;
+    --card: #ffffff;
+    --text: #1a1a1a;
+    --text2: #5f6368;
+    --text3: #9aa0a6;
+    --border: #dadce0;
+    --border-light: #e8eaed;
+    --accent: #1a73e8;
+    --accent-hover: #1557b0;
+    --accent-light: rgba(26,115,232,.08);
+    --green: #34a853;
+    --orange: #f9ab00;
+    --red: #ea4335;
+    --radius: 8px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Google Sans', 'PingFang SC', 'Helvetica Neue', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ===== Top navigation bar ===== */
+.topbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 64px;
+    background: var(--card);
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    z-index: 100;
+}
+.topbar-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--text);
+}
+.topbar-logo .mark {
+    width: 36px; height: 36px;
+    background: var(--text);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 14px; font-weight: 800; letter-spacing: -.5px;
+}
+.topbar-logo .brand {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -.3px;
+}
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--text2);
+}
+.topbar-right a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+    padding: 8px 20px;
+    border: 1.5px solid var(--accent);
+    border-radius: var(--radius);
+    transition: all .15s;
+}
+.topbar-right a:hover {
+    background: var(--accent);
+    color: #fff;
+}
+
+/* ===== Main layout ===== */
+.main {
+    min-height: 100vh;
+    padding-top: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.container {
+    width: 100%;
+    max-width: 520px;
+    padding: 48px 24px 60px;
+}
+
+/* ===== Card ===== */
+.card {
+    background: var(--card);
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    padding: 40px 44px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.04), 0 4px 12px rgba(0,0,0,.02);
+}
+
+/* ===== Typography ===== */
+h1 {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -.3px;
+    margin-bottom: 8px;
+    color: var(--text);
+}
+.desc {
+    font-size: 14px;
+    color: var(--text2);
+    line-height: 1.6;
+    margin-bottom: 32px;
+}
+.desc b { color: var(--text); font-weight: 600; }
+
+/* ===== Tabs (email / phone) ===== */
+.tabs {
+    display: flex;
+    border-bottom: 2px solid var(--border-light);
+    margin-bottom: 24px;
+    gap: 0;
+}
+.tab {
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text3);
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-family: inherit;
+    position: relative;
+    transition: color .2s;
+}
+.tab:hover { color: var(--text2); }
+.tab.on { color: var(--accent); }
+.tab.on::after {
+    content: '';
+    position: absolute;
+    bottom: -2px; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 1px 1px 0 0;
+}
+
+/* ===== Form fields ===== */
+.field { margin-bottom: 20px; }
+.field-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+}
+.field-input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 14px;
+    color: var(--text);
+    background: var(--card);
+    outline: none;
+    font-family: inherit;
+    transition: border-color .15s, box-shadow .15s;
+}
+.field-input:hover { border-color: #bdc1c6; }
+.field-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-light);
+}
+.field-input::placeholder { color: #bdc1c6; }
+
+/* Phone composite */
+.phone-row { display: flex; }
+.phone-row select {
+    width: 88px;
+    padding: 12px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius) 0 0 var(--radius);
+    border-right: none;
+    font-size: 14px;
+    color: var(--text);
+    background: #f8f9fa;
+    outline: none;
+    font-family: inherit;
+    appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%239aa0a6' d='M5 6L0 0h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    font-weight: 500;
+}
+.phone-row .field-input { border-radius: 0 var(--radius) var(--radius) 0; }
+
+/* ===== OTP 6-digit ===== */
+.otp-row { display: flex; gap: 10px; justify-content: center; margin: 12px 0 20px; }
+.otp-row input {
+    width: 52px; height: 56px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    outline: none;
+    color: var(--text);
+    font-family: inherit;
+    transition: border-color .15s, box-shadow .15s;
+    font-variant-numeric: tabular-nums;
+    background: var(--card);
+}
+.otp-row input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-light);
+}
+
+/* ===== Resend ===== */
+.resend-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+}
+.resend-row span { font-size: 13px; color: var(--text3); }
+.resend-row button {
+    font-size: 13px;
+    color: var(--accent);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    transition: background .15s;
+}
+.resend-row button:hover { background: var(--accent-light); }
+.resend-row button:disabled { color: var(--text3); cursor: default; background: none; }
+
+/* ===== Password meter ===== */
+.pwd-meter { display: flex; gap: 4px; margin-top: 8px; }
+.pwd-meter i {
+    flex: 1; height: 3px; border-radius: 2px;
+    background: var(--border-light); transition: background .3s; font-style: normal;
+}
+.pwd-meter i.w { background: var(--red); }
+.pwd-meter i.m { background: var(--orange); }
+.pwd-meter i.s { background: var(--green); }
+.pwd-hint { font-size: 12px; color: var(--text3); margin-top: 4px; font-weight: 500; }
+
+/* ===== Method radio list ===== */
+.methods { margin-bottom: 24px; }
+.mth {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    cursor: pointer;
+    border-radius: var(--radius);
+    transition: all .15s;
+    margin-bottom: 2px;
+    border: 1px solid transparent;
+}
+.mth:hover { background: #f1f3f4; }
+.mth.on {
+    background: var(--accent-light);
+    border-color: rgba(26,115,232,.15);
+}
+.mth .radio {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all .15s;
+}
+.mth.on .radio {
+    border-color: var(--accent);
+    background: var(--accent);
+}
+.mth.on .radio::after {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #fff;
+}
+.mth .mth-body { flex: 1; }
+.mth .mth-title { font-size: 14px; font-weight: 600; color: var(--text); }
+.mth .mth-desc { font-size: 12px; color: var(--text3); margin-top: 2px; }
+
+/* ===== Agreement ===== */
+.agree {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 28px;
+}
+.agree input[type=checkbox] {
+    margin-top: 2px;
+    accent-color: var(--accent);
+    width: 16px; height: 16px;
+    flex-shrink: 0;
+}
+.agree label {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.6;
+}
+.agree label a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+}
+.agree label a:hover { text-decoration: underline; }
+
+/* ===== Buttons ===== */
+.btn {
+    width: 100%;
+    padding: 12px 24px;
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+    transition: all .15s;
+}
+.btn-primary {
+    background: var(--accent);
+    color: #fff;
+}
+.btn-primary:hover { background: var(--accent-hover); box-shadow: 0 1px 3px rgba(26,115,232,.3); }
+.btn-primary:active { transform: scale(.99); }
+.btn-text {
+    background: none;
+    color: var(--accent);
+    margin-top: 8px;
+}
+.btn-text:hover { background: var(--accent-light); }
+
+/* ===== Action row (two buttons side by side) ===== */
+.action-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 4px;
+}
+.action-row .btn { flex: 1; }
+.btn-outline {
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+.btn-outline:hover { background: #f1f3f4; }
+
+/* ===== QR code area ===== */
+.qr-area {
+    text-align: center;
+    margin-bottom: 24px;
+}
+.qr-box {
+    width: 200px; height: 200px;
+    margin: 0 auto 16px;
+    border-radius: 12px;
+    background: #f1f3f4;
+    border: 1px solid var(--border-light);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 8px;
+    color: var(--text3); font-size: 13px;
+}
+.qr-box .qr-icon { font-size: 48px; opacity: .3; }
+.secret-row {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.6;
+}
+.secret-row code {
+    display: inline-block;
+    background: #f1f3f4;
+    padding: 5px 14px;
+    border-radius: 6px;
+    font-family: 'SF Mono', 'Roboto Mono', Menlo, monospace;
+    font-size: 14px;
+    color: var(--text);
+    letter-spacing: 2px;
+    font-weight: 600;
+    margin-top: 4px;
+    border: 1px solid var(--border-light);
+}
+
+/* ===== Email verification banner ===== */
+.verify-banner {
+    background: #e8f0fe;
+    border: 1px solid #aecbfa;
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    text-align: center;
+    margin-bottom: 24px;
+}
+.verify-banner .vb-icon { font-size: 40px; margin-bottom: 12px; }
+.verify-banner p { font-size: 14px; color: var(--text); line-height: 1.6; }
+.verify-banner .vb-addr { font-weight: 700; color: var(--accent); }
+
+/* ===== Success ===== */
+.success-icon {
+    width: 64px; height: 64px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background: var(--green);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 28px; font-weight: 700;
+    animation: popIn .4s cubic-bezier(.175,.885,.32,1.275);
+}
+@keyframes popIn {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+.success-body { text-align: center; }
+.success-body h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+.success-body p { font-size: 14px; color: var(--text2); line-height: 1.5; }
+.success-body .countdown { font-size: 13px; color: var(--text3); margin-top: 24px; }
+.success-body .countdown b { color: var(--accent); font-weight: 700; }
+
+/* ===== Views ===== */
+.v { display: none; animation: fadeUp .25s ease; }
+.v.on { display: block; }
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Footer ===== */
+.page-footer {
+    text-align: center;
+    padding: 24px;
+    font-size: 12px;
+    color: var(--text3);
+}
+.page-footer a { color: var(--text3); text-decoration: none; margin: 0 12px; }
+.page-footer a:hover { color: var(--text2); }
+</style>
+</head>
+<body>
+
+<!-- ===== Top bar ===== -->
+<div class="topbar">
+    <a class="topbar-logo" href="#">
+        <div class="mark" id="logoMark"></div>
+        <span class="brand" id="logoBrand"></span>
+    </a>
+    <div class="topbar-right">
+        已有账户？
+        <a href="#" onclick="return false;">登录</a>
+    </div>
+</div>
+
+<!-- ===== Main ===== -->
+<div class="main">
+    <div class="container">
+
+        <!-- ==================== 1. 注册首页 ==================== -->
+        <div class="v on" id="v-start">
+            <div class="card">
+                <h1>注册</h1>
+                <div class="desc"></div>
+
+                <div class="tabs">
+                    <button class="tab on" onclick="sw(this,'email')">邮箱</button>
+                    <button class="tab" onclick="sw(this,'phone')">手机号</button>
+                </div>
+
+                <div id="f-email">
+                    <div class="field">
+                        <label class="field-label">邮箱地址</label>
+                        <input class="field-input" type="email" placeholder="name@company.com" id="inEmail">
+                    </div>
+                </div>
+                <div id="f-phone" style="display:none">
+                    <div class="field">
+                        <label class="field-label">手机号</label>
+                        <div class="phone-row">
+                            <select id="ccSel"><option>+86</option><option>+852</option><option>+1</option><option>+44</option><option>+81</option><option>+65</option></select>
+                            <input class="field-input" type="tel" placeholder="输入手机号" id="inPhone">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="methods">
+                    <div class="mth on" data-m="code" onclick="pick(this)">
+                        <div class="radio"></div>
+                        <div class="mth-body">
+                            <div class="mth-title">验证码注册</div>
+                            <div class="mth-desc">发送验证码到邮箱/手机，验证后即完成注册</div>
+                        </div>
+                    </div>
+                    <div class="mth" data-m="pwd" onclick="pick(this)">
+                        <div class="radio"></div>
+                        <div class="mth-body">
+                            <div class="mth-title">密码注册</div>
+                            <div class="mth-desc">设置登录密码，通过邮件或短信确认身份</div>
+                        </div>
+                    </div>
+                    <div class="mth" data-m="otp" onclick="pick(this)">
+                        <div class="radio"></div>
+                        <div class="mth-body">
+                            <div class="mth-title">OTP 动态令牌</div>
+                            <div class="mth-desc">绑定 Google Authenticator，每次登录使用动态码</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="agree">
+                    <input type="checkbox" id="ck" checked>
+                    <label for="ck">我已阅读并同意 <a href="#">《会员服务协议》</a>、<a href="#">《支付服务协议》</a> 和 <a href="#">《授权协议》</a></label>
+                </div>
+
+                <button class="btn btn-primary" onclick="goNext()">继续</button>
+            </div>
+        </div>
+
+        <!-- ==================== 2-A. 验证码注册 ==================== -->
+        <div class="v" id="v-code">
+            <div class="card">
+                <h1>输入验证码</h1>
+                <div class="desc">6 位验证码已发送至 <b id="t-code">—</b></div>
+
+                <div class="otp-row" id="otp1"></div>
+                <div class="resend-row">
+                    <span>有效期 10 分钟</span>
+                    <button id="rs1" onclick="cd(this)">重新发送</button>
+                </div>
+
+                <div class="action-row">
+                    <button class="btn btn-outline" onclick="go('v-start')">返回</button>
+                    <button class="btn btn-primary" onclick="finish()">验证并注册</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 2-B. 密码注册 ==================== -->
+        <div class="v" id="v-pwd">
+            <div class="card">
+                <h1>设置密码</h1>
+                <div class="desc">为 <b id="t-pwd">—</b> 设置登录密码</div>
+
+                <div class="field">
+                    <label class="field-label">密码</label>
+                    <input class="field-input" type="password" placeholder="至少 8 位，含大小写字母和数字" id="inPwd" oninput="meter(this.value)">
+                    <div class="pwd-meter"><i id="s1"></i><i id="s2"></i><i id="s3"></i><i id="s4"></i></div>
+                    <div class="pwd-hint" id="pwdH"></div>
+                </div>
+                <div class="field">
+                    <label class="field-label">确认密码</label>
+                    <input class="field-input" type="password" placeholder="再次输入密码" id="inPwd2">
+                </div>
+
+                <div class="action-row">
+                    <button class="btn btn-outline" onclick="go('v-start')">返回</button>
+                    <button class="btn btn-primary" onclick="pwdSubmit()">注册</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 2-B-2. 密码注册 → 验证邮件/短信 ==================== -->
+        <div class="v" id="v-pwd-verify">
+            <div class="card">
+                <h1>验证您的账户</h1>
+                <div class="desc">我们已发送验证信息到您的邮箱/手机</div>
+
+                <div class="verify-banner">
+                    <div class="vb-icon">✉️</div>
+                    <p>请查收发送至 <span class="vb-addr" id="t-pwd-v">—</span> 的验证链接，<br>点击链接完成注册。</p>
+                </div>
+
+                <div class="resend-row" style="justify-content:center;gap:6px">
+                    <span>没有收到？</span>
+                    <button id="rs2" onclick="cd(this)">重新发送</button>
+                </div>
+
+                <div class="action-row" style="margin-top:16px">
+                    <button class="btn btn-outline" onclick="go('v-start')">返回</button>
+                    <button class="btn btn-primary" onclick="finish()">我已验证</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 2-C-1. OTP 注册 → 先验证邮箱/手机 ==================== -->
+        <div class="v" id="v-otp-verify">
+            <div class="card">
+                <h1>验证邮箱/手机</h1>
+                <div class="desc">绑定动态令牌前，请先验证 <b id="t-otp-v">—</b></div>
+
+                <div class="otp-row" id="otp2"></div>
+                <div class="resend-row">
+                    <span>有效期 10 分钟</span>
+                    <button id="rs3" onclick="cd(this)">重新发送</button>
+                </div>
+
+                <div class="action-row">
+                    <button class="btn btn-outline" onclick="go('v-start')">返回</button>
+                    <button class="btn btn-primary" onclick="otpVerified()">验证并继续</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 2-C-2. OTP 绑定 Authenticator ==================== -->
+        <div class="v" id="v-otp-bind">
+            <div class="card">
+                <h1>绑定动态令牌</h1>
+                <div class="desc">使用 Google Authenticator 或其他 TOTP 应用扫描下方二维码</div>
+
+                <div class="qr-area">
+                    <div class="qr-box">
+                        <div class="qr-icon">📱</div>
+                        <span>扫描绑定</span>
+                    </div>
+                    <div class="secret-row">
+                        无法扫码？手动输入密钥<br>
+                        <code>JBSW Y3DP EHPK 3PXP</code>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="field-label">验证码</label>
+                    <input class="field-input" type="text" placeholder="输入 Authenticator 上的 6 位动态码" id="inTotp" maxlength="6" style="text-align:center;letter-spacing:6px;font-size:18px;font-weight:700">
+                </div>
+
+                <div class="action-row">
+                    <button class="btn btn-outline" onclick="go('v-start')">返回</button>
+                    <button class="btn btn-primary" onclick="finish()">验证并注册</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 3. 注册成功 ==================== -->
+        <div class="v" id="v-done">
+            <div class="card">
+                <div class="success-icon">✓</div>
+                <div class="success-body">
+                    <h2>注册成功</h2>
+                    <p>账户已创建，登录后即可开通产品</p>
+                    <div class="countdown"><b id="sec">5</b> 秒后自动跳转</div>
+                </div>
+                <div style="margin-top:28px">
+                    <button class="btn btn-primary" onclick="goLogin()">前往登录</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ===== Footer ===== -->
+<div class="page-footer">
+    <span id="footerBrand">&copy; 2026</span>
+    <a href="#">隐私政策</a>
+    <a href="#">服务条款</a>
+    <a href="#">帮助中心</a>
+</div>
+
+<script>
+let ct = 'email', rm = 'code';
+
+function go(id) {
+    document.querySelectorAll('.v').forEach(v => v.classList.remove('on'));
+    document.getElementById(id).classList.add('on');
+}
+
+function sw(el, m) {
+    ct = m;
+    el.parentElement.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
+    el.classList.add('on');
+    document.getElementById('f-email').style.display = m === 'email' ? '' : 'none';
+    document.getElementById('f-phone').style.display = m === 'phone' ? '' : 'none';
+}
+
+function pick(el) {
+    document.querySelectorAll('.mth').forEach(c => c.classList.remove('on'));
+    el.classList.add('on');
+    rm = el.dataset.m;
+}
+
+function val() {
+    return ct === 'email'
+        ? (document.getElementById('inEmail').value || 'name@company.com')
+        : (document.getElementById('inPhone').value || '手机号');
+}
+
+function buildOtp(id) {
+    const w = document.getElementById(id);
+    if (w.children.length) return;
+    for (let i = 0; i < 6; i++) {
+        const inp = document.createElement('input');
+        inp.maxLength = 1; inp.type = 'text';
+        inp.oninput = function() { if (this.value && i < 5) w.children[i + 1].focus(); };
+        inp.onkeydown = function(e) { if (e.key === 'Backspace' && !this.value && i > 0) w.children[i - 1].focus(); };
+        w.appendChild(inp);
+    }
+    setTimeout(() => w.children[0].focus(), 100);
+}
+
+function goNext() {
+    const c = val();
+    if (rm === 'code') {
+        document.getElementById('t-code').textContent = c;
+        go('v-code'); buildOtp('otp1'); cd(document.getElementById('rs1'));
+    } else if (rm === 'pwd') {
+        document.getElementById('t-pwd').textContent = c;
+        go('v-pwd');
+    } else {
+        document.getElementById('t-otp-v').textContent = c;
+        go('v-otp-verify'); buildOtp('otp2'); cd(document.getElementById('rs3'));
+    }
+}
+
+function otpVerified() {
+    go('v-otp-bind');
+}
+
+function pwdSubmit() {
+    document.getElementById('t-pwd-v').textContent = val();
+    go('v-pwd-verify');
+    cd(document.getElementById('rs2'));
+}
+
+function cd(btn) {
+    btn.disabled = true; let s = 60; btn.textContent = s + 's';
+    const t = setInterval(() => {
+        if (--s <= 0) { clearInterval(t); btn.disabled = false; btn.textContent = '重新发送'; }
+        else btn.textContent = s + 's';
+    }, 1000);
+}
+
+function finish() {
+    go('v-done');
+    let s = 5; const el = document.getElementById('sec');
+    const t = setInterval(() => {
+        if (--s <= 0) { clearInterval(t); goLogin(); }
+        else el.textContent = s;
+    }, 1000);
+}
+
+function goLogin() { alert('跳转到登录页…'); }
+
+function meter(p) {
+    const ss = ['s1','s2','s3','s4'].map(id => document.getElementById(id));
+    const h = document.getElementById('pwdH');
+    ss.forEach(s => s.className = '');
+    if (!p) { h.textContent = ''; return; }
+    let sc = 0;
+    if (p.length >= 8) sc++;
+    if (/[a-z]/.test(p) && /[A-Z]/.test(p)) sc++;
+    if (/\d/.test(p)) sc++;
+    if (/[^a-zA-Z0-9]/.test(p)) sc++;
+    const mp = [
+        { c: 'w', t: '弱 — 请增加复杂度', cl: '#ea4335' },
+        { c: 'm', t: '中等', cl: '#f9ab00' },
+        { c: 's', t: '强', cl: '#34a853' },
+        { c: 's', t: '非常强', cl: '#34a853' }
+    ];
+    for (let i = 0; i < sc; i++) ss[i].classList.add(mp[sc-1].c);
+    h.textContent = mp[sc-1].t; h.style.color = mp[sc-1].cl;
+}
+</script>
+</body>
+</html>

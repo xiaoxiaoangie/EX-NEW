@@ -308,9 +308,14 @@ const centerMenus = {
     customer: {
         name: '客户中心',
         groups: [
-            { label: '会员管理', items: [
-                { name: '会员基本信息查询', icon: 'users', active: true },
-                { name: '会员开通产品', icon: 'package' }
+            { label: '客户管理', items: [
+                { name: '客户基本信息', icon: 'users', active: true },
+                { name: '客户用户信息', icon: 'user' },
+                { name: '客户产品开通', icon: 'package' }
+            ]},
+            { label: '客户费率', items: [
+                { name: '客户费率配置', icon: 'credit-card' },
+                { name: '费率审核', icon: 'clipboard', badge: '2' }
             ]},
             { label: '订单查询', items: [
                 { name: 'VA账户', icon: 'credit-card' },
@@ -587,10 +592,16 @@ document.addEventListener('click', function(e) {
                 renderTemplateConfig();
             } else if (pageName === '机构返点配置') {
                 renderAgencyRebateConfig();
-            } else if (pageName === '会员基本信息查询') {
+            } else if (pageName === '客户基本信息' || pageName === '会员基本信息查询') {
                 renderMemberInfoQuery();
-            } else if (pageName === '会员开通产品') {
+            } else if (pageName === '客户用户信息') {
+                renderCustomerUsers();
+            } else if (pageName === '客户产品开通' || pageName === '会员开通产品') {
                 renderMemberProducts();
+            } else if (pageName === '客户费率配置') {
+                renderCustomerRateConfig();
+            } else if (pageName === '费率审核') {
+                renderRateAudit();
             } else if (pageName === '商户开通产品') {
                 renderMerchantProducts();
             } else if (pageName === '代理商查询') {
