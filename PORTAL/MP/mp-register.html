@@ -562,67 +562,65 @@ h1 {
 <div class="main">
     <div class="container">
 
-        <!-- ==================== 1. 注册首页 ==================== -->
+        <!-- ==================== 1. 注册首页（含内联验证） ==================== -->
         <div class="v on" id="v-start">
             <div class="card">
-                <h1>注册</h1>
-                <div class="desc"></div>
+                <h1 id="startTitle">注册</h1>
+                <div class="desc" id="startDesc"></div>
 
                 <div class="err-msg" id="errDup">
                     <span class="err-icon">⚠</span>
                     <span id="errDupText">该邮箱已注册，请直接登录</span>
                 </div>
 
-                <div class="tabs">
-                    <button class="tab on" onclick="sw(this,'email')">邮箱</button>
-                    <button class="tab" onclick="sw(this,'phone')">手机号</button>
-                </div>
-
-                <div id="f-email">
-                    <div class="field">
-                        <label class="field-label">邮箱地址</label>
-                        <input class="field-input" type="email" placeholder="name@company.com" id="inEmail">
+                <!-- Phase 1: 输入邮箱/手机号 -->
+                <div id="phase-input">
+                    <div class="tabs">
+                        <button class="tab on" onclick="sw(this,'email')">邮箱</button>
+                        <button class="tab" onclick="sw(this,'phone')">手机号</button>
                     </div>
-                </div>
-                <div id="f-phone" style="display:none">
-                    <div class="field">
-                        <label class="field-label">手机号</label>
-                        <div class="phone-row">
-                            <select id="ccSel"><option>+86</option><option>+852</option><option>+1</option><option>+44</option><option>+81</option><option>+65</option></select>
-                            <input class="field-input" type="tel" placeholder="输入手机号" id="inPhone">
+
+                    <div id="f-email">
+                        <div class="field">
+                            <label class="field-label">邮箱地址</label>
+                            <input class="field-input" type="email" placeholder="name@company.com" id="inEmail">
                         </div>
                     </div>
+                    <div id="f-phone" style="display:none">
+                        <div class="field">
+                            <label class="field-label">手机号</label>
+                            <div class="phone-row">
+                                <select id="ccSel"><option>+86</option><option>+852</option><option>+1</option><option>+44</option><option>+81</option><option>+65</option></select>
+                                <input class="field-input" type="tel" placeholder="输入手机号" id="inPhone">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="agree">
+                        <input type="checkbox" id="ck" checked>
+                        <label for="ck">我已阅读并同意 <a href="#">《会员服务协议》</a>、<a href="#">《支付服务协议》</a> 和 <a href="#">《授权协议》</a></label>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="goNext()">继续</button>
                 </div>
 
-                <div class="agree">
-                    <input type="checkbox" id="ck" checked>
-                    <label for="ck">我已阅读并同意 <a href="#">《会员服务协议》</a>、<a href="#">《支付服务协议》</a> 和 <a href="#">《授权协议》</a></label>
-                </div>
+                <!-- Phase 2: 内联验证码（同一卡片内） -->
+                <div id="phase-verify" style="display:none">
+                    <div class="err-msg" id="errCodeInline">
+                        <span class="err-icon">⚠</span>
+                        <span>验证码错误，请重新输入</span>
+                    </div>
 
-                <button class="btn btn-primary" onclick="goNext()">继续</button>
-            </div>
-        </div>
+                    <div class="otp-row" id="otpInline"></div>
+                    <div class="resend-row">
+                        <span>有效期 10 分钟</span>
+                        <button id="rsInline" onclick="cd(this)">重新发送</button>
+                    </div>
 
-        <!-- ==================== 2-A. 验证码注册 ==================== -->
-        <div class="v" id="v-code">
-            <div class="card">
-                <h1>输入验证码</h1>
-                <div class="desc">6 位验证码已发送至 <b id="t-code">—</b></div>
-
-                <div class="err-msg" id="errCode1">
-                    <span class="err-icon">⚠</span>
-                    <span>验证码错误，请重新输入</span>
-                </div>
-
-                <div class="otp-row" id="otp1"></div>
-                <div class="resend-row">
-                    <span>有效期 10 分钟</span>
-                    <button id="rs1" onclick="cd(this)">重新发送</button>
-                </div>
-
-                <div class="action-row">
-                    <button class="btn btn-outline" onclick="go('v-start')">返回</button>
-                    <button class="btn btn-primary" onclick="finish()">验证并注册</button>
+                    <div class="action-row">
+                        <button class="btn btn-outline" onclick="backToInput()">返回</button>
+                        <button class="btn btn-primary" id="verifyBtn" onclick="verifyAndContinue()">验证并继续</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -645,61 +643,13 @@ h1 {
                 </div>
 
                 <div class="action-row">
-                    <button class="btn btn-outline" onclick="go('v-start')">返回</button>
-                    <button class="btn btn-primary" onclick="pwdSubmit()">注册</button>
+                    <button class="btn btn-outline" onclick="backToStart()">返回</button>
+                    <button class="btn btn-primary" onclick="pwdSubmit()">设置并注册</button>
                 </div>
             </div>
         </div>
 
-        <!-- ==================== 2-B-2. 密码注册 → 验证码验证 ==================== -->
-        <div class="v" id="v-pwd-verify">
-            <div class="card">
-                <h1>验证您的账户</h1>
-                <div class="desc">6 位验证码已发送至 <b id="t-pwd-v">—</b></div>
-
-                <div class="err-msg" id="errCode3">
-                    <span class="err-icon">⚠</span>
-                    <span>验证码错误，请重新输入</span>
-                </div>
-
-                <div class="otp-row" id="otp3"></div>
-                <div class="resend-row">
-                    <span>有效期 10 分钟</span>
-                    <button id="rs2" onclick="cd(this)">重新发送</button>
-                </div>
-
-                <div class="action-row">
-                    <button class="btn btn-outline" onclick="go('v-start')">返回</button>
-                    <button class="btn btn-primary" onclick="finish()">验证并注册</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ==================== 2-C-1. OTP 注册 → 先验证邮箱/手机 ==================== -->
-        <div class="v" id="v-otp-verify">
-            <div class="card">
-                <h1>验证邮箱/手机</h1>
-                <div class="desc">绑定动态令牌前，请先验证 <b id="t-otp-v">—</b></div>
-
-                <div class="err-msg" id="errCode2">
-                    <span class="err-icon">⚠</span>
-                    <span>验证码错误，请重新输入</span>
-                </div>
-
-                <div class="otp-row" id="otp2"></div>
-                <div class="resend-row">
-                    <span>有效期 10 分钟</span>
-                    <button id="rs3" onclick="cd(this)">重新发送</button>
-                </div>
-
-                <div class="action-row">
-                    <button class="btn btn-outline" onclick="go('v-start')">返回</button>
-                    <button class="btn btn-primary" onclick="otpVerified()">验证并继续</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ==================== 2-C-2. OTP 绑定 Authenticator ==================== -->
+        <!-- ==================== 2-C. OTP 绑定 Authenticator ==================== -->
         <div class="v" id="v-otp-bind">
             <div class="card">
                 <h1>绑定动态令牌</h1>
@@ -722,7 +672,7 @@ h1 {
                 </div>
 
                 <div class="action-row">
-                    <button class="btn btn-outline" onclick="go('v-start')">返回</button>
+                    <button class="btn btn-outline" onclick="backToStart()">返回</button>
                     <button class="btn btn-primary" onclick="finish()">验证并注册</button>
                 </div>
             </div>
@@ -862,10 +812,44 @@ function buildOtp(id) {
     setTimeout(() => w.children[0].focus(), 100);
 }
 
+/* ===== Phase switching (inline on v-start) ===== */
+function showVerifyPhase() {
+    const c = val();
+    document.getElementById('phase-input').style.display = 'none';
+    document.getElementById('phase-verify').style.display = '';
+
+    // Update title and description based on method
+    document.getElementById('startTitle').textContent = '验证您的账户';
+    document.getElementById('startDesc').innerHTML = '6 位验证码已发送至 <b>' + c + '</b>';
+
+    // Update button text based on method
+    const btn = document.getElementById('verifyBtn');
+    if (rm === 'code') {
+        btn.textContent = '验证并注册';
+    } else {
+        btn.textContent = '验证并继续';
+    }
+
+    buildOtp('otpInline');
+    cd(document.getElementById('rsInline'));
+}
+
+function backToInput() {
+    document.getElementById('phase-verify').style.display = 'none';
+    document.getElementById('phase-input').style.display = '';
+    document.getElementById('startTitle').textContent = '注册';
+    document.getElementById('startDesc').innerHTML = '';
+    clearAllErrors();
+}
+
+function backToStart() {
+    go('v-start');
+    backToInput();
+}
+
 /* ===== Main flow ===== */
 function goNext() {
     clearAllErrors();
-    const c = val();
 
     // Edge case: duplicate account
     if (edgeCase === 'dup') {
@@ -878,32 +862,35 @@ function goNext() {
         return;
     }
 
+    // All methods: show inline verification first
+    showVerifyPhase();
+}
+
+/* ===== After inline verification ===== */
+function verifyAndContinue() {
+    // Edge case: verification code error
+    if (edgeCase === 'code_err') {
+        document.getElementById('errCodeInline').classList.add('show');
+        return;
+    }
+
     if (rm === 'code') {
-        document.getElementById('t-code').textContent = c;
-        go('v-code'); buildOtp('otp1'); cd(document.getElementById('rs1'));
+        // 验证码注册: verify → done
+        finish();
     } else if (rm === 'pwd') {
-        document.getElementById('t-pwd').textContent = c;
+        // 密码注册: verify → set password
+        document.getElementById('t-pwd').textContent = val();
         go('v-pwd');
-        // Edge case: pre-fill weak password
         if (edgeCase === 'pwd_weak') {
             setTimeout(() => {
-                const pwdInput = document.getElementById('inPwd');
-                pwdInput.value = '123';
+                document.getElementById('inPwd').value = '123';
                 meter('123');
             }, 200);
         }
     } else {
-        document.getElementById('t-otp-v').textContent = c;
-        go('v-otp-verify'); buildOtp('otp2'); cd(document.getElementById('rs3'));
+        // OTP注册: verify → bind authenticator
+        go('v-otp-bind');
     }
-}
-
-function otpVerified() {
-    if (edgeCase === 'code_err') {
-        document.getElementById('errCode2').classList.add('show');
-        return;
-    }
-    go('v-otp-bind');
 }
 
 function pwdSubmit() {
@@ -915,10 +902,8 @@ function pwdSubmit() {
             return;
         }
     }
-    document.getElementById('t-pwd-v').textContent = val();
-    go('v-pwd-verify');
-    buildOtp('otp3');
-    cd(document.getElementById('rs2'));
+    // Password set → finish
+    finish();
 }
 
 function cd(btn) {
@@ -930,15 +915,6 @@ function cd(btn) {
 }
 
 function finish() {
-    // Edge case: verification code error
-    if (edgeCase === 'code_err') {
-        // Show error on whichever verification view is active
-        ['errCode1', 'errCode3'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el && el.closest('.v.on')) el.classList.add('show');
-        });
-        return;
-    }
     go('v-done');
     let s = 5; const el = document.getElementById('sec');
     const t = setInterval(() => {
@@ -993,7 +969,7 @@ function demoRegion(region, btn) {
 
     applyTabAndMethod(region);
     syncDemoBar();
-    go('v-start');
+    backToInput();
 }
 
 /* ===== Demo bar: Method ===== */
@@ -1003,12 +979,12 @@ function demoMethod(method, btn) {
     rm = method;
 
     const descs = {
-        pwd: '密码注册：设置密码 → 验证码验证 → 完成',
-        otp: 'OTP 注册：验证邮箱/手机 → 绑定 Authenticator → 完成',
-        code: '验证码注册：输入验证码 → 直接完成'
+        pwd: '验证邮箱/手机 → 设置密码 → 完成（2步）',
+        otp: '验证邮箱/手机 → 绑定 Authenticator → 完成（2步）',
+        code: '验证邮箱/手机 → 直接完成（1步）'
     };
     document.getElementById('demoMethodDesc').textContent = descs[method];
-    go('v-start');
+    backToInput();
 }
 
 /* ===== Demo bar: Edge cases ===== */
@@ -1017,20 +993,19 @@ function demoEdge(edge, btn) {
     btn.classList.add('on');
     edgeCase = edge;
     clearAllErrors();
-    go('v-start');
+    backToInput();
 }
 
 /* ===== Sync demo bar buttons with current state ===== */
 function syncDemoBar() {
-    // Sync method buttons
     document.getElementById('dmPwd').classList.toggle('on', rm === 'pwd');
     document.getElementById('dmOtp').classList.toggle('on', rm === 'otp');
     document.getElementById('dmCode').classList.toggle('on', rm === 'code');
 
     const descs = {
-        pwd: '密码注册：设置密码 → 验证码验证 → 完成',
-        otp: 'OTP 注册：验证邮箱/手机 → 绑定 Authenticator → 完成',
-        code: '验证码注册：输入验证码 → 直接完成'
+        pwd: '验证邮箱/手机 → 设置密码 → 完成（2步）',
+        otp: '验证邮箱/手机 → 绑定 Authenticator → 完成（2步）',
+        code: '验证邮箱/手机 → 直接完成（1步）'
     };
     document.getElementById('demoMethodDesc').textContent = descs[rm];
 }
