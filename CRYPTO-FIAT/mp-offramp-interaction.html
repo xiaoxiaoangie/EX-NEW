@@ -197,6 +197,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
             <button class="scenario-tab" onclick="switchScenario('bb-beneficiary')">② BB数币→收款人银行(BB)</button>
             <button class="scenario-tab" onclick="switchScenario('ipl-fiat')">③ BB数币→IPL法币</button>
             <button class="scenario-tab" onclick="switchScenario('ipl-beneficiary')">④ BB数币→收款人银行(IPL)</button>
+            <button class="scenario-tab" onclick="switchScenario('risk-exception')" style="color:var(--red);">⑤ 异常：渠道风险通知</button>
         </div>
 
         <!-- ===== 场景①：BB数币钱包→BB法币账户 ===== -->
@@ -780,9 +781,206 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
         </div>
     </div>
 
+        <!-- ===== 场景⑤：渠道风险通知异常处理 ===== -->
+        <div class="scenario-panel" id="scenario-risk-exception">
+            <div class="scenario-card">
+                <h4>⑤ 异常场景：渠道风险通知 → 合规决策 <span class="tag" style="background:var(--red-bg); color:var(--red);">异常流程</span></h4>
+                <div class="sc-tags">
+                    <span class="tag" style="background:var(--red-bg); color:var(--red);">触发: 渠道通知有风险</span>
+                    <span class="tag tag-pending">决策: 合规审核</span>
+                    <span class="tag tag-active">结果A: 继续入账</span>
+                    <span class="tag" style="background:var(--red-bg); color:var(--red);">结果B: 拒绝 → 退款</span>
+                </div>
+
+                <div class="note-box" style="background:var(--red-bg); border:1px solid #fca5a5; color:#991b1b;">
+                    <strong>场景说明：</strong>OffRamp 订单提交后，渠道（SP/银行）在处理过程中<strong>通知该笔交易存在风险</strong>（如反洗钱、制裁名单命中、异常交易模式等）。<br>
+                    <strong>触发时机：</strong>渠道单处理中，渠道主动回调通知风险。<br>
+                    <strong>决策权：</strong>合规团队审核后决定该笔渠道单是否继续执行。<br>
+                    <strong>两种结果：</strong><br>
+                    &nbsp;&nbsp;A. <strong>继续</strong> → 渠道单继续执行，走正常入账流程<br>
+                    &nbsp;&nbsp;B. <strong>拒绝</strong> → 渠道单失败，生成退款单，资金退回给商户
+                </div>
+
+                <div class="divider"></div>
+                <h4>异常处理流程</h4>
+
+                <div class="flow-container">
+                    <div class="flow-step">
+                        <div class="step-dot done"></div>
+                        <div class="step-content">
+                            <div class="step-title">Step 1：商户正常提交 OffRamp 订单</div>
+                            <div class="step-desc">商户按场景①~④任一流程提交 OffRamp 订单，系统开始处理。</div>
+                            <div class="note-box note-green">
+                                ① 数币扣款（BB数币钱包 -10,000 USDT） ✅ 完成<br>
+                                ② 承兑处理（USDT→USD） ✅ 完成<br>
+                                ③ 渠道单提交（出款/入账） ⏳ 处理中
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-step">
+                        <div class="step-dot" style="background:var(--red); border-color:var(--red);"></div>
+                        <div class="step-content">
+                            <div class="step-title" style="color:var(--red);">Step 2：渠道通知 — 该笔交易有风险</div>
+                            <div class="step-desc">渠道（银行/支付网络）回调通知：该笔交易命中风控规则，需要人工审核。</div>
+                            <div class="note-box" style="background:var(--red-bg); border:1px solid #fca5a5; color:#991b1b;">
+                                <strong>渠道通知内容（示例）：</strong><br>
+                                • 风险类型：AML / 制裁名单 / 异常交易模式 / 收款方风险<br>
+                                • 风险等级：High / Medium<br>
+                                • 渠道要求：需发起方确认是否继续<br>
+                                • 截止时间：72小时内回复，否则自动退回
+                            </div>
+                            <div class="note-box note-info">
+                                <strong>系统行为：</strong><br>
+                                • 渠道单状态更新为 <strong>"Risk Review"</strong><br>
+                                • OffRamp 订单状态更新为 <strong>"Pending Risk Review"</strong><br>
+                                • 自动通知合规团队（邮件/站内信/工单）<br>
+                                • 商户端订单状态显示 <strong>"处理中 — 审核中"</strong>（不暴露风险细节）
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-step">
+                        <div class="step-dot current"></div>
+                        <div class="step-content">
+                            <div class="step-title">Step 3：合规团队审核决策</div>
+                            <div class="step-desc">合规人员在 TP 后台的风控合规中心查看风险详情，做出决策。</div>
+
+                            <div style="display:flex; gap:12px; margin:12px 0; flex-wrap:wrap;">
+                                <div style="flex:1; min-width:280px; background:var(--green-bg); border:1px solid var(--green-border); border-radius:10px; padding:16px;">
+                                    <h4 style="color:var(--green); margin-bottom:8px;">✅ 决策A：继续执行</h4>
+                                    <div style="font-size:13px; color:#065f46; line-height:1.6;">
+                                        合规判断风险可控，决定继续执行该笔渠道单。<br><br>
+                                        <strong>系统行为：</strong><br>
+                                        • 通知渠道：确认继续<br>
+                                        • 渠道单恢复处理<br>
+                                        • 走正常入账/出款流程<br>
+                                        • 订单状态恢复为 "Processing"<br>
+                                        • 商户端看到订单继续处理
+                                    </div>
+                                </div>
+                                <div style="flex:1; min-width:280px; background:var(--red-bg); border:1px solid #fca5a5; border-radius:10px; padding:16px;">
+                                    <h4 style="color:var(--red); margin-bottom:8px;">❌ 决策B：拒绝 → 生成退款单</h4>
+                                    <div style="font-size:13px; color:#991b1b; line-height:1.6;">
+                                        合规判断风险不可接受，拒绝该笔渠道单。<br><br>
+                                        <strong>系统行为：</strong><br>
+                                        • 通知渠道：取消/拒绝<br>
+                                        • 渠道单状态 → Failed<br>
+                                        • OffRamp 订单状态 → Failed<br>
+                                        • <strong>自动生成退款单</strong><br>
+                                        • 通知商户：订单失败，退款处理中
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-step">
+                        <div class="step-dot" style="background:var(--green); border-color:var(--green);"></div>
+                        <div class="step-content">
+                            <div class="step-title" style="color:var(--green);">Step 4A：继续 → 正常入账</div>
+                            <div class="note-box note-green">
+                                <strong>全链路视图（继续执行）：</strong><br>
+                                ① 数币扣款（-10,000 USDT） ✅<br>
+                                ② 承兑处理（USDT→USD） ✅<br>
+                                ③ 渠道单提交 ✅<br>
+                                ④ ⚠️ 渠道风险通知 → 合规审核 → <strong style="color:var(--green);">继续</strong><br>
+                                ⑤ 渠道单恢复处理 ✅<br>
+                                ⑥ 入账/出款完成 ✅
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-step">
+                        <div class="step-dot" style="background:var(--red); border-color:var(--red);"></div>
+                        <div class="step-content">
+                            <div class="step-title" style="color:var(--red);">Step 4B：拒绝 → 退款处理</div>
+                            <div class="step-desc">渠道单失败后，系统自动生成退款单。商户可以选择退款方式。</div>
+
+                            <div class="note-box" style="background:var(--red-bg); border:1px solid #fca5a5; color:#991b1b; margin-bottom:12px;">
+                                <strong>退款单生成规则：</strong><br>
+                                • 退款金额 = 原承兑后的法币金额（手续费退还视业务规则而定）<br>
+                                • 退款单关联原 OffRamp 订单号<br>
+                                • 退款单状态：Pending（等待商户选择退款方式）
+                            </div>
+
+                            <h4 style="margin-bottom:10px;">商户选择退款方式</h4>
+
+                            <div style="display:flex; gap:12px; margin:8px 0; flex-wrap:wrap;">
+                                <div style="flex:1; min-width:260px; background:var(--blue-bg); border:1px solid var(--blue-border); border-radius:10px; padding:16px;">
+                                    <h4 style="color:var(--blue); margin-bottom:8px;">🔄 方式一：原路退回</h4>
+                                    <div style="font-size:13px; color:#1e40af; line-height:1.6;">
+                                        资金按原路径退回到商户的来源账户。<br><br>
+                                        <strong>退回路径：</strong><br>
+                                        法币 → 反向承兑为数币 → 退回BB数币钱包<br>
+                                        或：法币直接退回到法币账户（如果承兑后资金还在法币侧）<br><br>
+                                        <strong>特点：</strong><br>
+                                        • 系统自动处理，无需商户额外操作<br>
+                                        • 退回时间取决于渠道处理速度<br>
+                                        • 可能涉及反向承兑汇率差异
+                                    </div>
+                                </div>
+                                <div style="flex:1; min-width:260px; background:var(--purple-bg); border:1px solid #c4b5fd; border-radius:10px; padding:16px;">
+                                    <h4 style="color:var(--purple); margin-bottom:8px;">🏦 方式二：退到指定账户（商户选择）</h4>
+                                    <div style="font-size:13px; color:#5b21b6; line-height:1.6;">
+                                        商户选择退款到其他账户。<br><br>
+                                        <strong>可选目标：</strong><br>
+                                        • 退到其他法币账户（如从BB法币改退到IPL法币）<br>
+                                        • 退到数币钱包（反向承兑后退回USDT/USDC）<br>
+                                        • 退到其他收款人银行账户<br><br>
+                                        <strong>特点：</strong><br>
+                                        • 商户在退款单详情中选择目标<br>
+                                        • 可能产生额外的手续费/汇率差<br>
+                                        • 需要商户确认后才执行
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mock-form" style="margin-top:12px;">
+                                <div style="font-size:12px; color:var(--text-m); margin-bottom:10px;">退款单详情 — 商户操作界面</div>
+                                <div style="background:white; border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:10px;">
+                                    <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span>原订单号</span><strong>OR-2026021500123</strong></div>
+                                    <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span>退款金额</span><strong style="color:var(--red);">$9,955.00 USD</strong></div>
+                                    <div style="display:flex; justify-content:space-between; padding:4px 0; font-size:13px;"><span>失败原因</span><span>交易审核未通过</span></div>
+                                    <div style="height:1px; background:var(--border); margin:8px 0;"></div>
+                                    <div style="margin-bottom:8px;">
+                                        <label style="font-size:13px; font-weight:600; display:block; margin-bottom:6px;">选择退款方式：</label>
+                                        <div style="display:flex; flex-direction:column; gap:8px;">
+                                            <label style="display:flex; align-items:center; gap:8px; font-size:13px; padding:8px 12px; background:var(--blue-bg); border-radius:6px; cursor:pointer; border:2px solid var(--blue);">
+                                                <input type="radio" name="refund-method" checked> 🔄 原路退回（退到来源数币钱包）
+                                            </label>
+                                            <label style="display:flex; align-items:center; gap:8px; font-size:13px; padding:8px 12px; background:var(--border-light); border-radius:6px; cursor:pointer; border:2px solid transparent;">
+                                                <input type="radio" name="refund-method"> 🏦 退到法币账户（选择目标账户）
+                                            </label>
+                                            <label style="display:flex; align-items:center; gap:8px; font-size:13px; padding:8px 12px; background:var(--border-light); border-radius:6px; cursor:pointer; border:2px solid transparent;">
+                                                <input type="radio" name="refund-method"> 👤 退到其他收款人银行账户
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary" style="width:100%;">确认退款方式</button>
+                            </div>
+
+                            <div class="note-box note-info" style="margin-top:12px;">
+                                <strong>全链路视图（拒绝 → 退款）：</strong><br>
+                                ① 数币扣款（-10,000 USDT） ✅<br>
+                                ② 承兑处理（USDT→USD） ✅<br>
+                                ③ 渠道单提交 ✅<br>
+                                ④ ⚠️ 渠道风险通知 → 合规审核 → <strong style="color:var(--red);">拒绝</strong><br>
+                                ⑤ 渠道单失败 ❌<br>
+                                ⑥ 生成退款单 → 商户选择退款方式<br>
+                                ⑦ 退款执行（原路退回 / 退到指定账户） ⏳
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- ===== OffRamp 场景汇总表 ===== -->
     <div class="card">
-        <h3>📊 OffRamp 四大场景汇总</h3>
+        <h3>📊 OffRamp 五大场景汇总</h3>
         <table class="data-table">
             <thead>
                 <tr>
@@ -832,6 +1030,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
                     <td>✅ 是（BB→IPL）</td>
                     <td>无收款人 / 有收款人</td>
                 </tr>
+                <tr style="background:var(--red-bg);">
+                    <td><strong style="color:var(--red);">⑤ 异常：渠道风险通知</strong></td>
+                    <td>任意场景</td>
+                    <td>BB</td>
+                    <td>合规决策</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>继续入账 / 拒绝→退款（原路退回 / 商户选择）</td>
+                </tr>
             </tbody>
         </table>
 
@@ -841,7 +1048,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
             • <strong>承兑引擎固定BB</strong>：所有OffRamp的数币→法币承兑都由BB处理<br>
             • <strong>出款路径由TP配置决定</strong>：BB优先→走场景①②，IPL优先→走场景③④<br>
             • <strong>跨SP自动处理</strong>：BB→IPL的法币划转由系统自动完成<br>
-            • <strong>收款人状态分支</strong>：没有收款人→引导添加，有收款人→选择后继续
+            • <strong>收款人状态分支</strong>：没有收款人→引导添加，有收款人→选择后继续<br>
+            • <strong>渠道风险异常</strong>：渠道通知风险→合规决策→继续入账 or 拒绝生成退款单（原路退回/商户选择新路径）
         </div>
     </div>
 

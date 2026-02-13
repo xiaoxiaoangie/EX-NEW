@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>登录</title>
+<style>
+:root {
+    --bg: #f8f9fa;
+    --card: #ffffff;
+    --text: #1a1a1a;
+    --text2: #5f6368;
+    --text3: #9aa0a6;
+    --border: #dadce0;
+    --border-light: #e8eaed;
+    --accent: #1a73e8;
+    --accent-hover: #1557b0;
+    --accent-light: rgba(26,115,232,.08);
+    --green: #34a853;
+    --orange: #f9ab00;
+    --red: #ea4335;
+    --red-light: rgba(234,67,53,.08);
+    --radius: 8px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Google Sans', 'PingFang SC', 'Helvetica Neue', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ===== Top bar ===== */
+.topbar {
+    
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 64px;
+    background: var(--card);
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    z-index: 100;
+}
+.topbar-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--text);
+}
+.topbar-logo .mark {
+    width: 36px; height: 36px;
+    background: var(--text);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 14px; font-weight: 800; letter-spacing: -.5px;
+}
+.topbar-logo .brand {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -.3px;
+}
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--text2);
+}
+.topbar-right a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+    padding: 8px 20px;
+    border: 1.5px solid var(--accent);
+    border-radius: var(--radius);
+    transition: all .15s;
+}
+.topbar-right a:hover {
+    background: var(--accent);
+    color: #fff;
+}
+
+/* ===== Main ===== */
+.main {
+    min-height: 100vh;
+    padding-top: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.container {
+    width: 100%;
+    max-width: 520px;
+    padding: 48px 24px 60px;
+}
+
+/* ===== Card ===== */
+.card {
+    background: var(--card);
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    padding: 40px 44px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.04), 0 4px 12px rgba(0,0,0,.02);
+}
+
+/* ===== Typography ===== */
+h1 {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -.3px;
+    margin-bottom: 8px;
+    color: var(--text);
+}
+.desc {
+    font-size: 14px;
+    color: var(--text2);
+    line-height: 1.6;
+    margin-bottom: 32px;
+}
+.desc b { color: var(--text); font-weight: 600; }
+
+/* ===== Tabs ===== */
+.tabs {
+    display: flex;
+    border-bottom: 2px solid var(--border-light);
+    margin-bottom: 24px;
+}
+.tab {
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text3);
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-family: inherit;
+    position: relative;
+    transition: color .2s;
+}
+.tab:hover { color: var(--text2); }
+.tab.on { color: var(--accent); }
+.tab.on::after {
+    content: '';
+    position: absolute;
+    bottom: -2px; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 1px 1px 0 0;
+}
+
+/* ===== Fields ===== */
+.field { margin-bottom: 20px; }
+.field-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+}
+.field-input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 14px;
+    color: var(--text);
+    background: var(--card);
+    outline: none;
+    font-family: inherit;
+    transition: border-color .15s, box-shadow .15s;
+}
+.field-input:hover { border-color: #bdc1c6; }
+.field-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-light);
+}
+.field-input::placeholder { color: #bdc1c6; }
+.field-input.error {
+    border-color: var(--red);
+    box-shadow: 0 0 0 3px var(--red-light);
+}
+
+/* Password field with toggle */
+.pwd-wrap {
+    position: relative;
+}
+.pwd-wrap .field-input { padding-right: 44px; }
+.pwd-toggle {
+    position: absolute;
+    right: 12px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; cursor: pointer;
+    color: var(--text3); font-size: 13px; font-family: inherit;
+    padding: 4px;
+    transition: color .15s;
+}
+.pwd-toggle:hover { color: var(--text2); }
+
+/* Phone row */
+.phone-row { display: flex; }
+.phone-row select {
+    width: 88px;
+    padding: 12px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius) 0 0 var(--radius);
+    border-right: none;
+    font-size: 14px;
+    color: var(--text);
+    background: #f8f9fa;
+    outline: none;
+    font-family: inherit;
+    appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%239aa0a6' d='M5 6L0 0h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    font-weight: 500;
+}
+.phone-row .field-input { border-radius: 0 var(--radius) var(--radius) 0; }
+
+/* ===== Error message ===== */
+.err-msg {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: var(--red-light);
+    border: 1px solid rgba(234,67,53,.2);
+    border-radius: var(--radius);
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: var(--red);
+    line-height: 1.5;
+}
+.err-msg.show { display: flex; }
+.err-msg .err-icon { font-size: 16px; flex-shrink: 0; }
+
+/* ===== OTP 6-digit ===== */
+.otp-row { display: flex; gap: 10px; justify-content: center; margin: 12px 0 20px; }
+.otp-row input {
+    width: 52px; height: 56px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    outline: none;
+    color: var(--text);
+    font-family: inherit;
+    transition: border-color .15s, box-shadow .15s;
+    font-variant-numeric: tabular-nums;
+    background: var(--card);
+}
+.otp-row input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-light);
+}
+
+/* ===== Resend ===== */
+.resend-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+}
+.resend-row span { font-size: 13px; color: var(--text3); }
+.resend-row button {
+    font-size: 13px;
+    color: var(--accent);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    transition: background .15s;
+}
+.resend-row button:hover { background: var(--accent-light); }
+.resend-row button:disabled { color: var(--text3); cursor: default; background: none; }
+
+/* ===== Method tabs (top level) ===== */
+.method-tabs {
+    display: flex;
+    background: #f1f3f4;
+    border-radius: 10px;
+    padding: 3px;
+    margin-bottom: 28px;
+}
+.method-tab {
+    flex: 1;
+    padding: 9px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text2);
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-family: inherit;
+    border-radius: 8px;
+    transition: all .2s;
+    text-align: center;
+}
+.method-tab:hover { color: var(--text); }
+.method-tab.on {
+    background: var(--card);
+    color: var(--text);
+    box-shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+
+/* ===== CAPTCHA area ===== */
+.captcha-area {
+    margin-bottom: 24px;
+}
+.captcha-box {
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: #f8f9fa;
+}
+.captcha-img {
+    width: 100%;
+    height: 160px;
+    background: linear-gradient(135deg, #e8eaed 25%, #f1f3f4 25%, #f1f3f4 50%, #e8eaed 50%, #e8eaed 75%, #f1f3f4 75%);
+    background-size: 40px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 8px;
+    color: var(--text3);
+    font-size: 13px;
+    position: relative;
+}
+.captcha-img .puzzle-icon { font-size: 40px; opacity: .4; }
+.captcha-slider {
+    padding: 12px 16px;
+    background: var(--card);
+    border-top: 1px solid var(--border-light);
+}
+.slider-track {
+    height: 40px;
+    background: #f1f3f4;
+    border-radius: 20px;
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+.slider-thumb {
+    width: 44px; height: 36px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: grab;
+    position: absolute;
+    left: 2px;
+    transition: left .3s, background .2s, border-color .2s;
+    font-size: 16px;
+    color: var(--text3);
+    box-shadow: 0 1px 3px rgba(0,0,0,.08);
+    user-select: none;
+}
+.slider-thumb:hover { border-color: var(--accent); color: var(--accent); }
+.slider-thumb.done {
+    background: var(--green);
+    border-color: var(--green);
+    color: #fff;
+    left: calc(100% - 46px);
+}
+.slider-text {
+    width: 100%;
+    text-align: center;
+    font-size: 13px;
+    color: var(--text3);
+    pointer-events: none;
+    user-select: none;
+}
+
+/* ===== Buttons ===== */
+.btn {
+    width: 100%;
+    padding: 12px 24px;
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+    transition: all .15s;
+}
+.btn-primary {
+    background: var(--accent);
+    color: #fff;
+}
+.btn-primary:hover { background: var(--accent-hover); box-shadow: 0 1px 3px rgba(26,115,232,.3); }
+.btn-primary:active { transform: scale(.99); }
+.btn-outline {
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+.btn-outline:hover { background: #f1f3f4; }
+.btn-text {
+    background: none;
+    color: var(--accent);
+    margin-top: 8px;
+}
+.btn-text:hover { background: var(--accent-light); }
+
+.action-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 4px;
+}
+.action-row .btn { flex: 1; }
+
+/* ===== Forgot password link ===== */
+.forgot-link {
+    text-align: right;
+    margin-bottom: 24px;
+    margin-top: -12px;
+}
+.forgot-link a {
+    font-size: 13px;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+}
+.forgot-link a:hover { text-decoration: underline; }
+
+/* ===== Lock screen ===== */
+.lock-icon {
+    width: 72px; height: 72px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background: var(--red-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+}
+.lock-body { text-align: center; }
+.lock-body h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; color: var(--red); }
+.lock-body p { font-size: 14px; color: var(--text2); line-height: 1.6; margin-bottom: 4px; }
+.lock-timer {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #fef7f6;
+    border: 1px solid rgba(234,67,53,.15);
+    border-radius: 20px;
+    padding: 8px 20px;
+    margin: 20px 0;
+    font-size: 14px;
+    color: var(--red);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ===== Risk level demo selector ===== */
+.demo-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--card);
+    border-top: 1px solid var(--border-light);
+    padding: 12px 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    z-index: 100;
+    box-shadow: 0 -2px 8px rgba(0,0,0,.04);
+}
+.demo-bar .demo-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    white-space: nowrap;
+}
+.demo-bar .demo-btns { display: flex; gap: 8px; }
+.demo-btn {
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text2);
+    font-family: inherit;
+    transition: all .15s;
+    white-space: nowrap;
+}
+.demo-btn:hover { border-color: var(--accent); color: var(--accent); }
+.demo-btn.on {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+.demo-desc {
+    font-size: 12px;
+    color: var(--text3);
+    flex: 1;
+    line-height: 1.4;
+}
+
+/* ===== Password reset success ===== */
+.success-icon {
+    width: 64px; height: 64px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background: var(--green);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 28px; font-weight: 700;
+    animation: popIn .4s cubic-bezier(.175,.885,.32,1.275);
+}
+@keyframes popIn {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* ===== Views ===== */
+.v { display: none; animation: fadeUp .25s ease; }
+.v.on { display: block; }
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Footer ===== */
+.page-footer {
+    text-align: center;
+    padding: 24px;
+    padding-bottom: 72px;
+    font-size: 12px;
+    color: var(--text3);
+}
+.page-footer a { color: var(--text3); text-decoration: none; margin: 0 12px; }
+.page-footer a:hover { color: var(--text2); }
+</style>
+</head>
+<body>
+
+<!-- ===== Top bar ===== -->
+<div class="topbar">
+    <a class="topbar-logo" href="#">
+        <div class="mark" id="logoMark"></div>
+        <span class="brand" id="logoBrand"></span>
+    </a>
+    <div class="topbar-right">
+        还没有账户？
+        <a href="mp-register.html">注册</a>
+    </div>
+</div>
+
+<!-- ===== Main ===== -->
+<div class="main">
+    <div class="container">
+
+        <!-- ==================== 1. 登录首页 ==================== -->
+        <div class="v on" id="v-start">
+            <div class="card">
+                <h1>登录</h1>
+                <div class="desc"></div>
+
+                <div class="method-tabs">
+                    <button class="method-tab on" data-m="pwd" onclick="pickMethod(this)">密码登录</button>
+                    <button class="method-tab" data-m="code" onclick="pickMethod(this)">验证码登录</button>
+                    <button class="method-tab" data-m="otp" onclick="pickMethod(this)">OTP 动态令牌</button>
+                </div>
+
+                <div class="tabs">
+                    <button class="tab on" onclick="swTab(this,'email')">邮箱</button>
+                    <button class="tab" onclick="swTab(this,'phone')">手机号</button>
+                </div>
+
+                <div id="f-email">
+                    <div class="field">
+                        <label class="field-label">邮箱地址</label>
+                        <input class="field-input" type="email" placeholder="name@company.com" id="inEmail">
+                    </div>
+                </div>
+                <div id="f-phone" style="display:none">
+                    <div class="field">
+                        <label class="field-label">手机号</label>
+                        <div class="phone-row">
+                            <select id="ccSel"><option>+86</option><option>+852</option><option>+1</option><option>+44</option><option>+81</option><option>+65</option></select>
+                            <input class="field-input" type="tel" placeholder="输入手机号" id="inPhone">
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="goNext()">继续</button>
+            </div>
+        </div>
+
+        <!-- ==================== 2. CAPTCHA 图形验证 (L1+) ==================== -->
+        <div class="v" id="v-captcha">
+            <div class="card">
+                <h1>安全验证</h1>
+                <div class="desc">检测到新的登录环境，请完成以下验证</div>
+
+                <div class="captcha-area">
+                    <div class="captcha-box">
+                        <div class="captcha-img">
+                            <div class="puzzle-icon">🧩</div>
+                            <span>滑动拼图验证区域</span>
+                        </div>
+                        <div class="captcha-slider">
+                            <div class="slider-track" id="sliderTrack" onclick="completeCaptcha()">
+                                <div class="slider-thumb" id="sliderThumb">→</div>
+                                <span class="slider-text">向右滑动完成验证</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-row">
+                    <button class="btn btn-outline" onclick="go('v-start')">返回</button>
+                    <button class="btn btn-primary" id="captchaNext" onclick="afterCaptcha()" disabled style="opacity:.5">验证后继续</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 3-A. 密码输入 ==================== -->
+        <div class="v" id="v-pwd">
+            <div class="card">
+                <h1>输入密码</h1>
+                <div class="desc"><b id="t-pwd-acct">—</b></div>
+
+                <div class="err-msg" id="pwdErr">
+                    <span class="err-icon">⚠</span>
+                    <span id="pwdErrText">密码错误，请重试</span>
+                </div>
+
+                <div class="field">
+                    <label class="field-label">密码</label>
+                    <div class="pwd-wrap">
+                        <input class="field-input" type="password" placeholder="输入登录密码" id="inPwd">
+                        <button class="pwd-toggle" onclick="togglePwd()" id="pwdEye">显示</button>
+                    </div>
+                </div>
+                <div class="forgot-link">
+                    <a href="#" onclick="goForgot(); return false;">忘记密码？</a>
+                </div>
+
+                <div class="action-row">
+                    <button class="btn btn-outline" onclick="go('v-start')">返回</button>
+                    <button class="btn btn-primary" onclick="submitPwd()">登录</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 3-B. 验证码输入 ==================== -->
+        <div class="v" id="v-code">
+            <div class="card">
+                <h1>输入验证码</h1>
+                <div class="desc">6 位验证码已发送至 <b id="t-code-acct">—</b></div>
+
+                <div class="err-msg" id="codeErr">
+                    <span class="err-icon">⚠</span>
+                    <span id="codeErrText">验证码错误，请重试</span>
+                </div>
+
+                <div class="otp-row" id="otp1"></div>
+                <div class="resend-row">
+                    <span>有效期 10 分钟</span>
+                    <button id="rs1" onclick="countdown(this)">重新发送</button>
+                </div>
+
+                <div class="action-row">
+                    <button class="btn btn-outline" onclick="go('v-start')">返回</button>
+                    <button class="btn btn-primary" onclick="submitCode()">登录</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 3-C. OTP 动态码输入 ==================== -->
+        <div class="v" id="v-otp">
+            <div class="card">
+                <h1>输入动态码</h1>
+                <div class="desc">打开 Authenticator 应用，输入 <b id="t-otp-acct">—</b> 的 6 位动态码</div>
+
+                <div class="err-msg" id="otpErr">
+                    <span class="err-icon">⚠</span>
+                    <span id="otpErrText">动态码错误，请检查后重试</span>
+                </div>
+
+                <div class="field">
+                    <label class="field-label">动态码</label>
+                    <input class="field-input" type="text" placeholder="输入 6 位动态码" id="inOtp" maxlength="6" style="text-align:center;letter-spacing:6px;font-size:18px;font-weight:700">
+                </div>
+
+                <div class="action-row">
+                    <button class="btn btn-outline" onclick="go('v-start')">返回</button>
+                    <button class="btn btn-primary" onclick="submitOtp()">登录</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 4. 二次验证 (L2) ==================== -->
+        <div class="v" id="v-mfa">
+            <div class="card">
+                <h1>安全验证</h1>
+                <div class="desc">为保护账户安全，请完成二次身份验证。<br>验证码已发送至 <b id="t-mfa-acct">—</b></div>
+
+                <div class="err-msg" id="mfaErr">
+                    <span class="err-icon">⚠</span>
+                    <span id="mfaErrText">验证码错误</span>
+                </div>
+
+                <div class="otp-row" id="otp2"></div>
+                <div class="resend-row">
+                    <span>有效期 10 分钟</span>
+                    <button id="rs2" onclick="countdown(this)">重新发送</button>
+                </div>
+
+                <div class="action-row">
+                    <button class="btn btn-outline" onclick="go('v-start')">返回</button>
+                    <button class="btn btn-primary" onclick="submitMfa()">验证并登录</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 5. 账户锁定 (L3) ==================== -->
+        <div class="v" id="v-locked">
+            <div class="card">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-body">
+                    <h2>账户已冻结</h2>
+                    <p>为保护您的账户安全，登录功能已暂时冻结 24 小时。</p>
+                    <p>我们已向您的注册邮箱/手机发送了安全通知。</p>
+                    <div class="lock-timer">
+                        剩余冻结时间：<span id="lockTime">23:59:59</span>
+                    </div>
+                </div>
+                <div class="action-row" style="margin-top:24px">
+                    <button class="btn btn-outline" onclick="alert('发送解锁邮件…')">通过邮件解锁</button>
+                    <button class="btn btn-outline" onclick="alert('联系客服…')">联系客服</button>
+                </div>
+                <button class="btn btn-text" onclick="go('v-start')">返回登录</button>
+            </div>
+        </div>
+
+        <!-- ==================== 6. 登录成功 ==================== -->
+        <div class="v" id="v-success">
+            <div class="card">
+                <div class="success-icon">✓</div>
+                <div class="lock-body" style="text-align:center">
+                    <h2 style="color:var(--text)">登录成功</h2>
+                    <p>正在跳转到控制台…</p>
+                    <div class="lock-timer" style="background:rgba(52,168,83,.08);border-color:rgba(52,168,83,.15);color:var(--green)">
+                        <span id="successSec">3</span> 秒后自动跳转
+                    </div>
+                </div>
+                <button class="btn btn-primary" style="margin-top:16px" onclick="alert('进入 MP 控制台…')">立即进入</button>
+            </div>
+        </div>
+
+        <!-- ==================== 7. 忘记密码 — 输入邮箱 ==================== -->
+        <div class="v" id="v-forgot">
+            <div class="card">
+                <h1>重置密码</h1>
+                <div class="desc">输入您的注册邮箱或手机号，我们将发送重置链接</div>
+
+                <div class="field">
+                    <label class="field-label">邮箱 / 手机号</label>
+                    <input class="field-input" type="text" placeholder="name@company.com" id="inForgot">
+                </div>
+
+                <div class="action-row">
+                    <button class="btn btn-outline" onclick="go('v-start')">返回登录</button>
+                    <button class="btn btn-primary" onclick="sendReset()">发送重置链接</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 8. 忘记密码 — 已发送 ==================== -->
+        <div class="v" id="v-forgot-sent">
+            <div class="card">
+                <h1>查收邮件</h1>
+                <div class="desc">密码重置链接已发送至 <b id="t-forgot-acct">—</b></div>
+
+                <div style="background:#e8f0fe;border:1px solid #aecbfa;border-radius:var(--radius);padding:28px 24px;text-align:center;margin-bottom:24px">
+                    <div style="font-size:40px;margin-bottom:12px">✉️</div>
+                    <p style="font-size:14px;color:var(--text);line-height:1.6">请查收邮件中的重置链接，<br>点击链接设置新密码。</p>
+                </div>
+
+                <div class="resend-row" style="justify-content:center;gap:6px">
+                    <span>没有收到？</span>
+                    <button id="rs3" onclick="countdown(this)">重新发送</button>
+                </div>
+
+                <button class="btn btn-text" onclick="go('v-start')">返回登录</button>
+            </div>
+        </div>
+
+        <!-- ==================== 9. 忘记密码 — 设置新密码 ==================== -->
+        <div class="v" id="v-reset-pwd">
+            <div class="card">
+                <h1>设置新密码</h1>
+                <div class="desc">请为您的账户设置新的登录密码</div>
+
+                <div class="field">
+                    <label class="field-label">新密码</label>
+                    <input class="field-input" type="password" placeholder="至少 8 位，含大小写字母和数字" id="inNewPwd" oninput="meter(this.value)">
+                    <div class="pwd-meter" style="display:flex;gap:4px;margin-top:8px"><i id="s1" style="flex:1;height:3px;border-radius:2px;background:var(--border-light);transition:background .3s;font-style:normal"></i><i id="s2" style="flex:1;height:3px;border-radius:2px;background:var(--border-light);transition:background .3s;font-style:normal"></i><i id="s3" style="flex:1;height:3px;border-radius:2px;background:var(--border-light);transition:background .3s;font-style:normal"></i><i id="s4" style="flex:1;height:3px;border-radius:2px;background:var(--border-light);transition:background .3s;font-style:normal"></i></div>
+                    <div id="pwdH" style="font-size:12px;color:var(--text3);margin-top:4px;font-weight:500"></div>
+                </div>
+                <div class="field">
+                    <label class="field-label">确认新密码</label>
+                    <input class="field-input" type="password" placeholder="再次输入新密码" id="inNewPwd2">
+                </div>
+
+                <button class="btn btn-primary" onclick="resetDone()">重置密码</button>
+            </div>
+        </div>
+
+        <!-- ==================== 10. 密码重置成功 ==================== -->
+        <div class="v" id="v-reset-done">
+            <div class="card">
+                <div class="success-icon">✓</div>
+                <div style="text-align:center">
+                    <h2 style="font-size:22px;font-weight:700;margin-bottom:8px">密码已重置</h2>
+                    <p style="font-size:14px;color:var(--text2);line-height:1.5">请使用新密码登录您的账户</p>
+                </div>
+                <button class="btn btn-primary" style="margin-top:28px" onclick="go('v-start')">返回登录</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ===== Footer ===== -->
+<div class="page-footer">
+    <span id="footerBrand">&copy; 2026</span>
+    <a href="#">隐私政策</a>
+    <a href="#">服务条款</a>
+    <a href="#">帮助中心</a>
+</div>
+
+<!-- ===== Demo bar (prototype only) ===== -->
+<div class="demo-bar">
+    <span class="demo-label">风险等级模拟</span>
+    <div class="demo-btns">
+        <button class="demo-btn on" data-r="0" onclick="setRisk(0,this)">L0 无风险</button>
+        <button class="demo-btn" data-r="1" onclick="setRisk(1,this)">L1 低风险</button>
+        <button class="demo-btn" data-r="2" onclick="setRisk(2,this)">L2 高风险</button>
+        <button class="demo-btn" data-r="e" onclick="setRisk('e',this)">密码错误 3 次</button>
+    </div>
+    <span class="demo-desc" id="demoDesc">常用设备 + 常用 IP → 直接输入凭证登录</span>
+</div>
+
+<script>
+/* ===== State ===== */
+let acctType = 'email';   // email | phone
+let loginMethod = 'pwd';  // pwd | code | otp
+let riskLevel = 0;        // 0-2
+let errCount = 0;
+let captchaPassed = false;
+
+const riskDescs = {
+    0: '常用设备 + 常用 IP → 直接输入凭证登录',
+    1: '新设备 / 新浏览器 → 需先完成图形验证码',
+    2: '连续错误 ≥5 次 / 异地新设备 → 冻结账户 24 小时',
+    'e': '模拟密码连续输入错误 3 次，触发图形验证码'
+};
+
+/* ===== IP-based default login method ===== */
+(function initDefaultMethod() {
+    // Simulate IP region detection
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+    let region = 'other';
+    if (tz.startsWith('Asia/Shanghai') || tz.startsWith('Asia/Chongqing')) region = 'CN';
+    else if (tz.startsWith('Asia/Hong_Kong')) region = 'HK';
+    else if (tz.startsWith('Asia/Tokyo')) region = 'JP';
+    else if (tz.startsWith('America/')) region = 'US';
+    else if (tz.startsWith('Europe/')) region = 'EU';
+
+    // Default method by region: CN/HK/JP → password, US/EU → verification code, other → password
+    const regionMethodMap = { CN: 'pwd', HK: 'pwd', JP: 'pwd', US: 'code', EU: 'code', other: 'pwd' };
+    const defaultMethod = regionMethodMap[region] || 'pwd';
+    loginMethod = defaultMethod;
+
+    // Activate the correct method tab
+    setTimeout(() => {
+        document.querySelectorAll('.method-tab').forEach(t => {
+            t.classList.toggle('on', t.dataset.m === defaultMethod);
+        });
+    }, 0);
+})();
+
+/* ===== Navigation ===== */
+function go(id) {
+    document.querySelectorAll('.v').forEach(v => v.classList.remove('on'));
+    document.getElementById(id).classList.add('on');
+}
+
+function swTab(el, m) {
+    acctType = m;
+    el.parentElement.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
+    el.classList.add('on');
+    document.getElementById('f-email').style.display = m === 'email' ? '' : 'none';
+    document.getElementById('f-phone').style.display = m === 'phone' ? '' : 'none';
+}
+
+function pickMethod(el) {
+    document.querySelectorAll('.method-tab').forEach(c => c.classList.remove('on'));
+    el.classList.add('on');
+    loginMethod = el.dataset.m;
+}
+
+function getAcct() {
+    return acctType === 'email'
+        ? (document.getElementById('inEmail').value || 'name@company.com')
+        : (document.getElementById('inPhone').value || '手机号');
+}
+
+function maskAcct(a) {
+    if (a.includes('@')) {
+        const [u, d] = a.split('@');
+        return u.slice(0, 2) + '***@' + d;
+    }
+    return a.slice(0, 3) + '****' + a.slice(-4);
+}
+
+/* ===== Risk level demo ===== */
+function setRisk(r, btn) {
+    document.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    if (r === 'e') {
+        riskLevel = 0;
+        errCount = 3;
+    } else {
+        riskLevel = r;
+        errCount = 0;
+    }
+    document.getElementById('demoDesc').textContent = riskDescs[r];
+    captchaPassed = false;
+    resetCaptcha();
+}
+
+/* ===== Main flow ===== */
+function goNext() {
+    const acct = getAcct();
+    captchaPassed = false;
+    resetCaptcha();
+
+    // L2 → frozen 24h
+    if (riskLevel >= 2) {
+        go('v-locked');
+        startLockTimer();
+        return;
+    }
+
+    // L1 or errCount>=3 → CAPTCHA first
+    if (riskLevel >= 1 || errCount >= 3) {
+        go('v-captcha');
+        return;
+    }
+
+    // L0 → go directly to credential
+    goToCredential(acct);
+}
+
+function afterCaptcha() {
+    if (!captchaPassed) return;
+    goToCredential(getAcct());
+}
+
+function goToCredential(acct) {
+    if (loginMethod === 'pwd') {
+        document.getElementById('t-pwd-acct').textContent = acct;
+        document.getElementById('pwdErr').classList.remove('show');
+        go('v-pwd');
+    } else if (loginMethod === 'code') {
+        document.getElementById('t-code-acct').textContent = acct;
+        document.getElementById('codeErr').classList.remove('show');
+        go('v-code');
+        buildOtp('otp1');
+        countdown(document.getElementById('rs1'));
+    } else {
+        document.getElementById('t-otp-acct').textContent = acct;
+        document.getElementById('otpErr').classList.remove('show');
+        go('v-otp');
+    }
+}
+
+/* ===== CAPTCHA ===== */
+function completeCaptcha() {
+    captchaPassed = true;
+    const thumb = document.getElementById('sliderThumb');
+    thumb.classList.add('done');
+    thumb.textContent = '✓';
+    const btn = document.getElementById('captchaNext');
+    btn.disabled = false;
+    btn.style.opacity = '1';
+}
+
+function resetCaptcha() {
+    captchaPassed = false;
+    const thumb = document.getElementById('sliderThumb');
+    if (thumb) {
+        thumb.classList.remove('done');
+        thumb.textContent = '→';
+    }
+    const btn = document.getElementById('captchaNext');
+    if (btn) {
+        btn.disabled = true;
+        btn.style.opacity = '.5';
+    }
+}
+
+/* ===== Submit handlers ===== */
+function submitPwd() {
+    // Simulate: if errCount demo, show error
+    if (errCount > 0 && errCount < 5) {
+        errCount++;
+        const el = document.getElementById('pwdErr');
+        const txt = document.getElementById('pwdErrText');
+        el.classList.add('show');
+        if (errCount >= 5) {
+            txt.textContent = '连续错误 ' + errCount + ' 次，账户已临时锁定';
+            setTimeout(() => { go('v-locked'); startLockTimer(); }, 1500);
+            return;
+        } else if (errCount >= 3) {
+            txt.textContent = '密码错误（第 ' + errCount + ' 次），请完成安全验证后重试';
+        } else {
+            txt.textContent = '密码错误，请重试（第 ' + errCount + ' 次）';
+        }
+        return;
+    }
+
+    // Success
+    loginSuccess();
+}
+
+function submitCode() {
+    // Verification code is itself identity proof, skip MFA even for L2
+    loginSuccess();
+}
+
+function submitOtp() {
+    loginSuccess();
+}
+
+function submitMfa() {
+    loginSuccess();
+}
+
+function loginSuccess() {
+    go('v-success');
+    let s = 3;
+    const el = document.getElementById('successSec');
+    const t = setInterval(() => {
+        if (--s <= 0) { clearInterval(t); alert('进入 MP 控制台…'); }
+        else el.textContent = s;
+    }, 1000);
+}
+
+/* ===== Forgot password ===== */
+function goForgot() {
+    go('v-forgot');
+}
+
+function sendReset() {
+    const v = document.getElementById('inForgot').value || 'name@company.com';
+    document.getElementById('t-forgot-acct').textContent = maskAcct(v);
+    go('v-forgot-sent');
+    countdown(document.getElementById('rs3'));
+}
+
+function resetDone() {
+    go('v-reset-done');
+}
+
+/* ===== Lock timer ===== */
+function startLockTimer() {
+    let total = 24 * 60 * 60; // 24 hours
+    const el = document.getElementById('lockTime');
+    const t = setInterval(() => {
+        if (--total <= 0) { clearInterval(t); el.textContent = '00:00'; return; }
+        const h = Math.floor(total / 3600);
+        const m = Math.floor((total % 3600) / 60);
+        const s = total % 60;
+        el.textContent = String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+    }, 1000);
+}
+
+/* ===== OTP builder ===== */
+function buildOtp(id) {
+    const w = document.getElementById(id);
+    if (w.children.length) return;
+    for (let i = 0; i < 6; i++) {
+        const inp = document.createElement('input');
+        inp.maxLength = 1; inp.type = 'text';
+        inp.oninput = function() { if (this.value && i < 5) w.children[i + 1].focus(); };
+        inp.onkeydown = function(e) { if (e.key === 'Backspace' && !this.value && i > 0) w.children[i - 1].focus(); };
+        w.appendChild(inp);
+    }
+    setTimeout(() => w.children[0].focus(), 100);
+}
+
+/* ===== Countdown ===== */
+function countdown(btn) {
+    btn.disabled = true; let s = 60; btn.textContent = s + 's';
+    const t = setInterval(() => {
+        if (--s <= 0) { clearInterval(t); btn.disabled = false; btn.textContent = '重新发送'; }
+        else btn.textContent = s + 's';
+    }, 1000);
+}
+
+/* ===== Password toggle ===== */
+function togglePwd() {
+    const inp = document.getElementById('inPwd');
+    const btn = document.getElementById('pwdEye');
+    if (inp.type === 'password') {
+        inp.type = 'text'; btn.textContent = '隐藏';
+    } else {
+        inp.type = 'password'; btn.textContent = '显示';
+    }
+}
+
+/* ===== Password meter ===== */
+function meter(p) {
+    const ss = ['s1','s2','s3','s4'].map(id => document.getElementById(id));
+    const h = document.getElementById('pwdH');
+    ss.forEach(s => { s.style.background = 'var(--border-light)'; });
+    if (!p) { h.textContent = ''; return; }
+    let sc = 0;
+    if (p.length >= 8) sc++;
+    if (/[a-z]/.test(p) && /[A-Z]/.test(p)) sc++;
+    if (/\d/.test(p)) sc++;
+    if (/[^a-zA-Z0-9]/.test(p)) sc++;
+    const mp = [
+        { t: '弱 — 请增加复杂度', cl: '#ea4335' },
+        { t: '中等', cl: '#f9ab00' },
+        { t: '强', cl: '#34a853' },
+        { t: '非常强', cl: '#34a853' }
+    ];
+    for (let i = 0; i < sc; i++) ss[i].style.background = mp[sc-1].cl;
+    h.textContent = mp[sc-1].t; h.style.color = mp[sc-1].cl;
+}
+</script>
+</body>
+</html>
