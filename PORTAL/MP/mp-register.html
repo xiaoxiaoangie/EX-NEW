@@ -248,16 +248,23 @@ h1 {
 .resend-row button:hover { background: var(--accent-light); }
 .resend-row button:disabled { color: var(--text3); cursor: default; background: none; }
 
-/* ===== Password meter ===== */
-.pwd-meter { display: flex; gap: 4px; margin-top: 8px; }
-.pwd-meter i {
-    flex: 1; height: 3px; border-radius: 2px;
-    background: var(--border-light); transition: background .3s; font-style: normal;
+/* ===== Password rules checklist ===== */
+.pwd-rules { margin-top: 10px; display: flex; flex-direction: column; gap: 4px; }
+.pwd-rule {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--text3); font-weight: 500;
+    transition: color .2s;
 }
-.pwd-meter i.w { background: var(--red); }
-.pwd-meter i.m { background: var(--orange); }
-.pwd-meter i.s { background: var(--green); }
-.pwd-hint { font-size: 12px; color: var(--text3); margin-top: 4px; font-weight: 500; }
+.pwd-rule .rule-icon {
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 1.5px solid var(--border); display: flex;
+    align-items: center; justify-content: center;
+    font-size: 10px; transition: all .2s; flex-shrink: 0;
+}
+.pwd-rule.pass { color: var(--green); }
+.pwd-rule.pass .rule-icon {
+    border-color: var(--green); background: var(--green); color: #fff;
+}
 
 /* ===== Method card selector ===== */
 .methods { margin-bottom: 24px; display: flex; flex-direction: column; gap: 10px; }
@@ -622,63 +629,57 @@ h1 {
                         <button class="btn btn-primary" id="verifyBtn" onclick="verifyAndContinue()">验证并继续</button>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- ==================== 2-B. 密码注册 ==================== -->
-        <div class="v" id="v-pwd">
-            <div class="card">
-                <h1>设置密码</h1>
-                <div class="desc">为 <b id="t-pwd">—</b> 设置登录密码</div>
-
-                <div class="field">
-                    <label class="field-label">密码</label>
-                    <input class="field-input" type="password" placeholder="至少 8 位，含大小写字母和数字" id="inPwd" oninput="meter(this.value)">
-                    <div class="pwd-meter"><i id="s1"></i><i id="s2"></i><i id="s3"></i><i id="s4"></i></div>
-                    <div class="pwd-hint" id="pwdH"></div>
-                </div>
-                <div class="field">
-                    <label class="field-label">确认密码</label>
-                    <input class="field-input" type="password" placeholder="再次输入密码" id="inPwd2">
-                </div>
-
-                <div class="action-row">
-                    <button class="btn btn-outline" onclick="backToStart()">返回</button>
-                    <button class="btn btn-primary" onclick="pwdSubmit()">设置并注册</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ==================== 2-C. OTP 绑定 Authenticator ==================== -->
-        <div class="v" id="v-otp-bind">
-            <div class="card">
-                <h1>绑定动态令牌</h1>
-                <div class="desc">使用 Google Authenticator 或其他 TOTP 应用扫描下方二维码</div>
-
-                <div class="qr-area">
-                    <div class="qr-box">
-                        <div class="qr-icon">📱</div>
-                        <span>扫描绑定</span>
+                <!-- Phase 3-A: 设置密码（密码注册，同一卡片内） -->
+                <div id="phase-pwd" style="display:none">
+                    <div class="field">
+                        <label class="field-label">密码</label>
+                        <input class="field-input" type="password" placeholder="至少 8 位，含字母、数字和特殊字符" id="inPwd" oninput="meter(this.value)">
+                        <div class="pwd-rules">
+                            <div class="pwd-rule" id="r-len"><span class="rule-icon">✓</span>至少 8 位字符</div>
+                            <div class="pwd-rule" id="r-letter"><span class="rule-icon">✓</span>包含字母 (a-z)</div>
+                            <div class="pwd-rule" id="r-digit"><span class="rule-icon">✓</span>包含数字 (0-9)</div>
+                            <div class="pwd-rule" id="r-special"><span class="rule-icon">✓</span>包含特殊字符 (!@#$%...)</div>
+                        </div>
                     </div>
-                    <div class="secret-row">
-                        无法扫码？手动输入密钥<br>
-                        <code>JBSW Y3DP EHPK 3PXP</code>
+                    <div class="field">
+                        <label class="field-label">确认密码</label>
+                        <input class="field-input" type="password" placeholder="再次输入密码" id="inPwd2">
+                    </div>
+
+                    <div class="action-row">
+                        <button class="btn btn-outline" onclick="backToInput()">返回</button>
+                        <button class="btn btn-primary" onclick="pwdSubmit()">注册</button>
                     </div>
                 </div>
 
-                <div class="field">
-                    <label class="field-label">验证码</label>
-                    <input class="field-input" type="text" placeholder="输入 Authenticator 上的 6 位动态码" id="inTotp" maxlength="6" style="text-align:center;letter-spacing:6px;font-size:18px;font-weight:700">
-                </div>
+                <!-- Phase 3-B: 绑定动态令牌（OTP 注册，同一卡片内） -->
+                <div id="phase-otp" style="display:none">
+                    <div class="qr-area">
+                        <div class="qr-box">
+                            <div class="qr-icon">📱</div>
+                            <span>扫描绑定</span>
+                        </div>
+                        <div class="secret-row">
+                            无法扫码？手动输入密钥<br>
+                            <code>JBSW Y3DP EHPK 3PXP</code>
+                        </div>
+                    </div>
 
-                <div class="action-row">
-                    <button class="btn btn-outline" onclick="backToStart()">返回</button>
-                    <button class="btn btn-primary" onclick="finish()">验证并注册</button>
+                    <div class="field">
+                        <label class="field-label">验证码</label>
+                        <input class="field-input" type="text" placeholder="输入 Authenticator 上的 6 位动态码" id="inTotp" maxlength="6" style="text-align:center;letter-spacing:6px;font-size:18px;font-weight:700">
+                    </div>
+
+                    <div class="action-row">
+                        <button class="btn btn-outline" onclick="backToInput()">返回</button>
+                        <button class="btn btn-primary" onclick="finish()">验证并注册</button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- ==================== 3. 注册成功 ==================== -->
+        <!-- ==================== 2. 注册成功 ==================== -->
         <div class="v" id="v-done">
             <div class="card">
                 <div class="success-icon">✓</div>
@@ -815,7 +816,7 @@ function buildOtp(id) {
 /* ===== Phase switching (inline on v-start) ===== */
 function showVerifyPhase() {
     const c = val();
-    document.getElementById('phase-input').style.display = 'none';
+    hideAllPhases();
     document.getElementById('phase-verify').style.display = '';
 
     // Update title and description based on method
@@ -834,17 +835,18 @@ function showVerifyPhase() {
     cd(document.getElementById('rsInline'));
 }
 
+function hideAllPhases() {
+    ['phase-input', 'phase-verify', 'phase-pwd', 'phase-otp'].forEach(id => {
+        document.getElementById(id).style.display = 'none';
+    });
+}
+
 function backToInput() {
-    document.getElementById('phase-verify').style.display = 'none';
+    hideAllPhases();
     document.getElementById('phase-input').style.display = '';
     document.getElementById('startTitle').textContent = '注册';
     document.getElementById('startDesc').innerHTML = '';
     clearAllErrors();
-}
-
-function backToStart() {
-    go('v-start');
-    backToInput();
 }
 
 /* ===== Main flow ===== */
@@ -862,7 +864,7 @@ function goNext() {
         return;
     }
 
-    // All methods: show inline verification first
+    // All methods: step 1 = input + inline verification on same card
     showVerifyPhase();
 }
 
@@ -878,30 +880,32 @@ function verifyAndContinue() {
         // 验证码注册: verify → done
         finish();
     } else if (rm === 'pwd') {
-        // 密码注册: verify → set password
-        document.getElementById('t-pwd').textContent = val();
-        go('v-pwd');
+        // 密码注册: verify → set password (step 2)
+        hideAllPhases();
+        document.getElementById('phase-pwd').style.display = '';
+        document.getElementById('startTitle').textContent = '设置密码';
+        document.getElementById('startDesc').innerHTML = '为 <b>' + val() + '</b> 设置登录密码';
         if (edgeCase === 'pwd_weak') {
             setTimeout(() => {
                 document.getElementById('inPwd').value = '123';
                 meter('123');
             }, 200);
         }
-    } else {
-        // OTP注册: verify → bind authenticator
-        go('v-otp-bind');
+    } else if (rm === 'otp') {
+        // OTP注册: verify → bind authenticator (step 2)
+        hideAllPhases();
+        document.getElementById('phase-otp').style.display = '';
+        document.getElementById('startTitle').textContent = '绑定动态令牌';
+        document.getElementById('startDesc').textContent = '使用 Google Authenticator 或其他 TOTP 应用扫描下方二维码';
     }
 }
 
 function pwdSubmit() {
-    // Edge case: password too weak
-    if (edgeCase === 'pwd_weak') {
-        const pwdInput = document.getElementById('inPwd');
-        if (!pwdInput.value || pwdInput.value.length < 8) {
-            meter(pwdInput.value || '');
-            return;
-        }
-    }
+    const p = document.getElementById('inPwd').value || '';
+    meter(p);
+    // Check all 4 rules pass
+    const allPass = p.length >= 8 && /[a-zA-Z]/.test(p) && /\d/.test(p) && /[^a-zA-Z0-9]/.test(p);
+    if (!allPass) return;
     // Password set → finish
     finish();
 }
@@ -925,25 +929,23 @@ function finish() {
 
 function goLogin() { alert('跳转到登录页…'); }
 
-/* ===== Password meter ===== */
+/* ===== Password rules checker ===== */
 function meter(p) {
-    const ss = ['s1','s2','s3','s4'].map(id => document.getElementById(id));
-    const h = document.getElementById('pwdH');
-    ss.forEach(s => s.className = '');
-    if (!p) { h.textContent = ''; return; }
-    let sc = 0;
-    if (p.length >= 8) sc++;
-    if (/[a-z]/.test(p) && /[A-Z]/.test(p)) sc++;
-    if (/\d/.test(p)) sc++;
-    if (/[^a-zA-Z0-9]/.test(p)) sc++;
-    const mp = [
-        { c: 'w', t: '弱 — 请增加复杂度', cl: '#ea4335' },
-        { c: 'm', t: '中等', cl: '#f9ab00' },
-        { c: 's', t: '强', cl: '#34a853' },
-        { c: 's', t: '非常强', cl: '#34a853' }
+    const rules = [
+        { id: 'r-len',     test: p => p.length >= 8 },
+        { id: 'r-letter',  test: p => /[a-zA-Z]/.test(p) },
+        { id: 'r-digit',   test: p => /\d/.test(p) },
+        { id: 'r-special', test: p => /[^a-zA-Z0-9]/.test(p) }
     ];
-    for (let i = 0; i < sc; i++) ss[i].classList.add(mp[sc-1].c);
-    h.textContent = mp[sc-1].t; h.style.color = mp[sc-1].cl;
+    rules.forEach(r => {
+        const el = document.getElementById(r.id);
+        if (!el) return;
+        if (p && r.test(p)) {
+            el.classList.add('pass');
+        } else {
+            el.classList.remove('pass');
+        }
+    });
 }
 
 /* ===== Error helpers ===== */
@@ -979,9 +981,9 @@ function demoMethod(method, btn) {
     rm = method;
 
     const descs = {
-        pwd: '验证邮箱/手机 → 设置密码 → 完成（2步）',
-        otp: '验证邮箱/手机 → 绑定 Authenticator → 完成（2步）',
-        code: '验证邮箱/手机 → 直接完成（1步）'
+        pwd: 'Step1 输入+验证 → Step2 设置密码 → 完成（2步）',
+        otp: 'Step1 输入+验证 → Step2 绑定 Authenticator → 完成（2步）',
+        code: 'Step1 输入+验证 → 直接完成（1步）'
     };
     document.getElementById('demoMethodDesc').textContent = descs[method];
     backToInput();
@@ -1003,9 +1005,9 @@ function syncDemoBar() {
     document.getElementById('dmCode').classList.toggle('on', rm === 'code');
 
     const descs = {
-        pwd: '验证邮箱/手机 → 设置密码 → 完成（2步）',
-        otp: '验证邮箱/手机 → 绑定 Authenticator → 完成（2步）',
-        code: '验证邮箱/手机 → 直接完成（1步）'
+        pwd: 'Step1 输入+验证 → Step2 设置密码 → 完成（2步）',
+        otp: 'Step1 输入+验证 → Step2 绑定 Authenticator → 完成（2步）',
+        code: 'Step1 输入+验证 → 直接完成（1步）'
     };
     document.getElementById('demoMethodDesc').textContent = descs[rm];
 }
