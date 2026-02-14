@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Developer — API Keys & Webhooks</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+    --pri:#4f46e5;--pri-light:#eef2ff;--pri-dark:#4338ca;
+    --green:#16a34a;--green-bg:#dcfce7;--red:#dc2626;--red-bg:#fef2f2;
+    --amber:#d97706;--amber-bg:#fefce8;
+    --text:#1e293b;--text2:#475569;--text3:#94a3b8;
+    --bg:#f8fafc;--card:#fff;--border:#e2e8f0;--border-light:#f1f5f9;
+    --radius:8px;--shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh;}
+
+/* Topbar */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:56px;background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;}
+.topbar-left{display:flex;align-items:center;gap:10px;}
+.topbar-left .mark{width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,var(--pri),#7c3aed);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:12px;}
+.topbar-left .brand{font-weight:700;font-size:15px;letter-spacing:-.3px;}
+.topbar-right{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--pri);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
+
+/* Layout */
+.page-wrap{max-width:900px;margin:0 auto;padding:32px 24px 100px;}
+.page-header{margin-bottom:24px;}
+.breadcrumb{font-size:12px;color:var(--text3);margin-bottom:4px;}
+.breadcrumb a{color:var(--pri);text-decoration:none;}
+.page-title{font-size:24px;font-weight:700;margin-bottom:4px;}
+.page-sub{font-size:14px;color:var(--text2);}
+
+/* Tabs */
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:24px;}
+.tab{padding:10px 24px;font-size:14px;font-weight:600;color:var(--text3);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;font-family:inherit;}
+.tab:hover{color:var(--text2);}
+.tab.on{color:var(--pri);border-bottom-color:var(--pri);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* Env toggle */
+.env-bar{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.env-toggle{display:flex;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.env-btn{padding:7px 20px;font-size:13px;font-weight:600;cursor:pointer;border:none;background:var(--card);color:var(--text2);font-family:inherit;transition:all .15s;}
+.env-btn:first-child{border-right:1px solid var(--border);}
+.env-btn.on{background:var(--pri);color:#fff;}
+.env-btn.test.on{background:var(--amber);color:#fff;}
+.env-label{font-size:12px;color:var(--text3);}
+
+/* Card */
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px;box-shadow:var(--shadow);}
+.card-title{font-size:15px;font-weight:700;margin-bottom:4px;}
+.card-sub{font-size:12px;color:var(--text3);margin-bottom:16px;}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+
+/* Key row */
+.key-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border-light);}
+.key-row:last-child{border-bottom:none;}
+.key-label{font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px;}
+.key-value{font-family:'SF Mono','Roboto Mono',Menlo,monospace;font-size:13px;color:var(--text);background:var(--bg);padding:6px 12px;border-radius:6px;border:1px solid var(--border);display:inline-flex;align-items:center;gap:8px;}
+.key-value .dot{color:var(--text3);}
+.key-meta{font-size:11px;color:var(--text3);margin-top:4px;}
+.key-actions{display:flex;gap:6px;}
+
+/* Buttons */
+.btn{padding:7px 16px;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--text2);font-family:inherit;transition:all .15s;white-space:nowrap;}
+.btn:hover{border-color:var(--pri);color:var(--pri);}
+.btn-pri{background:var(--pri);color:#fff;border-color:var(--pri);}
+.btn-pri:hover{background:var(--pri-dark);border-color:var(--pri-dark);color:#fff;}
+.btn-sm{padding:5px 12px;font-size:12px;}
+.btn-danger{color:var(--red);border-color:rgba(220,38,38,.3);}
+.btn-danger:hover{background:var(--red-bg);border-color:var(--red);color:var(--red);}
+.btn-ghost{border:none;background:none;padding:5px 10px;}
+.btn-ghost:hover{background:var(--bg);}
+.btn-icon{width:32px;height:32px;padding:0;display:flex;align-items:center;justify-content:center;font-size:14px;}
+
+/* Table */
+.tbl{width:100%;border-collapse:collapse;}
+.tbl th{text-align:left;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;padding:10px 14px;border-bottom:2px solid var(--border);background:var(--bg);}
+.tbl td{padding:12px 14px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border-light);vertical-align:middle;}
+.tbl tr:hover td{background:#fafbfc;}
+.tbl .nm{font-weight:600;color:var(--text);}
+.tbl .mono{font-family:'SF Mono','Roboto Mono',Menlo,monospace;font-size:12px;}
+
+/* Badge */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:600;}
+.badge-green{background:var(--green-bg);color:var(--green);}
+.badge-red{background:var(--red-bg);color:var(--red);}
+.badge-amber{background:var(--amber-bg);color:var(--amber);}
+.badge-gray{background:var(--border-light);color:var(--text3);}
+
+/* Webhook endpoint card */
+.ep-card{border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:10px;cursor:pointer;transition:all .15s;}
+.ep-card:hover{border-color:var(--pri);box-shadow:0 0 0 3px var(--pri-light);}
+.ep-url{font-family:'SF Mono','Roboto Mono',Menlo,monospace;font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;word-break:break-all;}
+.ep-meta{display:flex;align-items:center;gap:16px;font-size:12px;color:var(--text3);}
+.ep-meta .sep{color:var(--border);}
+
+/* Modal */
+.modal-mask{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:200;align-items:center;justify-content:center;}
+.modal-mask.show{display:flex;}
+.modal{background:var(--card);border-radius:16px;padding:28px 32px;width:560px;max-width:92vw;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.15);}
+.modal h2{font-size:18px;font-weight:700;margin-bottom:4px;}
+.modal .m-sub{font-size:13px;color:var(--text2);margin-bottom:16px;}
+
+/* Form */
+.fg{margin-bottom:14px;}
+.fl{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:5px;}
+.fi{width:100%;padding:9px 14px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:inherit;color:var(--text);outline:none;transition:border-color .15s;}
+.fi:focus{border-color:var(--pri);box-shadow:0 0 0 3px var(--pri-light);}
+.fi-hint{font-size:11px;color:var(--text3);margin-top:4px;}
+
+/* Event checkboxes */
+.evt-group{margin-bottom:12px;}
+.evt-group-title{font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+.evt-group-title label{font-size:11px;font-weight:500;color:var(--pri);cursor:pointer;text-transform:none;letter-spacing:0;}
+.evt-list{display:flex;flex-wrap:wrap;gap:6px;}
+.evt-chip{padding:5px 12px;border:1px solid var(--border);border-radius:16px;font-size:12px;font-family:'SF Mono','Roboto Mono',Menlo,monospace;color:var(--text2);cursor:pointer;transition:all .15s;user-select:none;}
+.evt-chip:hover{border-color:var(--pri);color:var(--pri);}
+.evt-chip.on{background:var(--pri);color:#fff;border-color:var(--pri);}
+
+/* Secret reveal box */
+.secret-box{background:#1e293b;color:#e2e8f0;border-radius:var(--radius);padding:16px 20px;font-family:'SF Mono','Roboto Mono',Menlo,monospace;font-size:13px;margin:12px 0;position:relative;word-break:break-all;line-height:1.8;}
+.secret-box .copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.1);border:none;color:#e2e8f0;padding:4px 10px;border-radius:4px;font-size:11px;cursor:pointer;font-family:inherit;}
+.secret-box .copy-btn:hover{background:rgba(255,255,255,.2);}
+
+/* Alert */
+.alert{padding:12px 16px;border-radius:var(--radius);font-size:13px;line-height:1.6;display:flex;gap:10px;align-items:flex-start;margin-bottom:16px;}
+.alert-warn{background:#fef3c7;color:#92400e;border:1px solid #fde68a;}
+.alert-info{background:var(--pri-light);color:#3730a3;border:1px solid #c7d2fe;}
+
+/* Btn row */
+.btn-row{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;}
+
+/* Delivery log */
+.del-status{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;}
+.del-ok{color:var(--green);}
+.del-fail{color:var(--red);}
+
+/* Detail panel */
+.detail-panel{display:none;}
+.detail-panel.active{display:block;}
+.detail-back{font-size:13px;color:var(--pri);cursor:pointer;display:inline-flex;align-items:center;gap:4px;margin-bottom:16px;font-weight:500;}
+.detail-back:hover{text-decoration:underline;}
+
+/* Endpoint detail sections */
+.ep-detail-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;}
+.ep-detail-url{font-family:'SF Mono','Roboto Mono',Menlo,monospace;font-size:15px;font-weight:600;color:var(--text);word-break:break-all;margin-bottom:6px;}
+.ep-detail-meta{display:flex;gap:16px;font-size:12px;color:var(--text3);flex-wrap:wrap;}
+
+/* Subscribed events display */
+.sub-events{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.sub-evt{padding:3px 10px;background:var(--bg);border:1px solid var(--border);border-radius:12px;font-size:11px;font-family:'SF Mono','Roboto Mono',Menlo,monospace;color:var(--text2);}
+
+/* Toast */
+.toast{position:fixed;top:70px;right:24px;padding:10px 20px;border-radius:var(--radius);font-size:13px;font-weight:500;color:#fff;background:var(--green);z-index:300;transform:translateX(calc(100% + 40px));transition:transform .25s ease;box-shadow:0 4px 12px rgba(0,0,0,.12);}
+.toast.show{transform:translateX(0);}
+.toast.err{background:var(--red);}
+</style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+    <div class="topbar-left">
+        <div class="mark">EX</div>
+        <span class="brand">EX Platform</span>
+    </div>
+    <div class="topbar-right">
+        <span style="font-size:12px;color:var(--text3);">ABC Trading · MID-001</span>
+        <div class="avatar">JD</div>
+    </div>
+</div>
+
+<div class="page-wrap">
+    <div class="page-header">
+        <div class="breadcrumb">Settings / <a href="#">Developer</a></div>
+        <div class="page-title">Developer</div>
+        <div class="page-sub">管理 API 密钥和 Webhook 事件通知</div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab on" onclick="switchTab('keys',this)">🔑 API Keys</button>
+        <button class="tab" onclick="switchTab('webhooks',this)">🔔 Webhooks</button>
+    </div>
+
+    <!-- ==================== API Keys Tab ==================== -->
+    <div class="tab-panel active" id="panelKeys">
+
+        <!-- Env toggle -->
+        <div class="env-bar">
+            <div class="env-toggle">
+                <button class="env-btn on" onclick="switchEnv('live',this)">● Live</button>
+                <button class="env-btn test" onclick="switchEnv('test',this)">● Test</button>
+            </div>
+            <span class="env-label" id="envLabel">生产环境 — 真实交易，请妥善保管密钥</span>
+        </div>
+
+        <!-- Standard Keys -->
+        <div class="card">
+            <div class="card-title">Standard Keys</div>
+            <div class="card-sub">每个环境一对标准密钥，拥有所有 API 权限</div>
+
+            <div class="key-row">
+                <div>
+                    <div class="key-label">Publishable key</div>
+                    <div class="key-value" id="pkValue">
+                        <span id="pkText">pk_live_aBcDeFgHiJkLmNoP</span>
+                        <button class="btn btn-sm btn-ghost" onclick="copyKey('pkText')" title="Copy">📋</button>
+                    </div>
+                    <div class="key-meta">可安全用于前端 / SDK</div>
+                </div>
+            </div>
+
+            <div class="key-row">
+                <div>
+                    <div class="key-label">Secret key</div>
+                    <div class="key-value">
+                        <span id="skText" class="dot">sk_live_••••••••••••••••</span>
+                        <button class="btn btn-sm btn-ghost" id="skRevealBtn" onclick="revealSK()" title="Reveal">👁</button>
+                    </div>
+                    <div class="key-meta">Created: 2025-12-01 · Last used: 2 hours ago</div>
+                </div>
+                <div class="key-actions">
+                    <button class="btn btn-sm" onclick="openRotateModal('standard')">Rotate</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MVP note -->
+        <div class="alert alert-info" style="margin-top:8px;">
+            <span>💡</span>
+            <div><b>MVP 阶段：</b>仅提供 Standard Keys（每环境一对），拥有所有 API 权限。Restricted Keys（按模块配置权限范围）将在后续版本支持。</div>
+        </div>
+    </div>
+
+    <!-- ==================== Webhooks Tab ==================== -->
+    <div class="tab-panel" id="panelWebhooks">
+
+        <!-- List view -->
+        <div id="whListView">
+            <div class="env-bar">
+                <div class="env-toggle">
+                    <button class="env-btn on" onclick="switchEnv('live',this)">● Live</button>
+                    <button class="env-btn test" onclick="switchEnv('test',this)">● Test</button>
+                </div>
+                <span class="env-label" id="envLabelWh">生产环境</span>
+                <div style="flex:1"></div>
+                <button class="btn btn-pri btn-sm" onclick="openAddEndpoint()">+ Add Endpoint</button>
+            </div>
+
+            <div id="whEndpoints"></div>
+        </div>
+
+        <!-- Detail view -->
+        <div class="detail-panel" id="whDetailView">
+            <div class="detail-back" onclick="backToWhList()">← Back to Endpoints</div>
+
+            <div class="card">
+                <div class="ep-detail-header">
+                    <div style="flex:1;">
+                        <div class="ep-detail-url" id="detailUrl"></div>
+                        <div class="ep-detail-meta">
+                            <span id="detailStatus"></span>
+                            <span id="detailCreated"></span>
+                            <span id="detailDesc"></span>
+                        </div>
+                    </div>
+                    <div class="key-actions">
+                        <button class="btn btn-sm" onclick="openEditEndpoint()">Edit</button>
+                        <button class="btn btn-sm" onclick="toggleEndpoint()">Disable</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteEndpoint()">Delete</button>
+                    </div>
+                </div>
+
+                <div style="margin-bottom:16px;">
+                    <div class="key-label">Signing Secret</div>
+                    <div class="key-value">
+                        <span id="whSecretText" class="dot">whsec_••••••••••••••••</span>
+                        <button class="btn btn-sm btn-ghost" onclick="revealWhSecret()">👁</button>
+                    </div>
+                    <div class="key-meta">用于验证 Webhook 请求签名（HMAC-SHA256）</div>
+                </div>
+
+                <div style="margin-bottom:16px;">
+                    <div class="card-header" style="margin-bottom:8px;">
+                        <div class="key-label" style="margin-bottom:0;">Subscribed Events</div>
+                        <button class="btn btn-sm btn-ghost" onclick="openEditEndpoint()">Edit Events</button>
+                    </div>
+                    <div class="sub-events" id="detailEvents"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Recent Deliveries</div>
+                    <button class="btn btn-sm" onclick="sendTestEvent()">Send Test Event</button>
+                </div>
+                <table class="tbl">
+                    <thead><tr><th>Time</th><th>Event</th><th>Status</th><th>Duration</th><th></th></tr></thead>
+                    <tbody id="deliveryBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== Modals ==================== -->
+
+<!-- Key Created Success -->
+<div class="modal-mask" id="modalKeyCreated">
+    <div class="modal">
+        <h2>🔑 Key Created</h2>
+        <div class="m-sub">请立即复制并安全保存此密钥，关闭后将无法再次查看完整密钥。</div>
+
+        <div class="alert alert-warn">
+            <span>⚠️</span>
+            <div><b>此密钥仅显示一次。</b>请复制到安全的地方（如密码管理器或环境变量）。关闭此弹窗后，密钥将永久隐藏，只显示末 4 位。</div>
+        </div>
+
+        <div class="secret-box" id="newKeyDisplay">
+            <button class="copy-btn" onclick="copyNewKey()">Copy</button>
+            <span id="newKeyText"></span>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-pri" onclick="closeModal('modalKeyCreated')">I've saved the key</button>
+        </div>
+    </div>
+</div>
+
+<!-- Rotate Key -->
+<div class="modal-mask" id="modalRotate">
+    <div class="modal">
+        <h2>Rotate Key</h2>
+        <div class="m-sub">生成新密钥替换当前密钥。可设置过渡期，期间新旧密钥均可使用。</div>
+
+        <div class="fg">
+            <label class="fl">Old Key Expiration</label>
+            <select class="fi" id="rotateExpiry">
+                <option value="0">立即失效</option>
+                <option value="24" selected>24 小时后失效（推荐）</option>
+                <option value="48">48 小时后失效</option>
+                <option value="72">72 小时后失效</option>
+            </select>
+            <div class="fi-hint">过渡期内新旧密钥均可使用，方便迁移</div>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn" onclick="closeModal('modalRotate')">Cancel</button>
+            <button class="btn btn-pri" onclick="doRotate()">Rotate Key</button>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Webhook Endpoint -->
+<div class="modal-mask" id="modalEndpoint">
+    <div class="modal">
+        <h2 id="epModalTitle">Add Endpoint</h2>
+        <div class="m-sub" id="epModalSub">配置 Webhook 回调地址和订阅事件</div>
+
+        <div class="fg">
+            <label class="fl">Endpoint URL</label>
+            <input class="fi" id="epUrl" placeholder="https://api.yoursite.com/webhooks/ex">
+            <div class="fi-hint">必须使用 HTTPS</div>
+        </div>
+
+        <div class="fg">
+            <label class="fl">Description <span style="font-weight:400;color:var(--text3);">(optional)</span></label>
+            <input class="fi" id="epDesc" placeholder="e.g. Production webhook handler">
+        </div>
+
+        <div class="fg">
+            <label class="fl">Subscribe to Events</label>
+            <div id="epEventsContainer"></div>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn" onclick="closeModal('modalEndpoint')">Cancel</button>
+            <button class="btn btn-pri" id="epSaveBtn" onclick="saveEndpoint()">Create Endpoint</button>
+        </div>
+    </div>
+</div>
+
+<!-- Endpoint Created / Signing Secret -->
+<div class="modal-mask" id="modalWhSecret">
+    <div class="modal">
+        <h2>🔔 Endpoint Created</h2>
+        <div class="m-sub">请立即复制 Signing Secret，用于验证 Webhook 请求签名。</div>
+
+        <div class="alert alert-warn">
+            <span>⚠️</span>
+            <div><b>Signing Secret 仅显示一次。</b>请保存到安全的地方，关闭后将无法再次查看。</div>
+        </div>
+
+        <div class="secret-box">
+            <button class="copy-btn" onclick="copyText(document.getElementById('whNewSecret').textContent)">Copy</button>
+            <span id="whNewSecret"></span>
+        </div>
+
+        <div class="alert alert-info" style="margin-top:12px;">
+            <span>💡</span>
+            <div>
+                <b>签名验证方法：</b><br>
+                <code style="font-size:12px;">signature = HMAC-SHA256(secret, timestamp + "." + body)</code><br>
+                对比 Header 中的 <code>X-EX-Signature</code>
+            </div>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-pri" onclick="closeModal('modalWhSecret')">I've saved the secret</button>
+        </div>
+    </div>
+</div>
+
+<!-- Delivery Detail -->
+<div class="modal-mask" id="modalDelivery">
+    <div class="modal" style="width:640px;">
+        <h2>Delivery Detail</h2>
+        <div class="m-sub" id="deliveryDetailSub"></div>
+
+        <div class="fg">
+            <label class="fl">Request Headers</label>
+            <pre style="background:var(--bg);padding:12px;border-radius:var(--radius);font-size:12px;font-family:'SF Mono',monospace;overflow-x:auto;border:1px solid var(--border);" id="delReqHeaders"></pre>
+        </div>
+        <div class="fg">
+            <label class="fl">Request Body</label>
+            <pre style="background:#1e293b;color:#e2e8f0;padding:12px;border-radius:var(--radius);font-size:12px;font-family:'SF Mono',monospace;overflow-x:auto;" id="delReqBody"></pre>
+        </div>
+        <div class="fg">
+            <label class="fl">Response</label>
+            <div id="delResponse" style="font-size:13px;"></div>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn" onclick="closeModal('modalDelivery')">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===== State ===== */
+let currentEnv = 'live';
+let skRevealed = false;
+
+
+const eventGroups = {
+    'Payin': ['payin.created','payin.completed','payin.failed'],
+    'Payout': ['payout.created','payout.processing','payout.completed','payout.failed','payout.reversed'],
+    'Exchange': ['exchange.completed','exchange.failed'],
+    'Card': ['card.created','card.activated','card.transaction','card.frozen'],
+    'Balance': ['balance.updated','balance.low'],
+    'Checkout': ['checkout.session.completed','checkout.session.expired'],
+    'Refund': ['refund.created','refund.completed','refund.failed']
+};
+
+let whEndpoints = [
+    { id:'ep1', url:'https://api.merchant.com/webhooks/ex', desc:'Production handler', status:'active', events:['payin.created','payin.completed','payout.completed','payout.failed','balance.updated','checkout.session.completed'], created:'2025-12-01', secret:'whsec_aBcDeFgHiJkLmNoPqRsT' },
+    { id:'ep2', url:'https://staging.merchant.com/hooks', desc:'Staging', status:'failing', events:['payin.completed','payout.completed','exchange.completed','refund.completed','refund.failed'], created:'2026-01-15', secret:'whsec_StAgInGsEcReT12345' },
+];
+
+const deliveries = [
+    { time:'2 min ago', event:'payout.completed', status:'ok', code:200, duration:'120ms' },
+    { time:'15 min ago', event:'payin.completed', status:'ok', code:200, duration:'89ms' },
+    { time:'1h ago', event:'payout.failed', status:'fail', code:503, duration:'30000ms' },
+    { time:'2h ago', event:'balance.updated', status:'ok', code:200, duration:'45ms' },
+    { time:'3h ago', event:'checkout.session.completed', status:'ok', code:200, duration:'156ms' },
+];
+
+let viewingEpId = null;
+let editingEpId = null;
+let epNextId = 3;
+
+/* ===== Tab switch ===== */
+function switchTab(tab, btn) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+    btn.classList.add('on');
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById(tab === 'keys' ? 'panelKeys' : 'panelWebhooks').classList.add('active');
+    if (tab === 'webhooks') renderEndpoints();
+}
+
+/* ===== Env switch ===== */
+function switchEnv(env, btn) {
+    currentEnv = env;
+    document.querySelectorAll('.env-btn').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    const prev = btn.parentElement.querySelector('.env-btn:not(.on)');
+    if (prev) prev.classList.remove('on');
+    // update all env toggles
+    document.querySelectorAll('.env-toggle').forEach(g => {
+        g.querySelectorAll('.env-btn').forEach(b => {
+            b.classList.remove('on');
+            if ((env === 'live' && !b.classList.contains('test')) || (env === 'test' && b.classList.contains('test'))) b.classList.add('on');
+        });
+    });
+    const labels = document.querySelectorAll('.env-label');
+    labels.forEach(l => {
+        l.textContent = env === 'live' ? '生产环境 — 真实交易，请妥善保管密钥' : '测试环境 — 不产生真实交易，可自由测试';
+    });
+    // update key prefixes
+    document.getElementById('pkText').textContent = env === 'live' ? 'pk_live_aBcDeFgHiJkLmNoP' : 'pk_test_aBcDeFgHiJkLmNoP';
+    skRevealed = false;
+    document.getElementById('skText').textContent = env === 'live' ? 'sk_live_••••••••••••••••' : 'sk_test_••••••••••••••••';
+    document.getElementById('skText').classList.add('dot');
+}
+
+/* ===== Modal ===== */
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+/* ===== Toast ===== */
+function showToast(msg, type) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast ' + (type === 'err' ? 'err' : '') + ' show';
+    setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+/* ===== Copy ===== */
+function copyText(text) {
+    navigator.clipboard.writeText(text).then(() => showToast('Copied to clipboard'));
+}
+function copyKey(id) { copyText(document.getElementById(id).textContent); }
+function copyNewKey() { copyText(document.getElementById('newKeyText').textContent); }
+
+/* ===== Reveal Secret Key ===== */
+function revealSK() {
+    if (skRevealed) {
+        document.getElementById('skText').textContent = currentEnv === 'live' ? 'sk_live_••••••••••••••••' : 'sk_test_••••••••••••••••';
+        document.getElementById('skText').classList.add('dot');
+        document.getElementById('skRevealBtn').textContent = '👁';
+        skRevealed = false;
+    } else {
+        // simulate 2FA check
+        const fakeKey = currentEnv === 'live' ? 'sk_live_RaNdOmSeCrEtKeY123456' : 'sk_test_RaNdOmSeCrEtKeY123456';
+        document.getElementById('skText').textContent = fakeKey;
+        document.getElementById('skText').classList.remove('dot');
+        document.getElementById('skRevealBtn').textContent = '🙈';
+        skRevealed = true;
+    }
+}
+
+/* ===== Rotate ===== */
+let rotateTarget = null;
+function openRotateModal(type, id) {
+    rotateTarget = { type, id };
+    openModal('modalRotate');
+}
+function doRotate() {
+    closeModal('modalRotate');
+    const prefix = currentEnv === 'live' ? 'sk_live_' : 'sk_test_';
+    const rand = Array.from({length:24}, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'[Math.floor(Math.random()*62)]).join('');
+    const fullKey = (rotateTarget.type === 'standard' ? prefix : (currentEnv === 'live' ? 'rk_live_' : 'rk_test_')) + rand;
+    document.getElementById('newKeyText').textContent = fullKey;
+    openModal('modalKeyCreated');
+    const exp = document.getElementById('rotateExpiry').value;
+    if (exp > 0) showToast('New key active. Old key expires in ' + exp + 'h');
+    else showToast('Key rotated. Old key revoked immediately');
+}
+
+/* ===== Webhooks ===== */
+function renderEndpoints() {
+    const container = document.getElementById('whEndpoints');
+    if (!whEndpoints.length) {
+        container.innerHTML = '<div style="text-align:center;padding:48px;color:var(--text3);">暂无 Webhook Endpoints<br><br><button class="btn btn-pri" onclick="openAddEndpoint()">+ Add Endpoint</button></div>';
+        return;
+    }
+    container.innerHTML = whEndpoints.map(ep => {
+        const statusBadge = ep.status === 'active' ? '<span class="badge badge-green">● Active</span>' :
+            ep.status === 'failing' ? '<span class="badge badge-red">⚠ Failing</span>' :
+            '<span class="badge badge-gray">Disabled</span>';
+        return `<div class="ep-card" onclick="viewEndpoint('${ep.id}')">
+            <div class="ep-url">${ep.url}</div>
+            <div class="ep-meta">
+                ${statusBadge}
+                <span class="sep">|</span>
+                <span>${ep.events.length} events subscribed</span>
+                <span class="sep">|</span>
+                <span>Created: ${ep.created}</span>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function viewEndpoint(id) {
+    viewingEpId = id;
+    const ep = whEndpoints.find(e => e.id === id);
+    if (!ep) return;
+
+    document.getElementById('whListView').style.display = 'none';
+    document.getElementById('whDetailView').classList.add('active');
+
+    document.getElementById('detailUrl').textContent = ep.url;
+    const statusBadge = ep.status === 'active' ? '<span class="badge badge-green">● Active</span>' :
+        ep.status === 'failing' ? '<span class="badge badge-red">⚠ Failing</span>' :
+        '<span class="badge badge-gray">Disabled</span>';
+    document.getElementById('detailStatus').innerHTML = statusBadge;
+    document.getElementById('detailCreated').textContent = 'Created: ' + ep.created;
+    document.getElementById('detailDesc').textContent = ep.desc || '';
+
+    document.getElementById('detailEvents').innerHTML = ep.events.map(e => `<span class="sub-evt">${e}</span>`).join('');
+
+    document.getElementById('whSecretText').textContent = 'whsec_••••••••••••••••';
+    document.getElementById('whSecretText').classList.add('dot');
+
+    renderDeliveries();
+}
+
+function backToWhList() {
+    document.getElementById('whDetailView').classList.remove('active');
+    document.getElementById('whListView').style.display = '';
+    renderEndpoints();
+}
+
+function renderDeliveries() {
+    document.getElementById('deliveryBody').innerHTML = deliveries.map((d, i) => {
+        const st = d.status === 'ok' ?
+            `<span class="del-status del-ok">✅ ${d.code}</span>` :
+            `<span class="del-status del-fail">❌ ${d.code}</span>`;
+        return `<tr>
+            <td>${d.time}</td>
+            <td class="mono">${d.event}</td>
+            <td>${st}</td>
+            <td>${d.duration}</td>
+            <td><button class="btn btn-sm btn-ghost" onclick="viewDelivery(${i})">View</button></td>
+        </tr>`;
+    }).join('');
+}
+
+function viewDelivery(idx) {
+    const d = deliveries[idx];
+    document.getElementById('deliveryDetailSub').textContent = d.event + ' · ' + d.time;
+    document.getElementById('delReqHeaders').textContent =
+`POST /webhooks/ex HTTP/1.1
+Content-Type: application/json
+X-EX-Signature: sha256=a1b2c3d4e5f6...
+X-EX-Timestamp: 1707900000
+X-EX-Event-ID: evt_aBcDeFgH12345678
+X-EX-Event-Type: ${d.event}`;
+
+    document.getElementById('delReqBody').textContent = JSON.stringify({
+        id: 'evt_aBcDeFgH12345678',
+        type: d.event,
+        created: 1707900000,
+        data: { object: { id: 'obj_xYz123', amount: 10000, currency: 'USD', status: d.event.split('.').pop() } }
+    }, null, 2);
+
+    document.getElementById('delResponse').innerHTML = d.status === 'ok' ?
+        `<span class="del-status del-ok">✅ ${d.code} OK</span> · ${d.duration}` :
+        `<span class="del-status del-fail">❌ ${d.code} Service Unavailable</span> · Timeout ${d.duration}`;
+
+    openModal('modalDelivery');
+}
+
+function revealWhSecret() {
+    const el = document.getElementById('whSecretText');
+    const ep = whEndpoints.find(e => e.id === viewingEpId);
+    if (el.classList.contains('dot')) {
+        el.textContent = ep ? ep.secret : 'whsec_aBcDeFgHiJkLmNoPqRsT';
+        el.classList.remove('dot');
+    } else {
+        el.textContent = 'whsec_••••••••••••••••';
+        el.classList.add('dot');
+    }
+}
+
+function toggleEndpoint() {
+    const ep = whEndpoints.find(e => e.id === viewingEpId);
+    if (!ep) return;
+    ep.status = ep.status === 'disabled' ? 'active' : 'disabled';
+    viewEndpoint(viewingEpId);
+    showToast(ep.status === 'disabled' ? 'Endpoint disabled' : 'Endpoint enabled');
+}
+
+function deleteEndpoint() {
+    whEndpoints = whEndpoints.filter(e => e.id !== viewingEpId);
+    backToWhList();
+    showToast('Endpoint deleted');
+}
+
+function sendTestEvent() {
+    showToast('Test event sent to endpoint');
+    const d = { time:'Just now', event:'payout.completed (test)', status:'ok', code:200, duration:'95ms' };
+    deliveries.unshift(d);
+    renderDeliveries();
+}
+
+/* ===== Add/Edit Endpoint ===== */
+function buildEventSelector(selectedEvents) {
+    const container = document.getElementById('epEventsContainer');
+    container.innerHTML = '';
+    for (const [group, events] of Object.entries(eventGroups)) {
+        const div = document.createElement('div');
+        div.className = 'evt-group';
+        div.innerHTML = `<div class="evt-group-title">${group} <label onclick="toggleEvtGroup(this,'${group}')">Select all</label></div><div class="evt-list"></div>`;
+        const list = div.querySelector('.evt-list');
+        events.forEach(e => {
+            const chip = document.createElement('span');
+            chip.className = 'evt-chip' + (selectedEvents.includes(e) ? ' on' : '');
+            chip.textContent = e;
+            chip.onclick = () => chip.classList.toggle('on');
+            list.appendChild(chip);
+        });
+        container.appendChild(div);
+    }
+}
+
+function toggleEvtGroup(label, group) {
+    const events = eventGroups[group];
+    const container = label.closest('.evt-group').querySelector('.evt-list');
+    const chips = container.querySelectorAll('.evt-chip');
+    const allOn = Array.from(chips).every(c => c.classList.contains('on'));
+    chips.forEach(c => { if (allOn) c.classList.remove('on'); else c.classList.add('on'); });
+}
+
+function openAddEndpoint() {
+    editingEpId = null;
+    document.getElementById('epModalTitle').textContent = 'Add Endpoint';
+    document.getElementById('epSaveBtn').textContent = 'Create Endpoint';
+    document.getElementById('epUrl').value = '';
+    document.getElementById('epDesc').value = '';
+    buildEventSelector([]);
+    openModal('modalEndpoint');
+}
+
+function openEditEndpoint() {
+    const ep = whEndpoints.find(e => e.id === viewingEpId);
+    if (!ep) return;
+    editingEpId = viewingEpId;
+    document.getElementById('epModalTitle').textContent = 'Edit Endpoint';
+    document.getElementById('epSaveBtn').textContent = 'Save Changes';
+    document.getElementById('epUrl').value = ep.url;
+    document.getElementById('epDesc').value = ep.desc || '';
+    buildEventSelector(ep.events);
+    openModal('modalEndpoint');
+}
+
+function saveEndpoint() {
+    const url = document.getElementById('epUrl').value.trim();
+    if (!url || !url.startsWith('https://')) { showToast('URL must start with https://', 'err'); return; }
+    const desc = document.getElementById('epDesc').value.trim();
+    const events = [];
+    document.querySelectorAll('#epEventsContainer .evt-chip.on').forEach(c => events.push(c.textContent));
+    if (!events.length) { showToast('Please select at least one event', 'err'); return; }
+
+    if (editingEpId) {
+        const ep = whEndpoints.find(e => e.id === editingEpId);
+        if (ep) { ep.url = url; ep.desc = desc; ep.events = events; }
+        closeModal('modalEndpoint');
+        viewEndpoint(editingEpId);
+        showToast('Endpoint updated');
+    } else {
+        const rand = Array.from({length:24}, () => 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'[Math.floor(Math.random()*62)]).join('');
+        const secret = 'whsec_' + rand;
+        const id = 'ep' + (epNextId++);
+        whEndpoints.push({ id, url, desc, status:'active', events, created:new Date().toISOString().slice(0,10), secret });
+        closeModal('modalEndpoint');
+        renderEndpoints();
+
+        document.getElementById('whNewSecret').textContent = secret;
+        openModal('modalWhSecret');
+    }
+}
+
+/* ===== Init ===== */
+renderEndpoints();
+</script>
+</body>
+</html>
