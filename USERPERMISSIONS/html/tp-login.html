@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TP — Login & Password</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+    --pri:#4f46e5;--pri-light:#eef2ff;--pri-dark:#4338ca;
+    --green:#16a34a;--green-bg:#dcfce7;--red:#dc2626;--red-bg:#fef2f2;
+    --amber:#d97706;--amber-bg:#fefce8;
+    --text:#1e293b;--text2:#475569;--text3:#94a3b8;
+    --bg:#f8fafc;--card:#fff;--border:#e2e8f0;--border-light:#f1f5f9;
+    --radius:8px;
+}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh;display:flex;flex-direction:column;}
+
+/* Center layout */
+.center-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px;}
+.auth-card{background:var(--card);border-radius:16px;padding:40px;width:420px;max-width:100%;box-shadow:0 20px 60px rgba(0,0,0,.08);border:1px solid var(--border);}
+.auth-logo{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px;}
+.auth-logo .mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#7c3aed,var(--pri));display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:700;}
+.auth-logo .brand{font-size:20px;font-weight:700;color:var(--pri);}
+.auth-title{text-align:center;font-size:18px;font-weight:700;margin-bottom:4px;}
+.auth-sub{text-align:center;font-size:13px;color:var(--text2);margin-bottom:24px;}
+
+/* Form */
+.fg{margin-bottom:14px;}
+.fl{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:5px;}
+.fl .req{color:var(--red);}
+.fi{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:inherit;color:var(--text);outline:none;transition:border-color .15s;}
+.fi:focus{border-color:var(--pri);box-shadow:0 0 0 3px var(--pri-light);}
+.fi-hint{font-size:11px;color:var(--text3);margin-top:4px;}
+
+/* Buttons */
+.btn{padding:7px 16px;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--text2);font-family:inherit;transition:all .15s;display:inline-flex;align-items:center;justify-content:center;}
+.btn:hover{border-color:var(--pri);color:var(--pri);}
+.btn-pri{background:var(--pri);color:#fff;border-color:var(--pri);width:100%;padding:12px;}
+.btn-pri:hover{background:var(--pri-dark);border-color:var(--pri-dark);color:#fff;}
+.btn-link{border:none;background:none;color:var(--pri);font-size:13px;font-weight:600;padding:0;cursor:pointer;font-family:inherit;}
+.btn-link:hover{text-decoration:underline;}
+
+/* Password strength */
+.pw-bar-wrap{height:4px;border-radius:2px;background:var(--border);margin-top:6px;overflow:hidden;}
+.pw-bar{height:100%;border-radius:2px;transition:width .2s,background .2s;width:0;}
+
+/* Alert */
+.alert{padding:12px 16px;border-radius:var(--radius);font-size:13px;line-height:1.6;display:flex;gap:10px;align-items:flex-start;margin-bottom:16px;}
+.alert-info{background:var(--pri-light);color:#3730a3;border:1px solid #c7d2fe;}
+.alert-warn{background:#fef3c7;color:#92400e;border:1px solid #fde68a;}
+.alert-success{background:var(--green-bg);color:#166534;border:1px solid #86efac;}
+
+/* Steps indicator */
+.steps{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:24px;}
+.step-dot{width:8px;height:8px;border-radius:50%;background:var(--border);}
+.step-dot.active{background:var(--pri);}
+.step-dot.done{background:var(--green);}
+
+/* Page views */
+.page-view{display:none;}
+.page-view.active{display:block;}
+
+/* Footer link */
+.auth-footer{text-align:center;margin-top:16px;font-size:12px;color:var(--text3);}
+.auth-footer a{color:var(--pri);text-decoration:none;font-weight:600;}
+.auth-footer a:hover{text-decoration:underline;}
+
+/* Divider */
+.divider{border:none;border-top:1px solid var(--border);margin:20px 0;}
+
+/* Toast */
+.toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-80px);padding:10px 24px;border-radius:var(--radius);font-size:13px;font-weight:500;color:#fff;background:var(--green);z-index:300;transition:transform .25s ease;box-shadow:0 4px 12px rgba(0,0,0,.12);}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.err{background:var(--red);}
+
+/* Demo bar */
+.demo-bar{background:#1e293b;color:#e2e8f0;padding:10px 20px;display:flex;align-items:center;gap:12px;font-size:12px;flex-wrap:wrap;}
+.demo-bar .label{font-weight:700;color:#f59e0b;}
+.demo-btn{padding:5px 12px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid #475569;background:transparent;color:#e2e8f0;font-family:inherit;transition:all .15s;}
+.demo-btn:hover{border-color:#818cf8;color:#818cf8;}
+.demo-btn.on{border-color:#818cf8;background:rgba(129,140,248,.15);color:#818cf8;}
+.demo-sep{color:#475569;}
+</style>
+</head>
+<body>
+
+<div class="center-wrap">
+    <!-- ===== 1. Login Page ===== -->
+    <div class="page-view active" id="viewLogin">
+        <div class="auth-card">
+            <div class="auth-logo"><div class="mark">TP</div><span class="brand">Tenant Portal</span></div>
+            <div class="auth-title">Sign In</div>
+            <div class="auth-sub">登录您的租户管理后台</div>
+
+            <div class="fg">
+                <label class="fl">Email or Phone</label>
+                <input class="fi" id="loginEmail" placeholder="Enter your email or phone number" value="liwei@fulunited.com">
+            </div>
+            <div class="fg">
+                <label class="fl">Password</label>
+                <input class="fi" id="loginPw" type="password" placeholder="Enter your password">
+            </div>
+
+            <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+                <button class="btn-link" onclick="goTo('viewForgot1')">Forgot Password?</button>
+            </div>
+
+            <button class="btn btn-pri" onclick="doLogin()">Sign In</button>
+
+            <div class="auth-footer">
+                Tenant Portal is by invitation only.<br>Contact your EX representative for access.
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 2. First Login — Force Change Password ===== -->
+    <div class="page-view" id="viewFirstLogin">
+        <div class="auth-card">
+            <div class="auth-logo"><div class="mark">TP</div><span class="brand">Tenant Portal</span></div>
+            <div class="auth-title">Set New Password</div>
+            <div class="auth-sub">首次登录，请设置您的新密码</div>
+
+            <div class="alert alert-warn">
+                <span>⚠️</span>
+                <div>您正在使用临时密码登录，必须设置新密码后才能继续使用系统。</div>
+            </div>
+
+            <div class="fg">
+                <label class="fl">Temporary Password</label>
+                <input class="fi" type="password" value="••••••••" disabled style="background:var(--border-light);">
+                <div class="fi-hint">管理员分配的临时密码（已验证通过）</div>
+            </div>
+
+            <div class="fg">
+                <label class="fl">New Password <span class="req">*</span></label>
+                <input class="fi" id="firstPw" type="password" placeholder="Enter new password" oninput="checkStrength('firstPw','firstBar','firstHint')">
+                <div class="pw-bar-wrap"><div class="pw-bar" id="firstBar"></div></div>
+                <div class="fi-hint" id="firstHint">至少 8 位，包含大小写字母 + 数字 + 特殊字符</div>
+            </div>
+
+            <div class="fg">
+                <label class="fl">Confirm New Password <span class="req">*</span></label>
+                <input class="fi" id="firstPwConfirm" type="password" placeholder="Confirm new password">
+            </div>
+
+            <button class="btn btn-pri" onclick="doFirstLogin()">Set Password & Continue</button>
+        </div>
+    </div>
+
+    <!-- ===== 3. Forgot Password — Step 1: Enter Email / Phone ===== -->
+    <div class="page-view" id="viewForgot1">
+        <div class="auth-card">
+            <div class="auth-logo"><div class="mark">TP</div><span class="brand">Tenant Portal</span></div>
+            <div class="auth-title">Forgot Password</div>
+            <div class="auth-sub">输入您的邮箱或手机号，我们将发送验证码</div>
+
+            <div class="steps">
+                <div class="step-dot active"></div>
+                <div class="step-dot"></div>
+                <div class="step-dot"></div>
+            </div>
+
+            <div class="fg">
+                <label class="fl">Email or Phone <span class="req">*</span></label>
+                <input class="fi" id="forgotAccount" placeholder="Enter your registered email or phone number" value="liwei@fulunited.com">
+            </div>
+
+            <button class="btn btn-pri" onclick="doForgot1()">Send Verification Code</button>
+
+            <div class="auth-footer">
+                <a href="#" onclick="goTo('viewLogin')">← Back to Sign In</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 4. Forgot Password — Step 2: Enter Verification Code ===== -->
+    <div class="page-view" id="viewForgot2">
+        <div class="auth-card">
+            <div class="auth-logo"><div class="mark">TP</div><span class="brand">Tenant Portal</span></div>
+            <div class="auth-title">Enter Verification Code</div>
+            <div class="auth-sub">请输入发送到 <b id="forgotAccountDisplay">liwei@fulunited.com</b> 的验证码</div>
+
+            <div class="steps">
+                <div class="step-dot done"></div>
+                <div class="step-dot active"></div>
+                <div class="step-dot"></div>
+            </div>
+
+            <div class="fg">
+                <label class="fl">Verification Code <span class="req">*</span></label>
+                <div style="display:flex;gap:8px;">
+                    <input class="fi" id="forgotCode" placeholder="Enter 6-digit code" maxlength="6" style="flex:1;letter-spacing:6px;font-size:18px;text-align:center;font-weight:700;">
+                    <button class="btn" id="resendBtn" onclick="doResendCode()" style="white-space:nowrap;min-width:110px;">Resend</button>
+                </div>
+                <div class="fi-hint">验证码已发送，有效期 5 分钟</div>
+            </div>
+
+            <button class="btn btn-pri" onclick="doForgot2()">Verify & Continue</button>
+
+            <div class="auth-footer">
+                <a href="#" onclick="goTo('viewForgot1')">← Change account</a>
+                <span style="margin:0 8px;color:var(--border);">|</span>
+                <a href="#" onclick="goTo('viewLogin')">Back to Sign In</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 5. Forgot Password — Step 3: Set New Password ===== -->
+    <div class="page-view" id="viewForgot3">
+        <div class="auth-card">
+            <div class="auth-logo"><div class="mark">TP</div><span class="brand">Tenant Portal</span></div>
+            <div class="auth-title">Reset Password</div>
+            <div class="auth-sub">设置您的新登录密码</div>
+
+            <div class="steps">
+                <div class="step-dot done"></div>
+                <div class="step-dot done"></div>
+                <div class="step-dot active"></div>
+            </div>
+
+            <div class="fg">
+                <label class="fl">New Password <span class="req">*</span></label>
+                <input class="fi" id="resetPw" type="password" placeholder="Enter new password" oninput="checkStrength('resetPw','resetBar','resetHint')">
+                <div class="pw-bar-wrap"><div class="pw-bar" id="resetBar"></div></div>
+                <div class="fi-hint" id="resetHint">至少 8 位，包含大小写字母 + 数字 + 特殊字符</div>
+            </div>
+
+            <div class="fg">
+                <label class="fl">Confirm New Password <span class="req">*</span></label>
+                <input class="fi" id="resetPwConfirm" type="password" placeholder="Confirm new password">
+            </div>
+
+            <button class="btn btn-pri" onclick="doReset()">Reset Password</button>
+        </div>
+    </div>
+
+    <!-- ===== 6. Reset Success ===== -->
+    <div class="page-view" id="viewResetDone">
+        <div class="auth-card" style="text-align:center;">
+            <div class="auth-logo"><div class="mark">TP</div><span class="brand">Tenant Portal</span></div>
+            <div style="font-size:48px;margin:16px 0;">✅</div>
+            <div class="auth-title">Password Reset Successful</div>
+            <div class="auth-sub">您的密码已重置成功，请使用新密码登录。</div>
+            <button class="btn btn-pri" onclick="goTo('viewLogin')">Go to Sign In</button>
+        </div>
+    </div>
+
+    <!-- ===== 7. Tenant Activation (Admin first time) ===== -->
+    <div class="page-view" id="viewActivation">
+        <div class="auth-card">
+            <div class="auth-logo"><div class="mark">TP</div><span class="brand">Tenant Portal</span></div>
+            <div class="auth-title">Activate Your Account</div>
+            <div class="auth-sub">Welcome! 请设置密码以激活您的管理员账号</div>
+
+            <div class="alert alert-info">
+                <span>📧</span>
+                <div>
+                    <b>Email:</b> admin@fulunited.com<br>
+                    <b>Tenant:</b> Fulunited Limited<br>
+                    <b>Role:</b> Admin
+                </div>
+            </div>
+
+            <div class="fg">
+                <label class="fl">Set Password <span class="req">*</span></label>
+                <input class="fi" id="actPw" type="password" placeholder="Enter your password" oninput="checkStrength('actPw','actBar','actHint')">
+                <div class="pw-bar-wrap"><div class="pw-bar" id="actBar"></div></div>
+                <div class="fi-hint" id="actHint">至少 8 位，包含大小写字母 + 数字 + 特殊字符</div>
+            </div>
+
+            <div class="fg">
+                <label class="fl">Confirm Password <span class="req">*</span></label>
+                <input class="fi" id="actPwConfirm" type="password" placeholder="Confirm your password">
+            </div>
+
+            <button class="btn btn-pri" onclick="doActivation()">Activate Account</button>
+
+            <div class="auth-footer">
+                Already activated? <a href="#" onclick="goTo('viewLogin')">Sign In</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Demo bar -->
+<div class="demo-bar">
+    <span class="label">DEMO</span>
+    <button class="demo-btn on" onclick="goTo('viewLogin')">Login</button>
+    <button class="demo-btn" onclick="goTo('viewFirstLogin')">First Login</button>
+    <button class="demo-btn" onclick="goTo('viewForgot1')">Forgot Password</button>
+    <button class="demo-btn" onclick="goTo('viewActivation')">Tenant Activation</button>
+    <span class="demo-sep">|</span>
+    <span style="color:#94a3b8;">Click buttons to switch between different flows</span>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+function goTo(viewId) {
+    document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active'));
+    document.getElementById(viewId).classList.add('active');
+    // highlight demo btn
+    document.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('on'));
+    const map = {viewLogin:0, viewFirstLogin:1, viewForgot1:2, viewForgot2:2, viewForgot3:2, viewActivation:3, viewResetDone:2};
+    const idx = map[viewId];
+    if (idx !== undefined) document.querySelectorAll('.demo-btn')[idx]?.classList.add('on');
+}
+
+function showToast(msg, type) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast ' + (type === 'err' ? 'err' : '') + ' show';
+    setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function checkStrength(inputId, barId, hintId) {
+    const pw = document.getElementById(inputId).value;
+    const bar = document.getElementById(barId);
+    const hint = document.getElementById(hintId);
+    let score = 0;
+    if (pw.length >= 8) score++;
+    if (/[a-z]/.test(pw)) score++;
+    if (/[A-Z]/.test(pw)) score++;
+    if (/[0-9]/.test(pw)) score++;
+    if (/[^a-zA-Z0-9]/.test(pw)) score++;
+    const pct = (score / 5) * 100;
+    bar.style.width = pct + '%';
+    if (score <= 2) { bar.style.background = '#ef4444'; hint.textContent = 'Weak — 需要更多字符类型'; }
+    else if (score <= 3) { bar.style.background = '#f59e0b'; hint.textContent = 'Medium — 再加一种字符类型'; }
+    else if (score <= 4) { bar.style.background = '#3b82f6'; hint.textContent = 'Good — 接近完美'; }
+    else { bar.style.background = '#16a34a'; hint.textContent = '✅ Strong — 密码强度符合要求'; }
+}
+
+function validatePw(pw, confirmPw) {
+    if (pw.length < 8) { showToast('Password must be at least 8 characters', 'err'); return false; }
+    if (!/[a-z]/.test(pw) || !/[A-Z]/.test(pw) || !/[0-9]/.test(pw) || !/[^a-zA-Z0-9]/.test(pw)) {
+        showToast('Must contain uppercase, lowercase, number, and special char', 'err'); return false;
+    }
+    if (pw !== confirmPw) { showToast('Passwords do not match', 'err'); return false; }
+    return true;
+}
+
+function doLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const pw = document.getElementById('loginPw').value;
+    if (!email) { showToast('Please enter email or phone', 'err'); return; }
+    if (!pw) { showToast('Please enter password', 'err'); return; }
+    showToast('Login successful! Redirecting to dashboard...');
+}
+
+function doFirstLogin() {
+    const pw = document.getElementById('firstPw').value;
+    const cf = document.getElementById('firstPwConfirm').value;
+    if (!validatePw(pw, cf)) return;
+    showToast('Password set! Redirecting to dashboard...');
+}
+
+/* Forgot password — verification code flow */
+let resendTimer = null;
+let resendCount = 60;
+
+function doForgot1() {
+    const acct = document.getElementById('forgotAccount').value.trim();
+    if (!acct) { showToast('Please enter email or phone number', 'err'); return; }
+    const isEmail = acct.includes('@');
+    const isPhone = /^\+?\d[\d\s-]{6,}$/.test(acct);
+    if (!isEmail && !isPhone) { showToast('Please enter a valid email or phone number', 'err'); return; }
+    document.getElementById('forgotAccountDisplay').textContent = acct;
+    goTo('viewForgot2');
+    startResendTimer();
+}
+
+function startResendTimer() {
+    clearInterval(resendTimer);
+    resendCount = 60;
+    const btn = document.getElementById('resendBtn');
+    btn.disabled = true;
+    btn.style.opacity = '0.5';
+    btn.style.cursor = 'not-allowed';
+    btn.textContent = resendCount + 's';
+    resendTimer = setInterval(() => {
+        resendCount--;
+        if (resendCount <= 0) {
+            clearInterval(resendTimer);
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            btn.style.cursor = 'pointer';
+            btn.textContent = 'Resend';
+        } else {
+            btn.textContent = resendCount + 's';
+        }
+    }, 1000);
+}
+
+function doResendCode() {
+    showToast('Verification code resent');
+    startResendTimer();
+}
+
+function doForgot2() {
+    const code = document.getElementById('forgotCode').value.trim();
+    if (!code || code.length !== 6 || !/^\d{6}$/.test(code)) {
+        showToast('Please enter a valid 6-digit code', 'err'); return;
+    }
+    goTo('viewForgot3');
+}
+
+function doReset() {
+    const pw = document.getElementById('resetPw').value;
+    const cf = document.getElementById('resetPwConfirm').value;
+    if (!validatePw(pw, cf)) return;
+    goTo('viewResetDone');
+}
+
+function doActivation() {
+    const pw = document.getElementById('actPw').value;
+    const cf = document.getElementById('actPwConfirm').value;
+    if (!validatePw(pw, cf)) return;
+    showToast('Account activated! Welcome to Tenant Portal');
+    setTimeout(() => goTo('viewLogin'), 1500);
+}
+</script>
+</body>
+</html>

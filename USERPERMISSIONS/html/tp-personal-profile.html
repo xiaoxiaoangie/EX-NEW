@@ -29,13 +29,6 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .page-title{font-size:22px;font-weight:700;margin-bottom:4px;}
 .page-sub{font-size:13px;color:var(--text2);margin-bottom:24px;}
 
-/* Tabs */
-.tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:28px;}
-.tab{padding:10px 24px;font-size:14px;font-weight:600;color:var(--text3);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;font-family:inherit;}
-.tab:hover{color:var(--text2);}
-.tab.on{color:var(--pri);border-bottom-color:var(--pri);}
-.tab-panel{display:none;}
-.tab-panel.active{display:block;}
 
 /* Card */
 .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px 28px;margin-bottom:20px;box-shadow:var(--shadow);}
@@ -82,14 +75,6 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .fi-hint{font-size:11px;color:var(--text3);margin-top:4px;}
 .btn-row{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;}
 
-/* Security item */
-.sec-item{display:flex;align-items:center;gap:16px;padding:16px 0;border-bottom:1px solid var(--border-light);}
-.sec-item:last-child{border-bottom:none;}
-.sec-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
-.sec-body{flex:1;min-width:0;}
-.sec-name{font-size:14px;font-weight:600;color:var(--text);}
-.sec-desc{font-size:12px;color:var(--text3);margin-top:2px;}
-.sec-action{flex-shrink:0;}
 
 /* Alert */
 .alert{padding:12px 16px;border-radius:var(--radius);font-size:13px;line-height:1.6;display:flex;gap:10px;align-items:flex-start;margin-bottom:16px;}
@@ -120,117 +105,62 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
     <div class="page-title">Personal Profile</div>
     <div class="page-sub">管理个人信息和安全设置</div>
 
-    <div class="tabs">
-        <button class="tab on" onclick="switchTab('profile',this)">Profile</button>
-        <button class="tab" onclick="switchTab('security',this)">Security</button>
-    </div>
+    <!-- ===== Basic Information ===== -->
+    <div class="card">
+        <div class="card-title">Basic Information</div>
+        <div class="card-sub">您的个人基本信息</div>
 
-    <!-- ===== Profile Tab ===== -->
-    <div class="tab-panel active" id="panelProfile">
-        <div class="card">
-            <div class="card-title">Basic Information</div>
-            <div class="card-sub">您的个人基本信息</div>
+        <div class="info-row">
+            <div class="info-label">Name</div>
+            <div class="info-value" id="profileName">Li Wei</div>
+            <div class="info-action"><button class="btn btn-link btn-sm" onclick="openEditName()">Edit</button></div>
+        </div>
 
-            <div class="info-row">
-                <div class="info-label">Name</div>
-                <div class="info-value" id="profileName">Li Wei</div>
-                <div class="info-action"><button class="btn btn-link btn-sm" onclick="openEditName()">Edit</button></div>
+        <div class="info-row">
+            <div class="info-label">Email</div>
+            <div class="info-value">
+                <span id="profileEmail">liwei@fulunited.com</span>
+                <span class="badge badge-green">Verified</span>
             </div>
+            <div class="info-action"><span style="font-size:11px;color:var(--text3);">不可修改</span></div>
+        </div>
 
-            <div class="info-row">
-                <div class="info-label">Email</div>
-                <div class="info-value">
-                    <span id="profileEmail">liwei@fulunited.com</span>
-                    <span class="badge badge-green">Verified</span>
-                </div>
-                <div class="info-action"><span style="font-size:11px;color:var(--text3);">不可修改</span></div>
+        <div class="info-row">
+            <div class="info-label">Phone</div>
+            <div class="info-value" id="phoneDisplay">
+                <span style="color:var(--text3);">Not set</span>
+                <span class="badge badge-gray">Optional</span>
             </div>
-
-            <div class="info-row">
-                <div class="info-label">Phone</div>
-                <div class="info-value" id="phoneDisplay">
-                    <span style="color:var(--text3);">Not set</span>
-                    <span class="badge badge-gray">Optional</span>
-                </div>
-                <div class="info-action"><button class="btn btn-link btn-sm" id="phoneBtn" onclick="openBindPhone()">Bind</button></div>
-            </div>
-
-            <div class="info-row">
-                <div class="info-label">Tenant</div>
-                <div class="info-value">Fulunited Limited <span style="font-size:11px;color:var(--text3);">TID-001</span></div>
-            </div>
-
-            <div class="info-row">
-                <div class="info-label">Role</div>
-                <div class="info-value" id="profileRole">客户经理</div>
-            </div>
-
-            <div class="info-row">
-                <div class="info-label">Language</div>
-                <div class="info-value">
-                    <select class="fi" style="width:180px;padding:6px 10px;" onchange="showToast('Language updated')">
-                        <option>English</option>
-                        <option selected>简体中文</option>
-                        <option>繁體中文</option>
-                    </select>
-                </div>
-            </div>
+            <div class="info-action"><button class="btn btn-link btn-sm" id="phoneBtn" onclick="openBindPhone()">Bind</button></div>
         </div>
     </div>
 
-    <!-- ===== Security Tab ===== -->
-    <div class="tab-panel" id="panelSecurity">
-        <div class="card">
-            <div class="card-title">Security Settings</div>
-            <div class="card-sub">管理登录密码和账号安全</div>
+    <!-- ===== Login Password ===== -->
+    <div class="card">
+        <div class="card-title">Login Password</div>
+        <div class="card-sub">管理您的登录密码</div>
 
-            <div class="sec-item">
-                <div class="sec-icon" style="background:var(--pri-light);">🔒</div>
-                <div class="sec-body">
-                    <div class="sec-name">Login Password</div>
-                    <div class="sec-desc">上次修改：2026-01-15</div>
-                </div>
-                <div class="sec-action"><button class="btn btn-sm" onclick="openChangePw()">Change Password</button></div>
-            </div>
-
-            <div class="sec-item">
-                <div class="sec-icon" style="background:var(--green-bg);">📧</div>
-                <div class="sec-body">
-                    <div class="sec-name">Email</div>
-                    <div class="sec-desc">liwei@fulunited.com · 用于登录和密码找回</div>
-                </div>
-                <div class="sec-action"><span class="badge badge-green">Verified</span></div>
-            </div>
-
-            <div class="sec-item">
-                <div class="sec-icon" style="background:var(--amber-bg);">📱</div>
-                <div class="sec-body">
-                    <div class="sec-name">Phone Number</div>
-                    <div class="sec-desc" id="secPhoneDesc">未绑定 · 绑定后可作为备用登录凭证</div>
-                </div>
-                <div class="sec-action"><button class="btn btn-sm" id="secPhoneBtn" onclick="openBindPhone()">Bind Phone</button></div>
-            </div>
+        <div class="info-row">
+            <div class="info-label">Password</div>
+            <div class="info-value" style="color:var(--text3);">上次修改：2026-01-15</div>
+            <div class="info-action"><button class="btn btn-sm" onclick="openChangePw()">Change Password</button></div>
         </div>
+    </div>
 
-        <div class="card">
-            <div class="card-title">Login History</div>
-            <div class="card-sub">最近的登录记录</div>
+    <!-- ===== Language Preference ===== -->
+    <div class="card">
+        <div class="card-title">Language Preference</div>
+        <div class="card-sub">选择界面显示语言</div>
 
-            <table style="width:100%;border-collapse:collapse;">
-                <thead>
-                    <tr>
-                        <th style="text-align:left;font-size:11px;font-weight:600;color:var(--text3);padding:8px 0;border-bottom:2px solid var(--border);">Time</th>
-                        <th style="text-align:left;font-size:11px;font-weight:600;color:var(--text3);padding:8px 0;border-bottom:2px solid var(--border);">IP Address</th>
-                        <th style="text-align:left;font-size:11px;font-weight:600;color:var(--text3);padding:8px 0;border-bottom:2px solid var(--border);">Device</th>
-                        <th style="text-align:left;font-size:11px;font-weight:600;color:var(--text3);padding:8px 0;border-bottom:2px solid var(--border);">Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td style="padding:10px 0;font-size:13px;border-bottom:1px solid var(--border-light);">2026-02-14 14:30</td><td style="padding:10px 0;font-size:13px;border-bottom:1px solid var(--border-light);">203.0.113.42</td><td style="padding:10px 0;font-size:13px;border-bottom:1px solid var(--border-light);">Chrome / macOS</td><td style="padding:10px 0;font-size:13px;border-bottom:1px solid var(--border-light);"><span class="badge badge-green">Success</span></td></tr>
-                    <tr><td style="padding:10px 0;font-size:13px;border-bottom:1px solid var(--border-light);">2026-02-13 09:15</td><td style="padding:10px 0;font-size:13px;border-bottom:1px solid var(--border-light);">203.0.113.42</td><td style="padding:10px 0;font-size:13px;border-bottom:1px solid var(--border-light);">Chrome / macOS</td><td style="padding:10px 0;font-size:13px;border-bottom:1px solid var(--border-light);"><span class="badge badge-green">Success</span></td></tr>
-                    <tr><td style="padding:10px 0;font-size:13px;">2026-02-12 18:45</td><td style="padding:10px 0;font-size:13px;">198.51.100.7</td><td style="padding:10px 0;font-size:13px;">Safari / iPhone</td><td style="padding:10px 0;font-size:13px;"><span class="badge badge-green">Success</span></td></tr>
-                </tbody>
-            </table>
+        <div class="info-row">
+            <div class="info-label">Language</div>
+            <div class="info-value">
+                <select class="fi" style="width:180px;padding:6px 10px;" onchange="showToast('Language updated')">
+                    <option>English</option>
+                    <option selected>简体中文</option>
+                    <option>繁體中文</option>
+                </select>
+            </div>
         </div>
     </div>
 </div>
@@ -310,13 +240,6 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 <script>
 let phoneBound = false;
 
-function switchTab(tab, btn) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
-    btn.classList.add('on');
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    document.getElementById(tab === 'profile' ? 'panelProfile' : 'panelSecurity').classList.add('active');
-}
-
 function openModal(id) { document.getElementById(id).classList.add('show'); }
 function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 
@@ -395,8 +318,6 @@ function savePhone() {
     phoneBound = true;
     document.getElementById('phoneDisplay').innerHTML = '+86 ' + phone + ' <span class="badge badge-green">Bound</span>';
     document.getElementById('phoneBtn').textContent = 'Change';
-    document.getElementById('secPhoneDesc').textContent = '+86 ' + phone + ' · 可作为备用登录凭证';
-    document.getElementById('secPhoneBtn').textContent = 'Change';
     closeModal('modalPhone');
     showToast('Phone number bound');
 }
