@@ -646,20 +646,20 @@ flowchart TD
 ```mermaid
 flowchart TD
     A[Settings → Security → Payment PIN] --> B{当前状态}
-    
+  
     B -->|未设置| C[点击 Set up]
     B -->|已设置| D[点击 Change / Reset]
-    
+  
     C --> E[Step 1: 身份验证]
     D --> E
-    
+  
     E --> E1{验证方式}
     E1 -->|有密码| E2[输入当前登录密码]
     E1 -->|无密码| E3[发送验证码到绑定凭证]
-    
+  
     E2 --> F[Step 2: 设置 PIN]
     E3 --> F
-    
+  
     F --> F1[输入 6 位数字 PIN]
     F1 --> F2[确认 PIN（再次输入）]
     F2 --> F3{两次一致}
@@ -690,13 +690,13 @@ flowchart TD
 ```mermaid
 flowchart TD
     A[Settings → Security → Designated Phone<br/>仅 Account Holder 可见] --> B{当前状态}
-    
+  
     B -->|未设置| C[点击 Set up]
     B -->|已设置| D[点击 Change]
-    
+  
     C --> E[Step 1: 身份验证<br/>验证 Account Holder 身份]
     D --> E
-    
+  
     E --> F[Step 2: 输入指定手机号<br/>选择区号 + 输入号码]
     F --> G[向该手机号发送验证码]
     G --> H[输入验证码确认]
@@ -714,13 +714,13 @@ flowchart TD
 ```mermaid
 flowchart TD
     A[用户发起资金操作] --> B{该角色的验证方式}
-    
+  
     B -->|Designated| C[验证码发到 MID 的 Designated Phone]
     C --> D[输入验证码]
     D --> E{验证通过}
     E -->|通过| OK[操作执行]
     E -->|失败| D
-    
+  
     B -->|Self| F{用户是否设置了 Payment PIN}
     F -->|已设置| G[输入 6 位 PIN]
     G --> H{PIN 正确}
@@ -730,7 +730,7 @@ flowchart TD
     H2 -->|< 5 次| G
     H2 -->|≥ 5 次| H3[PIN 锁定 30 分钟<br/>回退到验证码方式]
     H3 --> I
-    
+  
     F -->|未设置| I[验证码发到操作人自己的手机号/邮箱]
     I --> J[输入验证码]
     J --> K{验证通过}
@@ -740,14 +740,14 @@ flowchart TD
 
 **Security 页面展示逻辑：**
 
-| 设置项 | 层级 | 可见条件 | 说明 |
-|--------|------|----------|------|
-| Login Password | Identity | 所有用户 | 登录密码 |
-| Authenticator App (2FA) | Identity | 所有用户 | TOTP 动态令牌 |
-| SMS 2FA | Identity | 已绑定手机号 | 短信二次验证 |
-| Email 2FA | Identity | 已绑定邮箱 | 邮件二次验证 |
-| **Payment PIN** | **Identity** | **用户在任一 MID 有交易模块操作权限** | **交易密码，6位数字** |
-| **Designated Phone** | **MID** | **仅 Account Holder** | **安全验证手机号** |
+| 设置项                     | 层级               | 可见条件                                    | 说明                        |
+| -------------------------- | ------------------ | ------------------------------------------- | --------------------------- |
+| Login Password             | Identity           | 所有用户                                    | 登录密码                    |
+| Authenticator App (2FA)    | Identity           | 所有用户                                    | TOTP 动态令牌               |
+| SMS 2FA                    | Identity           | 已绑定手机号                                | 短信二次验证                |
+| Email 2FA                  | Identity           | 已绑定邮箱                                  | 邮件二次验证                |
+| **Payment PIN**      | **Identity** | **用户在任一 MID 有交易模块操作权限** | **交易密码，6位数字** |
+| **Designated Phone** | **MID**      | **仅 Account Holder**                 | **安全验证手机号**    |
 
 ---
 
@@ -1005,188 +1005,188 @@ EXPIRED（超过7天未处理）
 
 ### 11.1 通知渠道规则
 
-| 渠道 | 触发条件 | 说明 |
-|------|---------|------|
-| 邮件 | 用户绑定了邮箱 | 所有通知都发邮件 |
+| 渠道 | 触发条件         | 说明                                        |
+| ---- | ---------------- | ------------------------------------------- |
+| 邮件 | 用户绑定了邮箱   | 所有通知都发邮件                            |
 | 短信 | 用户绑定了手机号 | 验证码类通知发短信，安全告警同时发邮件+短信 |
 
 ### 11.2 通知场景清单
 
-| 编号 | 场景 | 渠道 | 触发时机 |
-|------|------|------|----------|
-| N01 | 注册验证码 | 邮件/短信 | 用户注册时发送验证码 |
-| N02 | 注册成功 | 邮件 | 注册完成后欢迎邮件 |
-| N03 | 登录验证码 | 邮件/短信 | 验证码登录时发送 |
-| N04 | 2FA 验证码（SMS） | 短信 | 登录触发 SMS 2FA |
-| N05 | 2FA 验证码（Email） | 邮件 | 登录触发 Email 2FA |
-| N06 | 账户冻结通知 | 邮件+短信 | 密码错误5次触发冻结 |
-| N07 | 账户解冻通知 | 邮件 | 冻结到期或手动解冻 |
-| N08 | 密码重置验证码 | 邮件/短信 | 用户点击“忘记密码” |
-| N09 | 密码修改成功 | 邮件 | 密码修改完成后确认 |
-| N10 | 邮箱/手机号绑定验证码 | 邮件/短信 | 绑定新凭证时发送验证码 |
-| N11 | 邮箱/手机号变更通知 | 邮件/短信 | 发送到**旧**凭证，提醒凭证已变更 |
-| N12 | 2FA 启用/关闭通知 | 邮件 | 2FA 设置变更后确认 |
-| N13 | 新设备登录通知 | 邮件 | 检测到新设备登录成功 |
-| N14 | 邀请加入商户 | 邮件 | Owner 邀请新成员加入 MID |
-| N15 | 成员加入成功 | 邮件 | 成员接受邀请后通知 Owner |
-| N16 | 成员移除通知 | 邮件 | 成员被移除时通知该成员 |
-| N17 | MID 级操作审批请求 | 邮件/短信 | 成员发起需 Owner 验证的操作 |
+| 编号 | 场景                  | 渠道      | 触发时机                               |
+| ---- | --------------------- | --------- | -------------------------------------- |
+| N01  | 注册验证码            | 邮件/短信 | 用户注册时发送验证码                   |
+| N02  | 注册成功              | 邮件      | 注册完成后欢迎邮件                     |
+| N03  | 登录验证码            | 邮件/短信 | 验证码登录时发送                       |
+| N04  | 2FA 验证码（SMS）     | 短信      | 登录触发 SMS 2FA                       |
+| N05  | 2FA 验证码（Email）   | 邮件      | 登录触发 Email 2FA                     |
+| N06  | 账户冻结通知          | 邮件+短信 | 密码错误5次触发冻结                    |
+| N07  | 账户解冻通知          | 邮件      | 冻结到期或手动解冻                     |
+| N08  | 密码重置验证码        | 邮件/短信 | 用户点击“忘记密码”                   |
+| N09  | 密码修改成功          | 邮件      | 密码修改完成后确认                     |
+| N10  | 邮箱/手机号绑定验证码 | 邮件/短信 | 绑定新凭证时发送验证码                 |
+| N11  | 邮箱/手机号变更通知   | 邮件/短信 | 发送到**旧**凭证，提醒凭证已变更 |
+| N12  | 2FA 启用/关闭通知     | 邮件      | 2FA 设置变更后确认                     |
+| N13  | 新设备登录通知        | 邮件      | 检测到新设备登录成功                   |
+| N14  | 邀请加入商户          | 邮件      | Owner 邀请新成员加入 MID               |
+| N15  | 成员加入成功          | 邮件      | 成员接受邀请后通知 Owner               |
+| N16  | 成员移除通知          | 邮件      | 成员被移除时通知该成员                 |
+| N17  | MID 级操作审批请求    | 邮件/短信 | 成员发起需 Owner 验证的操作            |
 
 ### 11.3 通知模板（三语）
 
 #### N01 注册验证码
 
-| 语言 | 短信内容 | 邮件标题 |
-|------|---------|----------|
-| EN | Your verification code is {code}. Valid for 5 minutes. Do not share this code. | Verify your email to complete registration |
-| 简体中文 | 您的验证码是 {code}，5分钟内有效。请勿泄露。 | 验证您的邮箱以完成注册 |
-| 繁體中文 | 您的驗證碼係 {code}，5分鐘內有效。請勿向任何人透露。 | 驗證您的郵箱以完成註冊 |
+| 语言     | 短信内容                                                                       | 邮件标题                                   |
+| -------- | ------------------------------------------------------------------------------ | ------------------------------------------ |
+| EN       | Your verification code is {code}. Valid for 5 minutes. Do not share this code. | Verify your email to complete registration |
+| 简体中文 | 您的验证码是 {code}，5分钟内有效。请勿泄露。                                   | 验证您的邮箱以完成注册                     |
+| 繁體中文 | 您的驗證碼係 {code}，5分鐘內有效。請勿向任何人透露。                           | 驗證您的郵箱以完成註冊                     |
 
 #### N02 注册成功
 
-| 语言 | 邮件标题 | 邮件正文摘要 |
-|------|---------|----------|
-| EN | Welcome to {platform}! | Your account has been created successfully. You can now log in and start using our services. |
-| 简体中文 | 欢迎加入 {platform}！ | 您的账户已创建成功，现在可以登录并开始使用我们的服务。 |
-| 繁體中文 | 歡迎加入 {platform}！ | 您的帳戶已成功建立，而家可以登入並開始使用我們的服務。 |
+| 语言     | 邮件标题               | 邮件正文摘要                                                                                 |
+| -------- | ---------------------- | -------------------------------------------------------------------------------------------- |
+| EN       | Welcome to {platform}! | Your account has been created successfully. You can now log in and start using our services. |
+| 简体中文 | 欢迎加入 {platform}！  | 您的账户已创建成功，现在可以登录并开始使用我们的服务。                                       |
+| 繁體中文 | 歡迎加入 {platform}！  | 您的帳戶已成功建立，而家可以登入並開始使用我們的服務。                                       |
 
 #### N03 登录验证码
 
-| 语言 | 短信内容 | 邮件标题 |
-|------|---------|----------|
-| EN | Your login code is {code}. Valid for 10 minutes. If you didn't request this, ignore this message. | Your login verification code |
-| 简体中文 | 您的登录验证码是 {code}，10分钟内有效。如非本人操作请忽略。 | 您的登录验证码 |
-| 繁體中文 | 您的登入驗證碼係 {code}，10分鐘內有效。如非本人操作請忽略。 | 您的登入驗證碼 |
+| 语言     | 短信内容                                                                                          | 邮件标题                     |
+| -------- | ------------------------------------------------------------------------------------------------- | ---------------------------- |
+| EN       | Your login code is {code}. Valid for 10 minutes. If you didn't request this, ignore this message. | Your login verification code |
+| 简体中文 | 您的登录验证码是 {code}，10分钟内有效。如非本人操作请忽略。                                       | 您的登录验证码               |
+| 繁體中文 | 您的登入驗證碼係 {code}，10分鐘內有效。如非本人操作請忽略。                                       | 您的登入驗證碼               |
 
 #### N04 2FA 验证码（SMS）
 
-| 语言 | 短信内容 |
-|------|----------|
-| EN | {code} is your 2FA code for {platform}. Valid for 5 minutes. |
-| 简体中文 | {code} 是您的 {platform} 二次验证码，5分钟内有效。 |
-| 繁體中文 | {code} 係您的 {platform} 二次驗證碼，5分鐘內有效。 |
+| 语言     | 短信内容                                                     |
+| -------- | ------------------------------------------------------------ |
+| EN       | {code} is your 2FA code for {platform}. Valid for 5 minutes. |
+| 简体中文 | {code} 是您的 {platform} 二次验证码，5分钟内有效。           |
+| 繁體中文 | {code} 係您的 {platform} 二次驗證碼，5分鐘內有效。           |
 
 #### N05 2FA 验证码（Email）
 
-| 语言 | 邮件标题 | 邮件正文摘要 |
-|------|---------|----------|
-| EN | Your two-factor authentication code | Your 2FA code is {code}. Valid for 5 minutes. If you didn't try to log in, please change your password immediately. |
-| 简体中文 | 您的二次验证码 | 您的二次验证码是 {code}，5分钟内有效。如非本人登录，请立即修改密码。 |
-| 繁體中文 | 您的二次驗證碼 | 您的二次驗證碼係 {code}，5分鐘內有效。如非本人登入，請即刻更改密碼。 |
+| 语言     | 邮件标题                            | 邮件正文摘要                                                                                                        |
+| -------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| EN       | Your two-factor authentication code | Your 2FA code is {code}. Valid for 5 minutes. If you didn't try to log in, please change your password immediately. |
+| 简体中文 | 您的二次验证码                      | 您的二次验证码是 {code}，5分钟内有效。如非本人登录，请立即修改密码。                                                |
+| 繁體中文 | 您的二次驗證碼                      | 您的二次驗證碼係 {code}，5分鐘內有效。如非本人登入，請即刻更改密碼。                                                |
 
 #### N06 账户冻结通知
 
-| 语言 | 短信内容 | 邮件标题 | 邮件正文摘要 |
-|------|---------|---------|----------|
-| EN | Your {platform} account has been frozen for 24 hours due to multiple failed login attempts. If this wasn't you, reset your password immediately. | Account security alert — account frozen | Your account has been temporarily frozen for 24 hours due to 5 consecutive failed login attempts. If this was not you, please reset your password immediately using the link below. |
-| 简体中文 | 您的 {platform} 账户因多次登录失败已冻结 24 小时。如非本人操作，请立即重置密码。 | 账户安全提醒 — 账户已冻结 | 您的账户因连续 5 次登录失败已被临时冻结 24 小时。如非本人操作，请立即通过以下链接重置密码。 |
-| 繁體中文 | 您的 {platform} 帳戶因多次登入失敗已凍結 24 小時。如非本人操作，請即刻重設密碼。 | 帳戶安全提醒 — 帳戶已凍結 | 您的帳戶因連續 5 次登入失敗已被臨時凍結 24 小時。如非本人操作，請即刻透過以下連結重設密碼。 |
+| 语言     | 短信内容                                                                                                                                         | 邮件标题                                 | 邮件正文摘要                                                                                                                                                                        |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| EN       | Your {platform} account has been frozen for 24 hours due to multiple failed login attempts. If this wasn't you, reset your password immediately. | Account security alert — account frozen | Your account has been temporarily frozen for 24 hours due to 5 consecutive failed login attempts. If this was not you, please reset your password immediately using the link below. |
+| 简体中文 | 您的 {platform} 账户因多次登录失败已冻结 24 小时。如非本人操作，请立即重置密码。                                                                 | 账户安全提醒 — 账户已冻结               | 您的账户因连续 5 次登录失败已被临时冻结 24 小时。如非本人操作，请立即通过以下链接重置密码。                                                                                         |
+| 繁體中文 | 您的 {platform} 帳戶因多次登入失敗已凍結 24 小時。如非本人操作，請即刻重設密碼。                                                                 | 帳戶安全提醒 — 帳戶已凍結               | 您的帳戶因連續 5 次登入失敗已被臨時凍結 24 小時。如非本人操作，請即刻透過以下連結重設密碼。                                                                                         |
 
 #### N07 账户解冻通知
 
-| 语言 | 邮件标题 | 邮件正文摘要 |
-|------|---------|----------|
-| EN | Your account has been unfrozen | Your account freeze period has ended. You can now log in normally. We recommend changing your password for security. |
-| 简体中文 | 您的账户已解冻 | 您的账户冻结已解除，现在可以正常登录。建议您修改密码以确保安全。 |
-| 繁體中文 | 您的帳戶已解凍 | 您的帳戶凍結已解除，而家可以正常登入。建議您更改密碼以確保安全。 |
+| 语言     | 邮件标题                       | 邮件正文摘要                                                                                                         |
+| -------- | ------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| EN       | Your account has been unfrozen | Your account freeze period has ended. You can now log in normally. We recommend changing your password for security. |
+| 简体中文 | 您的账户已解冻                 | 您的账户冻结已解除，现在可以正常登录。建议您修改密码以确保安全。                                                     |
+| 繁體中文 | 您的帳戶已解凍                 | 您的帳戶凍結已解除，而家可以正常登入。建議您更改密碼以確保安全。                                                     |
 
 #### N08 密码重置验证码
 
-| 语言 | 短信内容 | 邮件标题 |
-|------|---------|----------|
-| EN | Your password reset code is {code}. Valid for 5 minutes. If you didn't request this, ignore this message. | Reset your password |
-| 简体中文 | 您的密码重置验证码是 {code}，5分钟内有效。如非本人操作请忽略。 | 重置您的密码 |
-| 繁體中文 | 您的密碼重設驗證碼係 {code}，5分鐘內有效。如非本人操作請忽略。 | 重設您的密碼 |
+| 语言     | 短信内容                                                                                                  | 邮件标题            |
+| -------- | --------------------------------------------------------------------------------------------------------- | ------------------- |
+| EN       | Your password reset code is {code}. Valid for 5 minutes. If you didn't request this, ignore this message. | Reset your password |
+| 简体中文 | 您的密码重置验证码是 {code}，5分钟内有效。如非本人操作请忽略。                                            | 重置您的密码        |
+| 繁體中文 | 您的密碼重設驗證碼係 {code}，5分鐘內有效。如非本人操作請忽略。                                            | 重設您的密碼        |
 
 #### N09 密码修改成功
 
-| 语言 | 邮件标题 | 邮件正文摘要 |
-|------|---------|----------|
-| EN | Your password has been changed | Your account password was successfully changed on {datetime}. If this wasn't you, please reset your password immediately and contact support. |
-| 简体中文 | 您的密码已修改 | 您的账户密码已于 {datetime} 成功修改。如非本人操作，请立即重置密码并联系客服。 |
-| 繁體中文 | 您的密碼已更改 | 您的帳戶密碼已於 {datetime} 成功更改。如非本人操作，請即刻重設密碼並聯絡客服。 |
+| 语言     | 邮件标题                       | 邮件正文摘要                                                                                                                                  |
+| -------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| EN       | Your password has been changed | Your account password was successfully changed on {datetime}. If this wasn't you, please reset your password immediately and contact support. |
+| 简体中文 | 您的密码已修改                 | 您的账户密码已于 {datetime} 成功修改。如非本人操作，请立即重置密码并联系客服。                                                                |
+| 繁體中文 | 您的密碼已更改                 | 您的帳戶密碼已於 {datetime} 成功更改。如非本人操作，請即刻重設密碼並聯絡客服。                                                                |
 
 #### N10 邮箱/手机号绑定验证码
 
-| 语言 | 短信内容 | 邮件标题 |
-|------|---------|----------|
-| EN | Your verification code is {code}. Valid for 5 minutes. Use this to verify your new email/phone. | Verify your new email address |
-| 简体中文 | 您的验证码是 {code}，5分钟内有效。用于验证您的新邮箱/手机号。 | 验证您的新邮箱地址 |
-| 繁體中文 | 您的驗證碼係 {code}，5分鐘內有效。用於驗證您的新郵箱/手機號。 | 驗證您的新郵箱地址 |
+| 语言     | 短信内容                                                                                        | 邮件标题                      |
+| -------- | ----------------------------------------------------------------------------------------------- | ----------------------------- |
+| EN       | Your verification code is {code}. Valid for 5 minutes. Use this to verify your new email/phone. | Verify your new email address |
+| 简体中文 | 您的验证码是 {code}，5分钟内有效。用于验证您的新邮箱/手机号。                                   | 验证您的新邮箱地址            |
+| 繁體中文 | 您的驗證碼係 {code}，5分鐘內有效。用於驗證您的新郵箱/手機號。                                   | 驗證您的新郵箱地址            |
 
 #### N11 邮箱/手机号变更通知（发到旧凭证）
 
-| 语言 | 短信内容 | 邮件标题 |
-|------|---------|----------|
-| EN | Your {platform} account email/phone has been changed. If this wasn't you, contact support immediately. | Your account contact info was changed |
-| 简体中文 | 您的 {platform} 账户邮箱/手机号已变更。如非本人操作，请立即联系客服。 | 您的账户联系方式已变更 |
-| 繁體中文 | 您的 {platform} 帳戶郵箱/手機號已變更。如非本人操作，請即刻聯絡客服。 | 您的帳戶聯絡方式已變更 |
+| 语言     | 短信内容                                                                                               | 邮件标题                              |
+| -------- | ------------------------------------------------------------------------------------------------------ | ------------------------------------- |
+| EN       | Your {platform} account email/phone has been changed. If this wasn't you, contact support immediately. | Your account contact info was changed |
+| 简体中文 | 您的 {platform} 账户邮箱/手机号已变更。如非本人操作，请立即联系客服。                                  | 您的账户联系方式已变更                |
+| 繁體中文 | 您的 {platform} 帳戶郵箱/手機號已變更。如非本人操作，請即刻聯絡客服。                                  | 您的帳戶聯絡方式已變更                |
 
 #### N12 2FA 启用/关闭通知
 
-| 语言 | 邮件标题 | 邮件正文摘要 |
-|------|---------|----------|
-| EN | Two-factor authentication {enabled/disabled} | Two-factor authentication ({method}) has been {enabled/disabled} on your account on {datetime}. If this wasn't you, please secure your account immediately. |
-| 简体中文 | 二次验证已{enabled/disabled} | 您的账户二次验证（{method}）已于 {datetime} {enabled/disabled}。如非本人操作，请立即保护您的账户。 |
-| 繁體中文 | 二次驗證已{enabled/disabled} | 您的帳戶二次驗證（{method}）已於 {datetime} {enabled/disabled}。如非本人操作，請即刻保護您的帳戶。 |
+| 语言     | 邮件标题                                     | 邮件正文摘要                                                                                                                                                |
+| -------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| EN       | Two-factor authentication {enabled/disabled} | Two-factor authentication ({method}) has been {enabled/disabled} on your account on {datetime}. If this wasn't you, please secure your account immediately. |
+| 简体中文 | 二次验证已{enabled/disabled}                 | 您的账户二次验证（{method}）已于 {datetime} {enabled/disabled}。如非本人操作，请立即保护您的账户。                                                          |
+| 繁體中文 | 二次驗證已{enabled/disabled}                 | 您的帳戶二次驗證（{method}）已於 {datetime} {enabled/disabled}。如非本人操作，請即刻保護您的帳戶。                                                          |
 
 #### N13 新设备登录通知
 
-| 语言 | 邮件标题 | 邮件正文摘要 |
-|------|---------|----------|
-| EN | New device login detected | A new login to your account was detected on {datetime} from {device} ({ip}, {location}). If this wasn't you, please change your password immediately. |
-| 简体中文 | 检测到新设备登录 | 您的账户于 {datetime} 在新设备上登录：{device}（{ip}，{location}）。如非本人操作，请立即修改密码。 |
-| 繁體中文 | 偵測到新裝置登入 | 您的帳戶於 {datetime} 在新裝置上登入：{device}（{ip}，{location}）。如非本人操作，請即刻更改密碼。 |
+| 语言     | 邮件标题                  | 邮件正文摘要                                                                                                                                          |
+| -------- | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| EN       | New device login detected | A new login to your account was detected on {datetime} from {device} ({ip}, {location}). If this wasn't you, please change your password immediately. |
+| 简体中文 | 检测到新设备登录          | 您的账户于 {datetime} 在新设备上登录：{device}（{ip}，{location}）。如非本人操作，请立即修改密码。                                                    |
+| 繁體中文 | 偵測到新裝置登入          | 您的帳戶於 {datetime} 在新裝置上登入：{device}（{ip}，{location}）。如非本人操作，請即刻更改密碼。                                                    |
 
 #### N14 邀请加入商户
 
-| 语言 | 邮件标题 | 邮件正文摘要 |
-|------|---------|----------|
-| EN | You've been invited to join {merchant_name} | {inviter_name} has invited you to join {merchant_name} as {role}. Click the link below to accept the invitation. This invitation expires in 7 days. |
-| 简体中文 | 您被邀请加入 {merchant_name} | {inviter_name} 邀请您以 {role} 身份加入 {merchant_name}。请点击下方链接接受邀请。邀请有效期 7 天。 |
-| 繁體中文 | 您已被邀請加入 {merchant_name} | {inviter_name} 邀請您以 {role} 身份加入 {merchant_name}。請點擊下方連結接受邀請。邀請有效期 7 天。 |
+| 语言     | 邮件标题                                    | 邮件正文摘要                                                                                                                                        |
+| -------- | ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| EN       | You've been invited to join {merchant_name} | {inviter_name} has invited you to join {merchant_name} as {role}. Click the link below to accept the invitation. This invitation expires in 7 days. |
+| 简体中文 | 您被邀请加入 {merchant_name}                | {inviter_name} 邀请您以 {role} 身份加入 {merchant_name}。请点击下方链接接受邀请。邀请有效期 7 天。                                                  |
+| 繁體中文 | 您已被邀請加入 {merchant_name}              | {inviter_name} 邀請您以 {role} 身份加入 {merchant_name}。請點擊下方連結接受邀請。邀請有效期 7 天。                                                  |
 
 #### N15 成员加入成功（通知 Owner）
 
-| 语言 | 邮件标题 | 邮件正文摘要 |
-|------|---------|----------|
-| EN | New member joined {merchant_name} | {member_name} has accepted the invitation and joined {merchant_name} as {role}. |
-| 简体中文 | 新成员加入 {merchant_name} | {member_name} 已接受邀请，以 {role} 身份加入了 {merchant_name}。 |
-| 繁體中文 | 新成員加入 {merchant_name} | {member_name} 已接受邀請，以 {role} 身份加入了 {merchant_name}。 |
+| 语言     | 邮件标题                          | 邮件正文摘要                                                                    |
+| -------- | --------------------------------- | ------------------------------------------------------------------------------- |
+| EN       | New member joined {merchant_name} | {member_name} has accepted the invitation and joined {merchant_name} as {role}. |
+| 简体中文 | 新成员加入 {merchant_name}        | {member_name} 已接受邀请，以 {role} 身份加入了 {merchant_name}。                |
+| 繁體中文 | 新成員加入 {merchant_name}        | {member_name} 已接受邀請，以 {role} 身份加入了 {merchant_name}。                |
 
 #### N16 成员移除通知（通知被移除成员）
 
-| 语言 | 邮件标题 | 邮件正文摘要 |
-|------|---------|----------|
-| EN | You've been removed from {merchant_name} | You have been removed from {merchant_name} by the account owner. You will no longer have access to this merchant's data. If you believe this is an error, please contact the merchant owner. |
-| 简体中文 | 您已被移出 {merchant_name} | 您已被账户所有者从 {merchant_name} 移除。您将无法再访问该商户的数据。如有疑问，请联系商户所有者。 |
-| 繁體中文 | 您已被移出 {merchant_name} | 您已被帳戶擁有者從 {merchant_name} 移除。您將無法再存取該商戶的資料。如有疑問，請聯絡商戶擁有者。 |
+| 语言     | 邮件标题                                 | 邮件正文摘要                                                                                                                                                                                 |
+| -------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| EN       | You've been removed from {merchant_name} | You have been removed from {merchant_name} by the account owner. You will no longer have access to this merchant's data. If you believe this is an error, please contact the merchant owner. |
+| 简体中文 | 您已被移出 {merchant_name}               | 您已被账户所有者从 {merchant_name} 移除。您将无法再访问该商户的数据。如有疑问，请联系商户所有者。                                                                                            |
+| 繁體中文 | 您已被移出 {merchant_name}               | 您已被帳戶擁有者從 {merchant_name} 移除。您將無法再存取該商戶的資料。如有疑問，請聯絡商戶擁有者。                                                                                            |
 
 #### N17 MID 级操作审批请求（通知 Owner）
 
-| 语言 | 短信内容 | 邮件标题 |
-|------|---------|----------|
-| EN | {member_name} is requesting approval for {operation} on {merchant_name}. Verification code: {code} | Operation approval required — {merchant_name} |
-| 简体中文 | {member_name} 正在请求审批 {merchant_name} 的 {operation}。验证码：{code} | 操作审批请求 — {merchant_name} |
-| 繁體中文 | {member_name} 正在請求審批 {merchant_name} 的 {operation}。驗證碼：{code} | 操作審批請求 — {merchant_name} |
+| 语言     | 短信内容                                                                                           | 邮件标题                                       |
+| -------- | -------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| EN       | {member_name} is requesting approval for {operation} on {merchant_name}. Verification code: {code} | Operation approval required — {merchant_name} |
+| 简体中文 | {member_name} 正在请求审批 {merchant_name} 的 {operation}。验证码：{code}                          | 操作审批请求 — {merchant_name}                |
+| 繁體中文 | {member_name} 正在請求審批 {merchant_name} 的 {operation}。驗證碼：{code}                          | 操作審批請求 — {merchant_name}                |
 
 ### 11.4 通知模板变量说明
 
-| 变量 | 说明 | 示例 |
-|------|------|------|
-| `{code}` | 6位验证码 | 382916 |
-| `{platform}` | 平台名称 | EX Platform |
-| `{datetime}` | 操作时间 | 2026-02-13 20:04 (UTC+8) |
-| `{device}` | 设备信息 | Chrome 120 on macOS |
-| `{ip}` | IP 地址 | 203.0.113.42 |
-| `{location}` | 地理位置 | Hong Kong |
-| `{merchant_name}` | 商户名称 | ABC Trading Ltd |
-| `{inviter_name}` | 邀请人名称 | John Smith |
-| `{member_name}` | 成员名称 | Jane Doe |
-| `{role}` | 角色 | Admin / Member |
-| `{operation}` | 操作类型 | 发起交易 / 资金操作 |
-| `{method}` | 2FA 方式 | Authenticator App / SMS / Email |
-| `{enabled/disabled}` | 启用/关闭 | 已启用 / 已关闭 |
+| 变量                   | 说明       | 示例                            |
+| ---------------------- | ---------- | ------------------------------- |
+| `{code}`             | 6位验证码  | 382916                          |
+| `{platform}`         | 平台名称   | EX Platform                     |
+| `{datetime}`         | 操作时间   | 2026-02-13 20:04 (UTC+8)        |
+| `{device}`           | 设备信息   | Chrome 120 on macOS             |
+| `{ip}`               | IP 地址    | 203.0.113.42                    |
+| `{location}`         | 地理位置   | Hong Kong                       |
+| `{merchant_name}`    | 商户名称   | ABC Trading Ltd                 |
+| `{inviter_name}`     | 邀请人名称 | John Smith                      |
+| `{member_name}`      | 成员名称   | Jane Doe                        |
+| `{role}`             | 角色       | Admin / Member                  |
+| `{operation}`        | 操作类型   | 发起交易 / 资金操作             |
+| `{method}`           | 2FA 方式   | Authenticator App / SMS / Email |
+| `{enabled/disabled}` | 启用/关闭  | 已启用 / 已关闭                 |
 
 ---
 
