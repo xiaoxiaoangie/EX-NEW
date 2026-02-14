@@ -943,32 +943,32 @@ sequenceDiagram
     rect rgb(255, 250, 240)
         Note over MP,Wallet: 步骤2：HKD → USD换汇
         MP->>EX: 3. 申请换汇<br/>10000 HKD → USD
-      
+    
         EX->>FX: 4. 查询HKD/USD汇率
         FX->>EX: 5. 返回汇率 7.7938
-      
+    
         EX->>SP: 6. 执行换汇
         SP->>EX: 7. 换汇完成<br/>1283.04 USD
-      
+    
         EX->>EX: 8. 记录换汇交易<br/>fx_transactions表
-      
+    
         EX->>Wallet: 9. 更新余额<br/>-10000 HKD<br/>+1283.04 USD
     end
   
     rect rgb(240, 255, 240)
         Note over MP,Wallet: 步骤3：USD → USDT承兑
         MP->>EX: 10. 申请承兑<br/>1283.04 USD → USDT
-      
+    
         EX->>FX: 11. 查询USD/USDT汇率
         FX->>EX: 12. 返回汇率 1.00020
-      
+    
         EX->>SP: 13. 执行承兑
         SP->>EX: 14. 承兑完成<br/>1283.30 USDT
-      
+    
         EX->>EX: 15. 记录承兑交易<br/>fx_transactions表
-      
+    
         EX->>Wallet: 16. 更新余额<br/>-1283.04 USD<br/>+1283.30 USDT
-      
+    
         EX->>MP: 17. 完成<br/>最终获得1283.30 USDT
     end
 ```
@@ -1156,7 +1156,113 @@ USD/HKD
 - 卖出汇率 = 市场汇率 × (1 - TP加点 + SP返点)
 - TP利润率 = TP加点 - SP返点
 
----
+
+
+### 4.7 IPL法币换汇
+
+**场景：** 商户在IPL法币账户之间进行换汇（如USD→EUR）
+
+**单据流转：** 商户单 → 交易单 → 渠道单（调用外部换汇渠道）
+
+**特点：**
+
+- 不需要过风控（法币换汇）
+- 不需要计费（无手续费）
+- 需要查询实时汇率
+- 调用外部换汇渠道
+
+```mermaid
+sequenceDiagram
+    participant WP as 白牌/API
+    participant HUB as EX HUB
+    participant BL as 业务层
+    participant TE as 交易引擎
+    participant FX as 汇率服务
+    participant Account as IPL账户服务
+    participant Router as 路由引擎
+    participant CO as 渠道服务
+    participant Channel as 换汇渠道
+  
+    WP->>HUB: 1. 申请换汇(USD→EUR)
+  
+    Note over WP,HUB: 白牌已预汇率
+  
+    rect rgb(240, 248, 255)
+        Note over HUB,Channel: 阶段1：创建商户单(聚合层)
+        HUB->>HUB: 2. 创建商户单
+    end
+  
+    rect rgb(255, 250, 240)
+        Note over HUB,Channel: 阶段2：业务层校验
+        HUB->>BL: 3. 请求业务校验
+    end
+  
+    rect rgb(250, 250, 250)
+        Note over HUB,Channel: 阶段3：业务层-基础校验
+        BL->>BL: 4. 基础校验(余额、账户状态、权限、产品启用、有效期)
+    end
+  
+    rect rgb(245, 245, 245)
+        Note over HUB,Channel: 阶段4：业务层-产品配置检查
+        BL->>BL: 5. 产品配置(限额、货币对支持)
+        BL-->>HUB: 6. 校验通过
+    end
+  
+    rect rgb(255, 250, 240)
+        Note over HUB,Channel: 阶段5：交易引擎创建交易单
+        HUB->>TE: 7. 请求创建交易单
+        TE->>TE: 8. 创建交易单
+    end
+  
+    rect rgb(240, 255, 240)
+        Note over HUB,Channel: 阶段6：交易引擎执行-查询汇率
+        TE->>FX: 9. 查询实时汇率
+        FX-->>TE: 10. 返回换汇汇率
+        TE->>TE: 11. 更新交易单(汇率)
+    end
+  
+    rect rgb(255, 245, 238)
+        Note over HUB,Channel: 阶段7：交易引擎执行-记账(冻结)
+        TE->>Account: 12. 冻结源币种账户余额(USD)
+        Account-->>TE: 13. 冻结成功
+        TE->>TE: 14. 更新交易单(冻结信息)
+    end
+  
+    rect rgb(255, 240, 245)
+        Note over HUB,Channel: 阶段8：交易引擎执行-路由+渠道调用
+        TE->>Router: 15. 请求路由
+        Router-->>TE: 16. 返回换汇渠道
+        TE->>CO: 17. 创建渠道单
+        CO-->>TE: 18. 返回渠道单ID
+        TE->>Channel: 19. 调用换汇渠道执行换汇
+        Channel-->>TE: 20. 返回换汇结果
+        TE->>CO: 21. 更新渠道单状态(SUCCESS)
+        TE->>TE: 22. 更新交易单(渠道结果)
+    end
+  
+    rect rgb(240, 248, 255)
+        Note over HUB,Channel: 阶段9：交易引擎执行-确认记账
+        TE->>Account: 23. 确认扣款(USD-)
+        TE->>Account: 24. 入账(EUR+)
+        Account-->>TE: 25. 记账成功
+        TE->>TE: 26. 更新交易单状态(SUCCESS)
+    end
+  
+    rect rgb(255, 250, 240)
+        Note over HUB,Channel: 阶段10：聚合到商户单+通知
+        TE->>HUB: 27. 通知交易单完成
+        HUB->>HUB: 28. 更新商户单状态(SUCCESS)
+        HUB-->>WP: 29. 返回换汇结果
+        Note over HUB,Channel: 数据同步到TP Portal和PP Portal
+    end
+```
+
+**说明：**
+
+- **IPL换汇调用外部渠道**：换汇渠道（如银行、换汇服务商）
+- **不需要风控**：法币换汇不涉及风控检查
+- **不需要计费**：换汇无手续费
+- **需要查询汇率**：实时汇率查询
 
 *最后更新：2026-02-03*
 *文档版本：v1.0*

@@ -2477,6 +2477,7 @@ function renderCustomerRateConfig() {
         <td style="${tdStyle}"><span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;background:#ecfeff;color:#0891b2;">${r.product}</span></td>
         <td style="${tdStyle}">${r.updateTime}</td>
         <td style="${tdStyle}">
+            <button onclick="alert('查看费率详情：${r.mid} - ${r.product}')" style="background:none;border:none;color:#0891b2;cursor:pointer;font-size:13px;font-weight:500;margin-right:12px;">详情</button>
             <button onclick="alert('编辑费率配置：${r.mid} - ${r.product}')" style="background:none;border:none;color:#4f46e5;cursor:pointer;font-size:13px;font-weight:500;margin-right:12px;">编辑</button>
             <button onclick="alert('确认删除 ${r.mid} 的 ${r.product} 费率配置？')" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:13px;font-weight:500;">删除</button>
         </td>
