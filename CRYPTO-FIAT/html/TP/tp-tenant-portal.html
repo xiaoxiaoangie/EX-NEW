@@ -167,8 +167,22 @@
         /* 中心网格 */
         .centers-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .centers-grid.core-grid {
+            grid-template-columns: repeat(12, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .centers-grid.core-grid .center-card {
+            grid-column: span 3;
+        }
+
+        .center-card.featured {
+            grid-column: span 6;
+            min-height: 230px;
         }
 
         /* 中心卡片 */
@@ -176,7 +190,7 @@
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 16px;
-            padding: 24px;
+            padding: 20px;
             cursor: pointer;
             transition: all 0.2s;
             position: relative;
@@ -222,11 +236,17 @@
             color: var(--text-secondary);
             line-height: 1.5;
             margin-bottom: 16px;
+            display: -webkit-box;
+            line-clamp: 2;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 38px;
         }
         .center-stats {
             display: flex;
             gap: 16px;
-            padding-top: 16px;
+            padding-top: 14px;
             border-top: 1px solid var(--border);
         }
         .center-stat {
@@ -523,10 +543,14 @@
 
         /* 响应式 */
         @media (max-width: 1200px) {
-            .centers-grid { grid-template-columns: repeat(3, 1fr); }
+            .centers-grid.core-grid { grid-template-columns: repeat(8, minmax(0, 1fr)); }
+            .centers-grid.core-grid .center-card { grid-column: span 4; }
+            .center-card.featured { grid-column: span 8; }
         }
         @media (max-width: 900px) {
-            .centers-grid { grid-template-columns: repeat(2, 1fr); }
+            .centers-grid.core-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .centers-grid.core-grid .center-card,
+            .center-card.featured { grid-column: span 1; }
         }
         @media (max-width: 600px) {
             .centers-grid { grid-template-columns: 1fr; }
@@ -638,10 +662,10 @@
         </div>
 
         <!-- 核心经营 -->
-        <div class="category-title">核心经营</div>
-        <div class="centers-grid">
+        <div class="category-title">核心经营（按使用优先级）</div>
+        <div class="centers-grid core-grid">
             <!-- 产品中心 -->
-            <div class="center-card cyan" onclick="enterCenter('product')">
+            <div class="center-card cyan featured" onclick="enterCenter('product')">
                 <div class="center-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="9" cy="21" r="1"/>
@@ -665,7 +689,7 @@
             </div>
 
             <!-- 客户中心（合并会员+订单） -->
-            <div class="center-card success" onclick="enterCenter('customer')">
+            <div class="center-card success featured" onclick="enterCenter('customer')">
                 <div class="center-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
