@@ -167,146 +167,209 @@
         /* 中心网格 */
         .centers-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
         }
 
         .centers-grid.core-grid {
-            grid-template-columns: repeat(12, minmax(0, 1fr));
-            gap: 16px;
-        }
-
-        .centers-grid.core-grid .center-card {
-            grid-column: span 3;
-        }
-
-        .center-card.featured {
-            grid-column: span 6;
-            min-height: 230px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
         }
 
         /* 中心卡片 */
         .center-card {
             background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 20px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-radius: 20px;
+            padding: 24px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             position: relative;
             overflow: hidden;
         }
-        .center-card:hover {
-            border-color: transparent;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-            transform: translateY(-2px);
-        }
+
         .center-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 3px;
+            bottom: 0;
+            border-radius: 20px;
             opacity: 0;
-            transition: opacity 0.2s;
+            transition: opacity 0.3s;
+            pointer-events: none;
         }
+
+        .center-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: 20px 20px 0 0;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .center-card:hover {
+            border-color: transparent;
+            box-shadow:
+                0 4px 6px rgba(0, 0, 0, 0.04),
+                0 12px 28px rgba(0, 0, 0, 0.08),
+                0 0 0 1px rgba(0, 0, 0, 0.02);
+            transform: translateY(-3px) scale(1.005);
+        }
+
         .center-card:hover::before {
             opacity: 1;
         }
 
+        .center-card:hover::after {
+            opacity: 1;
+        }
+
+        .center-card:active {
+            transform: translateY(-1px) scale(0.998);
+            transition-duration: 0.1s;
+        }
+
         .center-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 16px;
+            margin-bottom: 18px;
+            position: relative;
+            transition: transform 0.3s, box-shadow 0.3s;
         }
-        .center-icon svg { width: 24px; height: 24px; }
+
+        .center-card:hover .center-icon {
+            transform: scale(1.08);
+        }
+
+        .center-icon svg { width: 24px; height: 24px; stroke-width: 2.2; }
 
         .center-name {
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 17px;
+            font-weight: 650;
             margin-bottom: 6px;
+            letter-spacing: -0.01em;
         }
+
         .center-desc {
             font-size: 13px;
             color: var(--text-secondary);
-            line-height: 1.5;
-            margin-bottom: 16px;
+            line-height: 1.55;
+            margin-bottom: 18px;
             display: -webkit-box;
             line-clamp: 2;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
-            min-height: 38px;
+            min-height: 40px;
         }
+
         .center-stats {
             display: flex;
-            gap: 16px;
-            padding-top: 14px;
-            border-top: 1px solid var(--border);
+            gap: 20px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(0, 0, 0, 0.06);
         }
+
         .center-stat {
             display: flex;
             flex-direction: column;
         }
+
         .center-stat-value {
-            font-size: 18px;
-            font-weight: 700;
+            font-size: 20px;
+            font-weight: 720;
+            letter-spacing: -0.02em;
         }
+
         .center-stat-label {
             font-size: 11px;
             color: var(--text-muted);
+            margin-top: 2px;
         }
+
         .center-badge {
             position: absolute;
-            top: 16px;
-            right: 16px;
+            top: 18px;
+            right: 18px;
             font-size: 11px;
             font-weight: 600;
-            padding: 4px 8px;
-            border-radius: 6px;
+            padding: 4px 10px;
+            border-radius: 8px;
+            backdrop-filter: blur(4px);
         }
 
-        /* 颜色主题 */
-        .center-card.accent::before { background: var(--accent); }
-        .center-card.accent .center-icon { background: var(--accent-bg); color: var(--accent); }
+        /* 颜色主题 — accent */
+        .center-card.accent::before { background: linear-gradient(135deg, rgba(79, 70, 229, 0.04), rgba(79, 70, 229, 0.01)); }
+        .center-card.accent::after { background: linear-gradient(90deg, var(--accent), var(--accent-hover)); }
+        .center-card.accent .center-icon { background: var(--accent-bg); color: var(--accent); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15); }
         .center-card.accent .center-stat-value { color: var(--accent); }
+        .center-card.accent:hover { box-shadow: 0 4px 6px rgba(79, 70, 229, 0.06), 0 12px 28px rgba(79, 70, 229, 0.12), 0 0 0 1px rgba(79, 70, 229, 0.08); }
 
-        .center-card.cyan::before { background: var(--cyan); }
-        .center-card.cyan .center-icon { background: var(--cyan-bg); color: var(--cyan); }
+        /* 颜色主题 — cyan */
+        .center-card.cyan::before { background: linear-gradient(135deg, rgba(6, 182, 212, 0.04), rgba(6, 182, 212, 0.01)); }
+        .center-card.cyan::after { background: linear-gradient(90deg, #06b6d4, #22d3ee); }
+        .center-card.cyan .center-icon { background: var(--cyan-bg); color: var(--cyan); box-shadow: 0 4px 12px rgba(6, 182, 212, 0.15); }
         .center-card.cyan .center-stat-value { color: var(--cyan); }
+        .center-card.cyan:hover { box-shadow: 0 4px 6px rgba(6, 182, 212, 0.06), 0 12px 28px rgba(6, 182, 212, 0.12), 0 0 0 1px rgba(6, 182, 212, 0.08); }
 
-        .center-card.success::before { background: var(--success); }
-        .center-card.success .center-icon { background: var(--success-bg); color: var(--success); }
+        /* 颜色主题 — success */
+        .center-card.success::before { background: linear-gradient(135deg, rgba(16, 185, 129, 0.04), rgba(16, 185, 129, 0.01)); }
+        .center-card.success::after { background: linear-gradient(90deg, #10b981, #34d399); }
+        .center-card.success .center-icon { background: var(--success-bg); color: var(--success); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15); }
         .center-card.success .center-stat-value { color: var(--success); }
+        .center-card.success:hover { box-shadow: 0 4px 6px rgba(16, 185, 129, 0.06), 0 12px 28px rgba(16, 185, 129, 0.12), 0 0 0 1px rgba(16, 185, 129, 0.08); }
 
-        .center-card.purple::before { background: var(--purple); }
-        .center-card.purple .center-icon { background: var(--purple-bg); color: var(--purple); }
+        /* 颜色主题 — purple */
+        .center-card.purple::before { background: linear-gradient(135deg, rgba(139, 92, 246, 0.04), rgba(139, 92, 246, 0.01)); }
+        .center-card.purple::after { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+        .center-card.purple .center-icon { background: var(--purple-bg); color: var(--purple); box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15); }
         .center-card.purple .center-stat-value { color: var(--purple); }
+        .center-card.purple:hover { box-shadow: 0 4px 6px rgba(139, 92, 246, 0.06), 0 12px 28px rgba(139, 92, 246, 0.12), 0 0 0 1px rgba(139, 92, 246, 0.08); }
 
-        .center-card.warning::before { background: var(--warning); }
-        .center-card.warning .center-icon { background: var(--warning-bg); color: var(--warning); }
+        /* 颜色主题 — warning */
+        .center-card.warning::before { background: linear-gradient(135deg, rgba(245, 158, 11, 0.04), rgba(245, 158, 11, 0.01)); }
+        .center-card.warning::after { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .center-card.warning .center-icon { background: var(--warning-bg); color: var(--warning); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15); }
         .center-card.warning .center-stat-value { color: var(--warning); }
+        .center-card.warning:hover { box-shadow: 0 4px 6px rgba(245, 158, 11, 0.06), 0 12px 28px rgba(245, 158, 11, 0.12), 0 0 0 1px rgba(245, 158, 11, 0.08); }
 
-        .center-card.pink::before { background: var(--pink); }
-        .center-card.pink .center-icon { background: var(--pink-bg); color: var(--pink); }
+        /* 颜色主题 — pink */
+        .center-card.pink::before { background: linear-gradient(135deg, rgba(236, 72, 153, 0.04), rgba(236, 72, 153, 0.01)); }
+        .center-card.pink::after { background: linear-gradient(90deg, #ec4899, #f472b6); }
+        .center-card.pink .center-icon { background: var(--pink-bg); color: var(--pink); box-shadow: 0 4px 12px rgba(236, 72, 153, 0.15); }
         .center-card.pink .center-stat-value { color: var(--pink); }
+        .center-card.pink:hover { box-shadow: 0 4px 6px rgba(236, 72, 153, 0.06), 0 12px 28px rgba(236, 72, 153, 0.12), 0 0 0 1px rgba(236, 72, 153, 0.08); }
 
-        .center-card.orange::before { background: var(--orange); }
-        .center-card.orange .center-icon { background: var(--orange-bg); color: var(--orange); }
+        /* 颜色主题 — orange */
+        .center-card.orange::before { background: linear-gradient(135deg, rgba(249, 115, 22, 0.04), rgba(249, 115, 22, 0.01)); }
+        .center-card.orange::after { background: linear-gradient(90deg, #f97316, #fb923c); }
+        .center-card.orange .center-icon { background: var(--orange-bg); color: var(--orange); box-shadow: 0 4px 12px rgba(249, 115, 22, 0.15); }
         .center-card.orange .center-stat-value { color: var(--orange); }
+        .center-card.orange:hover { box-shadow: 0 4px 6px rgba(249, 115, 22, 0.06), 0 12px 28px rgba(249, 115, 22, 0.12), 0 0 0 1px rgba(249, 115, 22, 0.08); }
 
-        .center-card.teal::before { background: var(--teal); }
-        .center-card.teal .center-icon { background: var(--teal-bg); color: var(--teal); }
+        /* 颜色主题 — teal */
+        .center-card.teal::before { background: linear-gradient(135deg, rgba(20, 184, 166, 0.04), rgba(20, 184, 166, 0.01)); }
+        .center-card.teal::after { background: linear-gradient(90deg, #14b8a6, #2dd4bf); }
+        .center-card.teal .center-icon { background: var(--teal-bg); color: var(--teal); box-shadow: 0 4px 12px rgba(20, 184, 166, 0.15); }
         .center-card.teal .center-stat-value { color: var(--teal); }
+        .center-card.teal:hover { box-shadow: 0 4px 6px rgba(20, 184, 166, 0.06), 0 12px 28px rgba(20, 184, 166, 0.12), 0 0 0 1px rgba(20, 184, 166, 0.08); }
 
-        .center-card.danger::before { background: var(--danger); }
-        .center-card.danger .center-icon { background: var(--danger-bg); color: var(--danger); }
+        /* 颜色主题 — danger */
+        .center-card.danger::before { background: linear-gradient(135deg, rgba(239, 68, 68, 0.04), rgba(239, 68, 68, 0.01)); }
+        .center-card.danger::after { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .center-card.danger .center-icon { background: var(--danger-bg); color: var(--danger); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15); }
         .center-card.danger .center-stat-value { color: var(--danger); }
+        .center-card.danger:hover { box-shadow: 0 4px 6px rgba(239, 68, 68, 0.06), 0 12px 28px rgba(239, 68, 68, 0.12), 0 0 0 1px rgba(239, 68, 68, 0.08); }
 
         /* 徽章颜色 */
         .badge-danger { background: var(--danger-bg); color: var(--danger); }
@@ -543,18 +606,14 @@
 
         /* 响应式 */
         @media (max-width: 1200px) {
-            .centers-grid.core-grid { grid-template-columns: repeat(8, minmax(0, 1fr)); }
-            .centers-grid.core-grid .center-card { grid-column: span 4; }
-            .center-card.featured { grid-column: span 8; }
+            .centers-grid { grid-template-columns: repeat(2, 1fr); }
+            .centers-grid.core-grid { grid-template-columns: repeat(2, 1fr); }
         }
-        @media (max-width: 900px) {
-            .centers-grid.core-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-            .centers-grid.core-grid .center-card,
-            .center-card.featured { grid-column: span 1; }
-        }
-        @media (max-width: 600px) {
-            .centers-grid { grid-template-columns: 1fr; }
+        @media (max-width: 768px) {
+            .centers-grid,
+            .centers-grid.core-grid { grid-template-columns: 1fr; }
             .main { padding: 20px; }
+            .center-card { padding: 20px; border-radius: 16px; }
         }
     </style>
 </head>
@@ -648,10 +707,6 @@
         <div class="favorites-section">
             <div class="section-header" style="margin-bottom: 12px;">
                 <h2 class="section-title" style="font-size: 15px;">常用页面</h2>
-                <button class="btn-manage" onclick="manageFavorites()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                    管理
-                </button>
             </div>
             <div class="favorites-grid" id="favoritesGrid"></div>
         </div>
@@ -662,10 +717,10 @@
         </div>
 
         <!-- 核心经营 -->
-        <div class="category-title">核心经营（按使用优先级）</div>
+        <div class="category-title">核心经营</div>
         <div class="centers-grid core-grid">
             <!-- 产品中心 -->
-            <div class="center-card cyan featured" onclick="enterCenter('product')">
+            <div class="center-card cyan" onclick="enterCenter('product')">
                 <div class="center-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="9" cy="21" r="1"/>
@@ -689,7 +744,7 @@
             </div>
 
             <!-- 客户中心（合并会员+订单） -->
-            <div class="center-card success featured" onclick="enterCenter('customer')">
+            <div class="center-card success" onclick="enterCenter('customer')">
                 <div class="center-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
