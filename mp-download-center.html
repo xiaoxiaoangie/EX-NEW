@@ -17,23 +17,10 @@
     --sidebar-w: 250px;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', sans-serif; background: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; -webkit-font-smoothing: antialiased; }
-
-/* ===== Sidebar ===== */
-.sidebar { width: var(--sidebar-w); background: var(--card-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; }
-.sidebar-logo { padding: 20px 16px; font-size: 16px; font-weight: 700; color: var(--primary); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
-.sidebar-logo .logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, var(--primary), #6366f1); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; font-weight: 700; }
-.menu-group { padding: 12px 8px 4px; }
-.menu-group-label { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 0 8px 6px; display: flex; align-items: center; gap: 6px; }
-.menu-group-label .dot { width: 6px; height: 6px; border-radius: 50%; }
-.menu-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; color: var(--text-s); transition: all .15s; user-select: none; }
-.menu-item:hover { background: var(--bg); color: var(--text); }
-.menu-item.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
-.menu-item .icon { width: 18px; text-align: center; font-size: 14px; }
-.menu-item .badge { background: var(--red); color: white; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 10px; margin-left: auto; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', sans-serif; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
 
 /* ===== Main ===== */
-.main { flex: 1; overflow-y: auto; padding: 28px 36px; }
+.main { max-width: 1100px; margin: 0 auto; padding: 28px 36px; }
 .breadcrumb { font-size: 12px; color: var(--text-m); margin-bottom: 6px; }
 .breadcrumb span { color: var(--primary); font-weight: 500; }
 .page-header { margin-bottom: 24px; }
@@ -48,6 +35,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
 .tag-generating::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--blue); animation: pulse 1.2s infinite; }
 .tag-ready { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
 .tag-expired { background: var(--bg); color: var(--text-m); border: 1px solid var(--border); }
+.tag-failed { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
 
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
 
@@ -125,48 +113,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
 </head>
 <body>
 
-<!-- ===== SIDEBAR ===== -->
-<div class="sidebar">
-    <div class="sidebar-logo">
-        <div class="logo-icon">MP</div>
-        Merchant Portal
-    </div>
-
-    <div class="menu-group">
-        <div class="menu-group-label" style="color:#10b981"><span class="dot" style="background:#10b981"></span> ASSETS</div>
-        <div class="menu-item"><span class="icon">🏦</span> Fiat Accounts</div>
-        <div class="menu-item"><span class="icon">💎</span> Crypto Wallet</div>
-        <div class="menu-item"><span class="icon">🔄</span> Exchange</div>
-    </div>
-
-    <div class="menu-group">
-        <div class="menu-group-label" style="color:#3b82f6"><span class="dot" style="background:#3b82f6"></span> TRANSFER IN</div>
-        <div class="menu-item"><span class="icon">🛠️</span> Collection Tools</div>
-        <div class="menu-item"><span class="icon">📥</span> Payins</div>
-        <div class="menu-item"><span class="icon">⛓️</span> OnRamp</div>
-    </div>
-
-    <div class="menu-group">
-        <div class="menu-group-label" style="color:#f59e0b"><span class="dot" style="background:#f59e0b"></span> TRANSFER OUT</div>
-        <div class="menu-item"><span class="icon">👤</span> Beneficiary</div>
-        <div class="menu-item"><span class="icon">📤</span> Payouts</div>
-        <div class="menu-item"><span class="icon">💱</span> OffRamp</div>
-    </div>
-
-    <div class="menu-group">
-        <div class="menu-group-label" style="color:#7c3aed"><span class="dot" style="background:#7c3aed"></span> REPORTS</div>
-        <div class="menu-item" onclick="switchPage('reports')"><span class="icon">📊</span> Reports</div>
-        <div class="menu-item active" onclick="switchPage('download')"><span class="icon">📥</span> Download Center <span class="badge">2</span></div>
-    </div>
-
-    <div class="menu-group">
-        <div class="menu-group-label" style="color:#64748b"><span class="dot" style="background:#64748b"></span> OTHER</div>
-        <div class="menu-item"><span class="icon">📄</span> Trade Documents</div>
-        <div class="menu-item"><span class="icon">🔧</span> Developer</div>
-        <div class="menu-item"><span class="icon">⚙️</span> Settings</div>
-    </div>
-</div>
-
 <!-- ===== MAIN CONTENT ===== -->
 <div class="main">
 
@@ -174,34 +120,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
     <div class="page-header">
         <div class="breadcrumb">Reports / <span>Download Center</span></div>
         <h1>Download Center</h1>
-        <p>查看和下载您导出的报表文件。文件生成后保留7天，过期后自动清理。</p>
-    </div>
-
-    <!-- 交互说明 -->
-    <div class="card">
-        <h3>💡 交互说明（PRD注释，非商户可见）</h3>
-        <div class="note-box note-info">
-            <strong>Download Center 定位：</strong><br>
-            • 与 Reports 同属一个大模块（REPORTS），Reports 负责报表查询/导出，Download Center 负责文件下载管理<br>
-            • 当导出文件较大时（如超过10,000条），系统异步生成文件，弹层提醒用户"文件生成中，请到 Download Center 查看"<br>
-            • 文件保留7天，过期后状态变为"已失效"，不可下载
-        </div>
-        <div class="note-box note-warn">
-            <strong>触发"文件生成中"弹层的条件：</strong><br>
-            • 导出数据量 > 阈值（如10,000条）<br>
-            • 文件格式为大体积格式（如Excel含多Sheet）<br>
-            • 系统判断生成时间 > 5秒<br>
-            <strong>点击下方按钮模拟弹层 ↓</strong>
-        </div>
-        <div style="display:flex; gap:10px;">
-            <button class="btn btn-primary" onclick="showModal('generating')">🔔 模拟：文件太大，生成中弹层</button>
-            <button class="btn btn-outline" onclick="showModal('ready')">✅ 模拟：文件已生成通知</button>
-        </div>
+        <p>查看和下载您导出的报表文件。文件生成后保留 7 天，过期后不可下载；记录保留 30 天后自动清除。</p>
     </div>
 
     <!-- 场景切换 -->
     <div class="card">
-        <h3>📋 Download Center 列表</h3>
 
         <div class="scenario-tabs">
             <button class="scenario-tab active" onclick="switchScenario('list')">列表视图</button>
@@ -250,7 +173,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
                         <td><span class="batch-id">DL20260214001</span></td>
                         <td>
                             <div class="file-name">Transaction_Report_2026-02.xlsx</div>
-                            <div class="file-meta">Estimated: ~2.3 MB · 45,230 records</div>
+                            <div class="file-meta">45,230 records</div>
                         </td>
                         <td>Transaction Report</td>
                         <td>
@@ -278,7 +201,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
                         <td><span class="batch-id">DL20260214002</span></td>
                         <td>
                             <div class="file-name">Payout_Report_Jan2026.csv</div>
-                            <div class="file-meta">Estimated: ~800 KB · 12,500 records</div>
+                            <div class="file-meta">12,500 records</div>
                         </td>
                         <td>Payout Report</td>
                         <td>
@@ -443,12 +366,41 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
                             </div>
                         </td>
                     </tr>
+                    <!-- Row 8: Failed -->
+                    <tr>
+                        <td><span class="batch-id" style="color:var(--red);">DL20260214008</span></td>
+                        <td>
+                            <div class="file-name" style="color:var(--red);">Payout_Report_2026-02.xlsx</div>
+                            <div class="file-meta">Generation failed · Timeout</div>
+                        </td>
+                        <td>Payout Report</td>
+                        <td>
+                            <div>2026-02-14</div>
+                            <div style="font-size:11px; color:var(--text-m);">18:30:45</div>
+                        </td>
+                        <td>
+                            <div class="user-cell">
+                                <div class="user-avatar" style="background:linear-gradient(135deg,#10b981,#34d399);">CZ</div>
+                                <div>
+                                    <div style="font-weight:600; font-size:12px;">Carol Zhang</div>
+                                    <div style="font-size:11px; color:var(--text-m);">carol@merchant.com</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="tag tag-failed">Failed</span></td>
+                        <td style="text-align:right;">
+                            <div class="actions" style="justify-content:flex-end;">
+                                <button class="btn-ghost" style="color:var(--primary);">🔄 Retry</button>
+                                <button class="btn-danger-ghost" title="Delete">🗑</button>
+                            </div>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
 
             <!-- Pagination -->
             <div class="pagination">
-                <span>Showing 1-7 of 7 files</span>
+                <span>Showing 1-8 of 8 files</span>
                 <div class="page-btns">
                     <div class="page-btn">‹</div>
                     <div class="page-btn active">1</div>
@@ -470,42 +422,51 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
         </div>
     </div>
 
-    <!-- 操作说明 -->
+    <!-- 状态×操作对照 -->
     <div class="card">
-        <h3>📐 状态 × 操作 对照表（PRD注释）</h3>
+        <h3>📐 状态 × 操作 对照</h3>
         <table class="data-table">
             <thead>
                 <tr>
-                    <th>Status</th>
-                    <th>Description</th>
-                    <th>Available Actions</th>
-                    <th>Notes</th>
+                    <th style="min-width:120px;">状态</th>
+                    <th style="min-width:200px;">可用操作</th>
+                    <th>操作说明</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td><span class="tag tag-generating">Generating</span></td>
-                    <td>文件正在异步生成中</td>
-                    <td>Download 按钮置灰不可点</td>
-                    <td>页面可轮询状态，生成完成后自动刷新为 Ready；也可通过 WebSocket 推送</td>
+                    <td><strong>Generating</strong></td>
+                    <td>无（Download 按钮置灰）</td>
+                    <td>页面轮询状态（每10秒），生成完成后自动刷新为 Ready</td>
                 </tr>
                 <tr>
-                    <td><span class="tag tag-ready">Ready</span></td>
-                    <td>文件已生成，可下载（保留7天）</td>
-                    <td><button class="btn btn-sm btn-primary">⬇ Download</button></td>
-                    <td>显示文件大小和记录数；到期前1天可提示即将过期</td>
+                    <td><strong>Ready</strong></td>
+                    <td><code style="background:var(--border-light); padding:2px 8px; border-radius:4px; font-size:12px;">Download</code></td>
+                    <td>点击直接下载文件；可多次下载</td>
                 </tr>
                 <tr>
-                    <td><span class="tag tag-expired">Expired</span></td>
-                    <td>文件已过期（超过7天），不可下载</td>
-                    <td>
-                        <button class="btn-ghost">🔄 Re-export</button>
-                        <button class="btn-danger-ghost">🗑 Delete</button>
-                    </td>
-                    <td>Re-export 会用相同参数重新生成一份新文件；Delete 删除记录</td>
+                    <td><strong>Expired</strong></td>
+                    <td><code style="background:var(--border-light); padding:2px 8px; border-radius:4px; font-size:12px;">Re-export</code> / <code style="background:var(--border-light); padding:2px 8px; border-radius:4px; font-size:12px;">Delete</code></td>
+                    <td>Re-export：用相同参数重新生成（注意：数据为当前最新状态）；Delete：删除记录</td>
+                </tr>
+                <tr>
+                    <td><strong>Failed</strong></td>
+                    <td><code style="background:var(--border-light); padding:2px 8px; border-radius:4px; font-size:12px;">Retry</code> / <code style="background:var(--border-light); padding:2px 8px; border-radius:4px; font-size:12px;">Delete</code></td>
+                    <td>Retry：重新触发生成；Delete：删除记录</td>
                 </tr>
             </tbody>
         </table>
+    </div>
+
+    <!-- 弹层交互模拟 -->
+    <div class="card">
+        <h3>🎬 弹层交互模拟</h3>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="btn btn-sm btn-primary" onclick="showModal('generating')">🔔 文件生成中</button>
+            <button class="btn btn-sm btn-outline" onclick="showModal('ready')">✅ 文件已生成</button>
+            <button class="btn btn-sm btn-outline" onclick="showModal('regenerate')">🔄 Re-export 确认</button>
+            <button class="btn btn-sm" style="background:var(--red-bg); color:var(--red); border:1px solid var(--red-border);" onclick="showModal('noperm')">� 无权限下载</button>
+        </div>
     </div>
 
 </div>
@@ -572,7 +533,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
                 </div>
                 <div style="display:flex; justify-content:space-between; font-size:13px;">
                     <span style="color:#065f46;">Expires</span>
-                    <strong style="color:#065f46;">2026-02-20 (7 days)</strong>
+                    <strong style="color:#065f46;">2026-02-20 (7 days from generation)</strong>
                 </div>
             </div>
         </div>
@@ -601,6 +562,41 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
         <div class="modal-footer">
             <button class="btn btn-outline" onclick="hideModal('regenerate')">Cancel</button>
             <button class="btn btn-primary" onclick="hideModal('regenerate'); showModal('generating');">🔄 Confirm Re-export</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MODAL: 无权限下载 ===== -->
+<div class="modal-overlay" id="modal-noperm" onclick="closeModal(event, 'noperm')">
+    <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <div class="modal-icon" style="background:var(--red-bg);">🚫</div>
+            <div class="modal-title">Permission denied</div>
+            <div class="modal-desc">
+                You don't have permission to download this file.
+            </div>
+        </div>
+        <div class="modal-body">
+            <div style="background:var(--red-bg); border:1px solid var(--red-border); border-radius:10px; padding:16px;">
+                <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:8px;">
+                    <span style="color:var(--text-s);">File</span>
+                    <strong>Settlement_Report_2026-W06.xlsx</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:8px;">
+                    <span style="color:var(--text-s);">Created by</span>
+                    <strong>Alice Liu (alice@merchant.com)</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:13px;">
+                    <span style="color:var(--text-s);">Your role</span>
+                    <strong>Member</strong>
+                </div>
+            </div>
+            <div style="background:var(--orange-bg); border:1px solid var(--orange-border); border-radius:8px; padding:12px; margin-top:14px; font-size:12px; color:#92400e; line-height:1.6;">
+                💡 Only the file creator, Owner, or Admin can download this file. Please contact your administrator if you need access.
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" onclick="hideModal('noperm')">OK</button>
         </div>
     </div>
 </div>
