@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OnRamp — 法币买入数币</title>
+<style>
+:root{
+  --bg:#f4f6fb;--card:#fff;--border:#e4e9f2;--bl:#f8fafc;
+  --text:#0f172a;--ts:#64748b;--tm:#94a3b8;
+  --p:#4f46e5;--pl:#eef2ff;--pd:#3730a3;--ph:#c7d2fe;
+  --g:#059669;--gb:#ecfdf5;--gbr:#6ee7b7;
+  --ob:#fffbeb;--obr:#fde68a;--ot:#92400e;
+  --bb:#eff6ff;--bbr:#bfdbfe;--bt:#1e40af;
+  --r:#ef4444;--rb:#fef2f2;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.04);
+  --shadow-lg:0 8px 32px rgba(0,0,0,.12);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Inter","PingFang SC",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
+.page{max-width:1040px;margin:0 auto;padding:36px 24px 80px;}
+.page-hd{margin-bottom:28px;}
+.page-hd h1{font-size:22px;font-weight:700;letter-spacing:-.3px;}
+.page-hd p{font-size:13px;color:var(--ts);margin-top:4px;}
+.tabs{display:flex;gap:4px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:5px;margin-bottom:28px;width:fit-content;box-shadow:var(--shadow);}
+.tab{padding:8px 20px;font-size:13px;font-weight:500;color:var(--ts);background:none;border:none;border-radius:8px;cursor:pointer;white-space:nowrap;transition:all .18s;}
+.tab:hover{color:var(--text);background:var(--bl);}
+.tab.on{color:var(--p);background:var(--pl);font-weight:700;}
+.panel{display:none;}.panel.on{display:block;}
+.card{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:24px;margin-bottom:16px;box-shadow:var(--shadow);}
+.card-hd{font-size:14px;font-weight:700;margin-bottom:16px;}
+.note{border-radius:10px;padding:12px 16px;font-size:13px;line-height:1.7;margin-bottom:14px;}
+.ni{background:var(--bb);border:1px solid var(--bbr);color:var(--bt);}
+.nw{background:var(--ob);border:1px solid var(--obr);color:var(--ot);}
+.et{width:100%;border-collapse:collapse;font-size:13px;}
+.et th{text-align:left;padding:10px 14px;background:var(--bl);font-weight:600;font-size:12px;color:var(--ts);border-bottom:2px solid var(--border);}
+.et td{padding:10px 14px;border-bottom:1px solid var(--bl);vertical-align:top;line-height:1.6;}
+.et tr:last-child td{border-bottom:none;}
+.form-grid{display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start;}
+@media(max-width:760px){.form-grid{grid-template-columns:1fr;}}
+.form-card{background:var(--card);border-radius:14px;border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow);}
+.form-section{padding:20px 24px;border-bottom:1px solid var(--bl);}
+.form-section:last-child{border-bottom:none;}
+.sec-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--tm);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.sec-num{width:20px;height:20px;border-radius:50%;background:var(--p);color:#fff;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sec-num.done{background:var(--g);}
+.f{margin-bottom:14px;}.f:last-child{margin-bottom:0;}
+.f label{display:block;font-size:12px;font-weight:600;color:var(--ts);margin-bottom:6px;}
+.f select,.f input[type=number]{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;background:#fff;color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s;appearance:none;-webkit-appearance:none;}
+.f select:focus,.f input:focus{border-color:var(--p);box-shadow:0 0 0 3px var(--ph);}
+.f-hint{font-size:11px;color:var(--tm);margin-top:5px;}
+.f-row{display:flex;gap:10px;}
+.f-row .f{flex:1;margin-bottom:0;}
+.f-cur{width:90px;flex-shrink:0;}
+.coin-cards{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px;}
+.coin-card{padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:10px;background:#fff;}
+.coin-card:hover,.coin-card.on{border-color:var(--p);background:var(--pl);}
+.coin-icon{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;}
+.ci-usdt{background:#26a17b;color:#fff;}.ci-usdc{background:#2775ca;color:#fff;}
+.coin-name{font-size:13px;font-weight:700;}
+.coin-sub{font-size:11px;color:var(--ts);}
+.src-tog{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+.src-btn{padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;background:#fff;text-align:left;border-style:solid;}
+.src-btn:hover,.src-btn.on{border-color:var(--p);background:var(--pl);}
+.src-ico{font-size:18px;margin-bottom:4px;}
+.src-lbl{font-size:13px;font-weight:700;color:var(--text);}
+.src-sub{font-size:11px;color:var(--ts);margin-top:2px;}
+.src-btn.on .src-lbl{color:var(--p);}
+.dest-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+.dest-opt{display:flex;align-items:center;gap:12px;padding:12px 16px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;background:#fff;}
+.dest-opt:hover,.dest-opt.on{border-color:var(--p);background:var(--pl);}
+.dest-opt input[type=radio]{accent-color:var(--p);width:16px;height:16px;flex-shrink:0;}
+.dest-opt-lbl{font-size:13px;font-weight:600;}
+.dest-opt-sub{font-size:11px;color:var(--ts);margin-top:2px;}
+.dest-opt.on .dest-opt-lbl{color:var(--p);}
+.va-list{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
+.va-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;background:#fff;}
+.va-item:hover,.va-item.on{border-color:var(--p);background:var(--pl);}
+.va-item input[type=radio]{accent-color:var(--p);width:15px;height:15px;flex-shrink:0;}
+.va-bank{font-size:13px;font-weight:600;}
+.va-acct{font-size:11px;color:var(--ts);margin-top:2px;}
+.va-curs{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap;}
+.cur-tag{font-size:10px;padding:2px 7px;border-radius:4px;background:var(--bl);border:1px solid var(--border);color:var(--ts);font-weight:600;}
+.drawer{border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:10px;}
+.drawer-hd{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:var(--bl);cursor:pointer;user-select:none;transition:background .15s;}
+.drawer-hd:hover{background:#f1f5f9;}
+.drawer-hd-left{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;}
+.drawer-hd-ico{font-size:14px;}
+.drawer-arrow{font-size:11px;color:var(--ts);transition:transform .2s;}
+.drawer-hd.open .drawer-arrow{transform:rotate(180deg);}
+.drawer-body{display:none;padding:4px 16px 14px;}
+.drawer-body.open{display:block;}
+.acct-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bl);font-size:13px;gap:12px;}
+.acct-row:last-child{border-bottom:none;}
+.acct-lbl{color:var(--ts);min-width:130px;flex-shrink:0;font-size:12px;}
+.acct-val{font-weight:600;display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end;text-align:right;font-size:13px;}
+.cp{cursor:pointer;color:var(--p);font-size:11px;background:var(--pl);border:none;padding:3px 8px;border-radius:5px;font-weight:600;transition:all .15s;flex-shrink:0;}
+.cp:hover{background:var(--p);color:#fff;}
+.copy-all{width:100%;margin-top:10px;padding:9px;border:1.5px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:600;cursor:pointer;color:var(--ts);transition:all .15s;}
+.copy-all:hover{border-color:var(--p);color:var(--p);}
+.bal-card{background:linear-gradient(135deg,#4f46e5 0%,#7c3aed 100%);border-radius:12px;padding:16px 20px;color:#fff;margin-bottom:12px;}
+.bal-lbl{font-size:11px;opacity:.8;margin-bottom:4px;}
+.bal-amt{font-size:26px;font-weight:800;letter-spacing:-.5px;}
+.bal-sub{font-size:11px;opacity:.7;margin-top:4px;}
+.summary{background:var(--bl);border-radius:12px;padding:16px;border:1px solid var(--border);}
+.sum-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:13px;color:var(--ts);}
+.sum-row .val{color:var(--text);font-weight:500;}
+.sum-divider{height:1px;background:var(--border);margin:8px 0;}
+.sum-total{display:flex;justify-content:space-between;align-items:center;padding:8px 0 0;}
+.sum-total .lbl{font-size:14px;font-weight:700;}
+.sum-total .amt{font-size:20px;font-weight:800;color:var(--g);}
+.submit-btn{width:100%;padding:14px;background:var(--p);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;transition:all .18s;margin-top:14px;}
+.submit-btn:hover{background:var(--pd);transform:translateY(-1px);box-shadow:0 6px 20px rgba(79,70,229,.35);}
+.sidebar-notice{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:20px;box-shadow:var(--shadow);}
+.sn-hd{font-size:13px;font-weight:700;margin-bottom:12px;}
+.sn-item{display:flex;gap:10px;margin-bottom:10px;font-size:12px;line-height:1.6;color:var(--ts);}
+.sn-item:last-child{margin-bottom:0;}
+.sn-dot{width:5px;height:5px;border-radius:50%;background:var(--obr);flex-shrink:0;margin-top:6px;}
+.ov{position:fixed;inset:0;background:rgba(15,23,42,.5);display:flex;align-items:center;justify-content:center;z-index:1000;opacity:0;pointer-events:none;transition:opacity .2s;backdrop-filter:blur(4px);}
+.ov.show{opacity:1;pointer-events:auto;}
+.modal{background:#fff;border-radius:20px;width:420px;max-width:92vw;padding:32px;box-shadow:var(--shadow-lg);transform:translateY(20px) scale(.97);transition:all .25s;}
+.ov.show .modal{transform:translateY(0) scale(1);}
+.modal-ico{width:52px;height:52px;border-radius:14px;background:var(--pl);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:16px;}
+.modal-title{font-size:18px;font-weight:800;margin-bottom:6px;}
+.modal-desc{font-size:13px;color:var(--ts);line-height:1.6;margin-bottom:20px;}
+.otp-input{width:100%;padding:14px;border:1.5px solid var(--border);border-radius:12px;font-size:24px;font-weight:700;text-align:center;letter-spacing:10px;outline:none;margin-bottom:16px;transition:border-color .15s;}
+.otp-input:focus{border-color:var(--p);box-shadow:0 0 0 3px var(--ph);}
+.modal-actions{display:flex;gap:10px;}
+.modal-actions button{flex:1;padding:12px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .15s;}
+.btn-cancel{background:var(--bl);color:var(--ts);}
+.btn-confirm{background:var(--p);color:#fff;}
+.btn-confirm:hover{background:var(--pd);}
+.order-modal{width:560px;max-width:95vw;max-height:88vh;overflow-y:auto;}
+.order-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap;}
+.order-filters{display:flex;gap:6px;}
+.filter-btn{padding:6px 14px;border:1px solid var(--border);border-radius:8px;font-size:12px;font-weight:600;background:var(--card);color:var(--ts);cursor:pointer;transition:all .15s;}
+.filter-btn.on{background:var(--pl);border-color:var(--p);color:var(--p);}
+.order-table{background:var(--card);border-radius:14px;border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow);}
+.ot-hd{display:grid;grid-template-columns:130px 1fr 110px 100px 80px;padding:10px 20px;background:var(--bl);border-bottom:1px solid var(--border);font-size:11px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.4px;gap:8px;}
+.ot-row{display:grid;grid-template-columns:130px 1fr 110px 100px 80px;padding:14px 20px;border-bottom:1px solid var(--bl);align-items:center;transition:background .15s;gap:8px;}
+.ot-row:last-child{border-bottom:none;}
+.ot-row:hover{background:var(--bl);}
+.ot-id{font-size:12px;font-weight:700;color:var(--p);}
+.ot-time{font-size:11px;color:var(--tm);margin-top:2px;}
+.ot-amt{font-size:13px;font-weight:700;}
+.ot-sub{font-size:11px;color:var(--ts);}
+.status-badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.sb-pending{background:#fef3c7;color:#d97706;}
+.sb-processing{background:var(--pl);color:var(--p);}
+.sb-done{background:var(--gb);color:var(--g);}
+.sb-failed{background:var(--rb);color:var(--r);}
+.view-btn{font-size:12px;font-weight:600;color:var(--p);background:var(--pl);border:none;padding:5px 12px;border-radius:6px;cursor:pointer;transition:all .15s;}
+.view-btn:hover{background:var(--p);color:#fff;}
+.acct-switch{display:flex;gap:8px;margin-bottom:16px;}
+.acct-sw-btn{flex:1;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:var(--ts);transition:all .15s;text-align:center;}
+.acct-sw-btn.on{border-color:var(--p);background:var(--pl);color:var(--p);}
+.detail-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bl);font-size:13px;gap:12px;}
+.detail-row:last-child{border-bottom:none;}
+.detail-lbl{color:var(--ts);font-size:12px;min-width:120px;}
+.detail-val{font-weight:600;text-align:right;display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end;}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="page-hd">
+    <h1>OnRamp &mdash; 法币买入数币</h1>
+    <p>Transfer In &nbsp;·&nbsp; 将法币兑换为 USDT / USDC，入账到您的数币钱包</p>
+  </div>
+  <div class="tabs">
+    <button class="tab on" onclick="switchTab('explain',this)">📋 交互说明</button>
+    <button class="tab" onclick="switchTab('s1',this)">场景一：仅 BB 大账户</button>
+    <button class="tab" onclick="switchTab('s2',this)">场景二：BB + 同名VA</button>
+    <button class="tab" onclick="switchTab('orders',this)">📄 下单后 — 订单列表</button>
+  </div>
+
+  <!-- ═══ TAB 1: 交互说明 ═══ -->
+  <div class="panel on" id="tab-explain">
+    <div class="card">
+      <div class="card-hd">OnRamp 整体说明</div>
+      <div class="note ni"><strong>OnRamp = 法币 → 数币承兑</strong><br>商户将法币（USD等）兑换为 USDT/USDC，入账到数币钱包。承兑引擎固定由 BB 处理。<br>商户不感知底层渠道，只看到统一的"法币账户"和"数币钱包"。</div>
+    </div>
+    <div class="card">
+      <div class="card-hd">客户场景对比</div>
+      <table class="et">
+        <thead><tr><th>场景</th><th>客户配置</th><th>银行转账时的收款账户选择</th></tr></thead>
+        <tbody>
+          <tr><td><strong>场景一</strong></td><td>仅 BB 大账户</td><td>直接展示 BB 代收付账户（无需选择）</td></tr>
+          <tr><td><strong>场景二</strong></td><td>BB 大账户 + 同名VA</td><td>可选：BB 代收付账户 或 同名VA账户（可能多个，按银行区分）</td></tr>
+          <tr><td><strong>场景三/四</strong></td><td>BB + 多渠道VA</td><td>同场景二，交互框架一致，VA 数量更多</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-hd">交互流程说明</div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="display:flex;gap:14px;align-items:flex-start"><div style="width:26px;height:26px;border-radius:50%;background:var(--p);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">1</div><div><strong>选择买入的数币货币</strong>：USDT 或 USDC，选择链（TRC-20 / ERC-20 / BEP-20）</div></div>
+        <div style="display:flex;gap:14px;align-items:flex-start"><div style="width:26px;height:26px;border-radius:50%;background:var(--p);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">2</div><div><strong>输入买入金额</strong>：填写法币金额（USD），系统实时计算预计获得数币数量</div></div>
+        <div style="display:flex;gap:14px;align-items:flex-start"><div style="width:26px;height:26px;border-radius:50%;background:var(--p);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">3</div><div><strong>选择支付来源</strong>：法币账户余额（直接扣款）或 银行转账（展示收款账户信息）</div></div>
+        <div style="display:flex;gap:14px;align-items:flex-start"><div style="width:26px;height:26px;border-radius:50%;background:var(--p);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">4</div><div><strong>选择转账至（仅银行转账）</strong>：根据客户配置展示可选收款账户。有同名VA时可选择具体银行的VA账户，账户明细折叠展示，点击展开后可复制</div></div>
+        <div style="display:flex;gap:14px;align-items:flex-start"><div style="width:26px;height:26px;border-radius:50%;background:var(--p);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">5</div><div><strong>汇率 &amp; 费用计算</strong>：展示实时汇率、手续费、预计到账数量</div></div>
+        <div style="display:flex;gap:14px;align-items:flex-start"><div style="width:26px;height:26px;border-radius:50%;background:var(--g);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">6</div><div><strong>提交 &amp; 安全验证</strong>：点击提交后弹出安全验证（OTP），验证通过后提交订单，进入订单列表</div></div>
+      </div>
+      <div class="note nw" style="margin-top:16px;margin-bottom:0">
+        <strong>Important Notice：</strong><br>
+        · 最终到账数量以实际到账法币金额为准（汇率在资金到账时确定）<br>
+        · 银行转账必须为<strong>同名转账</strong>，第三方转账将被自动退回<br>
+        · 银行转账备注中必须填写 <strong>Purpose Code</strong>，否则自动退款，损失由用户承担
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TAB 2: 场景一 仅BB ═══ -->
+  <div class="panel" id="tab-s1">
+    <div class="note ni" style="margin-bottom:16px"><strong>场景一：客户仅有 BB 大账户</strong> — 银行转账时直接展示 BB 代收付账户，无需选择收款账户类型。</div>
+    <div class="form-grid">
+      <div class="form-card">
+        <div class="form-section">
+          <div class="sec-label"><span class="sec-num">1</span> 选择买入的数币</div>
+          <div class="coin-cards">
+            <div class="coin-card on" onclick="selCoin(this)"><div class="coin-icon ci-usdt">₮</div><div><div class="coin-name">USDT</div><div class="coin-sub">Tether USD</div></div></div>
+            <div class="coin-card" onclick="selCoin(this)"><div class="coin-icon ci-usdc">$</div><div><div class="coin-name">USDC</div><div class="coin-sub">USD Coin</div></div></div>
+          </div>
+          <div class="f" style="margin-top:10px"><label>Network / Chain</label><select><option>TRC-20 (TRON) — 推荐，手续费低</option><option>ERC-20 (Ethereum)</option><option>BEP-20 (BSC)</option></select></div>
+        </div>
+        <div class="form-section">
+          <div class="sec-label"><span class="sec-num">2</span> 买入金额</div>
+          <div class="f">
+            <label>Fiat Amount</label>
+            <div class="f-row">
+              <div class="f"><input type="number" value="200" id="s1-amt" oninput="calc('s1')" min="1"></div>
+              <div class="f-cur"><select><option>USD</option><option>EUR</option><option>SGD</option><option>HKD</option></select></div>
+            </div>
+            <div class="f-hint">Minimum: 100 USD &nbsp;·&nbsp; Maximum: 50,000 USD per transaction</div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="sec-label"><span class="sec-num">3</span> 支付来源</div>
+          <div class="src-tog">
+            <button class="src-btn on" onclick="srcToggle('s1','bank',this)"><div class="src-ico">🏦</div><div class="src-lbl">Bank Transfer</div><div class="src-sub">Wire transfer to receiving account</div></button>
+            <button class="src-btn" onclick="srcToggle('s1','fiat',this)"><div class="src-ico">💳</div><div class="src-lbl">USD Wallet</div><div class="src-sub">Deduct from fiat balance</div></button>
+          </div>
+          <div id="s1-bank">
+            <div class="note ni" style="margin-bottom:10px;font-size:12px">请将款项汇至以下 BB 代收付账户，汇款备注请填写 <strong>Purpose Code</strong></div>
+            
+            <div class="drawer">
+              <div class="drawer-hd" onclick="toggleDrawer(this)">
+                <div class="drawer-hd-left"><span class="drawer-hd-ico">🏦</span><span>BB 代收付账户详情</span></div>
+                <span class="drawer-arrow">▼</span>
+              </div>
+              <div class="drawer-body">
+                <div class="acct-row"><span class="acct-lbl">Account Number</span><span class="acct-val">20301000010313 <button class="cp" onclick="doCopy(this,'20301000010313')">Copy</button></span></div>
+                <div class="acct-row"><span class="acct-lbl">Recipient Name</span><span class="acct-val">BLANKBLOCK LIMITED LIABILITY COMPANY <button class="cp" onclick="doCopy(this,'BLANKBLOCK LIMITED LIABILITY COMPANY')">Copy</button></span></div>
+                <div class="acct-row"><span class="acct-lbl">Recipient Address</span><span class="acct-val">street HOZA, No.86, Apt.Room 210, municipality WARSAW, post code 00-682, Poland <button class="cp" onclick="doCopy(this,'street HOZA, No.86, Apt.Room 210, municipality WARSAW, post code 00-682, Poland')">Copy</button></span></div>
+                <div class="acct-row"><span class="acct-lbl">Beneficiary Bank</span><span class="acct-val">SINGAPORE GULF BANK B.S.C. CLOSED <button class="cp" onclick="doCopy(this,'SINGAPORE GULF BANK B.S.C. CLOSED')">Copy</button></span></div>
+                <div class="acct-row"><span class="acct-lbl">Beneficiary SWIFT</span><span class="acct-val">SGBDBHB2XXX <button class="cp" onclick="doCopy(this,'SGBDBHB2XXX')">Copy</button></span></div>
+                <div class="acct-row"><span class="acct-lbl">Beneficiary Bank Address</span><span class="acct-val">FLAT 2901, BUILDING 1B, ISA AL-KABEER AVENUE 365, BLOCK 316, MANAMA, BAHRAIN <button class="cp" onclick="doCopy(this,'FLAT 2901, BUILDING 1B, ISA AL-KABEER AVENUE 365, BLOCK 316, MANAMA, BAHRAIN')">Copy</button></span></div>
+                <div class="acct-row"><span class="acct-lbl">Intermediary Bank</span><span class="acct-val">AL SALAM BANK B.S.C <button class="cp" onclick="doCopy(this,'AL SALAM BANK B.S.C')">Copy</button></span></div>
+                <div class="acct-row"><span class="acct-lbl">Intermediary SWIFT</span><span class="acct-val">ALSABHBMXXX <button class="cp" onclick="doCopy(this,'ALSABHBMXXX')">Copy</button></span></div>
+                <div class="acct-row"><span class="acct-lbl">Intermediary Bank Address</span><span class="acct-val">BUILDING NO. 935, STREET NO. 1015, DIPLOMATIC AREA, SANABIS, BAHRAIN <button class="cp" onclick="doCopy(this,'BUILDING NO. 935, STREET NO. 1015, DIPLOMATIC AREA, SANABIS, BAHRAIN')">Copy</button></span></div>
+                <button class="copy-all" onclick="copyAllBB()">📋 Copy All Bank Details</button>
+              </div>
+            </div>
+
+          </div>
+          <div id="s1-fiat" style="display:none">
+            <div class="bal-card"><div class="bal-lbl">USD Wallet Available Balance</div><div class="bal-amt">$15,240.00</div><div class="bal-sub">After deduction: $15,040.00</div></div>
+            <div class="f-hint">系统将从您的法币账户余额中实时扣款完成承兑。</div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="sec-label"><span class="sec-num done">4</span> 费用 &amp; 预计到账</div>
+          
+        <div class="summary">
+          <div class="sum-row"><span>Transfer Amount</span><span class="val" id="s1-ta">200 USD</span></div>
+          <div class="sum-row"><span>Exchange Rate</span><span class="val">1 USDT ≈ 0.96 USD</span></div>
+          <div class="sum-row"><span>Fee</span><span class="val">0.00 USD</span></div>
+          <div class="sum-divider"></div>
+          <div class="sum-total"><span class="lbl">You will receive (Est.)</span><span class="amt" id="s1-rcv">208.33 USDT</span></div>
+        </div>
+        <button class="submit-btn" onclick="showModal()">Submit Order</button>
+
+        </div>
+      </div>
+      
+    <div class="sidebar-notice">
+      <div class="sn-hd">⚠️ Important Notice</div>
+      <div class="sn-item"><div class="sn-dot"></div><div>Final amount is based on actual funds received by the bank</div></div>
+      <div class="sn-item"><div class="sn-dot"></div><div>Exchange rate is determined at the time of settlement</div></div>
+      <div class="sn-item"><div class="sn-dot"></div><div><strong>Same-Name Transfer Required</strong> — Third-party transfers will be rejected automatically</div></div>
+      <div class="sn-item"><div class="sn-dot"></div><div><strong>Purpose Code Mandatory</strong> — Missing code causes automatic refund; losses borne by user</div></div>
+      <div class="sn-item"><div class="sn-dot"></div><div>All consequences of non-compliance are the user's responsibility</div></div>
+    </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ TAB 3: 场景二 BB+VA ═══ -->
+  <div class="panel" id="tab-s2">
+    <div class="note ni" style="margin-bottom:16px"><strong>场景二：BB 大账户 + 同名VA</strong> — 银行转账时可选择转至 BB 代收付账户 或 同名VA账户（可能有多个，按银行区分）。</div>
+    <div class="form-grid">
+      <div class="form-card">
+        <div class="form-section">
+          <div class="sec-label"><span class="sec-num">1</span> 选择买入的数币</div>
+          <div class="coin-cards">
+            <div class="coin-card on" onclick="selCoin(this)"><div class="coin-icon ci-usdt">₮</div><div><div class="coin-name">USDT</div><div class="coin-sub">Tether USD</div></div></div>
+            <div class="coin-card" onclick="selCoin(this)"><div class="coin-icon ci-usdc">$</div><div><div class="coin-name">USDC</div><div class="coin-sub">USD Coin</div></div></div>
+          </div>
+          <div class="f" style="margin-top:10px"><label>Network / Chain</label><select><option>TRC-20 (TRON) — 推荐，手续费低</option><option>ERC-20 (Ethereum)</option><option>BEP-20 (BSC)</option></select></div>
+        </div>
+        <div class="form-section">
+          <div class="sec-label"><span class="sec-num">2</span> 买入金额</div>
+          <div class="f">
+            <label>Fiat Amount</label>
+            <div class="f-row">
+              <div class="f"><input type="number" value="200" id="s2-amt" oninput="calc('s2')" min="1"></div>
+              <div class="f-cur"><select><option>USD</option><option>EUR</option><option>SGD</option><option>HKD</option></select></div>
+            </div>
+            <div class="f-hint">Minimum: 100 USD &nbsp;·&nbsp; Maximum: 50,000 USD per transaction</div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="sec-label"><span class="sec-num">3</span> 支付来源</div>
+          <div class="src-tog">
+            <button class="src-btn on" onclick="srcToggle('s2','bank',this)"><div class="src-ico">🏦</div><div class="src-lbl">Bank Transfer</div><div class="src-sub">Wire transfer to receiving account</div></button>
+            <button class="src-btn" onclick="srcToggle('s2','fiat',this)"><div class="src-ico">💳</div><div class="src-lbl">USD Wallet</div><div class="src-sub">Deduct from fiat balance</div></button>
+          </div>
+          <div id="s2-bank">
+            <div class="sec-label" style="margin-bottom:10px"><span class="sec-num">4</span> 转账至</div>
+            <div class="dest-opts">
+              <div class="dest-opt on" id="s2-dopt-bb" onclick="destToggle('s2','bb')">
+                <input type="radio" name="s2dest" checked>
+                <div><div class="dest-opt-lbl">BB 代收付账户</div><div class="dest-opt-sub">通过 BB 大账户收款，适合所有汇款人</div></div>
+              </div>
+              <div class="dest-opt" id="s2-dopt-va" onclick="destToggle('s2','va')">
+                <input type="radio" name="s2dest">
+                <div><div class="dest-opt-lbl">同名 VA 账户</div><div class="dest-opt-sub">通过您的专属虚拟账户收款，请选择具体银行</div></div>
+              </div>
+            </div>
+            <div id="s2-dest-bb">
+              <div class="note ni" style="margin-bottom:10px;font-size:12px">请将款项汇至以下 BB 代收付账户，汇款备注请填写 <strong>Purpose Code</strong></div>
+              
+            <div class="drawer">
+              <div class="drawer-hd" onclick="toggleDrawer(this)">
+                <div class="drawer-hd-left"><span class="drawer-hd-ico">🏦</span><span>BB 代收付账户详情</span></div>
+                <span class="drawer-arrow">▼</span>
+              </div>
+              <div class="drawer-body">
+                <div class="acct-row"><span class="acct-lbl">Account Number</span><span class="acct-val">20301000010313 <button class="cp" onclick="doCopy(this,'20301000010313')">Copy</button></span></div>
+                <div class="acct-row"><span class="acct-lbl">Recipient Name</span><span class="acct-val">BLANKBLOCK LIMITED LIABILITY COMPANY <button class="cp" onclick="doCopy(this,'BLANKBLOCK LIMITED LIABILITY COMPANY')">Copy</button></span></div>
+                <div class="acct-row"><span class="acct-lbl">Recipient Address</span><span class="acct-val">street HOZA, No.86, Apt.Room 210, municipality WARSAW, post code 00-682, Poland <button class="cp" onclick="doCopy(this,'street HOZA No.86 Apt.Room 210 municipality WARSAW post code 00-682 Poland')">Copy</button></span></div>
+                <div class="acct-row"><span class="acct-lbl">Beneficiary Bank</span><span class="acct-val">SINGAPORE GULF BANK B.S.C. CLOSED <button class="cp" onclick="doCopy(this,'SINGAPORE GULF BANK B.S.C. CLOSED')">Copy</button></span></div>
+                <div class="acct-row"><span class="acct-lbl">Beneficiary SWIFT</span><span class="acct-val">SGBDBHB2XXX <button class="cp" onclick="doCopy(this,'SGBDBHB2XXX')">Copy</button></span></div>
+                <div class="acct-row"><span class="acct-lbl">Beneficiary Bank Address</span><span class="acct-val">FLAT 2901, BUILDING 1B, ISA AL-KABEER AVENUE 365, BLOCK 316, MANAMA, BAHRAIN <button class="cp" onclick="doCopy(this,'FLAT 2901 BUILDING 1B ISA AL-KABEER AVENUE 365 BLOCK 316 MANAMA BAHRAIN')">Copy</button></span></div>
+                <div class="acct-row"><span class="acct-lbl">Intermediary Bank</span><span class="acct-val">AL SALAM BANK B.S.C <button class="cp" onclick="doCopy(this,'AL SALAM BANK B.S.C')">Copy</button></span></div>
+                <div class="acct-row"><span class="acct-lbl">Intermediary SWIFT</span><span class="acct-val">ALSABHBMXXX <button class="cp" onclick="doCopy(this,'ALSABHBMXXX')">Copy</button></span></div>
+                <div class="acct-row"><span class="acct-lbl">Intermediary Bank Address</span><span class="acct-val">BUILDING NO. 935, STREET NO. 1015, DIPLOMATIC AREA, SANABIS, BAHRAIN <button class="cp" onclick="doCopy(this,'BUILDING NO. 935 STREET NO. 1015 DIPLOMATIC AREA SANABIS BAHRAIN')">Copy</button></span></div>
+                <button class="copy-all" onclick="copyAllBB()">📋 Copy All Bank Details</button>
+              </div>
+            </div>
+            </div>
+            <div id="s2-dest-va" style="display:none">
+              <div class="f"><label>选择 VA 账户</label>
+                <div class="va-list">
+                  <div class="va-item on" id="s2-va-0" onclick="selVA('s2',0)">
+                    <input type="radio" name="s2va" checked>
+                    <div>
+                      <div class="va-bank">DBS BANK (HONG KONG) LIMITED</div>
+                      <div class="va-acct">账号：7983709047 &nbsp;·&nbsp; 国家/地区：香港</div>
+                      <div class="va-curs"><span class="cur-tag">CNH</span><span class="cur-tag">HKD</span><span class="cur-tag">USD</span><span class="cur-tag">EUR</span><span class="cur-tag">GBP</span></div>
+                    </div>
+                  </div>
+                  <div class="va-item" id="s2-va-1" onclick="selVA('s2',1)">
+                    <input type="radio" name="s2va">
+                    <div>
+                      <div class="va-bank">OCBC BANK (SINGAPORE)</div>
+                      <div class="va-acct">账号：7073512821 &nbsp;·&nbsp; 国家/地区：新加坡</div>
+                      <div class="va-curs"><span class="cur-tag">USD</span><span class="cur-tag">SGD</span><span class="cur-tag">EUR</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div id="s2-vad-0">
+                <div class="drawer">
+                  <div class="drawer-hd" onclick="toggleDrawer(this)">
+                    <div class="drawer-hd-left"><span class="drawer-hd-ico">🏦</span><span>DBS Bank (Hong Kong) — 账户详情</span></div>
+                    <span class="drawer-arrow">▼</span>
+                  </div>
+                  <div class="drawer-body">
+                    <div class="acct-row"><span class="acct-lbl">账户名称</span><span class="acct-val">ABC TRADING CO. LTD <button class="cp" onclick="doCopy(this,'ABC TRADING CO. LTD')">Copy</button></span></div>
+                    <div class="acct-row"><span class="acct-lbl">账户所在国家/地区</span><span class="acct-val">香港</span></div>
+                    <div class="acct-row"><span class="acct-lbl">银行名称</span><span class="acct-val">DBS BANK (HONG KONG) LIMITED <button class="cp" onclick="doCopy(this,'DBS BANK (HONG KONG) LIMITED')">Copy</button></span></div>
+                    <div class="acct-row"><span class="acct-lbl">银行账号</span><span class="acct-val">7983709047 <button class="cp" onclick="doCopy(this,'7983709047')">Copy</button></span></div>
+                    <div class="acct-row"><span class="acct-lbl">SWIFT Code</span><span class="acct-val">DHBKHKHH <button class="cp" onclick="doCopy(this,'DHBKHKHH')">Copy</button></span></div>
+                    <div class="acct-row"><span class="acct-lbl">银行代码</span><span class="acct-val">016 <button class="cp" onclick="doCopy(this,'016')">Copy</button></span></div>
+                    <div class="acct-row"><span class="acct-lbl">分行代码</span><span class="acct-val">478 <button class="cp" onclick="doCopy(this,'478')">Copy</button></span></div>
+                    <div class="acct-row"><span class="acct-lbl">银行地址</span><span class="acct-val">FLOOR 11, THE CENTER, 99 QUEEN'S ROAD <button class="cp" onclick="doCopy(this,'FLOOR 11, THE CENTER, 99 QUEENS ROAD')">Copy</button></span></div>
+                    <div class="acct-row"><span class="acct-lbl">银行所在邮编</span><span class="acct-val">999077 <button class="cp" onclick="doCopy(this,'999077')">Copy</button></span></div>
+                    <div class="acct-row"><span class="acct-lbl">城市</span><span class="acct-val">HONG KONG</span></div>
+                    <div class="acct-row"><span class="acct-lbl">账户币种</span><span class="acct-val"><span class="cur-tag">CNH</span><span class="cur-tag">HKD</span><span class="cur-tag">USD</span><span class="cur-tag">EUR</span><span class="cur-tag">GBP</span></span></div>
+                    <button class="copy-all" onclick="copyVA('s2',0)">📋 Copy All Account Details</button>
+                  </div>
+                </div>
+              </div>
+              <div id="s2-vad-1" style="display:none">
+                <div class="drawer">
+                  <div class="drawer-hd" onclick="toggleDrawer(this)">
+                    <div class="drawer-hd-left"><span class="drawer-hd-ico">🏦</span><span>OCBC Bank Singapore — 账户详情</span></div>
+                    <span class="drawer-arrow">▼</span>
+                  </div>
+                  <div class="drawer-body">
+                    <div class="acct-row"><span class="acct-lbl">账户名称</span><span class="acct-val">ABC TRADING CO. LTD <button class="cp" onclick="doCopy(this,'ABC TRADING CO. LTD')">Copy</button></span></div>
+                    <div class="acct-row"><span class="acct-lbl">账户所在国家/地区</span><span class="acct-val">新加坡</span></div>
+                    <div class="acct-row"><span class="acct-lbl">银行名称</span><span class="acct-val">OVERSEA-CHINESE BANKING CORPORATION LIMITED <button class="cp" onclick="doCopy(this,'OVERSEA-CHINESE BANKING CORPORATION LIMITED')">Copy</button></span></div>
+                    <div class="acct-row"><span class="acct-lbl">银行账号</span><span class="acct-val">7073512821 <button class="cp" onclick="doCopy(this,'7073512821')">Copy</button></span></div>
+                    <div class="acct-row"><span class="acct-lbl">SWIFT Code</span><span class="acct-val">OCBCSGSG <button class="cp" onclick="doCopy(this,'OCBCSGSG')">Copy</button></span></div>
+                    <div class="acct-row"><span class="acct-lbl">银行代码</span><span class="acct-val">7339 <button class="cp" onclick="doCopy(this,'7339')">Copy</button></span></div>
+                    <div class="acct-row"><span class="acct-lbl">分行代码</span><span class="acct-val">001 <button class="cp" onclick="doCopy(this,'001')">Copy</button></span></div>
+                    <div class="acct-row"><span class="acct-lbl">银行地址</span><span class="acct-val">65 CHULIA STREET, #01-00, OCBC CENTRE <button class="cp" onclick="doCopy(this,'65 CHULIA STREET #01-00 OCBC CENTRE')">Copy</button></span></div>
+                    <div class="acct-row"><span class="acct-lbl">银行所在邮编</span><span class="acct-val">049513 <button class="cp" onclick="doCopy(this,'049513')">Copy</button></span></div>
+                    <div class="acct-row"><span class="acct-lbl">城市</span><span class="acct-val">SINGAPORE</span></div>
+                    <div class="acct-row"><span class="acct-lbl">账户币种</span><span class="acct-val"><span class="cur-tag">USD</span><span class="cur-tag">SGD</span><span class="cur-tag">EUR</span></span></div>
+                    <button class="copy-all" onclick="copyVA('s2',1)">📋 Copy All Account Details</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="s2-fiat" style="display:none">
+            <div class="bal-card"><div class="bal-lbl">USD Wallet Available Balance</div><div class="bal-amt">$15,240.00</div><div class="bal-sub">After deduction: $15,040.00</div></div>
+            <div class="f-hint">系统将从您的法币账户余额中实时扣款完成承兑。</div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="sec-label"><span class="sec-num done">5</span> 费用 &amp; 预计到账</div>
+                  <div class="summary">
+          <div class="sum-row"><span>Transfer Amount</span><span class="val" id="s2-ta">200 USD</span></div>
+          <div class="sum-row"><span>Exchange Rate</span><span class="val">1 USDT ≈ 0.96 USD</span></div>
+          <div class="sum-row"><span>Fee</span><span class="val">0.00 USD</span></div>
+          <div class="sum-divider"></div>
+          <div class="sum-total"><span class="lbl">You will receive (Est.)</span><span class="amt" id="s2-rcv">208.33 USDT</span></div>
+        </div>
+        <button class="submit-btn" onclick="showModal()">Submit Order</button>
+        </div>
+      </div>
+          <div class="sidebar-notice">
+      <div class="sn-hd">⚠️ Important Notice</div>
+      <div class="sn-item"><div class="sn-dot"></div><div>Final amount is based on actual funds received by the bank</div></div>
+      <div class="sn-item"><div class="sn-dot"></div><div>Exchange rate is determined at the time of settlement</div></div>
+      <div class="sn-item"><div class="sn-dot"></div><div><strong>Same-Name Transfer Required</strong> — Third-party transfers will be rejected automatically</div></div>
+      <div class="sn-item"><div class="sn-dot"></div><div><strong>Purpose Code Mandatory</strong> — Missing code causes automatic refund; losses borne by user</div></div>
+      <div class="sn-item"><div class="sn-dot"></div><div>All consequences of non-compliance are the user's responsibility</div></div>
+    </div>
+    </div>
+  </div>
+
+  <!-- ═══ TAB 4: 订单列表 ═══ -->
+  <div class="panel" id="tab-orders">
+    <div class="order-toolbar">
+      <div style="font-size:15px;font-weight:700">OnRamp 订单列表</div>
+      <div class="order-filters">
+        <button class="filter-btn on" onclick="filterOrders('all',this)">全部</button>
+        <button class="filter-btn" onclick="filterOrders('pending',this)">待汇款</button>
+        <button class="filter-btn" onclick="filterOrders('processing',this)">处理中</button>
+        <button class="filter-btn" onclick="filterOrders('done',this)">已完成</button>
+      </div>
+    </div>
+    <div class="order-table">
+      <div class="ot-hd">
+        <div>订单号 / 时间</div>
+        <div>买入数币</div>
+        <div>法币金额</div>
+        <div>状态</div>
+        <div>操作</div>
+      </div>
+      <div class="ot-row" onclick="showOrderDetail('ORD-20250221-001')">
+        <div><div class="ot-id">ORD-20250221-001</div><div class="ot-time">2025-02-21 10:32:15</div></div>
+        <div><div class="ot-amt">208.33 USDT</div><div class="ot-sub">TRC-20</div></div>
+        <div><div class="ot-amt">200.00 USD</div><div class="ot-sub">Bank Transfer</div></div>
+        <div><span class="status-badge sb-pending">待汇款</span></div>
+        <div><button class="view-btn" onclick="event.stopPropagation();showOrderDetail('ORD-20250221-001')">查看账户</button></div>
+      </div>
+      <div class="ot-row" onclick="showOrderDetail('ORD-20250220-003')">
+        <div><div class="ot-id">ORD-20250220-003</div><div class="ot-time">2025-02-20 15:48:02</div></div>
+        <div><div class="ot-amt">1,041.67 USDT</div><div class="ot-sub">TRC-20</div></div>
+        <div><div class="ot-amt">1,000.00 USD</div><div class="ot-sub">Bank Transfer</div></div>
+        <div><span class="status-badge sb-processing">处理中</span></div>
+        <div><button class="view-btn" onclick="event.stopPropagation();showOrderDetail('ORD-20250220-003')">查看账户</button></div>
+      </div>
+      <div class="ot-row" onclick="showOrderDetail('ORD-20250219-007')">
+        <div><div class="ot-id">ORD-20250219-007</div><div class="ot-time">2025-02-19 09:15:44</div></div>
+        <div><div class="ot-amt">520.83 USDT</div><div class="ot-sub">ERC-20</div></div>
+        <div><div class="ot-amt">500.00 USD</div><div class="ot-sub">USD Wallet</div></div>
+        <div><span class="status-badge sb-done">已完成</span></div>
+        <div><button class="view-btn" onclick="event.stopPropagation();showOrderDetail('ORD-20250219-007')">查看详情</button></div>
+      </div>
+      <div class="ot-row" onclick="showOrderDetail('ORD-20250218-002')">
+        <div><div class="ot-id">ORD-20250218-002</div><div class="ot-time">2025-02-18 14:22:31</div></div>
+        <div><div class="ot-amt">2,083.33 USDT</div><div class="ot-sub">TRC-20</div></div>
+        <div><div class="ot-amt">2,000.00 USD</div><div class="ot-sub">Bank Transfer</div></div>
+        <div><span class="status-badge sb-done">已完成</span></div>
+        <div><button class="view-btn" onclick="event.stopPropagation();showOrderDetail('ORD-20250218-002')">查看详情</button></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<!-- ═══ Security Verification Modal ═══ -->
+<div class="ov" id="modal-otp">
+  <div class="modal">
+    <div class="modal-ico">🔐</div>
+    <div class="modal-title">Security Verification</div>
+    <div class="modal-desc">Please enter the 6-digit verification code sent to your registered email / phone to confirm this transaction.</div>
+    <input class="otp-input" type="text" maxlength="6" placeholder="· · · · · ·" id="otp-field">
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('modal-otp')">Cancel</button>
+      <button class="btn-confirm" onclick="confirmSubmit()">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Order Detail Modal ═══ -->
+<div class="ov" id="modal-order">
+  <div class="modal order-modal">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div>
+        <div class="modal-title" style="margin-bottom:2px" id="od-title">订单详情</div>
+        <div style="font-size:12px;color:var(--ts)" id="od-subtitle">ORD-20250221-001 &nbsp;·&nbsp; 2025-02-21 10:32:15</div>
+      </div>
+      <button onclick="closeModal('modal-order')" style="background:var(--bl);border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px;color:var(--ts)">✕ Close</button>
+    </div>
+
+    <!-- Order summary -->
+    <div style="background:var(--bl);border-radius:12px;padding:16px;margin-bottom:20px;border:1px solid var(--border)">
+      <div class="detail-row"><span class="detail-lbl">买入数币</span><span class="detail-val" style="color:var(--g);font-size:15px">208.33 USDT</span></div>
+      <div class="detail-row"><span class="detail-lbl">支付金额</span><span class="detail-val">200.00 USD</span></div>
+      <div class="detail-row"><span class="detail-lbl">支付方式</span><span class="detail-val">Bank Transfer</span></div>
+      <div class="detail-row"><span class="detail-lbl">状态</span><span class="detail-val"><span class="status-badge sb-pending">待汇款</span></span></div>
+    </div>
+
+    <!-- Account switch -->
+    <div style="font-size:13px;font-weight:700;margin-bottom:10px">收款账户信息</div>
+    <div class="acct-switch" id="od-acct-switch">
+      <button class="acct-sw-btn on" onclick="switchOrderAcct('bb',this)">BB 代收付账户</button>
+      <button class="acct-sw-btn" onclick="switchOrderAcct('va',this)">同名 VA 账户</button>
+    </div>
+
+    <!-- BB account panel -->
+    <div id="od-bb">
+      <div class="note ni" style="margin-bottom:12px;font-size:12px">请将款项汇至以下 BB 代收付账户，汇款备注请填写 <strong>Purpose Code</strong></div>
+      <div class="detail-row"><span class="detail-lbl">Account Number</span><span class="detail-val">20301000010313 <button class="cp" onclick="doCopy(this,'20301000010313')">Copy</button></span></div>
+      <div class="detail-row"><span class="detail-lbl">Recipient Name</span><span class="detail-val">BLANKBLOCK LIMITED LIABILITY COMPANY <button class="cp" onclick="doCopy(this,'BLANKBLOCK LIMITED LIABILITY COMPANY')">Copy</button></span></div>
+      <div class="detail-row"><span class="detail-lbl">Beneficiary Bank</span><span class="detail-val">SINGAPORE GULF BANK B.S.C. CLOSED <button class="cp" onclick="doCopy(this,'SINGAPORE GULF BANK B.S.C. CLOSED')">Copy</button></span></div>
+      <div class="detail-row"><span class="detail-lbl">Beneficiary SWIFT</span><span class="detail-val">SGBDBHB2XXX <button class="cp" onclick="doCopy(this,'SGBDBHB2XXX')">Copy</button></span></div>
+      <div class="detail-row"><span class="detail-lbl">Intermediary Bank</span><span class="detail-val">AL SALAM BANK B.S.C <button class="cp" onclick="doCopy(this,'AL SALAM BANK B.S.C')">Copy</button></span></div>
+      <div class="detail-row"><span class="detail-lbl">Intermediary SWIFT</span><span class="detail-val">ALSABHBMXXX <button class="cp" onclick="doCopy(this,'ALSABHBMXXX')">Copy</button></span></div>
+    </div>
+
+    <!-- VA account panel -->
+    <div id="od-va" style="display:none">
+      <div class="note ni" style="margin-bottom:12px;font-size:12px">请将款项汇至您的同名VA账户，汇款备注请填写 <strong>Purpose Code</strong></div>
+      <div class="va-list" style="margin-bottom:12px">
+        <div class="va-item on" onclick="selOrderVA(0,this)"><input type="radio" name="odva" checked><div><div class="va-bank">DBS BANK (HONG KONG) LIMITED</div><div class="va-acct">账号：7983709047 &nbsp;·&nbsp; 香港</div><div class="va-curs"><span class="cur-tag">CNH</span><span class="cur-tag">HKD</span><span class="cur-tag">USD</span></div></div></div>
+        <div class="va-item" onclick="selOrderVA(1,this)"><input type="radio" name="odva"><div><div class="va-bank">OCBC BANK (SINGAPORE)</div><div class="va-acct">账号：7073512821 &nbsp;·&nbsp; 新加坡</div><div class="va-curs"><span class="cur-tag">USD</span><span class="cur-tag">SGD</span></div></div></div>
+      </div>
+      <div id="od-vad-0">
+        <div class="detail-row"><span class="detail-lbl">账户名称</span><span class="detail-val">ABC TRADING CO. LTD <button class="cp" onclick="doCopy(this,'ABC TRADING CO. LTD')">Copy</button></span></div>
+        <div class="detail-row"><span class="detail-lbl">银行名称</span><span class="detail-val">DBS BANK (HONG KONG) LIMITED <button class="cp" onclick="doCopy(this,'DBS BANK (HONG KONG) LIMITED')">Copy</button></span></div>
+        <div class="detail-row"><span class="detail-lbl">银行账号</span><span class="detail-val">7983709047 <button class="cp" onclick="doCopy(this,'7983709047')">Copy</button></span></div>
+        <div class="detail-row"><span class="detail-lbl">SWIFT Code</span><span class="detail-val">DHBKHKHH <button class="cp" onclick="doCopy(this,'DHBKHKHH')">Copy</button></span></div>
+        <div class="detail-row"><span class="detail-lbl">银行代码</span><span class="detail-val">016 <button class="cp" onclick="doCopy(this,'016')">Copy</button></span></div>
+        <div class="detail-row"><span class="detail-lbl">分行代码</span><span class="detail-val">478 <button class="cp" onclick="doCopy(this,'478')">Copy</button></span></div>
+        <div class="detail-row"><span class="detail-lbl">银行地址</span><span class="detail-val">FLOOR 11, THE CENTER, 99 QUEEN'S ROAD <button class="cp" onclick="doCopy(this,'FLOOR 11 THE CENTER 99 QUEENS ROAD')">Copy</button></span></div>
+        <div class="detail-row"><span class="detail-lbl">邮编</span><span class="detail-val">999077 <button class="cp" onclick="doCopy(this,'999077')">Copy</button></span></div>
+        <div class="detail-row"><span class="detail-lbl">城市</span><span class="detail-val">HONG KONG</span></div>
+      </div>
+      <div id="od-vad-1" style="display:none">
+        <div class="detail-row"><span class="detail-lbl">账户名称</span><span class="detail-val">ABC TRADING CO. LTD <button class="cp" onclick="doCopy(this,'ABC TRADING CO. LTD')">Copy</button></span></div>
+        <div class="detail-row"><span class="detail-lbl">银行名称</span><span class="detail-val">OVERSEA-CHINESE BANKING CORPORATION LIMITED <button class="cp" onclick="doCopy(this,'OVERSEA-CHINESE BANKING CORPORATION LIMITED')">Copy</button></span></div>
+        <div class="detail-row"><span class="detail-lbl">银行账号</span><span class="detail-val">7073512821 <button class="cp" onclick="doCopy(this,'7073512821')">Copy</button></span></div>
+        <div class="detail-row"><span class="detail-lbl">SWIFT Code</span><span class="detail-val">OCBCSGSG <button class="cp" onclick="doCopy(this,'OCBCSGSG')">Copy</button></span></div>
+        <div class="detail-row"><span class="detail-lbl">银行代码</span><span class="detail-val">7339 <button class="cp" onclick="doCopy(this,'7339')">Copy</button></span></div>
+        <div class="detail-row"><span class="detail-lbl">分行代码</span><span class="detail-val">001 <button class="cp" onclick="doCopy(this,'001')">Copy</button></span></div>
+        <div class="detail-row"><span class="detail-lbl">银行地址</span><span class="detail-val">65 CHULIA STREET, #01-00, OCBC CENTRE <button class="cp" onclick="doCopy(this,'65 CHULIA STREET #01-00 OCBC CENTRE')">Copy</button></span></div>
+        <div class="detail-row"><span class="detail-lbl">邮编</span><span class="detail-val">049513 <button class="cp" onclick="doCopy(this,'049513')">Copy</button></span></div>
+        <div class="detail-row"><span class="detail-lbl">城市</span><span class="detail-val">SINGAPORE</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function switchTab(id,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('tab-'+id).classList.add('on');
+  if(btn)btn.classList.add('on');
+}
+function showModal(){document.getElementById('modal-otp').classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+function confirmSubmit(){
+  closeModal('modal-otp');
+  setTimeout(()=>{
+    switchTab('orders', document.querySelectorAll('.tab')[3]);
+    alert('Order submitted!\nYour OnRamp order is being processed. You will receive a notification when the crypto is credited to your wallet.');
+  },200);
+}
+function doCopy(btn,text){
+  navigator.clipboard.writeText(text).catch(()=>{});
+  const orig=btn.textContent;
+  btn.textContent='✓';btn.style.background='var(--g)';btn.style.color='#fff';
+  setTimeout(()=>{btn.textContent=orig;btn.style.background='';btn.style.color='';},1500);
+}
+function copyAllBB(){
+  const text=`Account Number: 20301000010313\nRecipient Name: BLANKBLOCK LIMITED LIABILITY COMPANY\nBeneficiary Bank: SINGAPORE GULF BANK B.S.C. CLOSED\nBeneficiary SWIFT: SGBDBHB2XXX\nIntermediary Bank: AL SALAM BANK B.S.C\nIntermediary SWIFT: ALSABHBMXXX`;
+  navigator.clipboard.writeText(text).catch(()=>{});
+  alert('BB bank details copied to clipboard!');
+}
+function copyVA(sid,idx){
+  const texts=[
+    `Account Name: ABC TRADING CO. LTD\nBank: DBS BANK (HONG KONG) LIMITED\nAccount Number: 7983709047\nSWIFT: DHBKHKHH\nBank Code: 016\nBranch Code: 478\nAddress: FLOOR 11, THE CENTER, 99 QUEENS ROAD\nPostcode: 999077\nCity: HONG KONG`,
+    `Account Name: ABC TRADING CO. LTD\nBank: OVERSEA-CHINESE BANKING CORPORATION LIMITED\nAccount Number: 7073512821\nSWIFT: OCBCSGSG\nBank Code: 7339\nBranch Code: 001\nAddress: 65 CHULIA STREET #01-00 OCBC CENTRE\nPostcode: 049513\nCity: SINGAPORE`
+  ];
+  navigator.clipboard.writeText(texts[idx]).catch(()=>{});
+  alert('VA account details copied to clipboard!');
+}
+function calc(sid){
+  const amt=parseFloat(document.getElementById(sid+'-amt')?.value)||0;
+  const rcv=(amt/0.96).toFixed(2);
+  const el=document.getElementById(sid+'-rcv');if(el)el.textContent=rcv+' USDT';
+  const ta=document.getElementById(sid+'-ta');if(ta)ta.textContent=amt.toFixed(2)+' USD';
+}
+function selCoin(el){
+  const parent=el.closest('.coin-cards');
+  parent.querySelectorAll('.coin-card').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+}
+function srcToggle(sid,mode,btn){
+  const sec=document.getElementById('tab-'+sid);
+  sec.querySelectorAll('.src-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  const bank=document.getElementById(sid+'-bank');
+  const fiat=document.getElementById(sid+'-fiat');
+  if(bank)bank.style.display=mode==='bank'?'block':'none';
+  if(fiat)fiat.style.display=mode==='fiat'?'block':'none';
+}
+function destToggle(sid,key){
+  document.querySelectorAll('#tab-'+sid+' .dest-opt').forEach(d=>d.classList.remove('on'));
+  const sel=document.getElementById(sid+'-dopt-'+key);if(sel)sel.classList.add('on');
+  document.querySelectorAll('#tab-'+sid+' [id^="'+sid+'-dest-"]').forEach(d=>d.style.display='none');
+  const content=document.getElementById(sid+'-dest-'+key);if(content)content.style.display='block';
+}
+function selVA(sid,idx){
+  document.querySelectorAll('#tab-'+sid+' .va-item').forEach(v=>v.classList.remove('on'));
+  const card=document.getElementById(sid+'-va-'+idx);if(card)card.classList.add('on');
+  document.querySelectorAll('#tab-'+sid+' [id^="'+sid+'-vad-"]').forEach(d=>d.style.display='none');
+  const detail=document.getElementById(sid+'-vad-'+idx);if(detail)detail.style.display='block';
+}
+function toggleDrawer(hd){
+  hd.classList.toggle('open');
+  const body=hd.nextElementSibling;
+  body.classList.toggle('open');
+}
+function filterOrders(status,btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+}
+function showOrderDetail(orderId){
+  document.getElementById('od-title').textContent='订单详情 — '+orderId;
+  document.getElementById('modal-order').classList.add('show');
+}
+function switchOrderAcct(key,btn){
+  document.querySelectorAll('.acct-sw-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('od-bb').style.display=key==='bb'?'block':'none';
+  document.getElementById('od-va').style.display=key==='va'?'block':'none';
+}
+function selOrderVA(idx,el){
+  document.querySelectorAll('#od-va .va-item').forEach(v=>v.classList.remove('on'));
+  el.classList.add('on');
+  document.querySelectorAll('[id^="od-vad-"]').forEach(d=>d.style.display='none');
+  const d=document.getElementById('od-vad-'+idx);if(d)d.style.display='block';
+}
+</script>
+</body>
+</html>
