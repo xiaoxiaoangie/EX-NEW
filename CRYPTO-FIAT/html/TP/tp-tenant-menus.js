@@ -839,6 +839,7 @@ function renderProductList(filter = 'all') {
 function renderProductTable(filteredProducts, filter) {
     const title = filter === 'signed' ? '已签约产品' : '即将到期产品';
     const emptyText = filter === 'signed' ? '暂无已签约产品' : '暂无即将到期产品';
+    const isSignedView = filter === 'signed';
     
     if (filteredProducts.length === 0) {
         return `
@@ -852,7 +853,9 @@ function renderProductTable(filteredProducts, filter) {
         `;
     }
 
-    const tableRows = filteredProducts.map(product => `
+    const tableRows = filteredProducts.map(product => {
+        const isAcceptanceProduct = product.name.includes('承兑') || product.nameEn.toLowerCase().includes('on/off ramp');
+        return `
         <tr onclick="showProductDetail(${product.id})" style="cursor: pointer;">
             <td>
                 <div class="product-table-name">
@@ -878,8 +881,19 @@ function renderProductTable(filteredProducts, filter) {
                 ${product.status === 'active' ? '<span class="table-badge active">使用中</span>' : ''}
                 ${product.status === 'expiring' ? '<span class="table-badge expiring">即将到期</span>' : ''}
             </td>
+            ${isSignedView ? `
+            <td>
+                ${isAcceptanceProduct ? `
+                    <button
+                        onclick="openProductConfig(${product.id}, event)"
+                        style="background: none; border: none; color: #4f46e5; cursor: pointer; font-size: 13px; text-decoration: underline;"
+                    >产品配置</button>
+                ` : '<span style="font-size: 12px; color: #94a3b8;">-</span>'}
+            </td>
+            ` : ''}
         </tr>
-    `).join('');
+    `;
+    }).join('');
 
     return `
         <div class="product-table-header">
@@ -901,6 +915,7 @@ function renderProductTable(filteredProducts, filter) {
                         <th>签约时间</th>
                         <th>到期时间</th>
                         <th>状态</th>
+                        ${isSignedView ? '<th>操作</th>' : ''}
                     </tr>
                 </thead>
                 <tbody>
@@ -989,6 +1004,278 @@ function renewProduct(productId) {
 // 管理产品
 function manageProduct(productId) {
     alert(`正在打开产品管理页面... 产品ID: ${productId}`);
+}
+
+// 承兑产品配置入口
+function openProductConfig(productId, event) {
+    if (event) {
+        event.stopPropagation();
+    }
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    const isAcceptanceProduct = product.name.includes('承兑') || product.nameEn.toLowerCase().includes('on/off ramp');
+    if (!isAcceptanceProduct) {
+        alert('当前仅支持承兑产品配置。');
+        return;
+    }
+
+    renderAcceptanceProductConfig(product);
+}
+
+function renderAcceptanceProductConfig(product) {
+    const mainContent = document.getElementById('detailMain');
+    if (!mainContent) return;
+
+    const statusText = product.status === 'expiring' ? '即将到期' : '使用中';
+    const statusColor = product.status === 'expiring' ? '#d97706' : '#10b981';
+    const statusBg = product.status === 'expiring' ? '#fffbeb' : '#ecfdf5';
+
+    mainContent.innerHTML = `
+        <div class="page-header">
+            <div class="breadcrumb">
+                <a href="#" onclick="goBack()">首页</a> / <span>产品中心</span> / <span>已签约产品</span> / <span>产品配置</span>
+            </div>
+            <h1 class="page-title">承兑产品配置</h1>
+            <p class="page-desc">配置承兑产品的法币账户、滑点容忍度、交易限额和退款规则</p>
+        </div>
+
+        <!-- 基本信息 -->
+        <div class="card" style="margin-bottom: 16px;">
+            <div class="card-header" style="border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px;">
+                <h2 class="card-title" style="font-size: 16px; font-weight: 700;">基本信息</h2>
+            </div>
+            <div style="padding: 0 24px 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
+                <div style="padding: 14px 16px; border: 1px solid #e2e8f0; border-radius: 10px; background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);">
+                    <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #94a3b8; margin-bottom: 6px; font-weight: 600;">产品名称</div>
+                    <div style="font-size: 15px; font-weight: 650; color: #0f172a;">${product.name}</div>
+                    <div style="font-size: 12px; color: #64748b; margin-top: 2px;">${product.nameEn}</div>
+                </div>
+                <div style="padding: 14px 16px; border: 1px solid #e2e8f0; border-radius: 10px; background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);">
+                    <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #94a3b8; margin-bottom: 6px; font-weight: 600;">开通时间</div>
+                    <div style="font-size: 15px; font-weight: 650; color: #0f172a;">${product.signedDate || '-'}</div>
+                </div>
+                <div style="padding: 14px 16px; border: 1px solid #e2e8f0; border-radius: 10px; background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);">
+                    <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #94a3b8; margin-bottom: 6px; font-weight: 600;">产品状态</div>
+                    <span style="display:inline-flex; align-items:center; padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 650; background: ${statusBg}; color: ${statusColor};">
+                        <span style="width: 6px; height: 6px; border-radius: 50%; background: ${statusColor}; margin-right: 6px;"></span>
+                        ${statusText}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 产品配置 -->
+        <div class="card">
+            <div class="card-header" style="border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 20px;">
+                <h2 class="card-title" style="font-size: 16px; font-weight: 700;">产品配置</h2>
+            </div>
+            <div style="padding: 0 24px 24px; display: flex; flex-direction: column; gap: 18px;">
+                
+                <!-- 1. 法币账户配置 -->
+                <div style="border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; background: #fff;">
+                    <div style="padding: 14px 18px; font-size: 14px; font-weight: 650; background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%); border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 8px;">
+                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 6px; background: #4f46e5; color: #fff; font-size: 12px; font-weight: 700;">1</span>
+                        法币账户配置
+                    </div>
+                    <div style="padding: 18px; display: flex; flex-wrap: wrap; gap: 18px; align-items: center;">
+                        <label style="display:flex; align-items:center; gap:8px; padding: 8px 14px; border: 1px solid #e2e8f0; border-radius: 8px; background: #f8fafc; cursor: not-allowed;">
+                            <input type="checkbox" checked disabled style="width: 16px; height: 16px;">
+                            <span style="font-size: 13px; font-weight: 600; color: #475569;">BB 法币账户</span>
+                            <span style="font-size: 11px; color: #94a3b8; background: #e2e8f0; padding: 2px 6px; border-radius: 4px;">必选</span>
+                        </label>
+                        <label style="display:flex; align-items:center; gap:8px; padding: 8px 14px; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='#4f46e5'; this.style.background='#eff6ff'" onmouseout="this.style.borderColor='#e2e8f0'; this.style.background='#fff'">
+                            <input type="checkbox" checked style="width: 16px; height: 16px; accent-color: #4f46e5;">
+                            <span style="font-size: 13px; font-weight: 600; color: #475569;">iPayLinks 法币账户</span>
+                            <span style="font-size: 11px; color: #d97706; background: #fffbeb; padding: 2px 6px; border-radius: 4px;">可选</span>
+                        </label>
+                        <div style="flex: 1 1 100%; font-size: 12px; color: #64748b; line-height: 1.6; padding: 10px 14px; background: #f8fafc; border-left: 3px solid #94a3b8; border-radius: 4px;">
+                            💡 说明：BB 为承兑产品主承接账户（必选）；租户若签约 iPayLinks，可额外勾选为商户提供 IPL 法币账户选项。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. 滑点配置 -->
+                <div style="border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; background: #fff;">
+                    <div style="padding: 14px 18px; font-size: 14px; font-weight: 650; background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%); border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 8px;">
+                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 6px; background: #4f46e5; color: #fff; font-size: 12px; font-weight: 700;">2</span>
+                        USD-USDT 滑点配置
+                    </div>
+                    <div style="padding: 18px;">
+                        <div style="display: grid; grid-template-columns: 200px 1fr; gap: 16px; align-items: start;">
+                            <div>
+                                <label style="display:block; font-size:12px; color:#64748b; margin-bottom:8px; font-weight: 600;">滑点容忍度（%）</label>
+                                <input type="number" id="slippageTolerance" value="1" min="0" max="10" step="0.1" style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; font-weight: 600;">
+                                <div style="font-size: 11px; color: #94a3b8; margin-top: 6px;">建议范围：0.1% ~ 5%</div>
+                            </div>
+                            <div style="padding: 14px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px;">
+                                <div style="font-size: 13px; font-weight: 600; color: #1e40af; margin-bottom: 8px;">📌 滑点说明</div>
+                                <div style="font-size: 12px; color: #1e3a8a; line-height: 1.7;">
+                                    <strong>场景：</strong>系统按实时汇率给商户报价，但报价时汇率与商户实际下单时汇率可能不同。<br>
+                                    <strong>规则：</strong>若汇率波动导致商户获得的目标币种数量<strong>变少</strong>（对商户不利），且变化幅度超过滑点容忍度，则下单失败。<br>
+                                    <strong>反之：</strong>若汇率波动对商户有利（获得更多目标币种），即使超过滑点，也允许成交。<br>
+                                    <strong>总结：</strong>滑点保护商户不在汇率剧烈不利变化时成交，但不限制有利变化。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. 交易限额 -->
+                <div style="border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; background: #fff;">
+                    <div style="padding: 14px 18px; font-size: 14px; font-weight: 650; background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%); border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 8px;">
+                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 6px; background: #4f46e5; color: #fff; font-size: 12px; font-weight: 700;">3</span>
+                        交易限额配置
+                    </div>
+                    <div style="padding: 18px;">
+                        <table style="width: 100%; border-collapse: collapse; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+                            <thead>
+                                <tr style="background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);">
+                                    <th style="padding: 12px 14px; text-align:left; font-size:12px; font-weight: 650; color:#475569; border-bottom:2px solid #e2e8f0; border-right: 1px solid #e2e8f0;">交易方向</th>
+                                    <th style="padding: 12px 14px; text-align:left; font-size:12px; font-weight: 650; color:#475569; border-bottom:2px solid #e2e8f0; border-right: 1px solid #e2e8f0;">单笔限额</th>
+                                    <th style="padding: 12px 14px; text-align:left; font-size:12px; font-weight: 650; color:#475569; border-bottom:2px solid #e2e8f0; border-right: 1px solid #e2e8f0;">单日限额</th>
+                                    <th style="padding: 12px 14px; text-align:left; font-size:12px; font-weight: 650; color:#475569; border-bottom:2px solid #e2e8f0; border-right: 1px solid #e2e8f0;">单月限额</th>
+                                    <th style="padding: 12px 14px; text-align:left; font-size:12px; font-weight: 650; color:#475569; border-bottom:2px solid #e2e8f0;">终身限额</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${renderLimitConfigRow('onramp', 'On-Ramp', '法币 → 数币')}
+                                ${renderLimitConfigRow('offramp', 'Off-Ramp', '数币 → 法币')}
+                            </tbody>
+                        </table>
+                        <div style="margin-top: 14px; padding: 12px 14px; background: #f8fafc; border-left: 3px solid #94a3b8; border-radius: 4px; font-size: 12px; color: #475569; line-height: 1.8;">
+                            <strong>说明：</strong><br>
+                            • 未勾选表示该维度不限额；<br>
+                            • 单笔限额需配置最小值和最大值，其余维度只配置最大值；<br>
+                            • 限额币种均为 <strong>USD</strong>（Off-Ramp 按稳定币实时汇率换算为 USD 计算）。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. 退款配置 -->
+                <div style="border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; background: #fff;">
+                    <div style="padding: 14px 18px; font-size: 14px; font-weight: 650; background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%); border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 8px;">
+                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 6px; background: #4f46e5; color: #fff; font-size: 12px; font-weight: 700;">4</span>
+                        退款配置（Off-Ramp 退款）
+                    </div>
+                    <div style="padding: 18px;">
+                        <div style="font-size: 13px; color:#475569; margin-bottom: 14px; font-weight: 600;">💰 退款交互（承兑相关）：按汇率规则决定退款时的币种归属</div>
+                        
+                        <div style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: 1px solid #fde68a; border-radius: 10px; padding: 16px; margin-bottom: 14px;">
+                            <div style="font-size: 13px; font-weight: 650; color: #92400e; margin-bottom: 10px;">📊 输入参数</div>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; font-size: 12px; color: #78350f;">
+                                <div><code style="background: #fff; padding: 2px 6px; border-radius: 4px; font-weight: 600;">original_rate</code> = 原交易时 1 USDT 的 USD 价格</div>
+                                <div><code style="background: #fff; padding: 2px 6px; border-radius: 4px; font-weight: 600;">realtime_rate</code> = 退款时 1 USDT 的 USD 价格</div>
+                                <div><code style="background: #fff; padding: 2px 6px; border-radius: 4px; font-weight: 600;">refund_usd</code> = 需退回的 USD 金额</div>
+                                <div><code style="background: #fff; padding: 2px 6px; border-radius: 4px; font-weight: 600;">threshold</code> = 商户配置的容忍阈值（默认 1%）</div>
+                            </div>
+                        </div>
+
+                        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 16px; margin-bottom: 14px;">
+                            <div style="font-size: 13px; font-weight: 650; color: #166534; margin-bottom: 10px;">🔄 判断逻辑</div>
+                            <div style="font-size: 12px; color: #15803d; line-height: 1.8;">
+                                <code style="background: #fff; padding: 4px 8px; border-radius: 4px; font-weight: 600; display: inline-block; margin-bottom: 8px;">diff = (realtime_rate - original_rate) / original_rate</code>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <div style="padding: 14px; background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 6px;">
+                                <div style="font-size: 13px; font-weight: 650; color: #1e40af; margin-bottom: 6px;">情况1: realtime_rate ≤ original_rate（USDT贬值，同样USD能回更多USDT，BB不亏）</div>
+                                <div style="font-size: 12px; color: #1e3a8a;">→ 按实时汇率退回数币钱包：<code style="background: #fff; padding: 2px 6px; border-radius: 4px;">refund_usd / realtime_rate</code> 个 USDT</div>
+                            </div>
+
+                            <div style="padding: 14px; background: #f0fdf4; border-left: 4px solid #10b981; border-radius: 6px;">
+                                <div style="font-size: 13px; font-weight: 650; color: #166534; margin-bottom: 6px;">情况2: diff ≤ threshold（USDT小幅升值，BB小亏≤阈值，可接受）</div>
+                                <div style="font-size: 12px; color: #15803d;">→ 按原汇率退回数币钱包：<code style="background: #fff; padding: 2px 6px; border-radius: 4px;">refund_usd / original_rate</code> 个 USDT</div>
+                            </div>
+
+                            <div style="padding: 14px; background: #fef2f2; border-left: 4px solid #ef4444; border-radius: 6px;">
+                                <div style="font-size: 13px; font-weight: 650; color: #991b1b; margin-bottom: 6px;">情况3: diff > threshold（USDT大幅升值，BB亏损超阈值）</div>
+                                <div style="font-size: 12px; color: #991b1b;">→ 退回法币账户（不做反向承兑，避免亏损）</div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 14px; padding: 12px 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12px; color: #475569; line-height: 1.7;">
+                            <strong>总结：</strong>只要 BB 不亏或小亏（在容忍阈值内），就退数币钱包；BB 亏损超过阈值，就退法币账户。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 操作按钮 -->
+                <div style="display:flex; gap:12px; padding-top: 8px;">
+                    <button onclick="saveAcceptanceProductConfig()" style="padding:10px 20px; background:#4f46e5; color:#fff; border:none; border-radius:8px; cursor:pointer; font-size:14px; font-weight: 600; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3); transition: all 0.2s;" onmouseover="this.style.background='#4338ca'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(79, 70, 229, 0.4)'" onmouseout="this.style.background='#4f46e5'; this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(79, 70, 229, 0.3)'">💾 保存配置</button>
+                    <button onclick="renderProductView('signed')" style="padding:10px 20px; background:#fff; color:#475569; border:1px solid #d1d5db; border-radius:8px; cursor:pointer; font-size:14px; font-weight: 600; transition: all 0.2s;" onmouseover="this.style.background='#f8fafc'; this.style.borderColor='#94a3b8'" onmouseout="this.style.background='#fff'; this.style.borderColor='#d1d5db'">↩️ 返回已签约产品</button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    initLimitConfigInteractions();
+}
+
+function renderLimitConfigRow(scope, label, desc) {
+    return `
+        <tr style="border-bottom: 1px solid #e2e8f0;">
+            <td style="padding: 14px; font-size:13px; font-weight:650; color:#0f172a; border-right: 1px solid #e2e8f0;">
+                <div>${label}</div>
+                <div style="font-size: 11px; color: #94a3b8; font-weight: 500; margin-top: 2px;">${desc}</div>
+            </td>
+            ${renderLimitCell(scope, 'single', true)}
+            ${renderLimitCell(scope, 'daily')}
+            ${renderLimitCell(scope, 'monthly')}
+            ${renderLimitCell(scope, 'lifetime')}
+        </tr>
+    `;
+}
+
+function renderLimitCell(scope, type, single = false) {
+    const defaultChecked = type === 'single';
+    return `
+        <td style="padding: 14px; vertical-align: top; border-right: 1px solid #e2e8f0;">
+            <label style="display:flex; align-items:center; gap:7px; font-size:12px; color:#475569; margin-bottom:8px; cursor: pointer; font-weight: 600;">
+                <input type="checkbox" class="limit-toggle" data-scope="${scope}" data-type="${type}" ${defaultChecked ? 'checked' : ''} style="width: 16px; height: 16px; accent-color: #4f46e5;">
+                启用限额
+            </label>
+            <div class="limit-inputs" data-scope="${scope}" data-type="${type}" style="display:${defaultChecked ? 'block' : 'none'}; font-size:12px; color:#475569;">
+                ${single ? `
+                    <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px;">
+                        <span style="font-size: 11px; color: #64748b; min-width: 32px;">最小</span>
+                        <input type="number" value="100" style="width:90px; padding:6px 8px; border:1px solid #d1d5db; border-radius:6px; font-size: 13px; font-weight: 600;">
+                        <span style="font-size: 11px; color: #94a3b8;">USD</span>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <span style="font-size: 11px; color: #64748b; min-width: 32px;">最大</span>
+                        <input type="number" value="50000" style="width:90px; padding:6px 8px; border:1px solid #d1d5db; border-radius:6px; font-size: 13px; font-weight: 600;">
+                        <span style="font-size: 11px; color: #94a3b8;">USD</span>
+                    </div>
+                ` : `
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <span style="font-size: 11px; color: #64748b; min-width: 32px;">最大</span>
+                        <input type="number" value="500000" style="width:100px; padding:6px 8px; border:1px solid #d1d5db; border-radius:6px; font-size: 13px; font-weight: 600;">
+                        <span style="font-size: 11px; color: #94a3b8;">USD</span>
+                    </div>
+                `}
+            </div>
+        </td>
+    `;
+}
+
+function initLimitConfigInteractions() {
+    const toggles = document.querySelectorAll('.limit-toggle');
+    toggles.forEach(toggle => {
+        toggle.addEventListener('change', function () {
+            const scope = this.dataset.scope;
+            const type = this.dataset.type;
+            const inputs = document.querySelector(`.limit-inputs[data-scope="${scope}"][data-type="${type}"]`);
+            if (inputs) {
+                inputs.style.display = this.checked ? 'block' : 'none';
+            }
+        });
+    });
+}
+
+function saveAcceptanceProductConfig() {
+    alert('承兑产品配置已保存（演示）');
 }
 
 // 渲染机构伙伴查询页面
