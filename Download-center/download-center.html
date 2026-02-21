@@ -65,15 +65,14 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
 .filter-bar input[type="text"] { min-width: 200px; }
 
 /* ===== Data Table ===== */
-.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.table-wrapper { overflow-x: auto; margin: 0 -24px; padding: 0 24px; }
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 1200px; }
 .data-table th { text-align: left; padding: 10px 12px; background: var(--border-light); font-weight: 600; font-size: 12px; color: var(--text-s); border-bottom: 2px solid var(--border); white-space: nowrap; }
-.data-table td { padding: 12px 12px; border-bottom: 1px solid var(--border-light); vertical-align: middle; }
+.data-table td { padding: 12px 12px; border-bottom: 1px solid var(--border-light); vertical-align: middle; white-space: nowrap; }
 .data-table tr:hover { background: #fafbfd; }
 .data-table .batch-id { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px; color: var(--primary); font-weight: 500; }
-.data-table .file-name { font-weight: 600; font-size: 13px; }
-.data-table .file-meta { font-size: 11px; color: var(--text-m); margin-top: 2px; }
-.data-table .user-cell { display: flex; align-items: center; gap: 8px; }
-.data-table .user-avatar { width: 26px; height: 26px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), #818cf8); display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 700; flex-shrink: 0; }
+.data-table .file-name { font-weight: 600; font-size: 13px; color: var(--text); }
+.data-table .user-name { font-weight: 500; font-size: 13px; color: var(--text); }
 .data-table .actions { display: flex; gap: 4px; align-items: center; }
 
 /* ===== Pagination ===== */
@@ -155,6 +154,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
             </div>
 
             <!-- Data Table -->
+            <div class="table-wrapper">
             <table class="data-table">
                 <thead>
                     <tr>
@@ -171,24 +171,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
                     <!-- Row 1: Generating -->
                     <tr>
                         <td><span class="batch-id">DL20260214001</span></td>
-                        <td>
-                            <div class="file-name">Transaction_Report_2026-02.xlsx</div>
-                            <div class="file-meta">45,230 records</div>
-                        </td>
+                        <td><div class="file-name">Transaction_Report_2026-02.xlsx</div></td>
                         <td>Transaction Report</td>
-                        <td>
-                            <div>2026-02-14</div>
-                            <div style="font-size:11px; color:var(--text-m);">20:01:32</div>
-                        </td>
-                        <td>
-                            <div class="user-cell">
-                                <div class="user-avatar">AL</div>
-                                <div>
-                                    <div style="font-weight:600; font-size:12px;">Alice Liu</div>
-                                    <div style="font-size:11px; color:var(--text-m);">alice@merchant.com</div>
-                                </div>
-                            </div>
-                        </td>
+                        <td>2026-02-14<br><span style="font-size:11px; color:var(--text-m);">20:01:32</span></td>
+                        <td><span class="user-name">Alice Liu</span></td>
                         <td><span class="tag tag-generating">Generating</span></td>
                         <td style="text-align:right;">
                             <div class="actions" style="justify-content:flex-end;">
@@ -199,24 +185,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
                     <!-- Row 2: Generating -->
                     <tr>
                         <td><span class="batch-id">DL20260214002</span></td>
-                        <td>
-                            <div class="file-name">Payout_Report_Jan2026.csv</div>
-                            <div class="file-meta">12,500 records</div>
-                        </td>
+                        <td><div class="file-name">Payout_Report_Jan2026.csv</div></td>
                         <td>Payout Report</td>
-                        <td>
-                            <div>2026-02-14</div>
-                            <div style="font-size:11px; color:var(--text-m);">19:45:10</div>
-                        </td>
-                        <td>
-                            <div class="user-cell">
-                                <div class="user-avatar" style="background:linear-gradient(135deg,#f59e0b,#fbbf24);">BW</div>
-                                <div>
-                                    <div style="font-weight:600; font-size:12px;">Bob Wang</div>
-                                    <div style="font-size:11px; color:var(--text-m);">bob@merchant.com</div>
-                                </div>
-                            </div>
-                        </td>
+                        <td>2026-02-14<br><span style="font-size:11px; color:var(--text-m);">19:45:10</span></td>
+                        <td><span class="user-name">Bob Wang</span></td>
                         <td><span class="tag tag-generating">Generating</span></td>
                         <td style="text-align:right;">
                             <div class="actions" style="justify-content:flex-end;">
@@ -227,176 +199,93 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'PingFang SC', s
                     <!-- Row 3: Ready -->
                     <tr>
                         <td><span class="batch-id">DL20260213003</span></td>
-                        <td>
-                            <div class="file-name">Settlement_Report_2026-W06.xlsx</div>
-                            <div class="file-meta">1.8 MB · 28,340 records</div>
-                        </td>
+                        <td><div class="file-name">Settlement_Report_2026-W06.xlsx</div></td>
                         <td>Settlement Report</td>
-                        <td>
-                            <div>2026-02-13</div>
-                            <div style="font-size:11px; color:var(--text-m);">14:22:05</div>
-                        </td>
-                        <td>
-                            <div class="user-cell">
-                                <div class="user-avatar">AL</div>
-                                <div>
-                                    <div style="font-weight:600; font-size:12px;">Alice Liu</div>
-                                    <div style="font-size:11px; color:var(--text-m);">alice@merchant.com</div>
-                                </div>
-                            </div>
-                        </td>
+                        <td>2026-02-13<br><span style="font-size:11px; color:var(--text-m);">14:22:05</span></td>
+                        <td><span class="user-name">Alice Liu</span></td>
                         <td><span class="tag tag-ready">Ready</span></td>
                         <td style="text-align:right;">
                             <div class="actions" style="justify-content:flex-end;">
-                                <button class="btn btn-sm btn-primary">⬇ Download</button>
+                                <button class="btn btn-sm btn-primary">Download</button>
                             </div>
                         </td>
                     </tr>
                     <!-- Row 4: Ready -->
                     <tr>
                         <td><span class="batch-id">DL20260212004</span></td>
-                        <td>
-                            <div class="file-name">Account_Statement_Jan2026.pdf</div>
-                            <div class="file-meta">520 KB · 3,200 records</div>
-                        </td>
+                        <td><div class="file-name">Account_Statement_Jan2026.pdf</div></td>
                         <td>Account Statement</td>
-                        <td>
-                            <div>2026-02-12</div>
-                            <div style="font-size:11px; color:var(--text-m);">09:15:30</div>
-                        </td>
-                        <td>
-                            <div class="user-cell">
-                                <div class="user-avatar" style="background:linear-gradient(135deg,#10b981,#34d399);">CZ</div>
-                                <div>
-                                    <div style="font-weight:600; font-size:12px;">Carol Zhang</div>
-                                    <div style="font-size:11px; color:var(--text-m);">carol@merchant.com</div>
-                                </div>
-                            </div>
-                        </td>
+                        <td>2026-02-12<br><span style="font-size:11px; color:var(--text-m);">09:15:30</span></td>
+                        <td><span class="user-name">Carol Zhang</span></td>
                         <td><span class="tag tag-ready">Ready</span></td>
                         <td style="text-align:right;">
                             <div class="actions" style="justify-content:flex-end;">
-                                <button class="btn btn-sm btn-primary">⬇ Download</button>
+                                <button class="btn btn-sm btn-primary">Download</button>
                             </div>
                         </td>
                     </tr>
                     <!-- Row 5: Ready -->
                     <tr>
                         <td><span class="batch-id">DL20260210005</span></td>
-                        <td>
-                            <div class="file-name">Payin_Report_2026-W05.xlsx</div>
-                            <div class="file-meta">2.1 MB · 31,000 records</div>
-                        </td>
+                        <td><div class="file-name">Payin_Report_2026-W05.xlsx</div></td>
                         <td>Payin Report</td>
-                        <td>
-                            <div>2026-02-10</div>
-                            <div style="font-size:11px; color:var(--text-m);">16:40:22</div>
-                        </td>
-                        <td>
-                            <div class="user-cell">
-                                <div class="user-avatar">AL</div>
-                                <div>
-                                    <div style="font-weight:600; font-size:12px;">Alice Liu</div>
-                                    <div style="font-size:11px; color:var(--text-m);">alice@merchant.com</div>
-                                </div>
-                            </div>
-                        </td>
+                        <td>2026-02-10<br><span style="font-size:11px; color:var(--text-m);">16:40:22</span></td>
+                        <td><span class="user-name">Alice Liu</span></td>
                         <td><span class="tag tag-ready">Ready</span></td>
                         <td style="text-align:right;">
                             <div class="actions" style="justify-content:flex-end;">
-                                <button class="btn btn-sm btn-primary">⬇ Download</button>
+                                <button class="btn btn-sm btn-primary">Download</button>
                             </div>
                         </td>
                     </tr>
                     <!-- Row 6: Expired -->
                     <tr style="opacity:.6;">
                         <td><span class="batch-id" style="color:var(--text-m);">DL20260205006</span></td>
-                        <td>
-                            <div class="file-name" style="color:var(--text-s);">Transaction_Report_2026-01.xlsx</div>
-                            <div class="file-meta">File expired · Originally 3.5 MB</div>
-                        </td>
+                        <td><div class="file-name" style="color:var(--text-s);">Transaction_Report_2026-01.xlsx</div></td>
                         <td style="color:var(--text-s);">Transaction Report</td>
-                        <td>
-                            <div style="color:var(--text-s);">2026-02-05</div>
-                            <div style="font-size:11px; color:var(--text-m);">11:30:00</div>
-                        </td>
-                        <td>
-                            <div class="user-cell">
-                                <div class="user-avatar" style="background:var(--border); color:var(--text-m);">AL</div>
-                                <div>
-                                    <div style="font-weight:600; font-size:12px; color:var(--text-s);">Alice Liu</div>
-                                    <div style="font-size:11px; color:var(--text-m);">alice@merchant.com</div>
-                                </div>
-                            </div>
-                        </td>
+                        <td style="color:var(--text-s);">2026-02-05<br><span style="font-size:11px; color:var(--text-m);">11:30:00</span></td>
+                        <td><span class="user-name" style="color:var(--text-s);">Alice Liu</span></td>
                         <td><span class="tag tag-expired">Expired</span></td>
                         <td style="text-align:right;">
                             <div class="actions" style="justify-content:flex-end;">
-                                <button class="btn-ghost" onclick="showModal('regenerate')">🔄 Re-export</button>
-                                <button class="btn-danger-ghost" title="Delete">🗑</button>
+                                <button class="btn-ghost" onclick="showModal('regenerate')">Re-export</button>
+                                <button class="btn-danger-ghost" title="Delete">Delete</button>
                             </div>
                         </td>
                     </tr>
                     <!-- Row 7: Expired -->
                     <tr style="opacity:.6;">
                         <td><span class="batch-id" style="color:var(--text-m);">DL20260203007</span></td>
-                        <td>
-                            <div class="file-name" style="color:var(--text-s);">Settlement_Report_2026-W04.xlsx</div>
-                            <div class="file-meta">File expired · Originally 1.2 MB</div>
-                        </td>
+                        <td><div class="file-name" style="color:var(--text-s);">Settlement_Report_2026-W04.xlsx</div></td>
                         <td style="color:var(--text-s);">Settlement Report</td>
-                        <td>
-                            <div style="color:var(--text-s);">2026-02-03</div>
-                            <div style="font-size:11px; color:var(--text-m);">08:20:15</div>
-                        </td>
-                        <td>
-                            <div class="user-cell">
-                                <div class="user-avatar" style="background:linear-gradient(135deg,#f59e0b,#fbbf24);">BW</div>
-                                <div>
-                                    <div style="font-weight:600; font-size:12px; color:var(--text-s);">Bob Wang</div>
-                                    <div style="font-size:11px; color:var(--text-m);">bob@merchant.com</div>
-                                </div>
-                            </div>
-                        </td>
+                        <td style="color:var(--text-s);">2026-02-03<br><span style="font-size:11px; color:var(--text-m);">08:20:15</span></td>
+                        <td><span class="user-name" style="color:var(--text-s);">Bob Wang</span></td>
                         <td><span class="tag tag-expired">Expired</span></td>
                         <td style="text-align:right;">
                             <div class="actions" style="justify-content:flex-end;">
-                                <button class="btn-ghost" onclick="showModal('regenerate')">🔄 Re-export</button>
-                                <button class="btn-danger-ghost" title="Delete">🗑</button>
+                                <button class="btn-ghost" onclick="showModal('regenerate')">Re-export</button>
+                                <button class="btn-danger-ghost" title="Delete">Delete</button>
                             </div>
                         </td>
                     </tr>
                     <!-- Row 8: Failed -->
                     <tr>
                         <td><span class="batch-id" style="color:var(--red);">DL20260214008</span></td>
-                        <td>
-                            <div class="file-name" style="color:var(--red);">Payout_Report_2026-02.xlsx</div>
-                            <div class="file-meta">Generation failed · Timeout</div>
-                        </td>
+                        <td><div class="file-name" style="color:var(--red);">Payout_Report_2026-02.xlsx</div></td>
                         <td>Payout Report</td>
-                        <td>
-                            <div>2026-02-14</div>
-                            <div style="font-size:11px; color:var(--text-m);">18:30:45</div>
-                        </td>
-                        <td>
-                            <div class="user-cell">
-                                <div class="user-avatar" style="background:linear-gradient(135deg,#10b981,#34d399);">CZ</div>
-                                <div>
-                                    <div style="font-weight:600; font-size:12px;">Carol Zhang</div>
-                                    <div style="font-size:11px; color:var(--text-m);">carol@merchant.com</div>
-                                </div>
-                            </div>
-                        </td>
+                        <td>2026-02-14<br><span style="font-size:11px; color:var(--text-m);">18:30:45</span></td>
+                        <td><span class="user-name">Carol Zhang</span></td>
                         <td><span class="tag tag-failed">Failed</span></td>
                         <td style="text-align:right;">
                             <div class="actions" style="justify-content:flex-end;">
-                                <button class="btn-ghost" style="color:var(--primary);">🔄 Retry</button>
-                                <button class="btn-danger-ghost" title="Delete">🗑</button>
+                                <button class="btn-ghost" style="color:var(--primary);">Retry</button>
+                                <button class="btn-danger-ghost" title="Delete">Delete</button>
                             </div>
                         </td>
                     </tr>
                 </tbody>
             </table>
+            </div>
 
             <!-- Pagination -->
             <div class="pagination">
