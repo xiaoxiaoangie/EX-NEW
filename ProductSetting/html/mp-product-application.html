@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Application — Merchant Portal</title>
+<style>
+:root{
+  --sidebar-w:260px;
+  --bg:#f0f2f5;--sidebar-bg:#fff;--sidebar-border:#e8ecf1;
+  --text:#1a1f36;--ts:#6b7294;--tm:#a5aac4;
+  --primary:#4f46e5;--primary-light:#eef2ff;--primary-hover:#6366f1;
+  --border:#e2e8f0;--card-bg:#fff;
+  --g:#10b981;--gl:#ecfdf5;--gd:#059669;
+  --warn:#f59e0b;--wl:#fffbeb;--wd:#d97706;
+  --r:#ef4444;--rl:#fef2f2;
+  --blue:#3b82f6;--blue-bg:#eff6ff;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 0 1px rgba(0,0,0,.08);
+  --shadow-lg:0 12px 40px rgba(0,0,0,.12);
+  --radius:12px;--radius-sm:8px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Inter','SF Pro Display','Segoe UI',sans-serif;background:var(--bg);color:var(--text);display:flex;height:100vh;overflow:hidden;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+
+/* ===== Sidebar ===== */
+.sidebar{width:var(--sidebar-w);background:var(--sidebar-bg);border-right:1px solid var(--sidebar-border);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;}
+.sidebar-logo{padding:24px 20px 16px;font-size:18px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--sidebar-border);display:flex;align-items:center;gap:10px;}
+.sidebar-logo .logo-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--primary),#6366f1);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:700;}
+.menu-group{padding:16px 12px 4px;}
+.menu-group-label{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;padding:0 8px 8px;display:flex;align-items:center;gap:6px;}
+.menu-group-label .dot{width:6px;height:6px;border-radius:50%;display:inline-block;}
+.menu-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:14px;color:var(--ts);transition:all .15s;user-select:none;}
+.menu-item:hover{background:var(--bg);color:var(--text);}
+.menu-item.active{background:var(--primary-light);color:var(--primary);font-weight:600;}
+.menu-item .icon{width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.sidebar-user{margin-top:auto;padding:16px;border-top:1px solid var(--sidebar-border);display:flex;align-items:center;gap:10px;}
+.sidebar-user .avatar{width:32px;height:32px;background:linear-gradient(135deg,#6366f1,#a78bfa);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600;}
+.sidebar-user .uname{font-size:13px;font-weight:600;}
+.sidebar-user .urole{font-size:11px;color:var(--ts);}
+
+/* ===== Right Panel ===== */
+.right-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+
+/* ===== Top Bar ===== */
+.topbar{height:56px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:16px;flex-shrink:0;}
+.topbar-right{display:flex;align-items:center;gap:8px;margin-left:auto;}
+.topbar-btn{width:36px;height:36px;border-radius:8px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--ts);position:relative;transition:background .15s;}
+.topbar-btn:hover{background:var(--bg);}
+.topbar-btn .badge-dot{position:absolute;top:6px;right:7px;width:8px;height:8px;background:#ef4444;border-radius:50%;border:2px solid #fff;}
+.user-chip{display:flex;align-items:center;gap:8px;padding:4px 8px 4px 4px;border-radius:8px;cursor:pointer;}
+.user-chip:hover{background:var(--bg);}
+.user-chip .avatar-sm{width:32px;height:32px;background:linear-gradient(135deg,#6366f1,#a78bfa);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600;}
+.user-chip .nick{font-size:13px;font-weight:600;}
+
+/* ===== Main Content ===== */
+.main{flex:1;overflow-y:auto;padding:32px 40px;}
+.page-header{margin-bottom:28px;}
+.page-header h1{font-size:24px;font-weight:700;margin-bottom:4px;}
+.page-header p{color:var(--ts);font-size:14px;}
+.breadcrumb{font-size:13px;color:var(--tm);margin-bottom:6px;}
+.breadcrumb span{color:var(--primary);font-weight:500;}
+
+/* ===== Content Section ===== */
+.content-section{background:var(--card-bg);border-radius:var(--radius);border:1px solid var(--border);padding:28px;margin-bottom:20px;}
+.content-section h3{font-size:16px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+
+/* ===== Step indicator ===== */
+.steps{display:flex;align-items:center;gap:0;margin-bottom:28px;}
+.step{display:flex;align-items:center;gap:10px;flex:1;position:relative;}
+.step:not(:last-child)::after{content:'';flex:1;height:2px;background:var(--border);margin:0 12px;}
+.step.done:not(:last-child)::after{background:var(--g);}
+.step.active:not(:last-child)::after{background:linear-gradient(90deg,var(--primary) 50%,var(--border) 50%);}
+.step-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;border:2px solid var(--border);color:var(--tm);background:#fff;flex-shrink:0;transition:all .2s;}
+.step.active .step-num{border-color:var(--primary);color:#fff;background:var(--primary);}
+.step.done .step-num{border-color:var(--g);color:#fff;background:var(--g);}
+.step-label{font-size:12px;font-weight:600;color:var(--tm);white-space:nowrap;}
+.step.active .step-label{color:var(--primary);}
+.step.done .step-label{color:var(--gd);}
+
+/* ===== Product Cards ===== */
+.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:24px;}
+.product-card{background:var(--card-bg);border:1.5px solid var(--border);border-radius:var(--radius);padding:22px;cursor:pointer;transition:all .2s;position:relative;}
+.product-card:hover{border-color:var(--primary-hover);box-shadow:var(--shadow);}
+.product-card.selected{border-color:var(--primary);background:var(--primary-light);box-shadow:0 0 0 3px rgba(79,70,229,.1);}
+.product-card .check{position:absolute;top:14px;right:14px;width:22px;height:22px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;color:transparent;transition:all .15s;}
+.product-card.selected .check{border-color:var(--primary);background:var(--primary);color:#fff;}
+.product-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:12px;}
+.product-name{font-size:15px;font-weight:700;margin-bottom:4px;}
+.product-desc{font-size:13px;color:var(--ts);line-height:1.6;margin-bottom:10px;}
+.product-features{display:flex;flex-wrap:wrap;gap:5px;}
+.product-tag{font-size:11px;font-weight:600;padding:3px 9px;border-radius:10px;background:#f1f5f9;color:var(--ts);}
+.product-card.selected .product-tag{background:rgba(79,70,229,.08);color:var(--primary);}
+
+/* ===== Buttons ===== */
+.btn{padding:10px 22px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s;display:inline-flex;align-items:center;gap:6px;}
+.btn-p{background:var(--primary);color:#fff;}.btn-p:hover{background:#4338ca;}
+.btn-o{background:#fff;color:var(--primary);border:1.5px solid var(--primary);}.btn-o:hover{background:var(--primary-light);}
+.btn-ghost{background:transparent;color:var(--ts);border:1.5px solid var(--border);}.btn-ghost:hover{border-color:var(--primary-hover);color:var(--primary);}
+.btn-lg{padding:12px 32px;font-size:14px;font-weight:700;}
+.btn:disabled{opacity:.5;cursor:not-allowed;}
+
+/* ===== Status cards ===== */
+.status-card{background:var(--card-bg);border-radius:var(--radius);border:1px solid var(--border);padding:28px;text-align:center;}
+.status-icon{font-size:40px;margin-bottom:10px;}
+.status-title{font-size:17px;font-weight:700;margin-bottom:4px;}
+.status-desc{font-size:13px;color:var(--ts);line-height:1.7;margin-bottom:16px;}
+.status-badge{display:inline-flex;align-items:center;gap:5px;padding:6px 16px;border-radius:16px;font-size:12px;font-weight:700;}
+.badge-pending{background:var(--wl);color:var(--wd);}
+.badge-approved{background:var(--gl);color:var(--gd);}
+.badge-rejected{background:var(--rl);color:var(--r);}
+.badge-rfi{background:var(--blue-bg);color:var(--blue);}
+
+/* ===== KYC / Submit section ===== */
+.submit-section{background:var(--card-bg);border-radius:var(--radius);border:1px solid var(--border);padding:28px;max-width:620px;margin:0 auto;box-shadow:var(--shadow);}
+.submit-title{font-size:16px;font-weight:700;margin-bottom:6px;}
+.submit-desc{font-size:13px;color:var(--ts);line-height:1.7;margin-bottom:18px;}
+.provider-box{display:flex;align-items:center;gap:14px;padding:14px;background:#f8fafc;border-radius:var(--radius-sm);margin-bottom:18px;}
+.provider-icon{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;font-weight:800;}
+.provider-name{font-size:14px;font-weight:700;}
+.provider-sub{font-size:11px;color:var(--ts);}
+.checklist{list-style:none;margin-bottom:20px;}
+.checklist li{padding:7px 0;font-size:13px;color:var(--ts);display:flex;align-items:center;gap:8px;border-bottom:1px solid #f1f5f9;}
+.checklist li:last-child{border-bottom:none;}
+
+/* ===== App rows ===== */
+.app-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
+.app-row{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-sm);transition:all .15s;}
+.app-row:hover{border-color:var(--primary-hover);box-shadow:var(--shadow);}
+.app-left{display:flex;align-items:center;gap:12px;}
+.app-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.app-name{font-size:13px;font-weight:700;}
+.app-sub{font-size:11px;color:var(--ts);}
+
+/* ===== Rejection ===== */
+.reject-box{background:var(--rl);border:1px solid var(--r);border-radius:var(--radius-sm);padding:16px 18px;margin-top:16px;text-align:left;}
+.reject-title{font-size:12px;font-weight:700;color:var(--r);margin-bottom:6px;}
+.reject-reason{font-size:12px;color:var(--text);line-height:1.7;}
+
+/* ===== RFI banner ===== */
+.rfi-banner{background:var(--blue-bg);border:1.5px solid var(--blue);border-radius:var(--radius-sm);padding:14px 18px;margin-bottom:18px;display:flex;align-items:flex-start;gap:10px;}
+.rfi-icon{font-size:18px;flex-shrink:0;margin-top:2px;}
+.rfi-content{flex:1;}
+.rfi-title{font-size:12px;font-weight:700;color:var(--blue);margin-bottom:3px;}
+.rfi-desc{font-size:11px;color:var(--ts);line-height:1.6;}
+.rfi-items{margin-top:8px;padding:0;list-style:none;}
+.rfi-items li{font-size:11px;padding:5px 0;border-bottom:1px solid rgba(59,130,246,.1);display:flex;align-items:center;gap:5px;}
+.rfi-items li:last-child{border-bottom:none;}
+
+/* ===== Scenario preview section ===== */
+.scenario-section{margin-top:32px;padding-top:28px;border-top:2px dashed var(--border);}
+.scenario-label{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--tm);margin-bottom:12px;}
+.scenario-btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+.scenario-btn{padding:8px 16px;font-size:12px;font-weight:600;border-radius:var(--radius-sm);cursor:pointer;border:1.5px solid var(--border);background:#fff;color:var(--ts);transition:all .15s;}
+.scenario-btn:hover{border-color:var(--primary-hover);color:var(--primary);}
+.scenario-btn.active{border-color:var(--primary);background:var(--primary-light);color:var(--primary);}
+
+/* ===== Misc ===== */
+.divider{height:1px;background:var(--border);margin:16px 0;}
+.mt-16{margin-top:16px;}.mt-20{margin-top:20px;}
+.text-center{text-align:center;}
+
+/* ===== Overlay / Modal ===== */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;z-index:1000;opacity:0;pointer-events:none;transition:opacity .2s;backdrop-filter:blur(3px);}
+.ov.show{opacity:1;pointer-events:auto;}
+.modal{background:#fff;border-radius:14px;width:440px;max-width:92vw;padding:28px;box-shadow:var(--shadow-lg);transform:translateY(12px);transition:transform .2s;}
+.ov.show .modal{transform:none;}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:6px;}
+.modal-desc{font-size:13px;color:var(--ts);margin-bottom:16px;line-height:1.6;}
+.modal-btns{display:flex;gap:10px;}
+.modal-btns button{flex:1;}
+
+/* ===== Loading ===== */
+.spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 14px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.fade-in{animation:fadeIn .25s ease;}
+</style>
+</head>
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">MP</div>
+    Merchant Portal
+  </div>
+  <div class="menu-group">
+    <div class="menu-item" onclick="return false;">
+      <span class="icon">📊</span> Dashboard
+    </div>
+  </div>
+  <div class="menu-group">
+    <div class="menu-group-label" style="color:#10b981">
+      <span class="dot" style="background:#10b981"></span> ASSETS
+    </div>
+    <div class="menu-item"><span class="icon">🏦</span> Fiat Accounts</div>
+    <div class="menu-item"><span class="icon">💎</span> Crypto Wallet</div>
+    <div class="menu-item"><span class="icon">🔄</span> Exchange</div>
+  </div>
+  <div class="menu-group">
+    <div class="menu-group-label" style="color:#3b82f6">
+      <span class="dot" style="background:#3b82f6"></span> TRANSFER IN
+    </div>
+    <div class="menu-item"><span class="icon">📥</span> Payins</div>
+    <div class="menu-item"><span class="icon">⛓️</span> Onramp</div>
+  </div>
+  <div class="menu-group">
+    <div class="menu-group-label" style="color:#ec4899">
+      <span class="dot" style="background:#ec4899"></span> CHECKOUT
+    </div>
+    <div class="menu-item"><span class="icon">💳</span> Online Payment</div>
+    <div class="menu-item"><span class="icon">📃</span> Invoice</div>
+  </div>
+  <div class="menu-group">
+    <div class="menu-group-label" style="color:#f59e0b">
+      <span class="dot" style="background:#f59e0b"></span> TRANSFER OUT
+    </div>
+    <div class="menu-item"><span class="icon">📤</span> Payouts</div>
+    <div class="menu-item"><span class="icon">🔗</span> OffRamp</div>
+  </div>
+  <div class="menu-group">
+    <div class="menu-group-label" style="color:#8b5cf6">
+      <span class="dot" style="background:#8b5cf6"></span> CARDS
+    </div>
+    <div class="menu-item"><span class="icon">💳</span> Cards Management</div>
+  </div>
+  <div class="menu-group">
+    <div class="menu-group-label" style="color:#78716c">
+      <span class="dot" style="background:#78716c"></span> SETTINGS
+    </div>
+    <div class="menu-item active"><span class="icon">🚀</span> Product Application</div>
+    <div class="menu-item"><span class="icon">🏢</span> Company Profile</div>
+  </div>
+  <div class="sidebar-user">
+    <div class="avatar">JD</div>
+    <div><div class="uname">John Doe</div><div class="urole">Admin</div></div>
+  </div>
+</div>
+
+<!-- ===== RIGHT PANEL ===== -->
+<div class="right-panel">
+
+<!-- Top Bar -->
+<div class="topbar">
+  <div style="font-size:13px;color:var(--tm);">Settings / <span style="color:var(--primary);font-weight:500;">Product Application</span></div>
+  <div class="topbar-right">
+    <button class="topbar-btn" title="Notifications">🔔<span class="badge-dot"></span></button>
+    <div class="user-chip">
+      <div class="avatar-sm">JD</div>
+      <span class="nick">John Doe</span>
+    </div>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="main">
+
+  <div class="page-header">
+    <h1>Product Application</h1>
+    <p>Select a product to activate and submit required information via our verification partner.</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- MAIN FLOW                               -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="content-section" id="flow-section">
+
+    <!-- Step indicator -->
+    <div class="steps" id="step-bar">
+      <div class="step active" id="s1"><div class="step-num">1</div><div class="step-label">Select Product</div></div>
+      <div class="step" id="s2"><div class="step-num">2</div><div class="step-label">Submit Product Info</div></div>
+      <div class="step" id="s3"><div class="step-num">3</div><div class="step-label">Under Review</div></div>
+    </div>
+
+    <!-- STEP 1: Select Product -->
+    <div id="flow-step1" class="fade-in">
+      <div style="font-size:14px;font-weight:700;margin-bottom:4px;">Choose a product to activate</div>
+      <div style="font-size:12px;color:var(--ts);margin-bottom:18px;">Select one product. All required information will be collected via SumSub in the next step.</div>
+
+      <div class="product-grid">
+        <div class="product-card selected" id="card-product" onclick="toggleProduct('card-product')">
+          <div class="check">✓</div>
+          <div class="product-icon" style="background:linear-gradient(135deg,#f59e0b,#f97316);">💳</div>
+          <div class="product-name">Card Issuing</div>
+          <div class="product-desc">Issue virtual and physical cards for your business. Manage card spending, set limits, and track transactions in real-time.</div>
+          <div class="product-features">
+            <span class="product-tag">Virtual Cards</span>
+            <span class="product-tag">Physical Cards</span>
+            <span class="product-tag">Spending Controls</span>
+          </div>
+        </div>
+        <div class="product-card" id="crypto-checkout" onclick="toggleProduct('crypto-checkout')">
+          <div class="check">✓</div>
+          <div class="product-icon" style="background:linear-gradient(135deg,#4f46e5,#818cf8);">🪙</div>
+          <div class="product-name">Crypto Checkout</div>
+          <div class="product-desc">Accept cryptocurrency payments from your customers. Support USDT, USDC, and other major stablecoins with instant settlement.</div>
+          <div class="product-features">
+            <span class="product-tag">USDT / USDC</span>
+            <span class="product-tag">Online Payment</span>
+            <span class="product-tag">Invoice</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div style="font-size:12px;color:var(--ts);" id="select-count">1 product selected</div>
+        <button class="btn btn-p btn-lg" id="btn-next" onclick="goStep2()">Continue →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: Submit Product Info (redirect to SumSub) -->
+    <div id="flow-step2" style="display:none;" class="fade-in">
+      <div class="submit-section" style="max-width:100%;box-shadow:none;border:none;padding:0;">
+        <div class="submit-title">Submit Product Information</div>
+        <div class="submit-desc">Product-specific information (KYC, business details, compliance documents) will be collected through our verification partner SumSub. You will be redirected to their secure platform.</div>
+
+        <div class="provider-box">
+          <div class="provider-icon">SB</div>
+          <div>
+            <div class="provider-name">SumSub Verification Platform</div>
+            <div class="provider-sub">SOC 2 Certified · GDPR Compliant · Trusted by 2,000+ companies</div>
+          </div>
+        </div>
+
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px;">Information to be collected:</div>
+        <ul class="checklist">
+          <li>📄 Business Registration Certificate / Certificate of Incorporation</li>
+          <li>🏢 Company Address Proof (utility bill, bank statement, etc.)</li>
+          <li>👤 Director / UBO Identity Document (passport or national ID)</li>
+          <li>🏦 Bank Account Statement (last 3 months)</li>
+          <li>📋 Business Description & Website URL</li>
+          <li>🔧 Product-specific compliance information</li>
+        </ul>
+
+        <div style="padding:10px 14px;background:var(--wl);border-radius:var(--radius-sm);margin-bottom:18px;font-size:12px;color:var(--wd);line-height:1.6;">
+          <strong>⚠️ Note:</strong> You will be redirected to SumSub. After submission, you will return here. Review typically takes <strong>1–3 business days</strong>.
+        </div>
+
+        <div style="font-size:12px;color:var(--ts);margin-bottom:8px;">Products being applied for:</div>
+        <div id="step2-products" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px;"></div>
+
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-ghost" onclick="goStep1()">← Back</button>
+          <button class="btn btn-p btn-lg" style="flex:1;" onclick="redirectToSumSub()">Proceed to SumSub →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: Submitted / Under Review -->
+    <div id="flow-step3" style="display:none;" class="fade-in">
+      <div style="text-align:center;">
+        <div class="status-icon">📨</div>
+        <div class="status-title">Application Submitted!</div>
+        <div class="status-desc">
+          Your information has been submitted successfully. Our compliance team is now reviewing your application.<br>
+          This typically takes <strong>1–3 business days</strong>.
+        </div>
+        <div class="status-badge badge-pending">⏳ Under Review</div>
+
+        <div class="divider"></div>
+
+        <div style="text-align:left;">
+          <div style="font-size:13px;font-weight:600;margin-bottom:8px;">Applied Products:</div>
+          <div id="step3-products" class="app-list"></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div style="font-size:12px;color:var(--ts);line-height:1.7;text-align:left;">
+          <strong>What happens next?</strong>
+          <ul style="padding-left:16px;margin-top:4px;">
+            <li>Our compliance team reviews your submitted documents</li>
+            <li>You will receive an email notification when the review is complete</li>
+            <li>If additional information is needed, you'll see an RFI notice upon login</li>
+            <li>Once approved, products are activated automatically with default configuration</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content-section -->
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SCENARIO PREVIEW (below the flow)       -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="scenario-section">
+    <div class="scenario-label">Re-login Status Preview (click to preview)</div>
+    <div class="scenario-btns">
+      <button class="scenario-btn" onclick="showScenario('reviewing',this)">⏳ Still Reviewing</button>
+      <button class="scenario-btn" onclick="showScenario('rejected',this)">❌ Rejected</button>
+      <button class="scenario-btn" onclick="showScenario('rfi',this)">📋 RFI Pending</button>
+    </div>
+    <div style="font-size:11px;color:var(--tm);margin-bottom:16px;">
+      <strong>✅ Approved:</strong> No separate page needed — merchant goes directly to Dashboard upon login. Products are activated and visible in the left menu.
+    </div>
+    <div id="scenario-container"></div>
+  </div>
+
+</div><!-- /main -->
+</div><!-- /right-panel -->
+
+<!-- ── Redirect Simulation Modal ── -->
+<div class="ov" id="modal-redirect">
+  <div class="modal">
+    <div class="text-center">
+      <div class="spinner"></div>
+      <div class="modal-title">Redirecting to SumSub...</div>
+      <div class="modal-desc">You are being redirected to SumSub's secure platform to submit your product information and verification documents.</div>
+      <div style="font-size:11px;color:var(--tm);margin-bottom:14px;">This is a simulation. In production, you would be redirected to the actual SumSub URL.</div>
+      <button class="btn btn-p" style="width:100%;" onclick="completeSumSub()">Simulate: Complete Submission & Return →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── RFI Detail Modal ── -->
+<div class="ov" id="modal-rfi">
+  <div class="modal">
+    <div class="modal-title">📋 Request for Information (RFI)</div>
+    <div class="modal-desc">The compliance team needs additional information to continue processing your application.</div>
+    <div style="background:var(--blue-bg);border-radius:var(--radius-sm);padding:12px;margin-bottom:14px;">
+      <div style="font-size:11px;font-weight:700;color:var(--blue);margin-bottom:6px;">Required Documents:</div>
+      <ul style="font-size:12px;color:var(--text);padding-left:16px;line-height:2;">
+        <li>Updated Certificate of Incorporation (current version expired)</li>
+        <li>Proof of business address dated within last 3 months</li>
+        <li>Source of funds declaration letter</li>
+      </ul>
+    </div>
+    <div style="font-size:11px;color:var(--ts);margin-bottom:14px;">Deadline: <strong style="color:var(--wd);">2026-03-01</strong> · Submit via SumSub verification portal.</div>
+    <div class="modal-btns">
+      <button class="btn btn-ghost" onclick="closeModal('modal-rfi')">Close</button>
+      <button class="btn btn-p" onclick="closeModal('modal-rfi')">Go to SumSub Portal →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── Flow step management ── */
+var curStep=1;
+function showStep(n){
+  curStep=n;
+  document.getElementById('flow-step1').style.display=n===1?'block':'none';
+  document.getElementById('flow-step2').style.display=n===2?'block':'none';
+  document.getElementById('flow-step3').style.display=n===3?'block':'none';
+  var s1=document.getElementById('s1'),s2=document.getElementById('s2'),s3=document.getElementById('s3');
+  s1.className='step'+(n===1?' active':n>1?' done':'');
+  s2.className='step'+(n===2?' active':n>2?' done':'');
+  s3.className='step'+(n===3?' active':'');
+}
+
+/* ── Product selection (single-select) ── */
+function toggleProduct(id){
+  var card=document.getElementById(id);
+  if(card.classList.contains('selected')){
+    card.classList.remove('selected');
+  } else {
+    document.querySelectorAll('.product-card.selected').forEach(function(c){c.classList.remove('selected');});
+    card.classList.add('selected');
+  }
+  updateCount();
+}
+function updateCount(){
+  var n=document.querySelectorAll('.product-card.selected').length;
+  document.getElementById('select-count').textContent=n===1?'1 product selected':'No product selected';
+  document.getElementById('btn-next').disabled=n===0;
+}
+
+function getSelectedProducts(){
+  var p=[];
+  if(document.getElementById('card-product').classList.contains('selected')) p.push({name:'Card Issuing',icon:'💳',color:'#f59e0b'});
+  if(document.getElementById('crypto-checkout').classList.contains('selected')) p.push({name:'Crypto Checkout',icon:'🪙',color:'#4f46e5'});
+  return p;
+}
+
+/* ── Step navigation ── */
+function goStep1(){showStep(1);}
+function goStep2(){
+  var n=document.querySelectorAll('.product-card.selected').length;
+  if(n===0){alert('Please select a product.');return;}
+  renderStep2Products();
+  showStep(2);
+}
+
+function renderStep2Products(){
+  var products=getSelectedProducts(),h='';
+  for(var i=0;i<products.length;i++){
+    h+='<span style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:6px;background:#f1f5f9;font-size:12px;font-weight:600;">'+products[i].icon+' '+products[i].name+'</span>';
+  }
+  document.getElementById('step2-products').innerHTML=h;
+}
+
+/* ── SumSub redirect ── */
+function redirectToSumSub(){document.getElementById('modal-redirect').classList.add('show');}
+function completeSumSub(){
+  closeModal('modal-redirect');
+  renderStep3Products();
+  showStep(3);
+}
+function renderStep3Products(){
+  var products=getSelectedProducts(),h='';
+  for(var i=0;i<products.length;i++){
+    h+='<div class="app-row"><div class="app-left"><div class="app-icon" style="background:'+products[i].color+'18;font-size:16px;">'+products[i].icon+'</div>';
+    h+='<div><div class="app-name">'+products[i].name+'</div><div class="app-sub">Applied on 2026-02-23</div></div></div>';
+    h+='<div><span class="status-badge badge-pending" style="font-size:11px;padding:4px 10px;">⏳ Under Review</span></div></div>';
+  }
+  document.getElementById('step3-products').innerHTML=h;
+}
+
+/* ── Scenario preview ── */
+function showScenario(type,btn){
+  document.querySelectorAll('.scenario-btn').forEach(function(b){b.classList.remove('active');});
+  if(btn) btn.classList.add('active');
+  var c=document.getElementById('scenario-container');
+  var products=getSelectedProducts();
+  if(products.length===0) products=[{name:'Card Issuing',icon:'💳',color:'#f59e0b'}];
+  var h='';
+
+  if(type==='reviewing'){
+    h+='<div style="text-align:center;margin-bottom:16px;">';
+    h+='<div class="status-icon">⏳</div>';
+    h+='<div class="status-title">Application Under Review</div>';
+    h+='<div class="status-desc">Your application is still being reviewed by our compliance team.<br>Estimated review time: <strong>1–3 business days</strong>.</div>';
+    h+='<div class="status-badge badge-pending">⏳ Under Review</div>';
+    h+='</div>';
+    h+='<div class="divider"></div>';
+    h+='<div style="font-size:13px;font-weight:600;margin-bottom:8px;">Application Status:</div>';
+    for(var i=0;i<products.length;i++){
+      h+='<div class="app-row"><div class="app-left"><div class="app-icon" style="background:'+products[i].color+'18;">'+products[i].icon+'</div><div><div class="app-name">'+products[i].name+'</div><div class="app-sub">Submitted 2026-02-23</div></div></div>';
+      h+='<div><span class="status-badge badge-pending" style="font-size:11px;padding:4px 10px;">⏳ Reviewing</span></div></div>';
+    }
+  }
+
+  else if(type==='rejected'){
+    h+='<div style="text-align:center;margin-bottom:16px;">';
+    h+='<div class="status-icon">😔</div>';
+    h+='<div class="status-title">Application Rejected</div>';
+    h+='<div class="status-desc">Unfortunately, your application could not be approved at this time.</div>';
+    h+='<div class="status-badge badge-rejected">❌ Rejected</div>';
+    h+='</div>';
+    h+='<div class="reject-box">';
+    h+='<div class="reject-title">Rejection Reason:</div>';
+    h+='<div class="reject-reason">';
+    h+='<strong>1. Insufficient Business Documentation</strong><br>The submitted Certificate of Incorporation is expired. Please provide a valid, up-to-date version.<br><br>';
+    h+='<strong>2. UBO Verification Failed</strong><br>The UBO information does not match the company registration records.<br><br>';
+    h+='<strong>3. High-Risk Business Category</strong><br>The declared business activity falls under a restricted category. Additional compliance review is required.';
+    h+='</div></div>';
+    h+='<div class="divider"></div>';
+    h+='<div style="font-size:13px;font-weight:600;margin-bottom:8px;">Application Status:</div>';
+    for(var i=0;i<products.length;i++){
+      h+='<div class="app-row"><div class="app-left"><div class="app-icon" style="background:'+products[i].color+'18;">'+products[i].icon+'</div><div><div class="app-name">'+products[i].name+'</div><div class="app-sub">Rejected on 2026-02-25</div></div></div>';
+      h+='<div><span class="status-badge badge-rejected" style="font-size:11px;padding:4px 10px;">❌ Rejected</span></div></div>';
+    }
+  }
+
+  else if(type==='rfi'){
+    h+='<div class="rfi-banner"><div class="rfi-icon">📋</div><div class="rfi-content">';
+    h+='<div class="rfi-title">Action Required — Request for Information (RFI)</div>';
+    h+='<div class="rfi-desc">The compliance team needs additional documents to continue processing your application.</div>';
+    h+='<ul class="rfi-items">';
+    h+='<li>📄 Updated Certificate of Incorporation</li>';
+    h+='<li>🏠 Proof of business address (last 3 months)</li>';
+    h+='<li>💰 Source of funds declaration letter</li>';
+    h+='</ul>';
+    h+='<div style="margin-top:6px;font-size:11px;color:var(--wd);">⏰ Deadline: <strong>2026-03-01</strong></div>';
+    h+='</div></div>';
+    h+='<div style="text-align:center;margin:16px 0;">';
+    h+='<div class="status-icon" style="font-size:36px;">⏳</div>';
+    h+='<div class="status-title" style="font-size:16px;">Application Under Review</div>';
+    h+='<div class="status-desc" style="font-size:12px;">Please respond to the RFI above to continue the review process.</div>';
+    h+='<div class="status-badge badge-pending">⏳ Under Review — RFI Pending</div>';
+    h+='</div>';
+    h+='<div style="font-size:13px;font-weight:600;margin-bottom:8px;">Application Status:</div>';
+    for(var i=0;i<products.length;i++){
+      h+='<div class="app-row"><div class="app-left"><div class="app-icon" style="background:'+products[i].color+'18;">'+products[i].icon+'</div><div><div class="app-name">'+products[i].name+'</div><div class="app-sub">Submitted 2026-02-23 · RFI 2026-02-24</div></div></div>';
+      h+='<div><span class="status-badge badge-rfi" style="font-size:11px;padding:4px 10px;">📋 RFI</span></div></div>';
+    }
+    h+='<div class="mt-20" style="text-align:center;">';
+    h+='<button class="btn btn-p" onclick="document.getElementById(\'modal-rfi\').classList.add(\'show\')">View RFI Details & Respond →</button>';
+    h+='</div>';
+  }
+
+  c.innerHTML=h;
+}
+
+/* ── Modal ── */
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+document.querySelectorAll('.ov').forEach(function(ov){
+  ov.addEventListener('click',function(e){if(e.target===ov)ov.classList.remove('show');});
+});
+</script>
+</body>
+</html>
