@@ -311,27 +311,50 @@ const centerMenus = {
             { label: '客户管理', items: [
                 { name: '客户基本信息', icon: 'users', active: true },
                 { name: '客户用户信息', icon: 'user' },
-                { name: '客户产品开通', icon: 'package' }
+                { name: '客户产品管理', icon: 'package' }
+            ]},
+            { label: '客户配置', items: [
+                { name: 'VA 账户查询', icon: 'credit-card' },
+                { name: '收款人查询', icon: 'user-check' },
+                { name: '汇款人查询', icon: 'user' }
             ]},
             { label: '客户费率', items: [
-                { name: '客户费率配置', icon: 'credit-card' },
+                { name: '客户费率配置', icon: 'percent' },
                 { name: '费率审核', icon: 'clipboard', badge: '2' }
             ]},
-            { label: '订单查询', items: [
-                { name: 'VA账户', icon: 'credit-card' },
-                { name: '收款商户单', icon: 'download' },
-                { name: '付款商户单', icon: 'upload' },
-                { name: '换汇商户单', icon: 'repeat' },
-                { name: 'Ramp商户单', icon: 'zap' },
-                { name: '充提币商户单', icon: 'bitcoin' },
-                { name: '卡片查询', icon: 'credit-card' },
-                { name: 'VCC商户单', icon: 'credit-card' },
+            { label: '账户', items: [
+                { name: '客户余额', icon: 'wallet' },
+                { name: '充值/提现记录', icon: 'repeat' },
+                { name: '充币/提币记录', icon: 'bitcoin' }
+            ]},
+            { label: '收款（Payins）', items: [
+                { name: 'VA 收款单', icon: 'download' },
+                { name: '链上收款单', icon: 'download' }
+            ]},
+            { label: '付款（Payouts）', items: [
+                { name: '法币付款单', icon: 'upload' },
+                { name: '链上付币单', icon: 'upload' }
+            ]},
+            { label: '换汇（Exchange）', items: [
+                { name: 'FX 换汇单', icon: 'repeat' },
+                { name: 'On-Ramp 单', icon: 'zap' },
+                { name: 'Off-Ramp 单', icon: 'zap' }
+            ]},
+            { label: '收单（Checkout）', items: [
                 { name: '收单商户单', icon: 'tag' }
             ]},
-            
-            { label: '会员分佣结算', items: [
+            { label: 'VCC（发卡）', items: [
+                { name: '卡片查询', icon: 'credit-card' },
+                { name: '卡订单查询', icon: 'file-text', note: 'Tab: 扣费订单 / 资金订单 / 消费订单' }
+            ]},
+            { label: '贸易背景', items: [
+                { name: '贸易订单', icon: 'clipboard' },
+                { name: '订单文件', icon: 'file' },
+                { name: '店铺查询', icon: 'store' }
+            ]},
+            { label: '客户分佣结算', items: [
                 { name: '分佣/返点账单', icon: 'clipboard' },
-                { name: '结算单查询', icon: 'file' },
+                { name: '结算单查询', icon: 'file' }
             ]}
         ]
     },
