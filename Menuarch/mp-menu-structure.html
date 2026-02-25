@@ -497,9 +497,6 @@
         <div class="menu-item" data-page="payins">
             <span class="icon">📥</span> Payins
         </div>
-        <div class="menu-item" data-page="Onramp">
-            <span class="icon">⛓️</span> Onramp
-        </div>
     </div>
 
     <!-- Checkout -->
@@ -527,10 +524,7 @@
             <span class="icon">👤</span> Beneficiary
         </div>
         <div class="menu-item" data-page="payouts">
-            <span class="icon">�</span> Payouts
-        </div>
-        <div class="menu-item" data-page="OffRamp">
-            <span class="icon">�</span> OffRamp
+            <span class="icon">💸</span> Payouts
         </div>
         <div class="menu-item" data-page="remittance-orders">
             <span class="icon">🔀</span> Remittance Orders
@@ -665,13 +659,14 @@
             <h3>📊 MP 菜单设计总览</h3>
             <div class="note-box">
                 <strong>菜单设计原则：</strong><br>
-                1. <strong>Assets（资产）</strong>= 同名充提 + 兑换（自己的钱左手倒右手，纯钱包内操作）；承兑后要付出去的走Transfer Out<br>
-                2. <strong>Transfer In（转账收款）</strong>= 收款工具管理（Collection Tools）+ 汇款人维护 + Payins（所有入金）+ Onramp（收法币→自动换U）<br>
-                3. <strong>Checkout（收单）</strong>= 商户管理收款订单，底层收款方式（VA/地址/在线支付）由系统自动选择<br>
-                4. <strong>Transfer Out（转账付款）</strong>= Beneficiary（收款人）+ Payouts（所有出金：法币付款+链上付币+同名提现+同名提币）+ Remittance Orders（收→换→付一单到底，编排层）<br>
-                5. <strong>Cards（发卡）</strong>= 通过卡消费方式付款<br>
-                6. <strong>Transfer In vs Checkout：</strong>Transfer In 管收款工具（商户主动申请的VA/地址），Checkout 管收款订单（底层工具由系统分配，对商户透明）<br>
-                7. <strong>Payins vs Payouts 对称：</strong>Payins = 所有入金，Payouts = 所有出金；Onramp（收法币→换U）和 Remittance（收→换→付）是编排层
+                1. <strong>Assets（资产）</strong>= 同名充提 + Exchange（统一兑换入口：FX + Buy Crypto/On-Ramp + Sell Crypto/Off-Ramp）<br>
+                2. <strong>Exchange 统一兑换入口（参考 Coinbase 模式）：</strong>FX/买U/卖U 本质都是 Conversion，统一到一个入口。用户选择兑换方向和资金来源/去向，系统自动决定底层是纯 Conversion 还是 Deposit+Conversion / Conversion+Withdraw 编排<br>
+                3. <strong>Transfer In（转账收款）</strong>= 收款工具管理（Collection Tools）+ 汇款人维护 + Payins（所有入金）<br>
+                4. <strong>Checkout（收单）</strong>= 商户管理收款订单，底层收款方式（VA/地址/在线支付）由系统自动选择<br>
+                5. <strong>Transfer Out（转账付款）</strong>= Beneficiary（收款人）+ Payouts（所有出金）+ Remittance Orders（收→换→付一单到底，编排层）<br>
+                6. <strong>Cards（发卡）</strong>= 通过卡消费方式付款<br>
+                7. <strong>Payins vs Payouts 对称：</strong>Payins = 所有入金，Payouts = 所有出金<br>
+                8. <strong>On-Ramp / Off-Ramp 归属 Exchange</strong>（不再作为 Transfer In / Transfer Out 的独立菜单），因为本质是兑换操作，涉及外部入金/出金时由 Exchange 内部编排
             </div>
             <div class="note-box">
                 <strong>SP透明 & 账户结构规则：</strong><br>
@@ -691,17 +686,15 @@
                 <tbody>
                     <tr><td rowspan="3"><strong>ASSETS</strong></td><td>Fiat Accounts</td><td>余额、同名充值、同名提现</td><td><span class="tag tag-same">同名</span></td></tr>
                     <tr><td>Crypto Wallet</td><td>余额、同名充币、同名提币</td><td><span class="tag tag-same">同名</span></td></tr>
-                    <tr><td>Exchange</td><td>法币换汇、法转数、数转法</td><td><span class="tag tag-same">同名</span></td></tr>
-                    <tr><td rowspan="4"><strong>TRANSFER IN</strong></td><td>Collection Tools</td><td>收款工具管理（Tab: Global Account/VA + 加密收款地址）</td><td><span class="tag tag-other">他人→我（转账）</span></td></tr>
+                    <tr><td>Exchange</td><td>统一兑换入口（Tab: FX换汇 / Buy Crypto即On-Ramp / Sell Crypto即Off-Ramp），支持从余额或外部一单到底</td><td><span class="tag tag-same">Conversion</span></td></tr>
+                    <tr><td rowspan="3"><strong>TRANSFER IN</strong></td><td>Collection Tools</td><td>收款工具管理（Tab: Global Account/VA + 加密收款地址）</td><td><span class="tag tag-other">他人→我（转账）</span></td></tr>
                     <tr><td>Remitter</td><td>汇款人维护（银行账户/链上地址）</td><td><span class="tag tag-other">他人→我</span></td></tr>
                     <tr><td>Payins</td><td>所有入金交易（VA收款+链上收款+同名充值+同名充币）</td><td><span class="tag tag-other">他人→我 + 同名</span></td></tr>
-                    <tr><td>Onramp</td><td>通过VA收款后自动换U（法币→USDT），一单到底</td><td><span class="tag tag-other">入金+换U</span></td></tr>
                     <tr><td rowspan="3"><strong>CHECKOUT</strong></td><td>Online Payment</td><td>在线支付订单</td><td><span class="tag tag-other">他人→我（收单）</span></td></tr>
                     <tr><td>Invoice</td><td>账单支付</td><td><span class="tag tag-other">他人→我（收单）</span></td></tr>
                     <tr><td>Subscription</td><td>订阅支付</td><td><span class="tag tag-other">他人→我（收单）</span></td></tr>
                     <tr><td rowspan="3"><strong>TRANSFER OUT</strong></td><td>Beneficiary</td><td>收款人管理</td><td><span class="tag tag-other">我→他人（转账）</span></td></tr>
                     <tr><td>Payouts</td><td>所有出金（法币付款+链上付币+同名提现+同名提币）</td><td><span class="tag tag-other">出金</span></td></tr>
-                    <tr><td>OffRamp</td><td>offramp（数币钱包-法币账户，和数币钱包直接到收款人）</td><td><span class="tag tag-other">出金</span></td></tr>
                     <tr><td>Remittance Orders</td><td>收→换→付一单到底，系统自动编排全链路</td><td><span class="tag tag-other">收→换→付</span></td></tr>
                     <tr><td rowspan="2"><strong>CARDS</strong></td><td>Cards Management</td><td>开卡、充值、冻结、注销</td><td><span class="tag tag-other">我→他人（卡）</span></td></tr>
                     <tr><td>Card Transactions</td><td>卡交易记录</td><td><span class="tag tag-other">我→他人（卡）</span></td></tr>
@@ -820,68 +813,128 @@
     <div class="page" id="page-exchange">
         <div class="page-header">
             <div class="breadcrumb">Assets / <span>Exchange</span></div>
-            <h1>Exchange（兑换/承兑）</h1>
-            <p>自己账户间的资产形态转换，钱不出服务商体系 <span class="tag tag-same">同名操作</span></p>
+            <h1>Exchange（统一兑换入口）</h1>
+            <p>FX 换汇 / Buy Crypto (On-Ramp) / Sell Crypto (Off-Ramp) — 统一兑换入口，底层按资金来源/去向自动编排</p>
         </div>
         <div class="content-section">
             <h3>职责定义</h3>
             <div class="note-box">
-                <strong>本菜单只管"纯钱包内兑换"：</strong>换汇、On-Ramp、Off-Ramp、SP间互转 — 钱始终在自己账户体系内，不出去。<br>
-                <strong>不管：</strong>承兑后要付出去的场景（→ Remittance，一单到底自动编排）
+                <strong>统一兑换入口（参考 Coinbase Buy/Sell 模式）：</strong>FX + Buy Crypto + Sell Crypto 统一到一个 Exchange 入口，三者本质都是 Conversion（体系内资产互换），只是资产类型不同。<br><br>
+                <strong>核心逻辑：</strong><br>
+                • 用户选择兑换方向 → 选择资金来源/去向 → 系统自动决定底层能力组合<br>
+                • <strong>从余额兑换</strong> = 纯 Conversion（体系内）<br>
+                • <strong>从外部充值买U（一单到底）</strong> = Deposit + Conversion（编排）<br>
+                • <strong>卖U到外部银行（一单到底）</strong> = Conversion + Withdraw（编排）<br><br>
+                <strong>不管：</strong>承兑后要付给第三方的场景（→ Remittance Orders，收→换→付一单到底自动编排）
             </div>
         </div>
         <div class="content-section">
-            <h3>法币换汇（FX）</h3>
-            <div class="func-list">
-                <div class="func-item">
-                    <div class="func-name">即时换汇</div>
-                    <div class="func-desc">自己法币账户间换汇，如 USD → EUR。系统自动选择SP，商户不感知</div>
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab(this, 'tab-fx')">💱 FX 换汇</button>
+                <button class="tab-btn" onclick="switchTab(this, 'tab-buy-crypto')">🟢 Buy Crypto (On-Ramp)</button>
+                <button class="tab-btn" onclick="switchTab(this, 'tab-sell-crypto')">🔴 Sell Crypto (Off-Ramp)</button>
+            </div>
+
+            <!-- Tab: FX -->
+            <div class="tab-panel active" id="tab-fx">
+                <h3>FX 换汇（法币 ↔ 法币）<span class="badge" style="background: #dcfce7; color: #166534;">纯 Conversion</span></h3>
+                <div class="func-list">
+                    <div class="func-item">
+                        <div class="func-name">即时换汇</div>
+                        <div class="func-desc">体系内法币账户间换汇，如 USD → EUR。底层能力 = Conversion，不涉及外部资金。系统自动选择SP，商户不感知</div>
+                    </div>
+                    <div class="func-item">
+                        <div class="func-name">换汇记录</div>
+                        <div class="func-desc">历史换汇记录、汇率、手续费详情</div>
+                    </div>
                 </div>
-                <div class="func-item">
-                    <div class="func-name">换汇记录</div>
-                    <div class="func-desc">历史换汇记录、汇率、手续费详情</div>
+                <div class="note-box">
+                    <strong>场景 S1：</strong>USD 账户 → EUR 账户，体系内法币→体系内法币，纯 Conversion<br>
+                    <strong>原子能力：</strong>Conversion × 1
+                </div>
+            </div>
+
+            <!-- Tab: Buy Crypto (On-Ramp) -->
+            <div class="tab-panel" id="tab-buy-crypto">
+                <h3>Buy Crypto / On-Ramp（法币 → 数币）</h3>
+                <div class="func-list">
+                    <div class="func-item" style="border-left-color: #10b981;">
+                        <div class="func-name">方式A：从体系内余额买U <span class="tag tag-same">纯 Conversion</span></div>
+                        <div class="func-desc">从自己法币账户余额直接兑换为加密资产（如 USD → USDT），存入加密钱包。不涉及外部资金，钱没出体系，只是换了形态<br>
+                        <strong>底层：</strong>Conversion × 1<br>
+                        <strong>场景 S3：</strong>法币账户 USD → 数币钱包 USDT</div>
+                    </div>
+                    <div class="func-item" style="border-left-color: #3b82f6;">
+                        <div class="func-name">方式B：从外部银行充值买U（一单到底）<span class="tag tag-cross">编排：Deposit + Conversion</span></div>
+                        <div class="func-desc">从外部银行充值法币，系统自动将法币兑换为 USDT，最终入账到加密钱包。<strong>一步操作，用户不需要分步执行</strong><br>
+                        <strong>底层：</strong>Deposit（外部入金）+ Conversion（法币→数币）编排<br>
+                        <strong>场景 S2：</strong>外部银行 → 充值法币 → 自动换成 USDT</div>
+                    </div>
+                    <div class="func-item">
+                        <div class="func-name">Buy Crypto 记录</div>
+                        <div class="func-desc">所有买U记录，含兑换方式（余额/外部充值）、汇率、手续费、到账数量。外部充值模式可追踪全链路状态</div>
+                    </div>
+                </div>
+                <div class="note-box">
+                    <strong>用户体验：</strong>统一入口，用户选择"资金来源"（体系内余额 / 外部银行账户），系统根据选择决定底层是纯 Conversion 还是 Deposit + Conversion
+                </div>
+            </div>
+
+            <!-- Tab: Sell Crypto (Off-Ramp) -->
+            <div class="tab-panel" id="tab-sell-crypto">
+                <h3>Sell Crypto / Off-Ramp（数币 → 法币）</h3>
+                <div class="func-list">
+                    <div class="func-item" style="border-left-color: #10b981;">
+                        <div class="func-name">方式A：卖U到体系内法币余额 <span class="tag tag-same">纯 Conversion</span></div>
+                        <div class="func-desc">从加密钱包余额兑换为法币（如 USDT → USD），存入法币账户。不涉及外部资金，钱没出体系，只是换了形态<br>
+                        <strong>底层：</strong>Conversion × 1<br>
+                        <strong>场景 S5：</strong>USDT → 换成 USD 到法币账户</div>
+                    </div>
+                    <div class="func-item" style="border-left-color: #f59e0b;">
+                        <div class="func-name">方式B：卖U提现到外部银行（一单到底）<span class="tag tag-cross">编排：Conversion + Withdraw</span></div>
+                        <div class="func-desc">USDT 兑换为法币，系统自动提现到外部银行账户。<strong>一步操作，用户不需要分步执行</strong><br>
+                        <strong>底层：</strong>Conversion（数币→法币）+ Withdraw（外部出金）编排<br>
+                        <strong>场景 S4：</strong>USDT → 换成法币 → 提现到外部银行</div>
+                    </div>
+                    <div class="func-item">
+                        <div class="func-name">Sell Crypto 记录</div>
+                        <div class="func-desc">所有卖U记录，含兑换方式（到余额/到银行）、汇率、手续费、到账金额。外部提现模式可追踪全链路状态</div>
+                    </div>
+                </div>
+                <div class="note-box">
+                    <strong>用户体验：</strong>统一入口，用户选择"资金去向"（体系内法币余额 / 外部银行账户），系统根据选择决定底层是纯 Conversion 还是 Conversion + Withdraw
                 </div>
             </div>
         </div>
         <div class="content-section">
-            <h3>法转数（On-Ramp）</h3>
-            <div class="func-list">
-                <div class="func-item">
-                    <div class="func-name">法币 → 加密</div>
-                    <div class="func-desc">从自己法币账户余额兑换为加密资产，存入自己的加密钱包。钱没出去，只是换了形态</div>
-                </div>
-                <div class="func-item">
-                    <div class="func-name">On-Ramp 记录</div>
-                    <div class="func-desc">法转数历史记录、兑换汇率、到账数量</div>
-                </div>
-            </div>
-        </div>
-        <div class="content-section">
-            <h3>数转法（Off-Ramp）</h3>
-            <div class="func-list">
-                <div class="func-item">
-                    <div class="func-name">加密 → 法币</div>
-                    <div class="func-desc">从自己加密钱包余额兑换为法币，存入自己的法币账户。钱没出去，只是换了形态</div>
-                </div>
-                <div class="func-item">
-                    <div class="func-name">Off-Ramp 记录</div>
-                    <div class="func-desc">数转法历史记录、兑换汇率、到账金额</div>
-                </div>
+            <h3>原子能力模型</h3>
+            <div class="note-box" style="background: #eff6ff; border-color: #93c5fd; color: #1e40af;">
+                <strong>四个原子能力：</strong><br>
+                • <strong>Deposit（入金）</strong>：外部资金 → 体系内账户<br>
+                • <strong>Withdraw（出金）</strong>：体系内账户 → 外部<br>
+                • <strong>Conversion（兑换）</strong>：体系内 A 账户 → 体系内 B 账户（含法币↔法币、法币↔数币）<br>
+                • <strong>Transfer（转账）</strong>：体系内资金付给非同名第三方<br><br>
+                <strong>Exchange 内的能力组合：</strong><br>
+                • FX（USD→EUR）= Conversion<br>
+                • 余额买U / 卖U到余额 = Conversion<br>
+                • 充值买U = Deposit + Conversion（编排）<br>
+                • 卖U提现 = Conversion + Withdraw（编排）
             </div>
         </div>
         <div class="content-section">
             <h3>边界说明</h3>
             <div class="note-box">
-                <strong>Exchange vs Remittance：</strong><br>
-                • <strong>Exchange</strong> = 纯兑换，钱留在自己钱包里（适合炒汇率、资产配置）<br>
-                • <strong>Remittance</strong> = 承兑+付款一单到底，钱最终要出去（如BB Off-Ramp后直接到IPL法币账户再付出）<br>
+                <strong>Exchange vs Remittance vs 同名充提：</strong><br>
+                • <strong>Exchange</strong> = 统一兑换入口，含纯体系内兑换和涉及外部的一单到底编排（On-Ramp/Off-Ramp）<br>
+                • <strong>Remittance</strong> = 收→换→付一单到底，钱最终要付给第三方（Deposit + Conversion + Transfer）<br>
+                • <strong>同名充值/提现</strong> = 纯 Deposit / Withdraw，不涉及兑换（在 Fiat Accounts / Crypto Wallet 中操作）<br>
                 • SP间互转（如IPL⇄BB）也在Exchange中完成，对商户透明<br>
                 • Remittance 的子步骤中如果涉及兑换，Exchange 也会产生对应记录，通过关联订单号串联
             </div>
         </div>
     </div>
 
-    <!-- ===== TRANSFER IN: Collection Tools (Global Accounts + Onramp 合并) ===== -->
+    <!-- ===== TRANSFER IN: Collection Tools (Global Accounts + 加密收款地址) ===== -->
     <div class="page" id="page-collection-tools">
         <div class="page-header">
             <div class="breadcrumb">Transfer In / <span>Collection Tools</span></div>
@@ -924,9 +977,9 @@
                 </div>
             </div>
 
-            <!-- Tab: Onramp Address -->
+            <!-- Tab: Crypto Receive Address -->
             <div class="tab-panel" id="tab-crypto-addr">
-                <h3>收款地址（Onramp Address）<span class="badge" style="background: #fef3c7; color: #92400e;">加密收款</span></h3>
+                <h3>收款地址（Crypto Receive Address）<span class="badge" style="background: #fef3c7; color: #92400e;">加密收款</span></h3>
                 <div class="func-list">
                     <div class="func-item">
                         <div class="func-name">收款地址管理</div>
@@ -1057,59 +1110,9 @@
         </div>
     </div>
 
-    <!-- ===== TRANSFER IN: Onramp ===== -->
-    <div class="page" id="page-crypto-receive">
-        <div class="page-header">
-            <div class="breadcrumb">Transfer In / <span>Onramp</span></div>
-            <h1>Onramp（收款换U）</h1>
-            <p>通过VA收款后自动兑换为USDT，一单到底 <span class="tag tag-other">入金+换U</span></p>
-        </div>
-        <div class="content-section">
-            <h3>职责定义</h3>
-            <div class="note-box">
-                <strong>本菜单管"法币收款→自动换U"的组合流程：</strong>他人通过VA银行转账法币入金，系统自动将收到的法币兑换为USDT（或其他稳定币），最终入账到商户的加密钱包。整个流程一单到底，商户无需手动操作Exchange。<br>
-                <strong>底层编排：</strong>VA收款（Payins）→ On-Ramp/法转数（Exchange）→ 入账USDT到Crypto Wallet<br>
-                <strong>与 Payins 的区别：</strong>Payins = 纯入金记录（法币到法币账户），Onramp = 入金+自动换U（法币→USDT到加密钱包）<br>
-                <strong>与 Remittance 的对称关系：</strong>Remittance = 收→换→付（钱出去），Onramp = 收→换→入账（钱进来换形态）
-            </div>
-        </div>
-        <div class="content-section">
-            <h3>页面功能</h3>
-            <div class="func-list">
-                <div class="func-item">
-                    <div class="func-name">收款换U订单列表</div>
-                    <div class="func-desc">所有Onramp订单，展示：法币收款金额、兑换汇率、USDT到账数量、订单状态。支持按时间/币种/状态筛选</div>
-                </div>
-                <div class="func-item">
-                    <div class="func-name">订单详情 — 全链路视图</div>
-                    <div class="func-desc">展示完整资金链路：VA收款（法币入账）→ 兑换（法币→USDT）→ 入账（USDT到加密钱包），每步状态实时更新</div>
-                </div>
-                <div class="func-item">
-                    <div class="func-name">子步骤追踪</div>
-                    <div class="func-desc">每个子步骤的独立状态、时间、金额、汇率、手续费明细</div>
-                </div>
-                <div class="func-item">
-                    <div class="func-name">配置规则</div>
-                    <div class="func-desc">设置自动换U规则：指定VA收款后自动触发兑换、目标币种（USDT/USDC等）、汇率策略（实时/锁定）</div>
-                </div>
-            </div>
-        </div>
-        <div class="content-section">
-            <h3>典型场景</h3>
-            <div class="func-list">
-                <div class="func-item">
-                    <div class="func-name">场景：跨境电商收款换U</div>
-                    <div class="func-desc">海外买家通过银行转账USD到商户VA → 系统自动将USD兑换为USDT → USDT入账到商户加密钱包。商户全程无需手动操作</div>
-                </div>
-            </div>
-            <div class="note-box">
-                <strong>与其他菜单的关系：</strong><br>
-                • Onramp 是"编排层"，底层复用 Payins（VA收款）和 Exchange（On-Ramp/法转数）的能力<br>
-                • 商户在 Onramp 看到完整链路，在 Payins 和 Exchange 也能看到对应的子订单记录<br>
-                • 通过关联订单号串联，各菜单都能追溯
-            </div>
-        </div>
-    </div>
+    <!-- ===== [已合并] Onramp → Exchange > Buy Crypto (On-Ramp) ===== -->
+    <!-- On-Ramp（法币→数币）已合并到 Exchange 统一兑换入口的 Buy Crypto tab -->
+    <!-- 外部充值买U（一单到底）= Exchange > Buy Crypto > 方式B（Deposit + Conversion 编排） -->
 
     <!-- ===== TRANSFER OUT: Beneficiary ===== -->
     <div class="page" id="page-beneficiary">
@@ -1173,7 +1176,7 @@
                 <strong>与 Payins 的对称关系：</strong><br>
                 • <strong>Payins</strong> = 所有入金（VA收款 + 链上收款 + 同名充值 + 同名充币）<br>
                 • <strong>Payouts</strong> = 所有出金（法币付款 + 链上付币 + 同名提现 + 同名提币）<br>
-                • 两者都是"纯交易记录"，不含编排层（Onramp / Remittance 是编排层）
+                • 两者都是"纯交易记录"，不含编排层（Exchange 内 On-Ramp/Off-Ramp 编排、Remittance 编排是独立菜单）
             </div>
         </div>
         <div class="content-section">
