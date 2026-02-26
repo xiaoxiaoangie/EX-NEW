@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiat Deposit - Merchant Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        sidebar: '#0f172a',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        * { font-family: 'Inter', sans-serif; }
+        .sidebar { width: 240px; }
+        .nav-item {
+            display: flex; align-items: center; padding: 10px 16px; margin: 2px 8px;
+            border-radius: 8px; color: #94a3b8; font-size: 14px; transition: all 0.15s ease; cursor: pointer;
+        }
+        .nav-item:hover { background: rgba(99, 102, 241, 0.1); color: #e2e8f0; }
+        .nav-item.active { background: rgba(99, 102, 241, 0.15); color: #818cf8; }
+        .nav-item i { width: 20px; font-size: 14px; }
+        .nav-section {
+            padding: 20px 16px 8px; font-size: 11px; font-weight: 600;
+            color: #475569; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .tag-web2 { background: #3b82f6; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 600; }
+        .tag-web3 { background: #10b981; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 600; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside class="sidebar bg-sidebar flex flex-col h-full fixed left-0 top-0 z-20">
+            <div class="p-5 border-b border-slate-800">
+                <div class="flex items-center space-x-3">
+                    <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-cube text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-white font-semibold text-sm">Merchant Portal</h1>
+                        <p class="text-slate-500 text-xs">Web2 + Web3</p>
+                    </div>
+                </div>
+            </div>
+            <nav class="flex-1 overflow-y-auto py-4">
+                <div class="nav-item" onclick="location.href='#'"><i class="fas fa-chart-line"></i><span class="ml-3">Dashboard</span></div>
+                <div class="nav-section">Assets</div>
+                <div class="nav-item" onclick="location.href='#'"><i class="fas fa-wallet"></i><span class="ml-3">Wallets</span></div>
+                <div class="nav-item" onclick="location.href='#'"><i class="fas fa-arrow-down"></i><span class="ml-3">Crypto Deposit</span><span class="tag-web3 ml-auto">W3</span></div>
+                <div class="nav-item active"><i class="fas fa-university"></i><span class="ml-3">Fiat Deposit</span><span class="tag-web2 ml-auto">W2</span></div>
+                <div class="nav-item" onclick="location.href='#'"><i class="fas fa-arrow-up"></i><span class="ml-3">Crypto Withdraw</span><span class="tag-web3 ml-auto">W3</span></div>
+                <div class="nav-item" onclick="location.href='#'"><i class="fas fa-arrow-up-from-line"></i><span class="ml-3">Fiat Withdraw</span><span class="tag-web2 ml-auto">W2</span></div>
+                <div class="nav-section">Exchange</div>
+                <div class="nav-item"><i class="fas fa-exchange-alt"></i><span class="ml-3">FX</span><span class="tag-web2 ml-auto">W2</span></div>
+                <div class="nav-item"><i class="fas fa-coins"></i><span class="ml-3">Buy Crypto</span><span class="tag-web3 ml-auto">W3</span></div>
+                <div class="nav-item"><i class="fas fa-hand-holding-usd"></i><span class="ml-3">Sell Crypto</span><span class="tag-web3 ml-auto">W3</span></div>
+                <div class="nav-section">Payments</div>
+                <div class="nav-item"><i class="fas fa-arrow-down-to-line"></i><span class="ml-3">Collection</span><span class="tag-web2 ml-auto">W2</span></div>
+                <div class="nav-item"><i class="fas fa-shopping-cart"></i><span class="ml-3">Checkout</span><span class="tag-web2 ml-auto">W2</span></div>
+                <div class="nav-item"><i class="fas fa-paper-plane"></i><span class="ml-3">Remittance</span><span class="tag-web2 ml-auto">W2</span></div>
+                <div class="nav-section">Cards</div>
+                <div class="nav-item"><i class="fas fa-credit-card"></i><span class="ml-3">Cards</span><span class="tag-web2 ml-auto">W2</span></div>
+                <div class="nav-section">Reports</div>
+                <div class="nav-item"><i class="fas fa-file-invoice"></i><span class="ml-3">Trade Documents</span></div>
+                <div class="nav-item"><i class="fas fa-chart-bar"></i><span class="ml-3">Reports</span></div>
+                <div class="nav-section">Developer</div>
+                <div class="nav-item"><i class="fas fa-key"></i><span class="ml-3">API Keys</span></div>
+                <div class="nav-item"><i class="fas fa-book"></i><span class="ml-3">Documentation</span></div>
+                <div class="nav-section">Settings</div>
+                <div class="nav-item"><i class="fas fa-building"></i><span class="ml-3">Company Profile</span></div>
+                <div class="nav-item"><i class="fas fa-users"></i><span class="ml-3">Team Members</span></div>
+                <div class="nav-item"><i class="fas fa-lock"></i><span class="ml-3">Security</span></div>
+            </nav>
+            <div class="p-4 border-t border-slate-800">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-full flex items-center justify-center">
+                        <span class="text-white text-xs font-medium">JD</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-slate-200 text-sm font-medium truncate">John Doe</p>
+                        <p class="text-slate-500 text-xs truncate">Admin</p>
+                    </div>
+                    <button class="text-slate-500 hover:text-slate-300"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 ml-[240px] overflow-y-auto">
+            <!-- Header -->
+            <header class="bg-white border-b border-slate-200 px-6 py-4 sticky top-0 z-10">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-xl font-semibold text-slate-800">Fiat Deposit</h2>
+                        <p class="text-slate-500 text-sm">Deposit fiat currency to your account</p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <button class="p-2 text-slate-500 hover:text-slate-700 relative">
+                            <i class="fas fa-bell"></i>
+                            <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="p-6">
+                <div class="max-w-[1600px] mx-auto">
+
+                    <!-- Account Type Selector -->
+                    <div class="flex items-center gap-3 mb-6">
+                        <button id="btn-payment" onclick="setAccountType('payment')"
+                            class="flex items-center gap-3 px-5 py-3.5 rounded-xl border-2 transition-all border-indigo-500 bg-indigo-50/60 shadow-sm">
+                            <div id="icon-payment" class="w-9 h-9 rounded-lg flex items-center justify-center bg-blue-100">
+                                <i id="icon-payment-i" class="fas fa-university text-sm text-blue-600"></i>
+                            </div>
+                            <div class="text-left">
+                                <p id="label-payment" class="text-sm font-semibold text-indigo-700">Payment Account</p>
+                                <p class="text-xs text-slate-500">Deposit to payment / collection account</p>
+                            </div>
+                            <span class="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-[9px] font-semibold rounded uppercase tracking-wide ml-2">Payment</span>
+                        </button>
+                        <button id="btn-trading" onclick="setAccountType('trading')"
+                            class="flex items-center gap-3 px-5 py-3.5 rounded-xl border-2 transition-all border-slate-200 hover:border-slate-300 hover:bg-slate-50">
+                            <div id="icon-trading" class="w-9 h-9 rounded-lg flex items-center justify-center bg-slate-100">
+                                <i id="icon-trading-i" class="fas fa-chart-line text-sm text-slate-400"></i>
+                            </div>
+                            <div class="text-left">
+                                <p id="label-trading" class="text-sm font-semibold text-slate-700">Trading Account</p>
+                                <p class="text-xs text-slate-500">Deposit to trading / exchange account</p>
+                            </div>
+                            <span class="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[9px] font-semibold rounded uppercase tracking-wide ml-2">Trading</span>
+                        </button>
+                    </div>
+
+                    <!-- Main Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Left: Form -->
+                        <div class="lg:col-span-2">
+                            <div class="bg-white border border-slate-200 rounded-xl p-6">
+                                <h3 id="form-title" class="font-semibold text-slate-900 mb-6">Payment Account Fiat Deposit</h3>
+
+                                <div class="space-y-6">
+
+                                    <!-- Row 1: Currency -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-900 mb-2.5">Currency <span class="text-red-500">*</span></label>
+                                        <div class="flex gap-2" id="currency-options">
+                                            <button onclick="setCurrency('USD')" data-currency="USD" class="currency-btn flex items-center gap-2 px-3.5 py-2.5 rounded-xl border-2 transition border-indigo-500 bg-indigo-50/50">
+                                                <div class="w-7 h-7 bg-green-100 rounded-full flex items-center justify-center"><span class="text-green-600 font-bold text-sm">$</span></div>
+                                                <span class="font-semibold text-slate-900 text-sm">USD</span>
+                                            </button>
+                                            <button onclick="setCurrency('EUR')" data-currency="EUR" class="currency-btn flex items-center gap-2 px-3.5 py-2.5 rounded-xl border-2 transition border-slate-100 hover:border-slate-200 hover:bg-slate-50">
+                                                <div class="w-7 h-7 bg-blue-100 rounded-full flex items-center justify-center"><span class="text-blue-600 font-bold text-sm">&euro;</span></div>
+                                                <span class="font-semibold text-slate-900 text-sm">EUR</span>
+                                            </button>
+                                            <button onclick="setCurrency('GBP')" data-currency="GBP" class="currency-btn flex items-center gap-2 px-3.5 py-2.5 rounded-xl border-2 transition border-slate-100 hover:border-slate-200 hover:bg-slate-50">
+                                                <div class="w-7 h-7 bg-purple-100 rounded-full flex items-center justify-center"><span class="text-purple-600 font-bold text-sm">&pound;</span></div>
+                                                <span class="font-semibold text-slate-900 text-sm">GBP</span>
+                                            </button>
+                                            <button onclick="setCurrency('HKD')" data-currency="HKD" class="currency-btn flex items-center gap-2 px-3.5 py-2.5 rounded-xl border-2 transition border-slate-100 hover:border-slate-200 hover:bg-slate-50">
+                                                <div class="w-7 h-7 bg-red-100 rounded-full flex items-center justify-center"><span class="text-red-600 font-bold text-sm">$</span></div>
+                                                <span class="font-semibold text-slate-900 text-sm">HKD</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Row 2: Deposit Amount -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-900 mb-2.5">Deposit Amount <span class="text-red-500">*</span></label>
+                                        <div class="flex border border-slate-200 rounded-lg focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-50">
+                                            <input id="deposit-amount" type="text" oninput="updateFees()" placeholder="Enter deposit amount" class="flex-1 px-4 py-2.5 text-sm border-0 rounded-l-lg focus:outline-none">
+                                            <div class="flex items-center px-4 bg-slate-50 border-l border-slate-200 rounded-r-lg">
+                                                <span id="amount-currency" class="text-sm font-medium text-slate-600">USD</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Row 3: Deposit Method -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-900 mb-2.5">Deposit Method <span class="text-red-500">*</span></label>
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <button id="method-collection" onclick="setMethod('collection')" class="flex items-center gap-3 p-4 rounded-xl border-2 transition text-left border-indigo-500 bg-indigo-50/40">
+                                                <div id="method-collection-icon" class="w-10 h-10 rounded-lg flex items-center justify-center bg-indigo-100">
+                                                    <i id="method-collection-i" class="fas fa-globe text-sm text-indigo-600"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="text-sm font-semibold text-slate-900">Collection Account</p>
+                                                    <p class="text-xs text-slate-500 mt-0.5">SWIFT / Wire Transfer</p>
+                                                </div>
+                                            </button>
+                                            <button id="method-va" onclick="setMethod('va')" class="flex items-center gap-3 p-4 rounded-xl border-2 transition text-left border-slate-200 hover:border-slate-300 hover:bg-slate-50">
+                                                <div id="method-va-icon" class="w-10 h-10 rounded-lg flex items-center justify-center bg-slate-100">
+                                                    <i id="method-va-i" class="fas fa-user-check text-sm text-slate-400"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="text-sm font-semibold text-slate-900">Same-Name VA Account</p>
+                                                    <p class="text-xs text-slate-500 mt-0.5">Local bank transfer (IBAN)</p>
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Row 4: Reference & Purpose (Collection only) -->
+                                    <div id="ref-purpose-section" class="space-y-4">
+                                        <div class="p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                                            <div class="flex gap-2">
+                                                <i class="fas fa-exclamation-triangle text-amber-500 mt-0.5 shrink-0"></i>
+                                                <p class="text-xs text-amber-800 leading-relaxed">
+                                                    Both the <strong>Reference Code</strong> and <strong>Purpose Code</strong> must be included in your bank transfer remarks. Missing either code will result in an automatic refund.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-slate-700 mb-2">Reference Code</label>
+                                                <div class="flex items-center border-2 border-blue-200 bg-blue-50/30 rounded-lg px-4 py-3">
+                                                    <span class="flex-1 font-mono font-bold text-slate-900 text-lg tracking-wider">29EEB964</span>
+                                                    <button onclick="copyText('29EEB964')" class="text-indigo-500 hover:text-indigo-700 p-1"><i class="far fa-copy"></i></button>
+                                                </div>
+                                                <p class="text-xs text-slate-500 mt-1"><i class="fas fa-info-circle mr-1"></i>Include in bank remarks</p>
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-slate-700 mb-2">Purpose Code</label>
+                                                <div class="flex items-center border-2 border-blue-200 bg-blue-50/30 rounded-lg px-4 py-3">
+                                                    <span class="flex-1 font-mono font-bold text-slate-900 text-lg">CBP</span>
+                                                    <button onclick="copyText('CBP')" class="text-indigo-500 hover:text-indigo-700 p-1"><i class="far fa-copy"></i></button>
+                                                </div>
+                                                <p class="text-xs text-slate-500 mt-1"><i class="fas fa-info-circle mr-1"></i>Include in bank remarks</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Row 5: Account Details (Collection) -->
+                                    <div id="detail-collection" class="border border-slate-200 rounded-xl overflow-hidden">
+                                        <button onclick="toggleDetails('collection')" class="flex items-center justify-between w-full px-5 py-4 hover:bg-slate-50 transition">
+                                            <span class="text-sm font-semibold text-slate-800">Bank Account Information</span>
+                                            <i id="chevron-collection" class="fas fa-chevron-down text-slate-400 text-xs transition-transform"></i>
+                                        </button>
+                                        <div id="detail-collection-body" class="hidden border-t border-slate-100">
+                                            <div class="mx-5 my-4 border border-slate-200 rounded-xl p-5">
+                                                <div class="detail-row"><span class="detail-label">Account Number</span><div class="detail-value"><span>20301000010313</span><button onclick="copyText('20301000010313')" class="copy-btn"><i class="far fa-copy text-xs"></i></button></div></div>
+                                                <div class="detail-row"><span class="detail-label">Recipient Name</span><div class="detail-value"><span>BLANKBLOCK LIMITED LIABILITY COMPANY</span><button onclick="copyText('BLANKBLOCK LIMITED LIABILITY COMPANY')" class="copy-btn"><i class="far fa-copy text-xs"></i></button></div></div>
+                                                <div class="detail-row"><span class="detail-label">Recipient Address</span><div class="detail-value"><span>street HOZA, No.86, Apt.Room 210, municipality WARSAW, post code 00-682, post office Poland, 004822</span><button onclick="copyText('street HOZA, No.86, Apt.Room 210, municipality WARSAW, post code 00-682, post office Poland, 004822')" class="copy-btn"><i class="far fa-copy text-xs"></i></button></div></div>
+                                                <div class="h-px bg-slate-200 my-1"></div>
+                                                <div class="detail-row"><span class="detail-label">Beneficiary Bank Name</span><div class="detail-value"><span>SINGAPORE GULF BANK B.S.C. CLOSED</span><button onclick="copyText('SINGAPORE GULF BANK B.S.C. CLOSED')" class="copy-btn"><i class="far fa-copy text-xs"></i></button></div></div>
+                                                <div class="detail-row"><span class="detail-label">Beneficiary Bank SWIFT Code</span><div class="detail-value"><span>SGBDBHB2XXX</span><button onclick="copyText('SGBDBHB2XXX')" class="copy-btn"><i class="far fa-copy text-xs"></i></button></div></div>
+                                                <div class="detail-row"><span class="detail-label">Beneficiary Bank Address</span><div class="detail-value"><span>FLAT 2901, BUILDING 1B, ISA AL-KABEER AVENUE 365, BLOCK 316, MANAMA, BAHRAIN</span><button onclick="copyText('FLAT 2901, BUILDING 1B, ISA AL-KABEER AVENUE 365, BLOCK 316, MANAMA, BAHRAIN')" class="copy-btn"><i class="far fa-copy text-xs"></i></button></div></div>
+                                                <div class="h-px bg-slate-200 my-1"></div>
+                                                <div class="detail-row"><span class="detail-label">Intermediary Bank Name</span><div class="detail-value"><span>AL SALAM BANK B.S.C</span><button onclick="copyText('AL SALAM BANK B.S.C')" class="copy-btn"><i class="far fa-copy text-xs"></i></button></div></div>
+                                                <div class="detail-row"><span class="detail-label">Intermediary Bank SWIFT Code</span><div class="detail-value"><span>ALSABHBMXXX</span><button onclick="copyText('ALSABHBMXXX')" class="copy-btn"><i class="far fa-copy text-xs"></i></button></div></div>
+                                                <div class="detail-row"><span class="detail-label">Intermediary Bank Address</span><div class="detail-value"><span>BUILDING NO. 935, STREET NO. 1015, DIPLOMATIC AREA, SANABIS, BAHRAIN</span><button onclick="copyText('BUILDING NO. 935, STREET NO. 1015, DIPLOMATIC AREA, SANABIS, BAHRAIN')" class="copy-btn"><i class="far fa-copy text-xs"></i></button></div></div>
+                                            </div>
+                                            <div class="px-5 pb-4">
+                                                <button onclick="copyAllCollection()" class="w-full py-2.5 border border-indigo-200 text-indigo-600 text-sm font-medium rounded-lg hover:bg-indigo-50 transition flex items-center justify-center gap-2">
+                                                    <i class="far fa-copy text-xs"></i> Copy Bank Detail
+                                                </button>
+                                            </div>
+                                            <div class="flex items-center justify-between px-5 py-3 border-t border-slate-100 bg-slate-50/50">
+                                                <div class="flex items-center gap-2 text-sm text-slate-600">
+                                                    <i class="far fa-clock text-slate-400"></i><span>Arrives within</span><span class="font-bold text-slate-900">3 days</span>
+                                                </div>
+                                                <div class="text-sm text-slate-500">Expires: <span class="text-indigo-600 font-medium">2026-02-26 09:05</span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Row 5: Account Details (VA) - hidden by default -->
+                                    <div id="detail-va" class="border border-slate-200 rounded-xl overflow-hidden hidden">
+                                        <button onclick="toggleDetails('va')" class="flex items-center justify-between w-full px-5 py-4 hover:bg-slate-50 transition">
+                                            <span class="text-sm font-semibold text-slate-800">Bank Account Details</span>
+                                            <i id="chevron-va" class="fas fa-chevron-down text-slate-400 text-xs transition-transform"></i>
+                                        </button>
+                                        <div id="detail-va-body" class="hidden border-t border-slate-100">
+                                            <div class="mx-5 my-4 border border-slate-200 rounded-xl p-5" id="va-details-content">
+                                                <!-- filled by JS -->
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Row 6: Fee Breakdown -->
+                                    <div>
+                                        <h4 class="text-sm font-semibold text-slate-900 mb-3">Fee Details</h4>
+                                        <div class="bg-slate-50 rounded-xl p-5 space-y-3 border border-slate-100">
+                                            <div class="flex justify-between text-sm">
+                                                <span class="text-slate-500">Percentage Fee (<span id="fee-pct-label">0.1</span>%)</span>
+                                                <span class="font-medium text-slate-900"><span id="fee-pct-value">0.00</span> <span class="fee-currency">USD</span></span>
+                                            </div>
+                                            <div class="flex justify-between text-sm">
+                                                <span class="text-slate-500">Fixed Fee</span>
+                                                <span class="font-medium text-slate-900"><span id="fee-fixed-value">5.00</span> <span class="fee-currency">USD</span></span>
+                                            </div>
+                                            <div class="pt-3 border-t border-slate-200 flex justify-between text-sm">
+                                                <span class="font-semibold text-slate-900">Total Deposit Fee</span>
+                                                <span class="font-bold text-indigo-600"><span id="fee-total-value">0.00</span> <span class="fee-currency">USD</span></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Row 7: Transaction Overview -->
+                                    <div>
+                                        <h4 class="text-sm font-semibold text-slate-900 mb-3">Transaction Overview</h4>
+                                        <div class="border border-slate-200 rounded-xl p-5 space-y-3">
+                                            <div class="flex justify-between text-sm">
+                                                <span class="text-slate-500">Currency:</span>
+                                                <span id="overview-currency" class="font-medium text-slate-900">USD</span>
+                                            </div>
+                                            <div class="flex justify-between text-sm">
+                                                <span class="text-slate-500">Deposit Amount:</span>
+                                                <span id="overview-amount" class="font-medium text-slate-900 text-right">0.00</span>
+                                            </div>
+                                            <div class="flex justify-between text-sm">
+                                                <span class="text-slate-500">Fee:</span>
+                                                <span id="overview-fee" class="font-medium text-slate-900 text-right">0.00</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Row 8: Confirm Button -->
+                                    <button class="w-full py-3.5 bg-gradient-to-r from-violet-500 to-purple-600 text-white text-sm font-semibold rounded-xl hover:from-violet-600 hover:to-purple-700 transition shadow-lg shadow-purple-200 flex items-center justify-center gap-2">
+                                        <i class="fas fa-check text-xs"></i>
+                                        Confirm Deposit Completion
+                                    </button>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Important Notice -->
+                        <div class="lg:col-span-1">
+                            <div class="bg-red-50 border border-red-200 rounded-xl p-5 sticky top-24">
+                                <h4 class="text-base font-semibold text-red-700 mb-4 flex items-center gap-2">
+                                    <i class="fas fa-exclamation-circle text-red-500"></i>
+                                    Important Notice
+                                </h4>
+                                <ul class="space-y-3.5 text-sm text-red-800 leading-relaxed">
+                                    <li class="flex gap-2.5"><span class="text-red-400 mt-1 shrink-0">&bull;</span><span><strong>The minimum transfer amount</strong> is $100.00 or equivalent. Transfers below the minimum will be automatically refunded.</span></li>
+                                    <li class="flex gap-2.5"><span class="text-red-400 mt-1 shrink-0">&bull;</span><span><strong>Exceeding the maximum</strong> amount of funds will be rejected by the bank. Please ensure the transfer amount is within your account limit.</span></li>
+                                    <li class="flex gap-2.5"><span class="text-red-400 mt-1 shrink-0">&bull;</span><span><strong>Same-Name Policy:</strong> The remitter name must match your registered account name. Third-party deposits will be rejected with a 3-5 business day refund.</span></li>
+                                    <li id="notice-purpose" class="flex gap-2.5"><span class="text-red-400 mt-1 shrink-0">&bull;</span><span><strong>Purpose Code:</strong> Both the Reference Code and Purpose Code are required in the bank transfer remarks. Missing either will cause automatic refund.</span></li>
+                                    <li class="flex gap-2.5"><span class="text-red-400 mt-1 shrink-0">&bull;</span><span><strong>Processing Time:</strong> Local transfers typically arrive within 1 business day. SWIFT transfers may take 1-3 business days.</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <style>
+        .detail-row {
+            display: flex; align-items: flex-start; justify-content: space-between;
+            gap: 16px; padding: 14px 0; border-bottom: 1px solid #f1f5f9;
+        }
+        .detail-row:last-child { border-bottom: none; }
+        .detail-label { font-size: 14px; color: #94a3b8; flex-shrink: 0; min-width: 160px; }
+        .detail-value { display: flex; align-items: flex-start; gap: 8px; flex: 1; justify-content: flex-end; }
+        .detail-value span { font-size: 14px; font-weight: 600; color: #1e293b; text-align: right; word-break: break-word; }
+        .copy-btn { color: #cbd5e1; flex-shrink: 0; margin-top: 2px; cursor: pointer; background: none; border: none; padding: 0; }
+        .copy-btn:hover { color: #6366f1; }
+    </style>
+
+    <script>
+        // ─── State ───────────────────────────────────────────────────
+        let state = {
+            accountType: 'payment',
+            currency: 'USD',
+            depositMethod: 'collection',
+            showCollectionDetails: false,
+            showVADetails: false,
+        };
+
+        const feeRates = {
+            USD: { percentRate: 0.001, fixedFee: 5.00 },
+            EUR: { percentRate: 0.001, fixedFee: 4.50 },
+            GBP: { percentRate: 0.001, fixedFee: 4.00 },
+            HKD: { percentRate: 0.001, fixedFee: 40.00 },
+        };
+
+        const vaData = {
+            USD: { recipientName: 'Shanghai Yye Network Technology Co, LTD', accountType: 'USD Account \u00b7 Local Receiving', currency: 'USD', country: 'United States', bankName: 'Community Federal Savings Bank', iban: 'N/A', bic: 'CMFGUS33', bankAddress: '89-16 Jamaica Ave, Woodhaven, NY 11421, US' },
+            EUR: { recipientName: 'Shanghai Yye Network Technology Co, LTD', accountType: 'EUR Account \u00b7 Local Receiving', currency: 'EUR', country: 'United Kingdom', bankName: 'The Currency Cloud Limited', iban: 'GB69TCCL00997971427073', bic: 'TCCLGB31', bankAddress: '12 Steward Street, The Steward Building, LONDON, E1 6FQ, GB' },
+            GBP: { recipientName: 'Shanghai Yye Network Technology Co, LTD', accountType: 'GBP Account \u00b7 Local Receiving', currency: 'GBP', country: 'United Kingdom', bankName: 'The Currency Cloud Limited', iban: 'GB69TCCL00997971427073', bic: 'TCCLGB31', bankAddress: '12 Steward Street, The Steward Building, LONDON, E1 6FQ, GB' },
+            HKD: { recipientName: 'Shanghai Yye Network Technology Co, LTD', accountType: 'HKD Account \u00b7 Local Receiving', currency: 'HKD', country: 'Hong Kong', bankName: 'DBS BANK (HONG KONG) LIMITED', iban: 'N/A', bic: 'DBSSHKHH', bankAddress: "11/F, The Center, 99 Queen's Road Central, Hong Kong" },
+        };
+
+        // ─── Functions ───────────────────────────────────────────────
+        function copyText(text) {
+            navigator.clipboard?.writeText(text).then(() => {
+                // brief visual feedback could go here
+            }).catch(() => {});
+        }
+
+        function copyAllCollection() {
+            const lines = [
+                'Account Number: 20301000010313',
+                'Recipient Name: BLANKBLOCK LIMITED LIABILITY COMPANY',
+                'Recipient Address: street HOZA, No.86, Apt.Room 210, municipality WARSAW, post code 00-682, post office Poland, 004822',
+                'Beneficiary Bank Name: SINGAPORE GULF BANK B.S.C. CLOSED',
+                'Beneficiary Bank SWIFT Code: SGBDBHB2XXX',
+                'Beneficiary Bank Address: FLAT 2901, BUILDING 1B, ISA AL-KABEER AVENUE 365, BLOCK 316, MANAMA, BAHRAIN',
+                'Intermediary Bank Name: AL SALAM BANK B.S.C',
+                'Intermediary Bank SWIFT Code: ALSABHBMXXX',
+                'Intermediary Bank Address: BUILDING NO. 935, STREET NO. 1015, DIPLOMATIC AREA, SANABIS, BAHRAIN',
+            ].join('\n');
+            copyText(lines);
+        }
+
+        function setAccountType(type) {
+            state.accountType = type;
+            state.showCollectionDetails = false;
+            state.showVADetails = false;
+
+            const btnP = document.getElementById('btn-payment');
+            const btnT = document.getElementById('btn-trading');
+            if (type === 'payment') {
+                btnP.className = 'flex items-center gap-3 px-5 py-3.5 rounded-xl border-2 transition-all border-indigo-500 bg-indigo-50/60 shadow-sm';
+                btnT.className = 'flex items-center gap-3 px-5 py-3.5 rounded-xl border-2 transition-all border-slate-200 hover:border-slate-300 hover:bg-slate-50';
+                document.getElementById('icon-payment').className = 'w-9 h-9 rounded-lg flex items-center justify-center bg-blue-100';
+                document.getElementById('icon-payment-i').className = 'fas fa-university text-sm text-blue-600';
+                document.getElementById('label-payment').className = 'text-sm font-semibold text-indigo-700';
+                document.getElementById('icon-trading').className = 'w-9 h-9 rounded-lg flex items-center justify-center bg-slate-100';
+                document.getElementById('icon-trading-i').className = 'fas fa-chart-line text-sm text-slate-400';
+                document.getElementById('label-trading').className = 'text-sm font-semibold text-slate-700';
+            } else {
+                btnT.className = 'flex items-center gap-3 px-5 py-3.5 rounded-xl border-2 transition-all border-indigo-500 bg-indigo-50/60 shadow-sm';
+                btnP.className = 'flex items-center gap-3 px-5 py-3.5 rounded-xl border-2 transition-all border-slate-200 hover:border-slate-300 hover:bg-slate-50';
+                document.getElementById('icon-trading').className = 'w-9 h-9 rounded-lg flex items-center justify-center bg-amber-100';
+                document.getElementById('icon-trading-i').className = 'fas fa-chart-line text-sm text-amber-600';
+                document.getElementById('label-trading').className = 'text-sm font-semibold text-indigo-700';
+                document.getElementById('icon-payment').className = 'w-9 h-9 rounded-lg flex items-center justify-center bg-slate-100';
+                document.getElementById('icon-payment-i').className = 'fas fa-university text-sm text-slate-400';
+                document.getElementById('label-payment').className = 'text-sm font-semibold text-slate-700';
+            }
+            document.getElementById('form-title').textContent = (type === 'payment' ? 'Payment Account' : 'Trading Account') + ' Fiat Deposit';
+            hideAllDetails();
+        }
+
+        function setCurrency(cur) {
+            state.currency = cur;
+            document.querySelectorAll('.currency-btn').forEach(btn => {
+                btn.className = btn.dataset.currency === cur
+                    ? 'currency-btn flex items-center gap-2 px-3.5 py-2.5 rounded-xl border-2 transition border-indigo-500 bg-indigo-50/50'
+                    : 'currency-btn flex items-center gap-2 px-3.5 py-2.5 rounded-xl border-2 transition border-slate-100 hover:border-slate-200 hover:bg-slate-50';
+            });
+            document.getElementById('amount-currency').textContent = cur;
+            document.querySelectorAll('.fee-currency').forEach(el => el.textContent = cur);
+            document.getElementById('overview-currency').textContent = cur;
+            renderVADetails();
+            updateFees();
+        }
+
+        function setMethod(method) {
+            state.depositMethod = method;
+            state.showCollectionDetails = false;
+            state.showVADetails = false;
+
+            const mc = document.getElementById('method-collection');
+            const mv = document.getElementById('method-va');
+            if (method === 'collection') {
+                mc.className = 'flex items-center gap-3 p-4 rounded-xl border-2 transition text-left border-indigo-500 bg-indigo-50/40';
+                mv.className = 'flex items-center gap-3 p-4 rounded-xl border-2 transition text-left border-slate-200 hover:border-slate-300 hover:bg-slate-50';
+                document.getElementById('method-collection-icon').className = 'w-10 h-10 rounded-lg flex items-center justify-center bg-indigo-100';
+                document.getElementById('method-collection-i').className = 'fas fa-globe text-sm text-indigo-600';
+                document.getElementById('method-va-icon').className = 'w-10 h-10 rounded-lg flex items-center justify-center bg-slate-100';
+                document.getElementById('method-va-i').className = 'fas fa-user-check text-sm text-slate-400';
+                document.getElementById('ref-purpose-section').classList.remove('hidden');
+                document.getElementById('detail-collection').classList.remove('hidden');
+                document.getElementById('detail-va').classList.add('hidden');
+                document.getElementById('notice-purpose').classList.remove('hidden');
+            } else {
+                mv.className = 'flex items-center gap-3 p-4 rounded-xl border-2 transition text-left border-indigo-500 bg-indigo-50/40';
+                mc.className = 'flex items-center gap-3 p-4 rounded-xl border-2 transition text-left border-slate-200 hover:border-slate-300 hover:bg-slate-50';
+                document.getElementById('method-va-icon').className = 'w-10 h-10 rounded-lg flex items-center justify-center bg-green-100';
+                document.getElementById('method-va-i').className = 'fas fa-user-check text-sm text-green-600';
+                document.getElementById('method-collection-icon').className = 'w-10 h-10 rounded-lg flex items-center justify-center bg-slate-100';
+                document.getElementById('method-collection-i').className = 'fas fa-globe text-sm text-slate-400';
+                document.getElementById('ref-purpose-section').classList.add('hidden');
+                document.getElementById('detail-collection').classList.add('hidden');
+                document.getElementById('detail-va').classList.remove('hidden');
+                document.getElementById('notice-purpose').classList.add('hidden');
+            }
+            hideAllDetails();
+        }
+
+        function toggleDetails(type) {
+            if (type === 'collection') {
+                state.showCollectionDetails = !state.showCollectionDetails;
+                document.getElementById('detail-collection-body').classList.toggle('hidden', !state.showCollectionDetails);
+                document.getElementById('chevron-collection').className = 'fas fa-chevron-' + (state.showCollectionDetails ? 'up' : 'down') + ' text-slate-400 text-xs transition-transform';
+            } else {
+                state.showVADetails = !state.showVADetails;
+                document.getElementById('detail-va-body').classList.toggle('hidden', !state.showVADetails);
+                document.getElementById('chevron-va').className = 'fas fa-chevron-' + (state.showVADetails ? 'up' : 'down') + ' text-slate-400 text-xs transition-transform';
+            }
+        }
+
+        function hideAllDetails() {
+            state.showCollectionDetails = false;
+            state.showVADetails = false;
+            document.getElementById('detail-collection-body').classList.add('hidden');
+            document.getElementById('detail-va-body').classList.add('hidden');
+            document.getElementById('chevron-collection').className = 'fas fa-chevron-down text-slate-400 text-xs transition-transform';
+            document.getElementById('chevron-va').className = 'fas fa-chevron-down text-slate-400 text-xs transition-transform';
+        }
+
+        function renderVADetails() {
+            const d = vaData[state.currency] || vaData['USD'];
+            const rows = [
+                ['Recipient Name', d.recipientName],
+                ['Account Type', d.accountType],
+                ['Currency', d.currency],
+                ['Country / Region', d.country],
+                ['Bank Name', d.bankName],
+                ['IBAN', d.iban],
+                ['BIC', d.bic],
+                ['Bank Address', d.bankAddress],
+            ];
+            const container = document.getElementById('va-details-content');
+            container.innerHTML = rows.map(([label, value]) => `
+                <div class="detail-row">
+                    <span class="detail-label">${label}</span>
+                    <div class="detail-value">
+                        <span>${value}</span>
+                        <button onclick="copyText('${value.replace(/'/g, "\\'")}')" class="copy-btn"><i class="far fa-copy text-xs"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateFees() {
+            const amountStr = document.getElementById('deposit-amount').value.replace(/,/g, '');
+            const amount = parseFloat(amountStr) || 0;
+            const rates = feeRates[state.currency] || { percentRate: 0.001, fixedFee: 5 };
+            const pctFee = amount * rates.percentRate;
+            const fixedFee = rates.fixedFee;
+            const totalFee = amount > 0 ? pctFee + fixedFee : 0;
+
+            document.getElementById('fee-pct-label').textContent = (rates.percentRate * 100).toFixed(1);
+            document.getElementById('fee-pct-value').textContent = amount > 0 ? pctFee.toFixed(2) : '0.00';
+            document.getElementById('fee-fixed-value').textContent = fixedFee.toFixed(2);
+            document.getElementById('fee-total-value').textContent = totalFee > 0 ? totalFee.toFixed(2) : '0.00';
+
+            document.getElementById('overview-amount').textContent = amount > 0 ? amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00';
+            document.getElementById('overview-fee').textContent = totalFee > 0 ? totalFee.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00';
+        }
+
+        // Init
+        renderVADetails();
+    </script>
+</body>
+</html>

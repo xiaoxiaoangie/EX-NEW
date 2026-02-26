@@ -619,7 +619,7 @@ document.addEventListener('click', function(e) {
                 renderMemberInfoQuery();
             } else if (pageName === '客户用户信息') {
                 renderCustomerUsers();
-            } else if (pageName === '客户产品开通' || pageName === '会员开通产品') {
+            } else if (pageName === '客户产品管理' || pageName === '客户产品开通' || pageName === '会员开通产品') {
                 renderMemberProducts();
             } else if (pageName === '客户费率配置') {
                 renderCustomerRateConfig();

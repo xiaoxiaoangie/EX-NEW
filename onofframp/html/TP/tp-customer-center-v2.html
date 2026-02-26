@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TP 客户中心 — 全局搜索 + 客户360视图</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+:root {
+  --bg: #f0f2f5;
+  --card: #ffffff;
+  --border: #e2e8f0;
+  --text: #1a1f36;
+  --text-s: #64748b;
+  --text-m: #94a3b8;
+  --primary: #4f46e5;
+  --primary-light: #eef2ff;
+  --primary-hover: #4338ca;
+  --green: #10b981;
+  --green-bg: #ecfdf5;
+  --red: #ef4444;
+  --red-bg: #fef2f2;
+  --orange: #f59e0b;
+  --orange-bg: #fffbeb;
+  --blue: #3b82f6;
+  --blue-bg: #eff6ff;
+  --cyan: #06b6d4;
+  --cyan-bg: #ecfeff;
+  --purple: #8b5cf6;
+  --purple-bg: #f5f3ff;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-lg: 0 10px 25px rgba(0,0,0,.08);
+  --shadow-xl: 0 20px 50px rgba(0,0,0,.12);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --sidebar-w: 220px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Inter',-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); min-height:100vh; font-size:14px; line-height:1.5; }
+
+/* ===== Layout ===== */
+.app { display:flex; height:100vh; overflow:hidden; }
+.sidebar { width:var(--sidebar-w); background:var(--card); border-right:1px solid var(--border); display:flex; flex-direction:column; flex-shrink:0; }
+.sidebar-header { padding:20px 16px 16px; border-bottom:1px solid var(--border); }
+.sidebar-header h2 { font-size:15px; font-weight:700; color:var(--primary); }
+.sidebar-header p { font-size:11px; color:var(--text-m); margin-top:2px; }
+.sidebar-nav { flex:1; overflow-y:auto; padding:8px 0; }
+.nav-group-label { padding:16px 16px 6px; font-size:10px; font-weight:700; color:var(--text-m); text-transform:uppercase; letter-spacing:.5px; }
+.nav-item { display:flex; align-items:center; gap:10px; padding:9px 16px; font-size:13px; color:var(--text-s); cursor:pointer; transition:all .15s; border-left:3px solid transparent; }
+.nav-item:hover { background:var(--primary-light); color:var(--text); }
+.nav-item.active { background:var(--primary-light); color:var(--primary); font-weight:600; border-left-color:var(--primary); }
+.nav-item .icon { width:16px; height:16px; opacity:.6; }
+.nav-item.active .icon { opacity:1; }
+.nav-badge { background:var(--primary); color:#fff; font-size:10px; font-weight:700; padding:1px 6px; border-radius:10px; margin-left:auto; }
+
+.main { flex:1; overflow-y:auto; }
+
+/* ===== Top Bar with Global Search ===== */
+.topbar { background:var(--card); border-bottom:1px solid var(--border); padding:0 32px; height:56px; display:flex; align-items:center; gap:16px; position:sticky; top:0; z-index:100; }
+.topbar-breadcrumb { font-size:12px; color:var(--text-m); }
+.topbar-breadcrumb a { color:var(--text-s); text-decoration:none; }
+.topbar-breadcrumb a:hover { color:var(--primary); }
+.topbar-spacer { flex:1; }
+
+/* Global Search */
+.global-search { position:relative; width:420px; }
+.global-search-input { width:100%; padding:9px 16px 9px 38px; border:1.5px solid var(--border); border-radius:10px; font-size:13px; background:var(--bg); transition:all .2s; outline:none; }
+.global-search-input:focus { border-color:var(--primary); background:#fff; box-shadow:0 0 0 3px rgba(79,70,229,.1); }
+.global-search-input::placeholder { color:var(--text-m); }
+.search-icon { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-m); pointer-events:none; }
+.search-shortcut { position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:11px; color:var(--text-m); background:var(--card); border:1px solid var(--border); padding:1px 6px; border-radius:4px; pointer-events:none; }
+
+/* Search Dropdown */
+.search-dropdown { position:absolute; top:calc(100% + 6px); left:0; right:0; background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow-xl); display:none; z-index:200; max-height:480px; overflow-y:auto; }
+.search-dropdown.show { display:block; }
+.search-result-group { padding:8px 0; border-bottom:1px solid var(--border); }
+.search-result-group:last-child { border-bottom:none; }
+.search-result-group-label { padding:4px 16px; font-size:10px; font-weight:700; color:var(--text-m); text-transform:uppercase; letter-spacing:.5px; }
+.search-result-item { display:flex; align-items:center; gap:12px; padding:10px 16px; cursor:pointer; transition:background .1s; }
+.search-result-item:hover { background:var(--primary-light); }
+.search-result-item .result-icon { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
+.search-result-item .result-info { flex:1; min-width:0; }
+.search-result-item .result-title { font-size:13px; font-weight:600; }
+.search-result-item .result-sub { font-size:11px; color:var(--text-m); }
+.search-result-item .result-badge { font-size:11px; padding:2px 8px; border-radius:6px; font-weight:600; }
+.search-tip { padding:12px 16px; font-size:12px; color:var(--text-m); text-align:center; }
+
+/* ===== Content Area ===== */
+.content { padding:24px 32px 60px; }
+
+/* Page Header */
+.page-header { margin-bottom:24px; }
+.page-title { font-size:20px; font-weight:800; }
+.page-desc { font-size:13px; color:var(--text-s); margin-top:4px; }
+
+/* Cards */
+.card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; }
+.card + .card { margin-top:16px; }
+.card-header { padding:16px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+.card-header h3 { font-size:14px; font-weight:700; }
+.card-body { padding:20px; }
+
+/* ===== Home: Search Landing ===== */
+.search-landing { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:calc(100vh - 160px); text-align:center; }
+.search-landing-icon { width:80px; height:80px; background:var(--primary-light); border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:24px; }
+.search-landing-icon svg { width:36px; height:36px; color:var(--primary); }
+.search-landing h1 { font-size:22px; font-weight:800; margin-bottom:8px; }
+.search-landing p { font-size:14px; color:var(--text-s); max-width:400px; margin-bottom:32px; }
+.search-landing .big-search { width:480px; position:relative; }
+.search-landing .big-search input { width:100%; padding:14px 20px 14px 48px; font-size:15px; border:2px solid var(--border); border-radius:14px; outline:none; transition:all .2s; background:#fff; }
+.search-landing .big-search input:focus { border-color:var(--primary); box-shadow:0 0 0 4px rgba(79,70,229,.1); }
+.search-landing .big-search .search-icon { left:18px; }
+.search-examples { display:flex; gap:8px; margin-top:16px; flex-wrap:wrap; justify-content:center; }
+.search-example-tag { padding:6px 14px; background:var(--card); border:1px solid var(--border); border-radius:20px; font-size:12px; color:var(--text-s); cursor:pointer; transition:all .15s; }
+.search-example-tag:hover { border-color:var(--primary); color:var(--primary); background:var(--primary-light); }
+
+/* ===== Customer 360 ===== */
+.customer-header { display:flex; align-items:center; gap:20px; padding:24px; background:linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color:#fff; border-radius:var(--radius) var(--radius) 0 0; }
+.customer-avatar { width:56px; height:56px; background:rgba(255,255,255,.2); border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:800; }
+.customer-meta { flex:1; }
+.customer-meta h2 { font-size:18px; font-weight:700; }
+.customer-meta .mid { font-size:12px; opacity:.75; margin-top:2px; }
+.customer-meta .tags { display:flex; gap:6px; margin-top:8px; }
+.customer-meta .tag { padding:3px 10px; background:rgba(255,255,255,.2); border-radius:12px; font-size:11px; font-weight:600; }
+.customer-status { text-align:right; }
+.customer-status .status-dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:#34d399; margin-right:6px; }
+.customer-status .status-text { font-size:13px; font-weight:600; }
+.customer-status .since { font-size:11px; opacity:.6; margin-top:4px; }
+
+/* Quick Stats */
+.quick-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:0; border-bottom:1px solid var(--border); }
+.stat-item { padding:16px 20px; text-align:center; border-right:1px solid var(--border); }
+.stat-item:last-child { border-right:none; }
+.stat-item .stat-value { font-size:18px; font-weight:800; }
+.stat-item .stat-label { font-size:11px; color:var(--text-m); margin-top:2px; }
+
+/* 360 Tabs */
+.tabs-360 { display:flex; border-bottom:2px solid var(--border); background:var(--card); padding:0 20px; overflow-x:auto; }
+.tab-360 { padding:12px 18px; font-size:13px; font-weight:600; color:var(--text-s); border-bottom:2px solid transparent; margin-bottom:-2px; cursor:pointer; white-space:nowrap; transition:all .15s; }
+.tab-360:hover { color:var(--text); }
+.tab-360.active { color:var(--primary); border-bottom-color:var(--primary); }
+.tab-360 .tab-count { font-size:11px; background:var(--bg); padding:1px 6px; border-radius:8px; margin-left:6px; font-weight:500; color:var(--text-m); }
+
+/* Tab Content */
+.tab-panel { display:none; padding:20px; }
+.tab-panel.active { display:block; }
+
+/* Mini Table */
+.mini-table { width:100%; border-collapse:collapse; font-size:13px; }
+.mini-table th { text-align:left; padding:10px 12px; font-size:11px; font-weight:700; color:var(--text-m); text-transform:uppercase; letter-spacing:.3px; background:var(--bg); border-bottom:1px solid var(--border); }
+.mini-table td { padding:10px 12px; border-bottom:1px solid var(--border); }
+.mini-table tr:last-child td { border-bottom:none; }
+.mini-table tr:hover { background:#fafbfc; }
+
+/* Badges */
+.badge { display:inline-block; padding:2px 8px; border-radius:6px; font-size:11px; font-weight:600; }
+.badge-green { background:var(--green-bg); color:var(--green); }
+.badge-red { background:var(--red-bg); color:var(--red); }
+.badge-orange { background:var(--orange-bg); color:var(--orange); }
+.badge-blue { background:var(--blue-bg); color:var(--blue); }
+.badge-purple { background:var(--purple-bg); color:var(--purple); }
+.badge-cyan { background:var(--cyan-bg); color:var(--cyan); }
+
+/* Link */
+.link { color:var(--primary); text-decoration:none; font-weight:600; cursor:pointer; }
+.link:hover { text-decoration:underline; }
+
+/* Section Header in tab */
+.section-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.section-head h4 { font-size:14px; font-weight:700; }
+.section-head .view-all { font-size:12px; color:var(--primary); cursor:pointer; font-weight:600; }
+.section-head .view-all:hover { text-decoration:underline; }
+
+/* Balance Cards */
+.balance-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:16px; }
+.balance-card { padding:16px; border:1px solid var(--border); border-radius:var(--radius-sm); }
+.balance-card .bc-label { font-size:11px; color:var(--text-m); font-weight:600; display:flex; align-items:center; gap:6px; }
+.balance-card .bc-value { font-size:20px; font-weight:800; margin-top:6px; }
+.balance-card .bc-sub { font-size:11px; color:var(--text-m); margin-top:2px; }
+.balance-card .bc-dot { width:8px; height:8px; border-radius:50%; }
+
+/* Advanced Query Page */
+.filter-bar { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px; align-items:flex-end; }
+.filter-group { display:flex; flex-direction:column; gap:4px; }
+.filter-group label { font-size:11px; font-weight:600; color:var(--text-m); }
+.filter-group input, .filter-group select { padding:8px 12px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:13px; outline:none; min-width:160px; }
+.filter-group input:focus, .filter-group select:focus { border-color:var(--primary); box-shadow:0 0 0 2px rgba(79,70,229,.1); }
+.btn { padding:8px 18px; border:none; border-radius:var(--radius-sm); font-size:13px; font-weight:600; cursor:pointer; transition:all .15s; }
+.btn-primary { background:var(--primary); color:#fff; }
+.btn-primary:hover { background:var(--primary-hover); }
+.btn-ghost { background:transparent; color:var(--text-s); border:1px solid var(--border); }
+.btn-ghost:hover { background:var(--bg); }
+
+/* Empty State */
+.empty-state { text-align:center; padding:48px 24px; color:var(--text-m); }
+.empty-state svg { width:48px; height:48px; margin-bottom:12px; opacity:.4; }
+.empty-state p { font-size:14px; }
+
+/* Annotation Box */
+.annotation { background:#fffbeb; border:1px solid #fde68a; border-radius:var(--radius-sm); padding:12px 16px; font-size:12px; color:#92400e; margin-bottom:16px; line-height:1.6; }
+.annotation strong { color:#78350f; }
+.annotation-blue { background:var(--blue-bg); border-color:#bfdbfe; color:#1e40af; }
+.annotation-blue strong { color:#1e3a8a; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- ===== Sidebar ===== -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h2>客户中心</h2>
+      <p>Customer Center</p>
+    </div>
+    <div class="sidebar-nav">
+      <div class="nav-group-label">搜索</div>
+      <div class="nav-item active" onclick="showPage('home')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        全局搜索
+      </div>
+
+      <div class="nav-group-label">客户管理</div>
+      <div class="nav-item" onclick="showPage('customer-list')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        客户列表
+      </div>
+      <div class="nav-item" onclick="showPage('product-mgmt')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        客户产品管理
+      </div>
+      <div class="nav-item" onclick="showPage('rate-config')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
+        客户费率配置
+        <span class="nav-badge">2</span>
+      </div>
+
+      <div class="nav-group-label">高级查询</div>
+      <div class="nav-item" onclick="showPage('query-orders')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        订单查询
+      </div>
+      <div class="nav-item" onclick="showPage('query-balance')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        余额查询
+      </div>
+      <div class="nav-item" onclick="showPage('query-va')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        VA 查询
+      </div>
+      <div class="nav-item" onclick="showPage('query-cards')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        卡片查询
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Main ===== -->
+  <div class="main">
+    <!-- Top Bar -->
+    <div class="topbar">
+      <div class="topbar-breadcrumb">
+        <a href="#">首页</a> / <a href="#">客户中心</a> / <span id="breadcrumb-page">全局搜索</span>
+      </div>
+      <div class="topbar-spacer"></div>
+      <div class="global-search">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input class="global-search-input" type="text" placeholder="搜索 MID、订单号、VA 号、客户名称..." id="globalSearchInput" oninput="handleSearch(this.value)" onfocus="handleSearchFocus()" onblur="setTimeout(()=>closeDropdown(),200)">
+        <span class="search-shortcut">/</span>
+        <!-- Search Dropdown -->
+        <div class="search-dropdown" id="searchDropdown">
+          <div class="search-result-group">
+            <div class="search-result-group-label">客户</div>
+            <div class="search-result-item" onclick="showCustomer360()">
+              <div class="result-icon" style="background:var(--primary-light);color:var(--primary);">鲲</div>
+              <div class="result-info">
+                <div class="result-title">鲲鹏商户 A</div>
+                <div class="result-sub">MID: M100023 · 入网 2025-08-15</div>
+              </div>
+              <span class="result-badge badge-green">活跃</span>
+            </div>
+            <div class="search-result-item">
+              <div class="result-icon" style="background:var(--cyan-bg);color:var(--cyan);">鲲</div>
+              <div class="result-info">
+                <div class="result-title">鲲鹏商户 B</div>
+                <div class="result-sub">MID: M100045 · 入网 2025-11-02</div>
+              </div>
+              <span class="result-badge badge-green">活跃</span>
+            </div>
+          </div>
+          <div class="search-result-group">
+            <div class="search-result-group-label">订单</div>
+            <div class="search-result-item" onclick="showCustomer360()">
+              <div class="result-icon" style="background:var(--blue-bg);color:var(--blue);">📦</div>
+              <div class="result-info">
+                <div class="result-title">ORD-2026022600123</div>
+                <div class="result-sub">OnRamp · $5,000 USD → USDT · 鲲鹏商户A</div>
+              </div>
+              <span class="result-badge badge-green">成功</span>
+            </div>
+          </div>
+          <div class="search-result-group">
+            <div class="search-result-group-label">VA 账户</div>
+            <div class="search-result-item" onclick="showCustomer360()">
+              <div class="result-icon" style="background:var(--purple-bg);color:var(--purple);">🏦</div>
+              <div class="result-info">
+                <div class="result-title">VA-USD-****4567</div>
+                <div class="result-sub">Blockchain Bank · 鲲鹏商户A</div>
+              </div>
+              <span class="result-badge badge-blue">活跃</span>
+            </div>
+          </div>
+          <div class="search-tip">按 <b>Enter</b> 查看所有结果 · 支持 MID / 订单号 / VA 号 / 客户名称</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Page: Home (Search Landing) ===== -->
+    <div class="content" id="page-home">
+      <div class="search-landing">
+        <div class="search-landing-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </div>
+        <h1>客户查询中心</h1>
+        <p>输入客户 MID、订单号、VA 号或客户名称，快速定位客户信息和交易详情</p>
+        <div class="big-search">
+          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" placeholder="搜索 MID、订单号、VA 号、客户名称..." onfocus="document.getElementById('globalSearchInput').focus()">
+        </div>
+        <div class="search-examples">
+          <span class="search-example-tag" onclick="fillSearch('M100023')">MID: M100023</span>
+          <span class="search-example-tag" onclick="fillSearch('ORD-2026022600123')">订单: ORD-2026022600123</span>
+          <span class="search-example-tag" onclick="fillSearch('VA-USD-4567')">VA: VA-USD-4567</span>
+          <span class="search-example-tag" onclick="fillSearch('鲲鹏商户')">客户: 鲲鹏商户</span>
+        </div>
+        <div style="margin-top:48px; display:flex; gap:32px;">
+          <div style="text-align:center;">
+            <div style="font-size:28px; font-weight:800; color:var(--primary);">126</div>
+            <div style="font-size:12px; color:var(--text-m); margin-top:2px;">活跃客户</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:28px; font-weight:800; color:var(--green);">1,842</div>
+            <div style="font-size:12px; color:var(--text-m); margin-top:2px;">本月订单</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:28px; font-weight:800; color:var(--blue);">$2.4M</div>
+            <div style="font-size:12px; color:var(--text-m); margin-top:2px;">本月交易额</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Page: Customer 360 ===== -->
+    <div class="content" id="page-customer360" style="display:none;">
+      <div class="card" style="overflow:visible;">
+        <!-- Customer Header -->
+        <div class="customer-header">
+          <div class="customer-avatar">鲲A</div>
+          <div class="customer-meta">
+            <h2>鲲鹏商户 A</h2>
+            <div class="mid">MID: M100023 · 所属租户: 鲲鹏科技</div>
+            <div class="tags">
+              <span class="tag">OnRamp</span>
+              <span class="tag">OffRamp</span>
+              <span class="tag">Payins</span>
+              <span class="tag">VCC</span>
+            </div>
+          </div>
+          <div class="customer-status">
+            <div><span class="status-dot"></span><span class="status-text">活跃</span></div>
+            <div class="since">入网 2025-08-15</div>
+          </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="quick-stats">
+          <div class="stat-item">
+            <div class="stat-value" style="color:var(--primary);">$45,230</div>
+            <div class="stat-label">法币总余额 (USD)</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" style="color:var(--orange);">32,100 USDT</div>
+            <div class="stat-label">数币总余额</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" style="color:var(--green);">238</div>
+            <div class="stat-label">本月订单数</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" style="color:var(--blue);">$182,400</div>
+            <div class="stat-label">本月交易额</div>
+          </div>
+        </div>
+
+        <!-- 360 Tabs -->
+        <div class="tabs-360">
+          <div class="tab-360 active" onclick="switch360Tab('overview')">概览</div>
+          <div class="tab-360" onclick="switch360Tab('balance')">余额 <span class="tab-count">4</span></div>
+          <div class="tab-360" onclick="switch360Tab('orders')">订单 <span class="tab-count">238</span></div>
+          <div class="tab-360" onclick="switch360Tab('va')">VA 账户 <span class="tab-count">3</span></div>
+          <div class="tab-360" onclick="switch360Tab('cards')">卡片 <span class="tab-count">2</span></div>
+          <div class="tab-360" onclick="switch360Tab('products')">已开通产品 <span class="tab-count">4</span></div>
+          <div class="tab-360" onclick="switch360Tab('rates')">费率配置</div>
+          <div class="tab-360" onclick="switch360Tab('trade')">贸易背景</div>
+          <div class="tab-360" onclick="switch360Tab('logs')">操作日志</div>
+        </div>
+
+        <!-- Tab: Overview -->
+        <div class="tab-panel active" id="tab-overview">
+          <!-- Balances -->
+          <div class="section-head">
+            <h4>账户余额</h4>
+            <span class="view-all" onclick="switch360Tab('balance')">查看全部 →</span>
+          </div>
+          <div class="balance-grid">
+            <div class="balance-card">
+              <div class="bc-label"><span class="bc-dot" style="background:var(--blue);"></span> BB 法币 (USD)</div>
+              <div class="bc-value">$32,100.00</div>
+              <div class="bc-sub">可用 $30,100 · 冻结 $2,000</div>
+            </div>
+            <div class="balance-card">
+              <div class="bc-label"><span class="bc-dot" style="background:var(--green);"></span> IPL 法币 (USD)</div>
+              <div class="bc-value">$13,130.00</div>
+              <div class="bc-sub">可用 $13,130 · 冻结 $0</div>
+            </div>
+            <div class="balance-card">
+              <div class="bc-label"><span class="bc-dot" style="background:var(--orange);"></span> BB 数币 (USDT)</div>
+              <div class="bc-value">32,100.00</div>
+              <div class="bc-sub">可用 32,100 · 冻结 0</div>
+            </div>
+          </div>
+
+          <!-- Recent Orders -->
+          <div class="section-head" style="margin-top:24px;">
+            <h4>最近订单</h4>
+            <span class="view-all" onclick="switch360Tab('orders')">查看全部 →</span>
+          </div>
+          <table class="mini-table">
+            <thead>
+              <tr><th>订单号</th><th>类型</th><th>金额</th><th>状态</th><th>时间</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="link">ORD-0226-00123</span></td>
+                <td><span class="badge badge-cyan">OnRamp</span></td>
+                <td>$5,000 → 4,985 USDT</td>
+                <td><span class="badge badge-green">成功</span></td>
+                <td>2026-02-26 14:32</td>
+              </tr>
+              <tr>
+                <td><span class="link">ORD-0226-00118</span></td>
+                <td><span class="badge badge-blue">Payins</span></td>
+                <td>$12,000</td>
+                <td><span class="badge badge-green">成功</span></td>
+                <td>2026-02-26 11:15</td>
+              </tr>
+              <tr>
+                <td><span class="link">ORD-0225-00095</span></td>
+                <td><span class="badge badge-purple">OffRamp</span></td>
+                <td>8,000 USDT → $7,960</td>
+                <td><span class="badge badge-orange">处理中</span></td>
+                <td>2026-02-25 16:48</td>
+              </tr>
+              <tr>
+                <td><span class="link">ORD-0225-00088</span></td>
+                <td><span class="badge badge-orange">Payouts</span></td>
+                <td>$3,200</td>
+                <td><span class="badge badge-green">成功</span></td>
+                <td>2026-02-25 10:22</td>
+              </tr>
+              <tr>
+                <td><span class="link">ORD-0224-00076</span></td>
+                <td><span class="badge badge-cyan">OnRamp</span></td>
+                <td>$10,000 → 9,970 USDT</td>
+                <td><span class="badge badge-green">成功</span></td>
+                <td>2026-02-24 09:05</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- VA + Cards side by side -->
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:24px;">
+            <div>
+              <div class="section-head">
+                <h4>VA 账户</h4>
+                <span class="view-all" onclick="switch360Tab('va')">查看全部 →</span>
+              </div>
+              <table class="mini-table">
+                <thead><tr><th>VA 号</th><th>银行</th><th>币种</th><th>状态</th></tr></thead>
+                <tbody>
+                  <tr><td><span class="link">****4567</span></td><td>Blockchain Bank</td><td>USD</td><td><span class="badge badge-green">活跃</span></td></tr>
+                  <tr><td><span class="link">****7890</span></td><td>DBS Bank</td><td>SGD</td><td><span class="badge badge-green">活跃</span></td></tr>
+                  <tr><td><span class="link">****1234</span></td><td>HSBC</td><td>HKD</td><td><span class="badge badge-red">已冻结</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <div class="section-head">
+                <h4>卡片</h4>
+                <span class="view-all" onclick="switch360Tab('cards')">查看全部 →</span>
+              </div>
+              <table class="mini-table">
+                <thead><tr><th>卡号</th><th>类型</th><th>限额</th><th>状态</th></tr></thead>
+                <tbody>
+                  <tr><td><span class="link">****8901</span></td><td>VCC</td><td>$10,000/月</td><td><span class="badge badge-green">活跃</span></td></tr>
+                  <tr><td><span class="link">****5678</span></td><td>VCC</td><td>$5,000/月</td><td><span class="badge badge-green">活跃</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: Balance -->
+        <div class="tab-panel" id="tab-balance">
+          <div class="annotation-blue annotation">
+            <strong>数据说明：</strong>TP 端可查看该客户在各 SP 下的账户余额。商户端仅展示按币种合计的总余额，不暴露 SP。
+          </div>
+          <div class="balance-grid" style="grid-template-columns:repeat(2,1fr);">
+            <div class="balance-card">
+              <div class="bc-label"><span class="bc-dot" style="background:var(--blue);"></span> BB 法币账户 (USD) · 承兑业务</div>
+              <div class="bc-value">$32,100.00</div>
+              <div class="bc-sub">可用 $30,100.00 · 冻结 $2,000.00</div>
+            </div>
+            <div class="balance-card">
+              <div class="bc-label"><span class="bc-dot" style="background:var(--green);"></span> IPL 法币账户 (USD) · 收付款业务</div>
+              <div class="bc-value">$13,130.00</div>
+              <div class="bc-sub">可用 $13,130.00 · 冻结 $0.00</div>
+            </div>
+            <div class="balance-card">
+              <div class="bc-label"><span class="bc-dot" style="background:var(--orange);"></span> BB 数币钱包 (USDT · TRC-20)</div>
+              <div class="bc-value">32,100.00</div>
+              <div class="bc-sub">可用 32,100.00 · 冻结 0.00</div>
+            </div>
+            <div class="balance-card">
+              <div class="bc-label"><span class="bc-dot" style="background:var(--orange);"></span> BB 数币钱包 (USDC · ERC-20)</div>
+              <div class="bc-value">5,000.00</div>
+              <div class="bc-sub">可用 5,000.00 · 冻结 0.00</div>
+            </div>
+          </div>
+          <div class="section-head" style="margin-top:24px;"><h4>余额变动记录</h4></div>
+          <table class="mini-table">
+            <thead><tr><th>时间</th><th>账户</th><th>类型</th><th>变动</th><th>余额</th><th>关联订单</th></tr></thead>
+            <tbody>
+              <tr><td>02-26 14:32</td><td>BB USD</td><td>OnRamp 扣款</td><td style="color:var(--red);">-$5,000.00</td><td>$30,100.00</td><td><span class="link">ORD-0226-00123</span></td></tr>
+              <tr><td>02-26 14:32</td><td>BB USDT</td><td>OnRamp 入账</td><td style="color:var(--green);">+4,985.00</td><td>32,100.00</td><td><span class="link">ORD-0226-00123</span></td></tr>
+              <tr><td>02-26 11:15</td><td>IPL USD</td><td>VA 收款入账</td><td style="color:var(--green);">+$12,000.00</td><td>$13,130.00</td><td><span class="link">ORD-0226-00118</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Tab: Orders -->
+        <div class="tab-panel" id="tab-orders">
+          <div class="filter-bar">
+            <div class="filter-group">
+              <label>订单号</label>
+              <input type="text" placeholder="输入订单号">
+            </div>
+            <div class="filter-group">
+              <label>订单类型</label>
+              <select>
+                <option>全部</option>
+                <option>OnRamp</option>
+                <option>OffRamp</option>
+                <option>Payins</option>
+                <option>Payouts</option>
+                <option>Exchange</option>
+                <option>VCC</option>
+                <option>Checkout</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>状态</label>
+              <select>
+                <option>全部</option>
+                <option>成功</option>
+                <option>处理中</option>
+                <option>失败</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>日期范围</label>
+              <input type="text" placeholder="2026-02-01 ~ 2026-02-26" style="min-width:200px;">
+            </div>
+            <button class="btn btn-primary">查询</button>
+            <button class="btn btn-ghost">重置</button>
+          </div>
+          <table class="mini-table">
+            <thead><tr><th>订单号</th><th>类型</th><th>金额</th><th>SP</th><th>状态</th><th>时间</th><th>操作</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="link">ORD-0226-00123</span></td>
+                <td><span class="badge badge-cyan">OnRamp</span></td>
+                <td>$5,000 → 4,985 USDT</td>
+                <td>BB</td>
+                <td><span class="badge badge-green">成功</span></td>
+                <td>02-26 14:32</td>
+                <td><span class="link">详情</span></td>
+              </tr>
+              <tr>
+                <td><span class="link">ORD-0226-00118</span></td>
+                <td><span class="badge badge-blue">Payins</span></td>
+                <td>$12,000</td>
+                <td>IPL</td>
+                <td><span class="badge badge-green">成功</span></td>
+                <td>02-26 11:15</td>
+                <td><span class="link">详情</span></td>
+              </tr>
+              <tr>
+                <td><span class="link">ORD-0225-00095</span></td>
+                <td><span class="badge badge-purple">OffRamp</span></td>
+                <td>8,000 USDT → $7,960</td>
+                <td>BB</td>
+                <td><span class="badge badge-orange">处理中</span></td>
+                <td>02-25 16:48</td>
+                <td><span class="link">详情</span></td>
+              </tr>
+              <tr>
+                <td><span class="link">ORD-0225-00088</span></td>
+                <td><span class="badge badge-orange">Payouts</span></td>
+                <td>$3,200</td>
+                <td>IPL</td>
+                <td><span class="badge badge-green">成功</span></td>
+                <td>02-25 10:22</td>
+                <td><span class="link">详情</span></td>
+              </tr>
+              <tr>
+                <td><span class="link">ORD-0224-00076</span></td>
+                <td><span class="badge badge-cyan">OnRamp</span></td>
+                <td>$10,000 → 9,970 USDT</td>
+                <td>BB</td>
+                <td><span class="badge badge-green">成功</span></td>
+                <td>02-24 09:05</td>
+                <td><span class="link">详情</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="margin-top:12px; font-size:12px; color:var(--text-m); text-align:right;">共 238 条 · 第 1/48 页</div>
+        </div>
+
+        <!-- Tab: VA -->
+        <div class="tab-panel" id="tab-va">
+          <table class="mini-table">
+            <thead><tr><th>VA 号</th><th>银行</th><th>币种</th><th>累计收款</th><th>最后收款</th><th>状态</th></tr></thead>
+            <tbody>
+              <tr><td><span class="link">VA-USD-****4567</span></td><td>Blockchain Bank</td><td>USD</td><td>$234,500</td><td>2026-02-26</td><td><span class="badge badge-green">活跃</span></td></tr>
+              <tr><td><span class="link">VA-SGD-****7890</span></td><td>DBS Bank</td><td>SGD</td><td>S$45,200</td><td>2026-02-20</td><td><span class="badge badge-green">活跃</span></td></tr>
+              <tr><td><span class="link">VA-HKD-****1234</span></td><td>HSBC</td><td>HKD</td><td>HK$0</td><td>—</td><td><span class="badge badge-red">已冻结</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Tab: Cards -->
+        <div class="tab-panel" id="tab-cards">
+          <table class="mini-table">
+            <thead><tr><th>卡号</th><th>类型</th><th>币种</th><th>月限额</th><th>本月消费</th><th>状态</th></tr></thead>
+            <tbody>
+              <tr><td><span class="link">****8901</span></td><td>VCC</td><td>USD</td><td>$10,000</td><td>$3,200</td><td><span class="badge badge-green">活跃</span></td></tr>
+              <tr><td><span class="link">****5678</span></td><td>VCC</td><td>USD</td><td>$5,000</td><td>$800</td><td><span class="badge badge-green">活跃</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Tab: Products -->
+        <div class="tab-panel" id="tab-products">
+          <table class="mini-table">
+            <thead><tr><th>产品</th><th>SP</th><th>状态</th><th>开通日期</th><th>备注</th></tr></thead>
+            <tbody>
+              <tr><td><strong>OnRamp</strong> — 法币→数币承兑</td><td>BB</td><td><span class="badge badge-green">已开通</span></td><td>2025-08-15</td><td>承兑业务由 BB 承接</td></tr>
+              <tr><td><strong>OffRamp</strong> — 数币→法币承兑</td><td>BB</td><td><span class="badge badge-green">已开通</span></td><td>2025-08-15</td><td>承兑业务由 BB 承接</td></tr>
+              <tr><td><strong>Payins</strong> — 法币收款</td><td>IPL</td><td><span class="badge badge-green">已开通</span></td><td>2025-09-01</td><td>VA 收款</td></tr>
+              <tr><td><strong>VCC</strong> — 虚拟信用卡</td><td>BB</td><td><span class="badge badge-green">已开通</span></td><td>2025-10-12</td><td>—</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Tab: Rates -->
+        <div class="tab-panel" id="tab-rates">
+          <div class="annotation">
+            <strong>费率配置说明：</strong>此处为只读查看。费率修改请前往侧边栏"客户费率配置"进行操作。
+          </div>
+          <table class="mini-table">
+            <thead><tr><th>产品</th><th>费率类型</th><th>费率</th><th>最低收费</th><th>生效日期</th></tr></thead>
+            <tbody>
+              <tr><td>OnRamp</td><td>承兑手续费</td><td>0.30%</td><td>$5.00</td><td>2025-08-15</td></tr>
+              <tr><td>OffRamp</td><td>承兑手续费</td><td>0.35%</td><td>$5.00</td><td>2025-08-15</td></tr>
+              <tr><td>Payins (VA)</td><td>收款手续费</td><td>0.15%</td><td>$3.00</td><td>2025-09-01</td></tr>
+              <tr><td>VCC</td><td>开卡费</td><td>$2.00/张</td><td>—</td><td>2025-10-12</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Tab: Trade -->
+        <div class="tab-panel" id="tab-trade">
+          <table class="mini-table">
+            <thead><tr><th>贸易订单号</th><th>类型</th><th>金额</th><th>对手方</th><th>状态</th></tr></thead>
+            <tbody>
+              <tr><td><span class="link">TO-20260220-001</span></td><td>采购订单</td><td>$15,000</td><td>Supplier Co.</td><td><span class="badge badge-green">已审核</span></td></tr>
+              <tr><td><span class="link">TO-20260218-003</span></td><td>销售订单</td><td>$8,500</td><td>Buyer Inc.</td><td><span class="badge badge-blue">待审核</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Tab: Logs -->
+        <div class="tab-panel" id="tab-logs">
+          <table class="mini-table">
+            <thead><tr><th>时间</th><th>操作人</th><th>操作</th><th>详情</th></tr></thead>
+            <tbody>
+              <tr><td>02-26 14:32</td><td>系统</td><td>OnRamp 交易完成</td><td>ORD-0226-00123, $5,000 USD → 4,985 USDT</td></tr>
+              <tr><td>02-26 11:15</td><td>系统</td><td>VA 收款入账</td><td>VA-USD-****4567, +$12,000</td></tr>
+              <tr><td>02-25 16:48</td><td>客户经理 张三</td><td>发起 OffRamp</td><td>ORD-0225-00095, 8,000 USDT → USD</td></tr>
+              <tr><td>02-25 10:00</td><td>系统</td><td>费率变更</td><td>OnRamp 手续费 0.25% → 0.30%</td></tr>
+              <tr><td>02-24 15:30</td><td>客户经理 张三</td><td>冻结 VA 账户</td><td>VA-HKD-****1234, 原因: 合规审查</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Page: Advanced Order Query ===== -->
+    <div class="content" id="page-query-orders" style="display:none;">
+      <div class="page-header">
+        <div class="page-title">订单高级查询</div>
+        <div class="page-desc">跨客户的订单批量查询，支持多维筛选和导出</div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="filter-bar">
+            <div class="filter-group">
+              <label>MID</label>
+              <input type="text" placeholder="输入 MID">
+            </div>
+            <div class="filter-group">
+              <label>订单号</label>
+              <input type="text" placeholder="输入订单号">
+            </div>
+            <div class="filter-group">
+              <label>订单类型</label>
+              <select>
+                <option>全部</option>
+                <option>OnRamp</option>
+                <option>OffRamp</option>
+                <option>Payins</option>
+                <option>Payouts</option>
+                <option>Exchange</option>
+                <option>VCC</option>
+                <option>Checkout</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>状态</label>
+              <select>
+                <option>全部</option>
+                <option>成功</option>
+                <option>处理中</option>
+                <option>失败</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>金额范围</label>
+              <input type="text" placeholder="$1,000 ~ $50,000" style="min-width:160px;">
+            </div>
+            <div class="filter-group">
+              <label>日期范围</label>
+              <input type="text" placeholder="2026-02-01 ~ 2026-02-26" style="min-width:200px;">
+            </div>
+            <button class="btn btn-primary">查询</button>
+            <button class="btn btn-ghost">重置</button>
+            <button class="btn btn-ghost">导出</button>
+          </div>
+          <table class="mini-table">
+            <thead><tr><th>订单号</th><th>客户</th><th>MID</th><th>类型</th><th>金额</th><th>SP</th><th>状态</th><th>时间</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="link">ORD-0226-00123</span></td>
+                <td><span class="link" onclick="showCustomer360()">鲲鹏商户A</span></td>
+                <td>M100023</td>
+                <td><span class="badge badge-cyan">OnRamp</span></td>
+                <td>$5,000</td>
+                <td>BB</td>
+                <td><span class="badge badge-green">成功</span></td>
+                <td>02-26 14:32</td>
+              </tr>
+              <tr>
+                <td><span class="link">ORD-0226-00120</span></td>
+                <td><span class="link">鲲鹏商户B</span></td>
+                <td>M100045</td>
+                <td><span class="badge badge-orange">Payouts</span></td>
+                <td>$8,700</td>
+                <td>IPL</td>
+                <td><span class="badge badge-green">成功</span></td>
+                <td>02-26 13:10</td>
+              </tr>
+              <tr>
+                <td><span class="link">ORD-0226-00118</span></td>
+                <td><span class="link" onclick="showCustomer360()">鲲鹏商户A</span></td>
+                <td>M100023</td>
+                <td><span class="badge badge-blue">Payins</span></td>
+                <td>$12,000</td>
+                <td>IPL</td>
+                <td><span class="badge badge-green">成功</span></td>
+                <td>02-26 11:15</td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="margin-top:12px; font-size:12px; color:var(--text-m); text-align:right;">共 1,842 条 · 第 1/369 页</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Page: Advanced Balance Query ===== -->
+    <div class="content" id="page-query-balance" style="display:none;">
+      <div class="page-header">
+        <div class="page-title">余额高级查询</div>
+        <div class="page-desc">跨客户余额查询，快速定位账户异常</div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="filter-bar">
+            <div class="filter-group">
+              <label>MID</label>
+              <input type="text" placeholder="输入 MID">
+            </div>
+            <div class="filter-group">
+              <label>SP</label>
+              <select><option>全部</option><option>BB</option><option>IPL</option></select>
+            </div>
+            <div class="filter-group">
+              <label>账户类型</label>
+              <select><option>全部</option><option>法币账户</option><option>数币钱包</option></select>
+            </div>
+            <div class="filter-group">
+              <label>币种</label>
+              <select><option>全部</option><option>USD</option><option>SGD</option><option>USDT</option><option>USDC</option></select>
+            </div>
+            <button class="btn btn-primary">查询</button>
+            <button class="btn btn-ghost">重置</button>
+          </div>
+          <table class="mini-table">
+            <thead><tr><th>客户</th><th>MID</th><th>SP</th><th>账户</th><th>可用余额</th><th>冻结</th><th>总余额</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="link" onclick="showCustomer360()">鲲鹏商户A</span></td>
+                <td>M100023</td>
+                <td>BB</td>
+                <td>法币 USD</td>
+                <td>$30,100.00</td>
+                <td>$2,000.00</td>
+                <td>$32,100.00</td>
+              </tr>
+              <tr>
+                <td><span class="link" onclick="showCustomer360()">鲲鹏商户A</span></td>
+                <td>M100023</td>
+                <td>IPL</td>
+                <td>法币 USD</td>
+                <td>$13,130.00</td>
+                <td>$0.00</td>
+                <td>$13,130.00</td>
+              </tr>
+              <tr>
+                <td><span class="link" onclick="showCustomer360()">鲲鹏商户A</span></td>
+                <td>M100023</td>
+                <td>BB</td>
+                <td>数币 USDT</td>
+                <td>32,100.00</td>
+                <td>0.00</td>
+                <td>32,100.00</td>
+              </tr>
+              <tr>
+                <td><span class="link">鲲鹏商户B</span></td>
+                <td>M100045</td>
+                <td>BB</td>
+                <td>法币 USD</td>
+                <td>$8,200.00</td>
+                <td>$0.00</td>
+                <td>$8,200.00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Page: Advanced VA Query ===== -->
+    <div class="content" id="page-query-va" style="display:none;">
+      <div class="page-header">
+        <div class="page-title">VA 高级查询</div>
+        <div class="page-desc">跨客户 VA 账户查询</div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="filter-bar">
+            <div class="filter-group">
+              <label>MID / VA 号</label>
+              <input type="text" placeholder="输入 MID 或 VA 号">
+            </div>
+            <div class="filter-group">
+              <label>银行</label>
+              <select><option>全部</option><option>Blockchain Bank</option><option>DBS Bank</option><option>HSBC</option></select>
+            </div>
+            <div class="filter-group">
+              <label>币种</label>
+              <select><option>全部</option><option>USD</option><option>SGD</option><option>HKD</option></select>
+            </div>
+            <div class="filter-group">
+              <label>状态</label>
+              <select><option>全部</option><option>活跃</option><option>已冻结</option></select>
+            </div>
+            <button class="btn btn-primary">查询</button>
+          </div>
+          <table class="mini-table">
+            <thead><tr><th>VA 号</th><th>客户</th><th>MID</th><th>银行</th><th>币种</th><th>累计收款</th><th>状态</th></tr></thead>
+            <tbody>
+              <tr><td><span class="link">VA-USD-****4567</span></td><td><span class="link" onclick="showCustomer360()">鲲鹏商户A</span></td><td>M100023</td><td>Blockchain Bank</td><td>USD</td><td>$234,500</td><td><span class="badge badge-green">活跃</span></td></tr>
+              <tr><td><span class="link">VA-SGD-****7890</span></td><td><span class="link" onclick="showCustomer360()">鲲鹏商户A</span></td><td>M100023</td><td>DBS Bank</td><td>SGD</td><td>S$45,200</td><td><span class="badge badge-green">活跃</span></td></tr>
+              <tr><td><span class="link">VA-USD-****2345</span></td><td><span class="link">鲲鹏商户B</span></td><td>M100045</td><td>Blockchain Bank</td><td>USD</td><td>$78,900</td><td><span class="badge badge-green">活跃</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Page: Advanced Card Query ===== -->
+    <div class="content" id="page-query-cards" style="display:none;">
+      <div class="page-header">
+        <div class="page-title">卡片高级查询</div>
+        <div class="page-desc">跨客户卡片和消费查询</div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="filter-bar">
+            <div class="filter-group">
+              <label>MID / 卡号</label>
+              <input type="text" placeholder="输入 MID 或卡号后四位">
+            </div>
+            <div class="filter-group">
+              <label>类型</label>
+              <select><option>全部</option><option>VCC</option></select>
+            </div>
+            <div class="filter-group">
+              <label>状态</label>
+              <select><option>全部</option><option>活跃</option><option>已冻结</option><option>已注销</option></select>
+            </div>
+            <button class="btn btn-primary">查询</button>
+          </div>
+          <table class="mini-table">
+            <thead><tr><th>卡号</th><th>客户</th><th>MID</th><th>类型</th><th>币种</th><th>月限额</th><th>本月消费</th><th>状态</th></tr></thead>
+            <tbody>
+              <tr><td><span class="link">****8901</span></td><td><span class="link" onclick="showCustomer360()">鲲鹏商户A</span></td><td>M100023</td><td>VCC</td><td>USD</td><td>$10,000</td><td>$3,200</td><td><span class="badge badge-green">活跃</span></td></tr>
+              <tr><td><span class="link">****5678</span></td><td><span class="link" onclick="showCustomer360()">鲲鹏商户A</span></td><td>M100023</td><td>VCC</td><td>USD</td><td>$5,000</td><td>$800</td><td><span class="badge badge-green">活跃</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Page: Customer List (placeholder) ===== -->
+    <div class="content" id="page-customer-list" style="display:none;">
+      <div class="page-header">
+        <div class="page-title">客户列表</div>
+        <div class="page-desc">所有客户（会员）管理</div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="filter-bar">
+            <div class="filter-group">
+              <label>MID / 客户名称</label>
+              <input type="text" placeholder="搜索">
+            </div>
+            <div class="filter-group">
+              <label>状态</label>
+              <select><option>全部</option><option>活跃</option><option>已冻结</option><option>待审核</option></select>
+            </div>
+            <button class="btn btn-primary">查询</button>
+          </div>
+          <table class="mini-table">
+            <thead><tr><th>MID</th><th>客户名称</th><th>已开通产品</th><th>法币余额</th><th>数币余额</th><th>入网日期</th><th>状态</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>M100023</td>
+                <td><span class="link" onclick="showCustomer360()">鲲鹏商户A</span></td>
+                <td>OnRamp, OffRamp, Payins, VCC</td>
+                <td>$45,230</td>
+                <td>32,100 USDT</td>
+                <td>2025-08-15</td>
+                <td><span class="badge badge-green">活跃</span></td>
+              </tr>
+              <tr>
+                <td>M100045</td>
+                <td><span class="link">鲲鹏商户B</span></td>
+                <td>OnRamp, Payins</td>
+                <td>$8,200</td>
+                <td>5,000 USDT</td>
+                <td>2025-11-02</td>
+                <td><span class="badge badge-green">活跃</span></td>
+              </tr>
+              <tr>
+                <td>M100067</td>
+                <td><span class="link">鲲鹏商户C</span></td>
+                <td>Payins, Payouts</td>
+                <td>$2,100</td>
+                <td>—</td>
+                <td>2026-01-10</td>
+                <td><span class="badge badge-orange">待审核</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Page: Product Management (placeholder) ===== -->
+    <div class="content" id="page-product-mgmt" style="display:none;">
+      <div class="page-header">
+        <div class="page-title">客户产品管理</div>
+        <div class="page-desc">管理客户产品开通、配置和变更</div>
+      </div>
+      <div class="card"><div class="card-body"><div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><p>客户产品管理功能页面（参见现有 tp-tenant-portal 产品管理交互）</p></div></div></div>
+    </div>
+
+    <!-- ===== Page: Rate Config (placeholder) ===== -->
+    <div class="content" id="page-rate-config" style="display:none;">
+      <div class="page-header">
+        <div class="page-title">客户费率配置</div>
+        <div class="page-desc">配置和审核客户费率方案</div>
+      </div>
+      <div class="card"><div class="card-body"><div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg><p>客户费率配置功能页面（参见现有 tp-tenant-portal 费率配置交互）</p></div></div></div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<script>
+// ===== Page Navigation =====
+const pageMap = {
+  'home':           { el: 'page-home',           crumb: '全局搜索' },
+  'customer360':    { el: 'page-customer360',     crumb: '客户详情 — 鲲鹏商户A (M100023)' },
+  'customer-list':  { el: 'page-customer-list',   crumb: '客户列表' },
+  'product-mgmt':   { el: 'page-product-mgmt',    crumb: '客户产品管理' },
+  'rate-config':    { el: 'page-rate-config',      crumb: '客户费率配置' },
+  'query-orders':   { el: 'page-query-orders',     crumb: '订单高级查询' },
+  'query-balance':  { el: 'page-query-balance',    crumb: '余额高级查询' },
+  'query-va':       { el: 'page-query-va',         crumb: 'VA 高级查询' },
+  'query-cards':    { el: 'page-query-cards',      crumb: '卡片高级查询' },
+};
+
+function showPage(key) {
+  // Hide all pages
+  Object.values(pageMap).forEach(p => {
+    document.getElementById(p.el).style.display = 'none';
+  });
+  // Show target
+  const target = pageMap[key];
+  if (target) {
+    document.getElementById(target.el).style.display = 'block';
+    document.getElementById('breadcrumb-page').textContent = target.crumb;
+  }
+  // Update sidebar active
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  // Find matching nav item
+  const navItems = document.querySelectorAll('.nav-item');
+  const labelMap = {
+    'home': '全局搜索',
+    'customer-list': '客户列表',
+    'product-mgmt': '客户产品管理',
+    'rate-config': '客户费率配置',
+    'query-orders': '订单查询',
+    'query-balance': '余额查询',
+    'query-va': 'VA 查询',
+    'query-cards': '卡片查询',
+  };
+  const label = labelMap[key];
+  if (label) {
+    navItems.forEach(el => {
+      if (el.textContent.trim().replace(/\d+/g, '').trim() === label.trim()) {
+        el.classList.add('active');
+      }
+    });
+  }
+}
+
+function showCustomer360() {
+  showPage('customer360');
+  // No sidebar item for 360 — it's accessed via search
+}
+
+// ===== Search =====
+function handleSearch(value) {
+  const dropdown = document.getElementById('searchDropdown');
+  if (value.length >= 1) {
+    dropdown.classList.add('show');
+  } else {
+    dropdown.classList.remove('show');
+  }
+}
+
+function handleSearchFocus() {
+  const input = document.getElementById('globalSearchInput');
+  if (input.value.length >= 1) {
+    document.getElementById('searchDropdown').classList.add('show');
+  }
+}
+
+function closeDropdown() {
+  document.getElementById('searchDropdown').classList.remove('show');
+}
+
+function fillSearch(text) {
+  const input = document.getElementById('globalSearchInput');
+  input.value = text;
+  input.focus();
+  handleSearch(text);
+}
+
+// ===== 360 Tabs =====
+function switch360Tab(tabName) {
+  // Deactivate all tabs and panels
+  document.querySelectorAll('.tab-360').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  // Activate
+  document.getElementById('tab-' + tabName).classList.add('active');
+  // Find tab button
+  const tabLabels = { overview:'概览', balance:'余额', orders:'订单', va:'VA 账户', cards:'卡片', products:'已开通产品', rates:'费率配置', trade:'贸易背景', logs:'操作日志' };
+  document.querySelectorAll('.tab-360').forEach(t => {
+    if (t.textContent.trim().startsWith(tabLabels[tabName])) {
+      t.classList.add('active');
+    }
+  });
+}
+
+// ===== Keyboard Shortcut =====
+document.addEventListener('keydown', function(e) {
+  if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+    e.preventDefault();
+    document.getElementById('globalSearchInput').focus();
+  }
+  if (e.key === 'Escape') {
+    closeDropdown();
+    document.getElementById('globalSearchInput').blur();
+  }
+});
+</script>
+
+</body>
+</html>
