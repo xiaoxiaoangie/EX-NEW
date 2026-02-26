@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assets - Deposit & Withdraw - Merchant Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        sidebar: '#0f172a',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        * { font-family: 'Inter', sans-serif; }
+        .sidebar { width: 240px; }
+        .nav-item {
+            display: flex; align-items: center; padding: 10px 16px; margin: 2px 8px;
+            border-radius: 8px; color: #94a3b8; font-size: 14px; transition: all 0.15s ease; cursor: pointer;
+        }
+        .nav-item:hover { background: rgba(99, 102, 241, 0.1); color: #e2e8f0; }
+        .nav-item.active { background: rgba(99, 102, 241, 0.15); color: #818cf8; }
+        .nav-item i { width: 20px; font-size: 14px; }
+        .nav-section {
+            padding: 20px 16px 8px; font-size: 11px; font-weight: 600;
+            color: #475569; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .tag-web2 { background: #3b82f6; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 600; }
+        .tag-web3 { background: #10b981; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 600; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+        .tab-btn { position: relative; padding: 12px 0; font-size: 14px; font-weight: 600; color: #94a3b8; border: none; background: none; cursor: pointer; transition: all 0.15s; }
+        .tab-btn:hover { color: #475569; }
+        .tab-btn.active { color: #6366f1; }
+        .tab-btn.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: #6366f1; border-radius: 1px; }
+        .detail-row {
+            display: flex; align-items: flex-start; justify-content: space-between;
+            gap: 16px; padding: 14px 0; border-bottom: 1px solid #f1f5f9;
+        }
+        .detail-row:last-child { border-bottom: none; }
+        .detail-label { font-size: 14px; color: #94a3b8; flex-shrink: 0; min-width: 140px; }
+        .detail-value { display: flex; align-items: flex-start; gap: 8px; flex: 1; justify-content: flex-end; }
+        .detail-value span { font-size: 14px; font-weight: 600; color: #1e293b; text-align: right; word-break: break-all; }
+        .copy-btn { color: #cbd5e1; flex-shrink: 0; margin-top: 2px; cursor: pointer; background: none; border: none; padding: 0; }
+        .copy-btn:hover { color: #6366f1; }
+        .qr-placeholder {
+            width: 160px; height: 160px; border: 2px dashed #e2e8f0; border-radius: 12px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; color: #94a3b8;
+            background: #f8fafc;
+        }
+        .chain-chip {
+            display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px;
+            border-radius: 10px; border: 2px solid #e2e8f0; font-size: 13px; font-weight: 600;
+            cursor: pointer; transition: all 0.15s; background: white;
+        }
+        .chain-chip.active { border-color: #6366f1; background: #eef2ff; color: #4f46e5; }
+        .chain-chip:hover:not(.active) { border-color: #c7d2fe; background: #f8fafc; }
+        .coin-chip {
+            display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px;
+            border-radius: 12px; border: 2px solid #e2e8f0; font-size: 14px; font-weight: 600;
+            cursor: pointer; transition: all 0.15s; background: white;
+        }
+        .coin-chip.active { border-color: #6366f1; background: #eef2ff; }
+        .coin-chip:hover:not(.active) { border-color: #c7d2fe; }
+        .coin-icon-usdt { width: 28px; height: 28px; border-radius: 50%; background: #26a17b; display: flex; align-items: center; justify-content: center; }
+        .coin-icon-usdc { width: 28px; height: 28px; border-radius: 50%; background: #2775ca; display: flex; align-items: center; justify-content: center; }
+        .toast {
+            position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
+            background: #1e293b; color: white; padding: 10px 20px; border-radius: 8px;
+            font-size: 13px; font-weight: 500; z-index: 100; opacity: 0; transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        .toast.show { opacity: 1; }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside class="sidebar bg-sidebar flex flex-col h-full fixed left-0 top-0 z-20">
+            <div class="p-5 border-b border-slate-800">
+                <div class="flex items-center space-x-3">
+                    <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-cube text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-white font-semibold text-sm">Merchant Portal</h1>
+                        <p class="text-slate-500 text-xs">Web2 + Web3</p>
+                    </div>
+                </div>
+            </div>
+            <nav class="flex-1 overflow-y-auto py-4">
+                <div class="nav-item"><i class="fas fa-chart-line"></i><span class="ml-3">Dashboard</span></div>
+                <div class="nav-section">Assets</div>
+                <div class="nav-item"><i class="fas fa-wallet"></i><span class="ml-3">Wallets</span></div>
+                <div class="nav-item" id="nav-crypto-deposit" onclick="switchPage('crypto-deposit')"><i class="fas fa-arrow-down"></i><span class="ml-3">Crypto Deposit</span><span class="tag-web3 ml-auto">W3</span></div>
+                <div class="nav-item" id="nav-fiat-deposit" onclick="switchPage('fiat-deposit')"><i class="fas fa-university"></i><span class="ml-3">Fiat Deposit</span><span class="tag-web2 ml-auto">W2</span></div>
+                <div class="nav-item" id="nav-crypto-withdraw" onclick="switchPage('crypto-withdraw')"><i class="fas fa-arrow-up"></i><span class="ml-3">Crypto Withdraw</span><span class="tag-web3 ml-auto">W3</span></div>
+                <div class="nav-item" id="nav-fiat-withdraw" onclick="switchPage('fiat-withdraw')"><i class="fas fa-arrow-up-from-line"></i><span class="ml-3">Fiat Withdraw</span><span class="tag-web2 ml-auto">W2</span></div>
+                <div class="nav-section">Exchange</div>
+                <div class="nav-item"><i class="fas fa-exchange-alt"></i><span class="ml-3">FX</span><span class="tag-web2 ml-auto">W2</span></div>
+                <div class="nav-item"><i class="fas fa-coins"></i><span class="ml-3">Buy Crypto</span><span class="tag-web3 ml-auto">W3</span></div>
+                <div class="nav-item"><i class="fas fa-hand-holding-usd"></i><span class="ml-3">Sell Crypto</span><span class="tag-web3 ml-auto">W3</span></div>
+                <div class="nav-section">Payments</div>
+                <div class="nav-item"><i class="fas fa-arrow-down-to-line"></i><span class="ml-3">Collection</span><span class="tag-web2 ml-auto">W2</span></div>
+                <div class="nav-item"><i class="fas fa-shopping-cart"></i><span class="ml-3">Checkout</span><span class="tag-web2 ml-auto">W2</span></div>
+                <div class="nav-item"><i class="fas fa-paper-plane"></i><span class="ml-3">Remittance</span><span class="tag-web2 ml-auto">W2</span></div>
+                <div class="nav-section">Cards</div>
+                <div class="nav-item"><i class="fas fa-credit-card"></i><span class="ml-3">Cards</span><span class="tag-web2 ml-auto">W2</span></div>
+                <div class="nav-section">Reports</div>
+                <div class="nav-item"><i class="fas fa-file-invoice"></i><span class="ml-3">Trade Documents</span></div>
+                <div class="nav-item"><i class="fas fa-chart-bar"></i><span class="ml-3">Reports</span></div>
+                <div class="nav-section">Developer</div>
+                <div class="nav-item"><i class="fas fa-key"></i><span class="ml-3">API Keys</span></div>
+                <div class="nav-item"><i class="fas fa-book"></i><span class="ml-3">Documentation</span></div>
+                <div class="nav-section">Settings</div>
+                <div class="nav-item"><i class="fas fa-building"></i><span class="ml-3">Company Profile</span></div>
+                <div class="nav-item"><i class="fas fa-users"></i><span class="ml-3">Team Members</span></div>
+                <div class="nav-item"><i class="fas fa-lock"></i><span class="ml-3">Security</span></div>
+            </nav>
+            <div class="p-4 border-t border-slate-800">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-full flex items-center justify-center">
+                        <span class="text-white text-xs font-medium">JD</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-slate-200 text-sm font-medium truncate">John Doe</p>
+                        <p class="text-slate-500 text-xs truncate">Admin</p>
+                    </div>
+                    <button class="text-slate-500 hover:text-slate-300"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 ml-[240px] overflow-y-auto">
+
+            <!-- ═══════════════════════════════════════════════════════════
+                 PAGE 1: CRYPTO DEPOSIT
+                 ═══════════════════════════════════════════════════════════ -->
+            <div id="page-crypto-deposit" class="page-content hidden">
+                <header class="bg-white border-b border-slate-200 px-6 py-4 sticky top-0 z-10">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 text-sm text-slate-400 mb-1">
+                                <span>HOME</span><i class="fas fa-chevron-right text-[10px]"></i><span class="text-slate-600">Crypto Deposit</span>
+                            </div>
+                            <h2 class="text-xl font-semibold text-slate-800">Crypto Deposit</h2>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <button class="p-2 text-slate-500 hover:text-slate-700 relative"><i class="fas fa-bell"></i><span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span></button>
+                        </div>
+                    </div>
+                    <!-- Tabs -->
+                    <div class="flex gap-8 mt-3 border-b border-slate-100 -mb-4">
+                        <button class="tab-btn active" onclick="switchSubTab('crypto-deposit','create')">Create Deposit</button>
+                        <button class="tab-btn" onclick="switchSubTab('crypto-deposit','orders')">Deposit Orders</button>
+                    </div>
+                </header>
+
+                <!-- Tab: Create -->
+                <div id="crypto-deposit-create" class="p-6">
+                    <div class="max-w-[1400px] mx-auto">
+                        <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                            <!-- Left 62% -->
+                            <div class="lg:col-span-3">
+                                <div class="bg-white border border-slate-200 rounded-xl p-6">
+                                    <h3 class="font-semibold text-slate-900 mb-6">Deposit Cryptocurrency</h3>
+
+                                    <!-- Select Coin -->
+                                    <div class="mb-6">
+                                        <label class="block text-sm font-semibold text-slate-900 mb-3">SELECT COIN TO DEPOSIT</label>
+                                        <div class="flex gap-3">
+                                            <div class="coin-chip active" onclick="setCryptoDepositCoin('USDT', this)">
+                                                <div class="coin-icon-usdt"><span class="text-white text-xs font-bold">₮</span></div>
+                                                <span>USDT</span>
+                                            </div>
+                                            <div class="coin-chip" onclick="setCryptoDepositCoin('USDC', this)">
+                                                <div class="coin-icon-usdc"><span class="text-white text-xs font-bold">$</span></div>
+                                                <span>USDC</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Select Chain / Network -->
+                                    <div class="mb-6">
+                                        <label class="block text-sm font-semibold text-slate-900 mb-3">SELECT NETWORK</label>
+                                        <div class="flex gap-2 flex-wrap">
+                                            <div class="chain-chip active" onclick="setChain('TRC20', this)"><i class="fas fa-link text-xs"></i> TRC20</div>
+                                            <div class="chain-chip" onclick="setChain('ERC20', this)"><i class="fas fa-link text-xs"></i> ERC20</div>
+                                            <div class="chain-chip" onclick="setChain('SOL', this)"><i class="fas fa-link text-xs"></i> Solana</div>
+                                            <div class="chain-chip" onclick="setChain('BEP20', this)"><i class="fas fa-link text-xs"></i> BEP20</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Deposit Address -->
+                                    <div class="mb-6">
+                                        <label class="block text-sm font-semibold text-slate-900 mb-3">DEPOSIT ADDRESS</label>
+                                        <div class="flex gap-6 items-start">
+                                            <div class="flex-1">
+                                                <div class="flex items-center border-2 border-slate-200 bg-slate-50/50 rounded-lg px-4 py-3.5">
+                                                    <span id="cd-address" class="flex-1 font-mono text-sm font-semibold text-slate-900 break-all leading-relaxed">TJYh7o2ZPRegKzz5NsafPb5JCbBP2dBxnA</span>
+                                                    <button onclick="copyText(document.getElementById('cd-address').textContent)" class="text-indigo-500 hover:text-indigo-700 ml-3 shrink-0"><i class="far fa-copy"></i></button>
+                                                </div>
+                                                <p class="text-xs text-slate-500 mt-2 flex items-center gap-1"><i class="fas fa-info-circle"></i> Only send <strong id="cd-coin-label">USDT</strong> on <strong id="cd-chain-label">TRC20</strong> network to this address</p>
+                                            </div>
+                                            <div class="qr-placeholder shrink-0">
+                                                <i class="fas fa-qrcode text-3xl mb-2"></i>
+                                                <span class="text-xs">QR Code</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Minimum Deposit -->
+                                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-100">
+                                        <div class="flex justify-between text-sm mb-2">
+                                            <span class="text-slate-500">Minimum Deposit</span>
+                                            <span class="font-semibold text-slate-900">1.00 <span id="cd-coin-min">USDT</span></span>
+                                        </div>
+                                        <div class="flex justify-between text-sm mb-2">
+                                            <span class="text-slate-500">Expected Arrival</span>
+                                            <span class="font-semibold text-slate-900">1 Network Confirmation</span>
+                                        </div>
+                                        <div class="flex justify-between text-sm">
+                                            <span class="text-slate-500">Deposit Fee</span>
+                                            <span class="font-semibold text-emerald-600">Free</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right 35% Notice -->
+                            <div class="lg:col-span-2">
+                                <div class="bg-amber-50 border border-amber-200 rounded-xl p-5 sticky top-28">
+                                    <h4 class="text-base font-semibold text-amber-700 mb-4 flex items-center gap-2">
+                                        <i class="fas fa-exclamation-circle text-amber-500"></i>
+                                        Important Notice
+                                    </h4>
+                                    <ul class="space-y-3 text-sm text-amber-800 leading-relaxed">
+                                        <li class="flex gap-2.5"><span class="text-amber-400 mt-1 shrink-0">&bull;</span><span>Ensure you select the <strong>correct network</strong>. Sending assets on a wrong network may result in permanent loss of funds.</span></li>
+                                        <li class="flex gap-2.5"><span class="text-amber-400 mt-1 shrink-0">&bull;</span><span>Deposits below the <strong>minimum amount</strong> will not be credited and cannot be recovered.</span></li>
+                                        <li class="flex gap-2.5"><span class="text-amber-400 mt-1 shrink-0">&bull;</span><span>Deposit will be credited after <strong>1 network confirmation</strong>. Processing time depends on the blockchain network.</span></li>
+                                        <li class="flex gap-2.5"><span class="text-amber-400 mt-1 shrink-0">&bull;</span><span>Do not deposit any other token to this address. Only <strong>USDT / USDC</strong> on the selected network is supported.</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Orders (placeholder) -->
+                <div id="crypto-deposit-orders" class="p-6 hidden">
+                    <div class="max-w-[1400px] mx-auto">
+                        <div class="bg-white border border-slate-200 rounded-xl p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="font-semibold text-slate-900 text-lg">Crypto Deposit Orders</h3>
+                                <div class="flex gap-2">
+                                    <button class="px-3 py-1.5 text-xs font-semibold rounded-full border border-indigo-200 bg-indigo-50 text-indigo-600">All</button>
+                                    <button class="px-3 py-1.5 text-xs font-semibold rounded-full border border-slate-200 text-slate-500 hover:border-slate-300">Pending</button>
+                                    <button class="px-3 py-1.5 text-xs font-semibold rounded-full border border-slate-200 text-slate-500 hover:border-slate-300">Completed</button>
+                                </div>
+                            </div>
+                            <table class="w-full text-sm">
+                                <thead><tr class="border-b border-slate-100 text-slate-500 text-left">
+                                    <th class="pb-3 font-medium">Order ID</th><th class="pb-3 font-medium">Coin</th><th class="pb-3 font-medium">Network</th><th class="pb-3 font-medium">Amount</th><th class="pb-3 font-medium">Status</th><th class="pb-3 font-medium">Time</th>
+                                </tr></thead>
+                                <tbody>
+                                    <tr class="border-b border-slate-50"><td class="py-3.5 font-mono text-xs text-indigo-600">CD20260227001</td><td class="py-3.5"><span class="inline-flex items-center gap-1.5"><span class="w-5 h-5 bg-emerald-100 rounded-full flex items-center justify-center text-[10px] text-emerald-700 font-bold">₮</span>USDT</span></td><td class="py-3.5">TRC20</td><td class="py-3.5 font-semibold">5,000.00</td><td class="py-3.5"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full text-xs font-semibold">Completed</span></td><td class="py-3.5 text-slate-500">2026-02-26 14:30</td></tr>
+                                    <tr class="border-b border-slate-50"><td class="py-3.5 font-mono text-xs text-indigo-600">CD20260226002</td><td class="py-3.5"><span class="inline-flex items-center gap-1.5"><span class="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center text-[10px] text-blue-700 font-bold">$</span>USDC</span></td><td class="py-3.5">ERC20</td><td class="py-3.5 font-semibold">12,000.00</td><td class="py-3.5"><span class="px-2 py-0.5 bg-amber-50 text-amber-700 rounded-full text-xs font-semibold">Pending</span></td><td class="py-3.5 text-slate-500">2026-02-26 10:15</td></tr>
+                                    <tr><td class="py-3.5 font-mono text-xs text-indigo-600">CD20260225003</td><td class="py-3.5"><span class="inline-flex items-center gap-1.5"><span class="w-5 h-5 bg-emerald-100 rounded-full flex items-center justify-center text-[10px] text-emerald-700 font-bold">₮</span>USDT</span></td><td class="py-3.5">TRC20</td><td class="py-3.5 font-semibold">800.00</td><td class="py-3.5"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full text-xs font-semibold">Completed</span></td><td class="py-3.5 text-slate-500">2026-02-25 09:00</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════════════════
+                 PAGE 2: CRYPTO WITHDRAW
+                 ═══════════════════════════════════════════════════════════ -->
+            <div id="page-crypto-withdraw" class="page-content hidden">
+                <header class="bg-white border-b border-slate-200 px-6 py-4 sticky top-0 z-10">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 text-sm text-slate-400 mb-1">
+                                <span>HOME</span><i class="fas fa-chevron-right text-[10px]"></i><span class="text-slate-600">Crypto Withdraw</span>
+                            </div>
+                            <h2 class="text-xl font-semibold text-slate-800">Crypto Withdraw</h2>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <button class="p-2 text-slate-500 hover:text-slate-700 relative"><i class="fas fa-bell"></i><span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span></button>
+                        </div>
+                    </div>
+                    <div class="flex gap-8 mt-3 border-b border-slate-100 -mb-4">
+                        <button class="tab-btn active" onclick="switchSubTab('crypto-withdraw','create')">Create Withdraw</button>
+                        <button class="tab-btn" onclick="switchSubTab('crypto-withdraw','orders')">Withdraw Orders</button>
+                    </div>
+                </header>
+
+                <!-- Tab: Create -->
+                <div id="crypto-withdraw-create" class="p-6">
+                    <div class="max-w-[1400px] mx-auto">
+                        <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                            <!-- Left 62% -->
+                            <div class="lg:col-span-3">
+                                <div class="bg-white border border-slate-200 rounded-xl p-6">
+                                    <h3 class="font-semibold text-slate-900 mb-6">Withdraw Cryptocurrency</h3>
+
+                                    <!-- Select Coin -->
+                                    <div class="mb-6">
+                                        <label class="block text-sm font-semibold text-slate-900 mb-2.5">SELECT COIN</label>
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex gap-3">
+                                                <div class="coin-chip active" onclick="setCryptoWithdrawCoin('USDT', this)">
+                                                    <div class="coin-icon-usdt"><span class="text-white text-xs font-bold">₮</span></div>
+                                                    <span>USDT</span>
+                                                </div>
+                                                <div class="coin-chip" onclick="setCryptoWithdrawCoin('USDC', this)">
+                                                    <div class="coin-icon-usdc"><span class="text-white text-xs font-bold">$</span></div>
+                                                    <span>USDC</span>
+                                                </div>
+                                            </div>
+                                            <div class="text-sm text-slate-500">Available: <span class="font-bold text-emerald-600" id="cw-balance">25,430.00</span> <span id="cw-coin-bal">USDT</span></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Select Network -->
+                                    <div class="mb-6">
+                                        <label class="block text-sm font-semibold text-slate-900 mb-2.5">SELECT NETWORK</label>
+                                        <div class="flex gap-2 flex-wrap">
+                                            <div class="chain-chip active" onclick="setCWChain('TRC20', this)"><i class="fas fa-link text-xs"></i> TRC20</div>
+                                            <div class="chain-chip" onclick="setCWChain('ERC20', this)"><i class="fas fa-link text-xs"></i> ERC20</div>
+                                            <div class="chain-chip" onclick="setCWChain('SOL', this)"><i class="fas fa-link text-xs"></i> Solana</div>
+                                            <div class="chain-chip" onclick="setCWChain('BEP20', this)"><i class="fas fa-link text-xs"></i> BEP20</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Withdraw Address -->
+                                    <div class="mb-6">
+                                        <label class="block text-sm font-semibold text-slate-900 mb-2.5">DESTINATION ADDRESS <span class="text-red-500">*</span></label>
+                                        <div class="flex border border-slate-200 rounded-lg focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-50">
+                                            <input id="cw-address" type="text" placeholder="Enter wallet address" class="flex-1 px-4 py-3 text-sm border-0 rounded-lg focus:outline-none font-mono">
+                                        </div>
+                                    </div>
+
+                                    <!-- Amount -->
+                                    <div class="mb-6">
+                                        <label class="block text-sm font-semibold text-slate-900 mb-2.5">AMOUNT <span class="text-red-500">*</span></label>
+                                        <div class="flex border border-slate-200 rounded-lg focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-50">
+                                            <input id="cw-amount" type="text" oninput="updateCWFees()" placeholder="Enter amount" class="flex-1 px-4 py-3 text-sm border-0 rounded-l-lg focus:outline-none">
+                                            <div class="flex items-center gap-2 px-4 bg-slate-50 border-l border-slate-200 rounded-r-lg">
+                                                <span id="cw-coin-label" class="text-sm font-medium text-slate-600">USDT</span>
+                                                <button onclick="document.getElementById('cw-amount').value='25430.00';updateCWFees()" class="text-xs text-indigo-600 font-semibold hover:text-indigo-800">MAX</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Fee Summary -->
+                                    <div class="bg-slate-50 rounded-xl p-5 space-y-3 border border-slate-100 mb-6">
+                                        <div class="flex justify-between text-sm">
+                                            <span class="text-slate-500">Network Fee</span>
+                                            <span class="font-semibold text-slate-900"><span id="cw-network-fee">1.00</span> <span class="cw-coin-unit">USDT</span></span>
+                                        </div>
+                                        <div class="flex justify-between text-sm">
+                                            <span class="text-slate-500">Platform Fee</span>
+                                            <span class="font-semibold text-emerald-600">Free</span>
+                                        </div>
+                                        <div class="pt-3 border-t border-slate-200 flex justify-between text-sm">
+                                            <span class="font-semibold text-slate-900">You Will Receive</span>
+                                            <span class="font-bold text-indigo-600"><span id="cw-receive">0.00</span> <span class="cw-coin-unit">USDT</span></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Submit -->
+                                    <button class="w-full py-3.5 bg-gradient-to-r from-violet-500 to-purple-600 text-white text-sm font-semibold rounded-xl hover:from-violet-600 hover:to-purple-700 transition shadow-lg shadow-purple-200 flex items-center justify-center gap-2">
+                                        <i class="fas fa-paper-plane text-xs"></i>
+                                        Submit Withdraw
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Right 35% Notice -->
+                            <div class="lg:col-span-2">
+                                <div class="bg-red-50 border border-red-200 rounded-xl p-5 sticky top-28">
+                                    <h4 class="text-base font-semibold text-red-700 mb-4 flex items-center gap-2">
+                                        <i class="fas fa-exclamation-circle text-red-500"></i>
+                                        Important Notice
+                                    </h4>
+                                    <ul class="space-y-3 text-sm text-red-800 leading-relaxed">
+                                        <li class="flex gap-2.5"><span class="text-red-400 mt-1 shrink-0">&bull;</span><span><strong>Double-check the destination address</strong> before submitting. Withdrawals to incorrect addresses cannot be reversed.</span></li>
+                                        <li class="flex gap-2.5"><span class="text-red-400 mt-1 shrink-0">&bull;</span><span>Ensure the <strong>network matches</strong> the destination wallet. Sending to the wrong network will result in permanent loss.</span></li>
+                                        <li class="flex gap-2.5"><span class="text-red-400 mt-1 shrink-0">&bull;</span><span><strong>Minimum withdraw:</strong> 10.00 USDT/USDC. Withdrawals below minimum will be rejected.</span></li>
+                                        <li class="flex gap-2.5"><span class="text-red-400 mt-1 shrink-0">&bull;</span><span><strong>Processing time:</strong> Most withdrawals complete within 30 minutes. During network congestion, it may take longer.</span></li>
+                                        <li class="flex gap-2.5"><span class="text-red-400 mt-1 shrink-0">&bull;</span><span><strong>Security verification</strong> (2FA / email) may be required for large withdrawals.</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Orders (placeholder) -->
+                <div id="crypto-withdraw-orders" class="p-6 hidden">
+                    <div class="max-w-[1400px] mx-auto">
+                        <div class="bg-white border border-slate-200 rounded-xl p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="font-semibold text-slate-900 text-lg">Crypto Withdraw Orders</h3>
+                                <div class="flex gap-2">
+                                    <button class="px-3 py-1.5 text-xs font-semibold rounded-full border border-indigo-200 bg-indigo-50 text-indigo-600">All</button>
+                                    <button class="px-3 py-1.5 text-xs font-semibold rounded-full border border-slate-200 text-slate-500">Processing</button>
+                                    <button class="px-3 py-1.5 text-xs font-semibold rounded-full border border-slate-200 text-slate-500">Completed</button>
+                                </div>
+                            </div>
+                            <table class="w-full text-sm">
+                                <thead><tr class="border-b border-slate-100 text-slate-500 text-left">
+                                    <th class="pb-3 font-medium">Order ID</th><th class="pb-3 font-medium">Coin</th><th class="pb-3 font-medium">Network</th><th class="pb-3 font-medium">Amount</th><th class="pb-3 font-medium">Fee</th><th class="pb-3 font-medium">To Address</th><th class="pb-3 font-medium">Status</th><th class="pb-3 font-medium">Time</th>
+                                </tr></thead>
+                                <tbody>
+                                    <tr class="border-b border-slate-50"><td class="py-3.5 font-mono text-xs text-indigo-600">CW20260227001</td><td class="py-3.5">USDT</td><td class="py-3.5">TRC20</td><td class="py-3.5 font-semibold">2,000.00</td><td class="py-3.5 text-slate-500">1.00</td><td class="py-3.5 font-mono text-xs text-slate-500">TJYh...xnA</td><td class="py-3.5"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full text-xs font-semibold">Completed</span></td><td class="py-3.5 text-slate-500">2026-02-27 08:15</td></tr>
+                                    <tr><td class="py-3.5 font-mono text-xs text-indigo-600">CW20260226002</td><td class="py-3.5">USDC</td><td class="py-3.5">ERC20</td><td class="py-3.5 font-semibold">5,500.00</td><td class="py-3.5 text-slate-500">5.00</td><td class="py-3.5 font-mono text-xs text-slate-500">0x8a...3f2</td><td class="py-3.5"><span class="px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full text-xs font-semibold">Processing</span></td><td class="py-3.5 text-slate-500">2026-02-26 16:40</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════════════════
+                 PAGE 3: FIAT DEPOSIT
+                 ═══════════════════════════════════════════════════════════ -->
+            <div id="page-fiat-deposit" class="page-content hidden">
+                <header class="bg-white border-b border-slate-200 px-6 py-4 sticky top-0 z-10">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 text-sm text-slate-400 mb-1">
+                                <span>HOME</span><i class="fas fa-chevron-right text-[10px]"></i><span class="text-slate-600">Fiat Deposit</span>
+                            </div>
+                            <h2 class="text-xl font-semibold text-slate-800">Fiat Deposit</h2>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <button class="p-2 text-slate-500 hover:text-slate-700 relative"><i class="fas fa-bell"></i><span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span></button>
+                        </div>
+                    </div>
+                    <div class="flex gap-8 mt-3 border-b border-slate-100 -mb-4">
+                        <button class="tab-btn active" onclick="switchSubTab('fiat-deposit','create')">Create Deposit</button>
+                        <button class="tab-btn" onclick="switchSubTab('fiat-deposit','orders')">Deposit Orders</button>
+                    </div>
+                </header>
+
+                <!-- Tab: Create -->
+                <div id="fiat-deposit-create" class="p-6">
+                    <div class="max-w-[1400px] mx-auto">
+
+                        <!-- Account Type Selector -->
+                        <div class="flex items-center gap-3 mb-6">
+                            <button id="fd-btn-payment" onclick="setFDAccountType('payment')"
+                                class="flex items-center gap-3 px-5 py-3.5 rounded-xl border-2 transition-all border-indigo-500 bg-indigo-50/60 shadow-sm">
+                                <div class="w-9 h-9 rounded-lg flex items-center justify-center bg-blue-100">
+                                    <i class="fas fa-university text-sm text-blue-600"></i>
+                                </div>
+                                <div class="text-left">
+                                    <p class="text-sm font-semibold text-indigo-700">Payment Account</p>
+                                    <p class="text-xs text-slate-500">Fiat-only payment / collection account</p>
+                                </div>
+                                <span class="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-[9px] font-semibold rounded uppercase tracking-wide ml-2">FIAT</span>
+                            </button>
+                            <button id="fd-btn-trading" onclick="setFDAccountType('trading')"
+                                class="flex items-center gap-3 px-5 py-3.5 rounded-xl border-2 transition-all border-slate-200 hover:border-slate-300 hover:bg-slate-50">
+                                <div class="w-9 h-9 rounded-lg flex items-center justify-center bg-slate-100">
+                                    <i class="fas fa-chart-line text-sm text-slate-400"></i>
+                                </div>
+                                <div class="text-left">
+                                    <p class="text-sm font-semibold text-slate-700">Trading Account</p>
+                                    <p class="text-xs text-slate-500">Crypto exchange / trading account (e.g. BB)</p>
+                                </div>
+                                <span class="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[9px] font-semibold rounded uppercase tracking-wide ml-2">TRADING</span>
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                            <!-- Left 62% -->
+                            <div class="lg:col-span-3">
+                                <div class="bg-white border border-slate-200 rounded-xl p-6">
+                                    <h3 id="fd-form-title" class="font-semibold text-slate-900 mb-6">Payment Account — Fiat Deposit</h3>
+
+                                    <!-- Currency -->
+                                    <div class="mb-6">
+                                        <label class="block text-sm font-semibold text-slate-900 mb-2.5">Currency <span class="text-red-500">*</span></label>
+                                        <div class="flex gap-2" id="fd-currency-options">
+                                            <button onclick="setFDCurrency('USD')" data-currency="USD" class="fd-currency-btn flex items-center gap-2 px-3.5 py-2.5 rounded-xl border-2 transition border-indigo-500 bg-indigo-50/50">
+                                                <div class="w-7 h-7 bg-green-100 rounded-full flex items-center justify-center"><span class="text-green-600 font-bold text-sm">$</span></div>
+                                                <span class="font-semibold text-slate-900 text-sm">USD</span>
+                                            </button>
+                                            <button onclick="setFDCurrency('EUR')" data-currency="EUR" class="fd-currency-btn flex items-center gap-2 px-3.5 py-2.5 rounded-xl border-2 transition border-slate-100 hover:border-slate-200 hover:bg-slate-50">
+                                                <div class="w-7 h-7 bg-blue-100 rounded-full flex items-center justify-center"><span class="text-blue-600 font-bold text-sm">&euro;</span></div>
+                                                <span class="font-semibold text-slate-900 text-sm">EUR</span>
+                                            </button>
+                                            <button onclick="setFDCurrency('GBP')" data-currency="GBP" class="fd-currency-btn flex items-center gap-2 px-3.5 py-2.5 rounded-xl border-2 transition border-slate-100 hover:border-slate-200 hover:bg-slate-50">
+                                                <div class="w-7 h-7 bg-purple-100 rounded-full flex items-center justify-center"><span class="text-purple-600 font-bold text-sm">&pound;</span></div>
+                                                <span class="font-semibold text-slate-900 text-sm">GBP</span>
+                                            </button>
+                                            <button onclick="setFDCurrency('HKD')" data-currency="HKD" class="fd-currency-btn flex items-center gap-2 px-3.5 py-2.5 rounded-xl border-2 transition border-slate-100 hover:border-slate-200 hover:bg-slate-50">
+                                                <div class="w-7 h-7 bg-red-100 rounded-full flex items-center justify-center"><span class="text-red-600 font-bold text-sm">$</span></div>
+                                                <span class="font-semibold text-slate-900 text-sm">HKD</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Amount -->
+                                    <div class="mb-6">
+                                        <label class="block text-sm font-semibold text-slate-900 mb-2.5">Deposit Amount <span class="text-red-500">*</span></label>
+                                        <div class="flex border border-slate-200 rounded-lg focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-50">
+                                            <input id="fd-amount" type="text" oninput="updateFDFees()" placeholder="Enter deposit amount" class="flex-1 px-4 py-2.5 text-sm border-0 rounded-l-lg focus:outline-none">
+                                            <div class="flex items-center px-4 bg-slate-50 border-l border-slate-200 rounded-r-lg">
+                                                <span id="fd-amount-currency" class="text-sm font-medium text-slate-600">USD</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Deposit Method -->
+                                    <div class="mb-6">
+                                        <label class="block text-sm font-semibold text-slate-900 mb-2.5">PAYMENT SOURCE <span class="text-red-500">*</span></label>
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <button id="fd-method-bank" onclick="setFDMethod('bank')" class="flex items-center gap-3 p-4 rounded-xl border-2 transition text-left border-indigo-500 bg-indigo-50/40">
+                                                <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-indigo-100">
+                                                    <i class="fas fa-university text-sm text-indigo-600"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="text-sm font-semibold text-slate-900">Bank Transfer</p>
+                                                    <p class="text-xs text-slate-500 mt-0.5">SWIFT / Wire / Local transfer</p>
+                                                </div>
+                                            </button>
+                                            <button id="fd-method-wallet" onclick="setFDMethod('wallet')" class="flex items-center gap-3 p-4 rounded-xl border-2 transition text-left border-slate-200 hover:border-slate-300 hover:bg-slate-50">
+                                                <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-slate-100">
+                                                    <i class="fas fa-wallet text-sm text-slate-400"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="text-sm font-semibold text-slate-900">USD Wallet</p>
+                                                    <p class="text-xs text-slate-500 mt-0.5">Internal wallet balance</p>
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Bank Account Info -->
+                                    <div id="fd-bank-info" class="mb-6">
+                                        <div class="border border-slate-200 rounded-xl overflow-hidden">
+                                            <div class="flex items-center gap-3 px-5 py-4 bg-slate-50/50 border-b border-slate-100">
+                                                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center"><i class="fas fa-university text-blue-600"></i></div>
+                                                <div class="flex-1">
+                                                    <p class="text-sm font-semibold text-slate-900">DBS BANK (HONG KONG) LIMITED</p>
+                                                    <p class="text-xs text-slate-500">**** **** 9847</p>
+                                                </div>
+                                                <button class="text-sm text-indigo-600 font-semibold hover:text-indigo-800">Change</button>
+                                            </div>
+                                            <button onclick="toggleFDBankDetails()" class="flex items-center justify-between w-full px-5 py-3 hover:bg-slate-50 transition">
+                                                <span class="text-sm font-medium text-slate-600">Bank Account Details</span>
+                                                <i id="fd-bank-chevron" class="fas fa-chevron-down text-slate-400 text-xs"></i>
+                                            </button>
+                                            <div id="fd-bank-details" class="hidden border-t border-slate-100 px-5 py-4">
+                                                <div class="detail-row"><span class="detail-label">Account Number</span><div class="detail-value"><span>20301000010313</span><button onclick="copyText('20301000010313')" class="copy-btn"><i class="far fa-copy text-xs"></i></button></div></div>
+                                                <div class="detail-row"><span class="detail-label">Recipient Name</span><div class="detail-value"><span>BLANKBLOCK LLC</span><button onclick="copyText('BLANKBLOCK LLC')" class="copy-btn"><i class="far fa-copy text-xs"></i></button></div></div>
+                                                <div class="detail-row"><span class="detail-label">SWIFT Code</span><div class="detail-value"><span>DBSSHKHH</span><button onclick="copyText('DBSSHKHH')" class="copy-btn"><i class="far fa-copy text-xs"></i></button></div></div>
+                                                <div class="detail-row"><span class="detail-label">Bank Address</span><div class="detail-value"><span>11/F, The Center, 99 Queen's Road Central, HK</span><button onclick="copyText('11/F, The Center')" class="copy-btn"><i class="far fa-copy text-xs"></i></button></div></div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between px-1 mt-3">
+                                            <div class="flex items-center gap-2 text-sm text-slate-500"><i class="far fa-clock text-slate-400"></i><span>Arrives within</span><span class="font-bold text-slate-900">3 days</span></div>
+                                            <div class="text-sm text-slate-500">Expires: <span class="text-indigo-600 font-medium">2026-02-28 09:05</span></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Fee -->
+                                    <div class="bg-slate-50 rounded-xl p-5 space-y-3 border border-slate-100 mb-6">
+                                        <div class="flex justify-between text-sm">
+                                            <span class="text-slate-500">Transfer Amount</span>
+                                            <span class="font-medium text-slate-900"><span id="fd-overview-amount">--</span> <span class="fd-cur">USD</span></span>
+                                        </div>
+                                        <div class="flex justify-between text-sm">
+                                            <span class="text-slate-500">Fee (0.1%)</span>
+                                            <span class="font-medium text-slate-900"><span id="fd-overview-fee">--</span> <span class="fd-cur">USD</span></span>
+                                        </div>
+                                        <div class="pt-3 border-t border-slate-200 flex justify-between text-sm">
+                                            <span class="font-semibold text-slate-900">You Receive</span>
+                                            <span class="font-bold text-indigo-600"><span id="fd-overview-receive">--</span> <span class="fd-cur">USD</span></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Confirm -->
+                                    <button class="w-full py-3.5 bg-gradient-to-r from-violet-500 to-purple-600 text-white text-sm font-semibold rounded-xl hover:from-violet-600 hover:to-purple-700 transition shadow-lg shadow-purple-200 flex items-center justify-center gap-2">
+                                        <i class="fas fa-check text-xs"></i>
+                                        Confirm Deposit Completion
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Right 35% Notice -->
+                            <div class="lg:col-span-2">
+                                <div class="bg-red-50 border border-red-200 rounded-xl p-5 sticky top-28">
+                                    <h4 class="text-base font-semibold text-red-700 mb-4 flex items-center gap-2">
+                                        <i class="fas fa-exclamation-circle text-red-500"></i>
+                                        Important Notice
+                                    </h4>
+                                    <ul class="space-y-3.5 text-sm text-red-800 leading-relaxed">
+                                        <li class="flex gap-2.5"><span class="text-red-400 mt-1 shrink-0">&bull;</span><span>The final amount will be based on the <strong>actual amount received</strong> by the bank.</span></li>
+                                        <li class="flex gap-2.5"><span class="text-red-400 mt-1 shrink-0">&bull;</span><span><strong>Same-Name Transfer Required:</strong> The remittance must be made from a bank account with the same name as your registered account. Third-party transfers will be rejected.</span></li>
+                                        <li class="flex gap-2.5"><span class="text-red-400 mt-1 shrink-0">&bull;</span><span><strong>Purpose Code & Reference Code Mandatory:</strong> Both codes are required in bank remarks. Missing either will result in automatic refund.</span></li>
+                                        <li class="flex gap-2.5"><span class="text-red-400 mt-1 shrink-0">&bull;</span><span><strong>User Liability:</strong> Failure to comply with the above requirements may result in transaction delays, refunds, or losses.</span></li>
+                                        <li class="flex gap-2.5"><span class="text-red-400 mt-1 shrink-0">&bull;</span><span><strong>Need Help?</strong> Please contact your Account Manager for assistance.</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Orders (placeholder) -->
+                <div id="fiat-deposit-orders" class="p-6 hidden">
+                    <div class="max-w-[1400px] mx-auto">
+                        <div class="bg-white border border-slate-200 rounded-xl p-6">
+                            <h3 class="font-semibold text-slate-900 text-lg mb-6">Fiat Deposit Orders</h3>
+                            <table class="w-full text-sm">
+                                <thead><tr class="border-b border-slate-100 text-slate-500 text-left">
+                                    <th class="pb-3 font-medium">Order ID</th><th class="pb-3 font-medium">Account</th><th class="pb-3 font-medium">Currency</th><th class="pb-3 font-medium">Amount</th><th class="pb-3 font-medium">Method</th><th class="pb-3 font-medium">Status</th><th class="pb-3 font-medium">Time</th>
+                                </tr></thead>
+                                <tbody>
+                                    <tr class="border-b border-slate-50"><td class="py-3.5 font-mono text-xs text-indigo-600">FD20260227001</td><td class="py-3.5"><span class="px-2 py-0.5 bg-blue-50 text-blue-700 rounded text-xs font-semibold">Payment</span></td><td class="py-3.5">USD</td><td class="py-3.5 font-semibold">50,000.00</td><td class="py-3.5">Bank Transfer</td><td class="py-3.5"><span class="px-2 py-0.5 bg-amber-50 text-amber-700 rounded-full text-xs font-semibold">Pending</span></td><td class="py-3.5 text-slate-500">2026-02-27 09:30</td></tr>
+                                    <tr><td class="py-3.5 font-mono text-xs text-indigo-600">FD20260226002</td><td class="py-3.5"><span class="px-2 py-0.5 bg-amber-50 text-amber-700 rounded text-xs font-semibold">Trading</span></td><td class="py-3.5">USD</td><td class="py-3.5 font-semibold">10,000.00</td><td class="py-3.5">Bank Transfer</td><td class="py-3.5"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full text-xs font-semibold">Completed</span></td><td class="py-3.5 text-slate-500">2026-02-26 15:20</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════════════════
+                 PAGE 4: FIAT WITHDRAW
+                 ═══════════════════════════════════════════════════════════ -->
+            <div id="page-fiat-withdraw" class="page-content hidden">
+                <header class="bg-white border-b border-slate-200 px-6 py-4 sticky top-0 z-10">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 text-sm text-slate-400 mb-1">
+                                <span>HOME</span><i class="fas fa-chevron-right text-[10px]"></i><span class="text-slate-600">Fiat Withdraw</span>
+                            </div>
+                            <h2 class="text-xl font-semibold text-slate-800">Fiat Withdraw</h2>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <button class="p-2 text-slate-500 hover:text-slate-700 relative"><i class="fas fa-bell"></i><span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span></button>
+                        </div>
+                    </div>
+                    <div class="flex gap-8 mt-3 border-b border-slate-100 -mb-4">
+                        <button class="tab-btn active" onclick="switchSubTab('fiat-withdraw','create')">Create Withdraw</button>
+                        <button class="tab-btn" onclick="switchSubTab('fiat-withdraw','orders')">Withdraw Orders</button>
+                    </div>
+                </header>
+
+                <!-- Tab: Create -->
+                <div id="fiat-withdraw-create" class="p-6">
+                    <div class="max-w-[1400px] mx-auto">
+
+                        <!-- Account Type Selector -->
+                        <div class="flex items-center gap-3 mb-6">
+                            <button id="fw-btn-payment" onclick="setFWAccountType('payment')"
+                                class="flex items-center gap-3 px-5 py-3.5 rounded-xl border-2 transition-all border-indigo-500 bg-indigo-50/60 shadow-sm">
+                                <div class="w-9 h-9 rounded-lg flex items-center justify-center bg-blue-100">
+                                    <i class="fas fa-university text-sm text-blue-600"></i>
+                                </div>
+                                <div class="text-left">
+                                    <p class="text-sm font-semibold text-indigo-700">Payment Account</p>
+                                    <p class="text-xs text-slate-500">Withdraw from payment account</p>
+                                </div>
+                                <span class="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-[9px] font-semibold rounded uppercase tracking-wide ml-2">FIAT</span>
+                            </button>
+                            <button id="fw-btn-trading" onclick="setFWAccountType('trading')"
+                                class="flex items-center gap-3 px-5 py-3.5 rounded-xl border-2 transition-all border-slate-200 hover:border-slate-300 hover:bg-slate-50">
+                                <div class="w-9 h-9 rounded-lg flex items-center justify-center bg-slate-100">
+                                    <i class="fas fa-chart-line text-sm text-slate-400"></i>
+                                </div>
+                                <div class="text-left">
+                                    <p class="text-sm font-semibold text-slate-700">Trading Account</p>
+                                    <p class="text-xs text-slate-500">Withdraw from trading account (e.g. BB)</p>
+                                </div>
+                                <span class="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[9px] font-semibold rounded uppercase tracking-wide ml-2">TRADING</span>
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                            <!-- Left 62% -->
+                            <div class="lg:col-span-3">
+                                <div class="bg-white border border-slate-200 rounded-xl p-6">
+                                    <h3 id="fw-form-title" class="font-semibold text-slate-900 mb-6">Payment Account — Fiat Withdraw</h3>
+
+                                    <!-- Currency -->
+                                    <div class="mb-6">
+                                        <label class="block text-sm font-semibold text-slate-900 mb-2.5 flex justify-between">
+                                            <span>Currency <span class="text-red-500">*</span></span>
+                                            <span class="text-slate-500 font-normal text-xs">Available: <span class="font-bold text-emerald-600" id="fw-balance">128,450.00</span> <span id="fw-bal-cur">USD</span></span>
+                                        </label>
+                                        <div class="flex gap-2">
+                                            <button onclick="setFWCurrency('USD')" data-currency="USD" class="fw-currency-btn flex items-center gap-2 px-3.5 py-2.5 rounded-xl border-2 transition border-indigo-500 bg-indigo-50/50">
+                                                <div class="w-7 h-7 bg-green-100 rounded-full flex items-center justify-center"><span class="text-green-600 font-bold text-sm">$</span></div>
+                                                <span class="font-semibold text-slate-900 text-sm">USD</span>
+                                            </button>
+                                            <button onclick="setFWCurrency('EUR')" data-currency="EUR" class="fw-currency-btn flex items-center gap-2 px-3.5 py-2.5 rounded-xl border-2 transition border-slate-100 hover:border-slate-200 hover:bg-slate-50">
+                                                <div class="w-7 h-7 bg-blue-100 rounded-full flex items-center justify-center"><span class="text-blue-600 font-bold text-sm">&euro;</span></div>
+                                                <span class="font-semibold text-slate-900 text-sm">EUR</span>
+                                            </button>
+                                            <button onclick="setFWCurrency('GBP')" data-currency="GBP" class="fw-currency-btn flex items-center gap-2 px-3.5 py-2.5 rounded-xl border-2 transition border-slate-100 hover:border-slate-200 hover:bg-slate-50">
+                                                <div class="w-7 h-7 bg-purple-100 rounded-full flex items-center justify-center"><span class="text-purple-600 font-bold text-sm">&pound;</span></div>
+                                                <span class="font-semibold text-slate-900 text-sm">GBP</span>
+                                            </button>
+                                            <button onclick="setFWCurrency('HKD')" data-currency="HKD" class="fw-currency-btn flex items-center gap-2 px-3.5 py-2.5 rounded-xl border-2 transition border-slate-100 hover:border-slate-200 hover:bg-slate-50">
+                                                <div class="w-7 h-7 bg-red-100 rounded-full flex items-center justify-center"><span class="text-red-600 font-bold text-sm">$</span></div>
+                                                <span class="font-semibold text-slate-900 text-sm">HKD</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Withdraw Amount -->
+                                    <div class="mb-6">
+                                        <label class="block text-sm font-semibold text-slate-900 mb-2.5">Withdraw Amount <span class="text-red-500">*</span></label>
+                                        <div class="flex border border-slate-200 rounded-lg focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-50">
+                                            <input id="fw-amount" type="text" oninput="updateFWFees()" placeholder="Enter withdraw amount" class="flex-1 px-4 py-2.5 text-sm border-0 rounded-l-lg focus:outline-none">
+                                            <div class="flex items-center gap-2 px-4 bg-slate-50 border-l border-slate-200 rounded-r-lg">
+                                                <span id="fw-amount-currency" class="text-sm font-medium text-slate-600">USD</span>
+                                                <button onclick="document.getElementById('fw-amount').value='128450.00';updateFWFees()" class="text-xs text-indigo-600 font-semibold hover:text-indigo-800">MAX</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Beneficiary Bank -->
+                                    <div class="mb-6">
+                                        <label class="block text-sm font-semibold text-slate-900 mb-2.5">Withdraw To (Same-Name Bank Account) <span class="text-red-500">*</span></label>
+                                        <div class="border border-slate-200 rounded-xl overflow-hidden">
+                                            <div class="flex items-center gap-3 px-5 py-4 hover:bg-slate-50 cursor-pointer transition">
+                                                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center"><i class="fas fa-university text-blue-600"></i></div>
+                                                <div class="flex-1">
+                                                    <p class="text-sm font-semibold text-slate-900">DBS BANK (HONG KONG) LIMITED</p>
+                                                    <p class="text-xs text-slate-500">Account: **** **** 9847 · SWIFT: DBSSHKHH</p>
+                                                </div>
+                                                <button class="text-sm text-indigo-600 font-semibold hover:text-indigo-800">Change</button>
+                                            </div>
+                                        </div>
+                                        <p class="text-xs text-slate-500 mt-2 flex items-center gap-1"><i class="fas fa-shield-alt text-emerald-500"></i> Same-name withdraw only — must match your registered company name</p>
+                                    </div>
+
+                                    <!-- Fee Summary -->
+                                    <div class="bg-slate-50 rounded-xl p-5 space-y-3 border border-slate-100 mb-6">
+                                        <div class="flex justify-between text-sm">
+                                            <span class="text-slate-500">Withdraw Amount</span>
+                                            <span class="font-medium text-slate-900"><span id="fw-overview-amount">--</span> <span class="fw-cur">USD</span></span>
+                                        </div>
+                                        <div class="flex justify-between text-sm">
+                                            <span class="text-slate-500">Wire Fee</span>
+                                            <span class="font-medium text-slate-900"><span id="fw-overview-fee">25.00</span> <span class="fw-cur">USD</span></span>
+                                        </div>
+                                        <div class="pt-3 border-t border-slate-200 flex justify-between text-sm">
+                                            <span class="font-semibold text-slate-900">Bank Receives</span>
+                                            <span class="font-bold text-indigo-600"><span id="fw-overview-receive">--</span> <span class="fw-cur">USD</span></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Submit -->
+                                    <button class="w-full py-3.5 bg-gradient-to-r from-violet-500 to-purple-600 text-white text-sm font-semibold rounded-xl hover:from-violet-600 hover:to-purple-700 transition shadow-lg shadow-purple-200 flex items-center justify-center gap-2">
+                                        <i class="fas fa-paper-plane text-xs"></i>
+                                        Submit Withdraw
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Right 35% Notice -->
+                            <div class="lg:col-span-2">
+                                <div class="bg-red-50 border border-red-200 rounded-xl p-5 sticky top-28">
+                                    <h4 class="text-base font-semibold text-red-700 mb-4 flex items-center gap-2">
+                                        <i class="fas fa-exclamation-circle text-red-500"></i>
+                                        Important Notice
+                                    </h4>
+                                    <ul class="space-y-3.5 text-sm text-red-800 leading-relaxed">
+                                        <li class="flex gap-2.5"><span class="text-red-400 mt-1 shrink-0">&bull;</span><span><strong>Same-Name Withdrawal Only:</strong> Funds can only be withdrawn to a bank account under the same registered name. Third-party withdrawals are not supported.</span></li>
+                                        <li class="flex gap-2.5"><span class="text-red-400 mt-1 shrink-0">&bull;</span><span><strong>Minimum withdrawal amount</strong> is $100.00 or equivalent. Below this amount will be rejected.</span></li>
+                                        <li class="flex gap-2.5"><span class="text-red-400 mt-1 shrink-0">&bull;</span><span><strong>Processing Time:</strong> SWIFT withdrawals take 1-3 business days. Local transfers typically arrive within 1 business day.</span></li>
+                                        <li class="flex gap-2.5"><span class="text-red-400 mt-1 shrink-0">&bull;</span><span><strong>Wire Fee:</strong> A fixed wire transfer fee will be charged per withdrawal. Fee varies by currency and method.</span></li>
+                                        <li class="flex gap-2.5"><span class="text-red-400 mt-1 shrink-0">&bull;</span><span><strong>Security verification</strong> (2FA / email) is required for all fiat withdrawals.</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Orders -->
+                <div id="fiat-withdraw-orders" class="p-6 hidden">
+                    <div class="max-w-[1400px] mx-auto">
+                        <div class="bg-white border border-slate-200 rounded-xl p-6">
+                            <h3 class="font-semibold text-slate-900 text-lg mb-6">Fiat Withdraw Orders</h3>
+                            <table class="w-full text-sm">
+                                <thead><tr class="border-b border-slate-100 text-slate-500 text-left">
+                                    <th class="pb-3 font-medium">Order ID</th><th class="pb-3 font-medium">Account</th><th class="pb-3 font-medium">Currency</th><th class="pb-3 font-medium">Amount</th><th class="pb-3 font-medium">Fee</th><th class="pb-3 font-medium">Bank</th><th class="pb-3 font-medium">Status</th><th class="pb-3 font-medium">Time</th>
+                                </tr></thead>
+                                <tbody>
+                                    <tr class="border-b border-slate-50"><td class="py-3.5 font-mono text-xs text-indigo-600">FW20260227001</td><td class="py-3.5"><span class="px-2 py-0.5 bg-blue-50 text-blue-700 rounded text-xs font-semibold">Payment</span></td><td class="py-3.5">USD</td><td class="py-3.5 font-semibold">20,000.00</td><td class="py-3.5 text-slate-500">25.00</td><td class="py-3.5 text-slate-500">DBS ****9847</td><td class="py-3.5"><span class="px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full text-xs font-semibold">Processing</span></td><td class="py-3.5 text-slate-500">2026-02-27 10:00</td></tr>
+                                    <tr><td class="py-3.5 font-mono text-xs text-indigo-600">FW20260225002</td><td class="py-3.5"><span class="px-2 py-0.5 bg-amber-50 text-amber-700 rounded text-xs font-semibold">Trading</span></td><td class="py-3.5">USD</td><td class="py-3.5 font-semibold">8,000.00</td><td class="py-3.5 text-slate-500">25.00</td><td class="py-3.5 text-slate-500">DBS ****9847</td><td class="py-3.5"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full text-xs font-semibold">Completed</span></td><td class="py-3.5 text-slate-500">2026-02-25 14:30</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast">Copied to clipboard</div>
+
+    <script>
+    // ═══════════════════════════════════════════════════════════
+    // GLOBAL NAVIGATION
+    // ═══════════════════════════════════════════════════════════
+    function switchPage(pageId) {
+        // Hide all pages
+        document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
+        // Show target
+        document.getElementById('page-' + pageId).classList.remove('hidden');
+        // Update sidebar active
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        const navEl = document.getElementById('nav-' + pageId);
+        if (navEl) navEl.classList.add('active');
+        // Reset sub-tabs to first
+        const page = document.getElementById('page-' + pageId);
+        const tabs = page.querySelectorAll('.tab-btn');
+        tabs.forEach((t, i) => { t.classList.toggle('active', i === 0); });
+        const prefix = pageId;
+        const createEl = document.getElementById(prefix + '-create');
+        const ordersEl = document.getElementById(prefix + '-orders');
+        if (createEl) createEl.classList.remove('hidden');
+        if (ordersEl) ordersEl.classList.add('hidden');
+    }
+
+    function switchSubTab(pageId, tab) {
+        const page = document.getElementById('page-' + pageId);
+        // Toggle tab buttons
+        page.querySelectorAll('.tab-btn').forEach((t, i) => {
+            t.classList.toggle('active', (tab === 'create' && i === 0) || (tab === 'orders' && i === 1));
+        });
+        const createEl = document.getElementById(pageId + '-create');
+        const ordersEl = document.getElementById(pageId + '-orders');
+        if (createEl) createEl.classList.toggle('hidden', tab !== 'create');
+        if (ordersEl) ordersEl.classList.toggle('hidden', tab !== 'orders');
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // CRYPTO DEPOSIT
+    // ═══════════════════════════════════════════════════════════
+    const cdAddresses = {
+        'USDT-TRC20': 'TJYh7o2ZPRegKzz5NsafPb5JCbBP2dBxnA',
+        'USDT-ERC20': '0x8a9C67fee641a16AeE7b2aC75fe3bD23F0c63b2a',
+        'USDT-SOL': '7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU',
+        'USDT-BEP20': '0x8a9C67fee641a16AeE7b2aC75fe3bD23F0c63b2a',
+        'USDC-TRC20': 'TKrx2Mxbp7hGFRkP3qGmSvRYnUA5kz4pYR',
+        'USDC-ERC20': '0x8a9C67fee641a16AeE7b2aC75fe3bD23F0c63b2a',
+        'USDC-SOL': '7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU',
+        'USDC-BEP20': '0x8a9C67fee641a16AeE7b2aC75fe3bD23F0c63b2a',
+    };
+    let cdCoin = 'USDT', cdChain = 'TRC20';
+
+    function setCryptoDepositCoin(coin, el) {
+        cdCoin = coin;
+        el.closest('.mb-6').querySelectorAll('.coin-chip').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        updateCDAddress();
+    }
+    function setChain(chain, el) {
+        cdChain = chain;
+        el.closest('.mb-6').querySelectorAll('.chain-chip').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        updateCDAddress();
+    }
+    function updateCDAddress() {
+        const key = cdCoin + '-' + cdChain;
+        document.getElementById('cd-address').textContent = cdAddresses[key] || 'N/A';
+        document.getElementById('cd-coin-label').textContent = cdCoin;
+        document.getElementById('cd-chain-label').textContent = cdChain;
+        document.getElementById('cd-coin-min').textContent = cdCoin;
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // CRYPTO WITHDRAW
+    // ═══════════════════════════════════════════════════════════
+    let cwCoin = 'USDT';
+    const cwNetworkFees = { TRC20: 1, ERC20: 5, SOL: 0.5, BEP20: 0.8 };
+    let cwChain = 'TRC20';
+
+    function setCryptoWithdrawCoin(coin, el) {
+        cwCoin = coin;
+        el.closest('.mb-6').querySelectorAll('.coin-chip').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        document.getElementById('cw-coin-bal').textContent = coin;
+        document.getElementById('cw-coin-label').textContent = coin;
+        document.querySelectorAll('.cw-coin-unit').forEach(e => e.textContent = coin);
+        updateCWFees();
+    }
+    function setCWChain(chain, el) {
+        cwChain = chain;
+        el.closest('.mb-6').querySelectorAll('.chain-chip').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        document.getElementById('cw-network-fee').textContent = (cwNetworkFees[chain] || 1).toFixed(2);
+        updateCWFees();
+    }
+    function updateCWFees() {
+        const amount = parseFloat(document.getElementById('cw-amount').value.replace(/,/g, '')) || 0;
+        const fee = cwNetworkFees[cwChain] || 1;
+        const receive = Math.max(0, amount - fee);
+        document.getElementById('cw-receive').textContent = amount > 0 ? receive.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00';
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // FIAT DEPOSIT
+    // ═══════════════════════════════════════════════════════════
+    let fdAccountType = 'payment', fdCurrency = 'USD';
+
+    function setFDAccountType(type) {
+        fdAccountType = type;
+        const btnP = document.getElementById('fd-btn-payment');
+        const btnT = document.getElementById('fd-btn-trading');
+        if (type === 'payment') {
+            btnP.className = 'flex items-center gap-3 px-5 py-3.5 rounded-xl border-2 transition-all border-indigo-500 bg-indigo-50/60 shadow-sm';
+            btnT.className = 'flex items-center gap-3 px-5 py-3.5 rounded-xl border-2 transition-all border-slate-200 hover:border-slate-300 hover:bg-slate-50';
+        } else {
+            btnT.className = 'flex items-center gap-3 px-5 py-3.5 rounded-xl border-2 transition-all border-indigo-500 bg-indigo-50/60 shadow-sm';
+            btnP.className = 'flex items-center gap-3 px-5 py-3.5 rounded-xl border-2 transition-all border-slate-200 hover:border-slate-300 hover:bg-slate-50';
+        }
+        document.getElementById('fd-form-title').textContent = (type === 'payment' ? 'Payment Account' : 'Trading Account') + ' — Fiat Deposit';
+    }
+    function setFDCurrency(cur) {
+        fdCurrency = cur;
+        document.querySelectorAll('.fd-currency-btn').forEach(btn => {
+            btn.className = btn.dataset.currency === cur
+                ? 'fd-currency-btn flex items-center gap-2 px-3.5 py-2.5 rounded-xl border-2 transition border-indigo-500 bg-indigo-50/50'
+                : 'fd-currency-btn flex items-center gap-2 px-3.5 py-2.5 rounded-xl border-2 transition border-slate-100 hover:border-slate-200 hover:bg-slate-50';
+        });
+        document.getElementById('fd-amount-currency').textContent = cur;
+        document.querySelectorAll('.fd-cur').forEach(e => e.textContent = cur);
+        updateFDFees();
+    }
+    function setFDMethod(method) {
+        const btnBank = document.getElementById('fd-method-bank');
+        const btnWallet = document.getElementById('fd-method-wallet');
+        if (method === 'bank') {
+            btnBank.className = 'flex items-center gap-3 p-4 rounded-xl border-2 transition text-left border-indigo-500 bg-indigo-50/40';
+            btnWallet.className = 'flex items-center gap-3 p-4 rounded-xl border-2 transition text-left border-slate-200 hover:border-slate-300 hover:bg-slate-50';
+            document.getElementById('fd-bank-info').classList.remove('hidden');
+        } else {
+            btnWallet.className = 'flex items-center gap-3 p-4 rounded-xl border-2 transition text-left border-indigo-500 bg-indigo-50/40';
+            btnBank.className = 'flex items-center gap-3 p-4 rounded-xl border-2 transition text-left border-slate-200 hover:border-slate-300 hover:bg-slate-50';
+            document.getElementById('fd-bank-info').classList.add('hidden');
+        }
+    }
+    function toggleFDBankDetails() {
+        const el = document.getElementById('fd-bank-details');
+        const chev = document.getElementById('fd-bank-chevron');
+        el.classList.toggle('hidden');
+        chev.className = el.classList.contains('hidden') ? 'fas fa-chevron-down text-slate-400 text-xs' : 'fas fa-chevron-up text-slate-400 text-xs';
+    }
+    function updateFDFees() {
+        const amount = parseFloat(document.getElementById('fd-amount').value.replace(/,/g, '')) || 0;
+        const fee = amount * 0.001;
+        const receive = Math.max(0, amount - fee);
+        document.getElementById('fd-overview-amount').textContent = amount > 0 ? amount.toLocaleString('en-US', { minimumFractionDigits: 2 }) : '--';
+        document.getElementById('fd-overview-fee').textContent = amount > 0 ? fee.toLocaleString('en-US', { minimumFractionDigits: 2 }) : '--';
+        document.getElementById('fd-overview-receive').textContent = amount > 0 ? receive.toLocaleString('en-US', { minimumFractionDigits: 2 }) : '--';
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // FIAT WITHDRAW
+    // ═══════════════════════════════════════════════════════════
+    let fwAccountType = 'payment', fwCurrency = 'USD';
+    const fwBalances = { USD: '128,450.00', EUR: '45,200.00', GBP: '32,100.00', HKD: '980,000.00' };
+    const fwWireFees = { USD: 25, EUR: 20, GBP: 15, HKD: 200 };
+
+    function setFWAccountType(type) {
+        fwAccountType = type;
+        const btnP = document.getElementById('fw-btn-payment');
+        const btnT = document.getElementById('fw-btn-trading');
+        if (type === 'payment') {
+            btnP.className = 'flex items-center gap-3 px-5 py-3.5 rounded-xl border-2 transition-all border-indigo-500 bg-indigo-50/60 shadow-sm';
+            btnT.className = 'flex items-center gap-3 px-5 py-3.5 rounded-xl border-2 transition-all border-slate-200 hover:border-slate-300 hover:bg-slate-50';
+        } else {
+            btnT.className = 'flex items-center gap-3 px-5 py-3.5 rounded-xl border-2 transition-all border-indigo-500 bg-indigo-50/60 shadow-sm';
+            btnP.className = 'flex items-center gap-3 px-5 py-3.5 rounded-xl border-2 transition-all border-slate-200 hover:border-slate-300 hover:bg-slate-50';
+        }
+        document.getElementById('fw-form-title').textContent = (type === 'payment' ? 'Payment Account' : 'Trading Account') + ' — Fiat Withdraw';
+    }
+    function setFWCurrency(cur) {
+        fwCurrency = cur;
+        document.querySelectorAll('.fw-currency-btn').forEach(btn => {
+            btn.className = btn.dataset.currency === cur
+                ? 'fw-currency-btn flex items-center gap-2 px-3.5 py-2.5 rounded-xl border-2 transition border-indigo-500 bg-indigo-50/50'
+                : 'fw-currency-btn flex items-center gap-2 px-3.5 py-2.5 rounded-xl border-2 transition border-slate-100 hover:border-slate-200 hover:bg-slate-50';
+        });
+        document.getElementById('fw-amount-currency').textContent = cur;
+        document.getElementById('fw-bal-cur').textContent = cur;
+        document.getElementById('fw-balance').textContent = fwBalances[cur] || '0.00';
+        document.querySelectorAll('.fw-cur').forEach(e => e.textContent = cur);
+        document.getElementById('fw-overview-fee').textContent = (fwWireFees[cur] || 25).toFixed(2);
+        updateFWFees();
+    }
+    function updateFWFees() {
+        const amount = parseFloat(document.getElementById('fw-amount').value.replace(/,/g, '')) || 0;
+        const fee = fwWireFees[fwCurrency] || 25;
+        const receive = Math.max(0, amount - fee);
+        document.getElementById('fw-overview-amount').textContent = amount > 0 ? amount.toLocaleString('en-US', { minimumFractionDigits: 2 }) : '--';
+        document.getElementById('fw-overview-receive').textContent = amount > 0 ? receive.toLocaleString('en-US', { minimumFractionDigits: 2 }) : '--';
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // UTILITIES
+    // ═══════════════════════════════════════════════════════════
+    function copyText(text) {
+        navigator.clipboard?.writeText(text).then(() => {
+            showToast('Copied to clipboard');
+        }).catch(() => {});
+    }
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 1500);
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // INIT — default to Crypto Deposit
+    // ═══════════════════════════════════════════════════════════
+    switchPage('crypto-deposit');
+    </script>
+</body>
+</html>
