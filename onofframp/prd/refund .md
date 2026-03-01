@@ -385,15 +385,15 @@ sequenceDiagram
 
 **与 1.2（风控拦截退回）的区别：**
 
-| 对比项 | 1.2 风控拦截退回 | 1.3 成功后退款 |
+| 对比项 | 1.2 风控拦截退回（v2.1） | 1.3 成功后退款 |
 | --- | --- | --- |
-| 触发时机 | 充币入账前（风控拦截） | 充币成功入账后 |
-| 发起方 | 系统通知商户选择 | **商户主动发起** |
-| 交易类型 | 退款（附属） | **CRYPTO_DEPOSIT_REFUND（独立）** |
+| 触发时机 | 风控拦截（商户单已存在PROCESSING） | 充币成功入账后 |
+| 发起方 | 人工复核确认拒绝后系统自动发起 | **商户主动发起** |
+| 交易类型 | 退款交易单（挂在原商户单下） | **CRYPTO_DEPOSIT_REFUND（独立交易类型）** |
 | 计费 | 原地址不收费 / 新地址清算确认 | **独立退款费率，额外收手续费** |
-| 记账 | 解冻并扣款（一步） | **冻结→风控→渠道→确认扣款（两阶段）** |
+| 记账 | 冻结余额转退款（一步） | **冻结→风控→渠道→确认扣款（两阶段）** |
 | 风控 | 新地址需 KYT | **原地址和新地址都需KYT** |
-| 商户可见 | 1笔退款单 | **独立退款单RM001 + 原单状态REFUNDED** |
+| 商户单 | 原单 M001 状态流转：PROCESSING→REJECTED→REFUNDED | **原单 M001=REFUNDED + 独立退款单 RM001** |
 
 ---
 
@@ -426,76 +426,125 @@ sequenceDiagram
 
 ---
 
-### 2.2 渠道已通知，内部风控拦截
+### 2.2 渠道已通知，内部风控拦截（v2.1）
 
-**场景：** 渠道通知入账（产生渠道单），但内部风控拦截，产生退款单。
+> **v2.1 变化：** 按照 payin-payouts.md v2.1，商户单在风控之前已创建（PROCESSING）。
+> 风控拦截时商户单已存在，退款在原商户单上流转，不再另建退款商户单。
 
-**处理方式：** 参考IPL现有流程 — 联系销售确认退回方式（原路退/退到新人），清算确认手续费，合规审核后退款。
+**场景：** 渠道通知入账（产生渠道单），商户单已存在（PROCESSING），资金已冻结入账。内部风控拦截后经人工复核确认拒绝，发起退款。
 
-**流程：** 清算处理 → 合规审核 → 执行退款
+**处理方式：** 人工复核确认拒绝 → 原商户单状态变为 REJECTED→REFUNDING→REFUNDED → 退回原汇款人。
 
-| 确认项                      | 由谁确认     | 说明                   |
-| --------------------------- | ------------ | ---------------------- |
-| 原路退还 vs 退到新人        | 销售联系商户 | 退到新人需提供收款信息 |
-| 手续费是否退 / 是否额外收费 | 清算         | 清算线下确认           |
-| 合规审核                    | 合规         | 审核退款合规性         |
+**退回方式：**
+
+| 退回方式 | 流程 | 收费 | 时效 |
+|---------|------|------|------|
+| **原路退回（默认）** | 人工确认拒绝后退回原汇款人原账户 | 不收费 | 人工复核周期 + 渠道处理 |
+| **退到新收款人（特殊情况）** | 原汇款人账户不可用时，通知商户在订单详情页提供新收款信息 | 清算确认手续费 | 人工复核 + 合规审核 |
+
+**单据结构：**
+
+```
+原VA收款商户单 M001 ← 商户可见，状态流转：PROCESSING → REJECTED → REFUNDING → REFUNDED
+    ├── 原交易单 T001: VA收款 — 状态=RISK_REJECTED → REJECTED
+    │       └── 原渠道单 C001 — 状态=SUCCESS（不变）
+    │
+    └── 退款交易单 RT001: 退款付款 — 退回原汇款人/新收款人
+            └── 退款渠道单 RC001: 银行转账退回（新单，关联C001）
+```
 
 ```mermaid
 sequenceDiagram
-    participant Remitter as 汇款人
-    participant Channel as 渠道/银行
-    participant CO as 渠道服务
+    participant MP as 商户(MP)
+    participant HUB as EX HUB
+    participant Compliance as 合规团队
+    participant Settlement as 清算
     participant TE as 交易引擎
     participant Account as 账户服务
-    participant Sales as 销售
-    participant Settlement as 清算
-    participant Compliance as 合规
-    participant HUB as EX HUB
-    participant MP as 商户
+    participant CO as 渠道服务
+    participant Channel as 渠道/银行
+    participant Remitter as 原汇款人
 
-    Remitter->>Channel: 0. 汇款到VA
-    Channel->>CO: 1. 入账通知
-    CO->>CO: 2. 创建渠道单(SUCCESS)
-    CO->>TE: 3. 创建交易单
-    TE->>Compliance: 4. 风控检查
-    Compliance-->>TE: 5. 风控拦截
-    TE->>Account: 6. 入账但冻结
-
-    rect rgb(255, 250, 240)
-        Note over Remitter,MP: 阶段1：销售确认退回方式
-        Compliance->>Sales: 7. 通知销售：风控拦截需退回
-        Sales->>MP: 8. 联系商户确认退回方式
-        MP-->>Sales: 9. 确认（原路退 或 退到新收款人）
-    end
-
-    rect rgb(240, 248, 255)
-        Note over Remitter,MP: 阶段2：清算处理
-        Sales->>Settlement: 10. 提交清算
-        Settlement->>Settlement: 11. 确认手续费（是否退/是否额外收）
-        Settlement-->>Sales: 12. 清算确认（退款金额）
-    end
+    Note over MP,Remitter: 前提：VA收款渠道已入账，商户单M001已存在(PROCESSING)，<br/>资金已冻结入账，风控自动拒绝，交易单状态=RISK_REJECTED
 
     rect rgb(255, 245, 238)
-        Note over Remitter,MP: 阶段3：合规审核
-        Settlement->>Compliance: 13. 提交合规审核
-        Compliance->>Compliance: 14. 审核退款合规性
-        Compliance-->>HUB: 15. 合规通过
+        Note over MP,Remitter: 阶段1：人工复核（来自 payin-payouts.md 风控拒绝流程）
+        Compliance->>Compliance: 1. 审核风控拒绝案例
     end
 
-    rect rgb(240, 255, 240)
-        Note over Remitter,MP: 阶段4：执行退款
-        HUB->>HUB: 16. 创建退款商户单
-        HUB->>TE: 17. 创建退款交易单
-        TE->>Account: 18. 解冻并扣款(商户法币账户-)
-        TE->>CO: 19. 创建退款渠道单（关联原渠道单）
-        CO->>Channel: 20. 调用渠道退款
-        Channel->>Remitter: 21. 退款到账
-        Channel-->>CO: 22. 退款成功
-        TE->>TE: 23. 退款交易单=SUCCESS
-        HUB->>HUB: 24. 退款商户单=SUCCESS
-        HUB-->>MP: 25. 退款通知
+    alt 人工改判通过（此处不涉及退款，见 payin-payouts.md）
+        Compliance->>HUB: 2x. 改判通过 → 解冻入账 → M001=SUCCESS
+    else 人工发起RFI（此处不涉及退款，见 payin-payouts.md）
+        Compliance->>HUB: 2y. 发起RFI → 商户补充材料
+    else 人工确认拒绝 → 发起退款
+        rect rgb(255, 250, 240)
+            Note over MP,Remitter: 阶段2：确认拒绝，更新商户单状态
+            Compliance->>HUB: 2. 确认拒绝
+            HUB->>HUB: 3. 更新M001状态=REJECTED
+        end
+
+        alt 原路退回（默认）
+            rect rgb(240, 255, 240)
+                Note over MP,Remitter: 阶段3a：退回原汇款人
+                HUB->>HUB: 4a. 更新M001状态=REFUNDING
+                HUB->>TE: 5a. 执行退款
+                TE->>TE: 6a. 创建退款交易单 RT001
+                TE->>Account: 7a. 冻结余额转退款
+                TE->>CO: 8a. 创建退款渠道单 RC001（关联原渠道单C001）
+                CO->>Channel: 9a. 调用渠道退款（原汇款人信息从原单提取）
+                Channel->>Remitter: 10a. 退款到账
+                Channel-->>CO: 11a. 退款成功
+                CO-->>TE: 12a. RC001状态=SUCCESS
+                TE->>TE: 13a. RT001状态=SUCCESS
+            end
+
+        else 退到新收款人（原汇款人账户不可用）
+            rect rgb(255, 250, 240)
+                Note over MP,Remitter: 阶段3b：通知商户提供新收款信息
+                HUB->>HUB: 4b. 更新M001合规子状态=ACTION_REQUIRED（需提供退回信息）
+                HUB-->>MP: 5b. 通知商户在订单详情页提供新收款人信息
+                MP->>HUB: 6b. 商户提供新收款人（姓名/账号/银行等）
+            end
+
+            rect rgb(240, 248, 255)
+                Note over MP,Remitter: 阶段4b：清算+合规审核
+                HUB->>Settlement: 7b. 提交清算确认手续费
+                Settlement-->>HUB: 8b. 清算确认
+                HUB->>Compliance: 9b. 新收款人合规审核（KYC/制裁名单）
+                Compliance-->>HUB: 10b. 合规通过
+            end
+
+            rect rgb(240, 255, 240)
+                Note over MP,Remitter: 阶段5b：执行退款
+                HUB->>HUB: 11b. 更新M001状态=REFUNDING
+                HUB->>TE: 12b. 执行退款
+                TE->>TE: 13b. 创建退款交易单 RT001
+                TE->>Account: 14b. 冻结余额转退款（扣手续费）
+                TE->>CO: 15b. 创建退款渠道单 RC001（关联C001）
+                CO->>Channel: 16b. 调用渠道退款（新收款人）
+                Channel-->>CO: 17b. 退款成功
+                CO-->>TE: 18b. RC001状态=SUCCESS
+                TE->>TE: 19b. RT001状态=SUCCESS
+            end
+        end
+
+        rect rgb(255, 250, 240)
+            Note over MP,Remitter: 阶段最终：聚合+通知
+            TE->>HUB: 20. 通知退款完成
+            HUB->>HUB: 21. 更新M001状态=REFUNDED
+            HUB-->>MP: 22. 退款通知(Webhook)
+            Note over MP: 商户看到：原VA收款单M001 状态 PROCESSING→REJECTED→REFUNDED
+        end
     end
 ```
+
+**说明：**
+
+- **不再另建退款商户单**：退款在原商户单 M001 上流转（REJECTED→REFUNDING→REFUNDED），商户看到的是同一笔单
+- **退款交易单挂在原商户单下**：RT001 作为 M001 的退款交易单
+- **默认原路退回**：人工确认拒绝后退回原汇款人原账户，无需商户操作
+- **新收款人退仅限特殊情况**：原汇款人账户不可用时，通过订单详情页让商户提供新收款人信息
+- **与 payin-payouts.md v2.1 衔接**：人工复核环节来自 payin-payouts.md 4.2 VA收款流程的风控拒绝分支
 
 ---
 
@@ -657,15 +706,15 @@ sequenceDiagram
 
 **与 2.2（风控拦截退回）的区别：**
 
-| 对比项 | 2.2 风控拦截退回 | 2.3 成功后退款 |
+| 对比项 | 2.2 风控拦截退回（v2.1） | 2.3 成功后退款 |
 | --- | --- | --- |
-| 触发时机 | 入账前（风控拦截） | 入账成功后 |
-| 发起方 | 合规→销售→商户 | **商户主动发起** |
-| 交易类型 | 退款（附属） | **VA_COLLECTION_REFUND（独立）** |
-| 计费 | 清算确认 | **独立退款费率，额外收手续费** |
-| 记账 | 解冻并扣款（一步） | **冻结→风控→渠道→确认扣款（两阶段）** |
-| 风控 | 合规审核退款合规性 | **合规审核 + 制裁名单筛查 + 新收款人KYC/KYB** |
-| 商户可见 | 1笔退款单 | **独立退款单RM001 + 原单状态REFUNDED** |
+| 触发时机 | 风控拦截（商户单已存在PROCESSING） | 入账成功后 |
+| 发起方 | 人工复核确认拒绝后系统自动发起 | **商户主动发起** |
+| 交易类型 | 退款交易单（挂在原商户单下） | **VA_COLLECTION_REFUND（独立交易类型）** |
+| 计费 | 原路不收费 / 新收款人清算确认 | **独立退款费率，额外收手续费** |
+| 记账 | 冻结余额转退款（一步） | **冻结→风控→渠道→确认扣款（两阶段）** |
+| 风控 | 新收款人需合规审核 | **合规审核 + 制裁名单筛查 + 新收款人KYC/KYB** |
+| 商户单 | 原单 M001 状态流转：PROCESSING→REJECTED→REFUNDED | **原单 M001=REFUNDED + 独立退款单 RM001** |
 
 ---
 
