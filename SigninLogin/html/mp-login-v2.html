@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>登录 — EX Platform</title>
+<style>
+:root {
+    --bg: #eef2f8;
+    --card: #ffffff;
+    --text: #1a1a1a;
+    --text2: #5f6368;
+    --text3: #9aa0a6;
+    --border: #dadce0;
+    --border-light: #e8eaed;
+    --accent: #1a73e8;
+    --accent-hover: #1557b0;
+    --accent-light: rgba(26,115,232,.08);
+    --green: #34a853;
+    --orange: #f9ab00;
+    --red: #ea4335;
+    --red-light: rgba(234,67,53,.08);
+    --radius: 8px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+    font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Google Sans','PingFang SC','Helvetica Neue',sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    -webkit-font-smoothing:antialiased;
+}
+
+/* ===== Split card ===== */
+.split-card{
+    display:flex;
+    width:920px;
+    max-width:96vw;
+    min-height:560px;
+    background:var(--card);
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 24px 64px rgba(0,0,0,.12),0 4px 16px rgba(0,0,0,.06);
+    margin:32px 0;
+}
+
+/* ===== Left panel ===== */
+.left-panel{
+    flex:0 0 420px;
+    background:linear-gradient(145deg,#1557b0 0%,#1a73e8 40%,#4a90d9 100%);
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+.left-panel::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:
+        radial-gradient(ellipse 60% 40% at 20% 80%,rgba(255,255,255,.06) 0%,transparent 70%),
+        radial-gradient(ellipse 50% 60% at 80% 20%,rgba(255,255,255,.04) 0%,transparent 70%);
+}
+
+/* ===== Isometric illustration (CSS) ===== */
+.illus{
+    position:relative;
+    width:340px;
+    height:300px;
+}
+
+/* Platform base */
+.plat-base{
+    position:absolute;
+    bottom:20px;left:20px;
+    width:280px;height:90px;
+    background:linear-gradient(160deg,#2b7fe8,#1555b0);
+    transform:skewX(-20deg);
+    border-radius:6px;
+    box-shadow:0 8px 24px rgba(0,0,0,.25);
+}
+.plat-base::after{
+    content:'';
+    position:absolute;
+    bottom:-14px;left:8px;right:-8px;
+    height:14px;
+    background:rgba(0,0,0,.25);
+    transform:skewX(0deg);
+    border-radius:0 0 4px 4px;
+}
+
+/* Monitor screen */
+.monitor{
+    position:absolute;
+    bottom:90px;left:50px;
+    width:180px;height:130px;
+    background:linear-gradient(135deg,#1a5fcc,#1a73e8);
+    border-radius:8px;
+    border:3px solid rgba(255,255,255,.2);
+    box-shadow:0 8px 32px rgba(0,0,0,.3);
+    overflow:hidden;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    gap:6px;
+    padding:12px 14px 16px;
+}
+.monitor::before{
+    content:'';
+    position:absolute;
+    top:0;left:0;right:0;bottom:0;
+    background:linear-gradient(180deg,rgba(255,255,255,.05) 0%,transparent 100%);
+}
+/* Bar chart inside monitor */
+.bar{
+    width:16px;
+    background:rgba(255,255,255,.3);
+    border-radius:3px 3px 0 0;
+    position:relative;
+    z-index:1;
+}
+.bar.b1{height:40%;background:rgba(255,255,255,.25);}
+.bar.b2{height:60%;background:rgba(255,255,255,.35);}
+.bar.b3{height:85%;background:#f97316;}
+.bar.b4{height:50%;background:rgba(255,255,255,.3);}
+.bar.b5{height:70%;background:#f97316;opacity:.8;}
+
+/* Line chart overlay */
+.line-chart{
+    position:absolute;
+    top:14px;left:10px;right:10px;height:50px;
+    z-index:2;
+}
+.line-chart svg{width:100%;height:100%;}
+
+/* Monitor stand */
+.monitor-stand{
+    position:absolute;
+    bottom:76px;left:128px;
+    width:4px;height:18px;
+    background:rgba(255,255,255,.15);
+}
+.monitor-stand::after{
+    content:'';
+    position:absolute;
+    bottom:-4px;left:-8px;
+    width:20px;height:4px;
+    background:rgba(255,255,255,.1);
+    border-radius:2px;
+}
+
+/* Secondary screen (tablet) */
+.tablet{
+    position:absolute;
+    bottom:24px;left:18px;
+    width:100px;height:72px;
+    background:rgba(255,255,255,.95);
+    border-radius:6px;
+    box-shadow:0 4px 16px rgba(0,0,0,.2);
+    overflow:hidden;
+    padding:8px 10px;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+}
+.tab-line{height:4px;border-radius:2px;background:#e0e8f0;}
+.tab-line.accent{background:#1a73e8;width:60%;}
+.tab-line.short{width:40%;}
+
+/* Document card */
+.doc-card{
+    position:absolute;
+    top:20px;left:14px;
+    width:80px;height:100px;
+    background:rgba(255,255,255,.92);
+    border-radius:8px;
+    box-shadow:0 6px 20px rgba(0,0,0,.18);
+    padding:10px 10px;
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+}
+.doc-line{height:3px;border-radius:2px;background:#e0e8f0;}
+.doc-line.blue{background:#3b82f6;width:70%;}
+.doc-dot{
+    width:16px;height:16px;
+    border-radius:50%;
+    background:#f97316;
+    margin-bottom:2px;
+    align-self:flex-end;
+}
+
+/* Coin elements */
+.coin{
+    position:absolute;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:900;
+    color:#fff;
+    font-size:13px;
+    box-shadow:0 4px 12px rgba(0,0,0,.25);
+}
+.coin1{
+    width:52px;height:52px;
+    background:linear-gradient(145deg,#f97316,#ea580c);
+    bottom:110px;right:16px;
+    font-size:18px;
+}
+.coin2{
+    width:36px;height:36px;
+    background:linear-gradient(145deg,#f97316,#ea580c);
+    bottom:60px;right:60px;
+    opacity:.85;
+    font-size:13px;
+}
+.coin3{
+    width:44px;height:44px;
+    background:linear-gradient(145deg,#f97316,#ea580c);
+    top:50px;right:30px;
+    opacity:.7;
+    font-size:16px;
+}
+
+/* Person figures */
+.person{
+    position:absolute;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:1px;
+}
+.person .head{
+    width:9px;height:9px;
+    border-radius:50%;
+    background:rgba(255,255,255,.7);
+}
+.person .body{
+    width:7px;height:16px;
+    border-radius:4px;
+    background:rgba(255,255,255,.55);
+}
+.person1{bottom:108px;left:128px;}
+.person2{bottom:95px;right:90px;}
+.person3{bottom:50px;left:90px;}
+
+/* Ladder */
+.ladder{
+    position:absolute;
+    bottom:80px;right:8px;
+    width:14px;height:80px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    align-items:center;
+}
+.rung{
+    width:100%;
+    height:2px;
+    background:rgba(255,255,255,.3);
+    border-radius:1px;
+}
+.ladder::before,.ladder::after{
+    content:'';
+    position:absolute;
+    top:0;bottom:0;
+    width:2px;
+    background:rgba(255,255,255,.25);
+}
+.ladder::before{left:0;}
+.ladder::after{right:0;}
+
+/* ===== Right panel ===== */
+.right-panel{
+    flex:1;
+    padding:48px 52px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    overflow-y:auto;
+}
+
+/* Logo */
+.rp-logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:32px;
+}
+.rp-logo .mark{
+    width:34px;height:34px;
+    background:linear-gradient(135deg,var(--accent),#7c4dff);
+    border-radius:9px;
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-size:13px;font-weight:800;letter-spacing:-.5px;
+}
+.rp-logo .brand{
+    font-size:17px;font-weight:700;letter-spacing:-.3px;color:var(--text);
+}
+
+/* Heading */
+.rp-title{
+    font-size:26px;font-weight:700;letter-spacing:-.4px;
+    color:var(--text);margin-bottom:28px;
+}
+
+/* ===== Fields ===== */
+.field{margin-bottom:18px;}
+.field-label{
+    display:block;font-size:13px;font-weight:600;
+    color:var(--text);margin-bottom:6px;
+}
+.field-input{
+    width:100%;padding:11px 14px;
+    border:1px solid var(--border);border-radius:var(--radius);
+    font-size:14px;color:var(--text);background:var(--card);
+    outline:none;font-family:inherit;
+    transition:border-color .15s,box-shadow .15s;
+}
+.field-input:hover{border-color:#bdc1c6;}
+.field-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light);}
+.field-input::placeholder{color:#bdc1c6;}
+.field-input.error{border-color:var(--red);box-shadow:0 0 0 3px var(--red-light);}
+
+/* Password field */
+.pwd-wrap{position:relative;}
+.pwd-wrap .field-input{padding-right:48px;}
+.pwd-toggle{
+    position:absolute;right:12px;top:50%;transform:translateY(-50%);
+    background:none;border:none;cursor:pointer;
+    color:var(--text3);font-size:13px;font-family:inherit;
+    padding:4px;transition:color .15s;
+}
+.pwd-toggle:hover{color:var(--text2);}
+
+/* Phone row */
+.phone-row{display:flex;}
+.phone-row select{
+    width:90px;padding:11px 8px;
+    border:1px solid var(--border);border-radius:var(--radius) 0 0 var(--radius);
+    border-right:none;font-size:14px;color:var(--text);
+    background:#f8f9fa;outline:none;font-family:inherit;
+    appearance:none;cursor:pointer;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%239aa0a6' d='M5 6L0 0h10z'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 8px center;font-weight:500;
+}
+.phone-row .field-input{border-radius:0 var(--radius) var(--radius) 0;}
+
+/* Method switcher links */
+.method-switch{
+    display:flex;justify-content:center;gap:20px;
+    margin-top:14px;
+}
+.method-switch a{
+    font-size:13px;color:var(--accent);text-decoration:none;font-weight:500;
+    padding:4px 8px;border-radius:6px;transition:background .15s;
+}
+.method-switch a:hover{background:var(--accent-light);}
+/* Send code button inside field */
+.send-code-btn{
+    display:inline-block;margin-top:10px;
+    font-size:13px;color:var(--accent);background:none;border:none;
+    cursor:pointer;font-family:inherit;font-weight:600;
+    padding:4px 10px;border-radius:6px;transition:background .15s;
+}
+.send-code-btn:hover{background:var(--accent-light);}
+.send-code-btn:disabled{color:var(--text3);cursor:default;background:none;}
+
+/* Sub-tabs (email/phone) */
+.tabs{display:flex;border-bottom:2px solid var(--border-light);margin-bottom:20px;}
+.tab{
+    padding:8px 18px;font-size:13px;font-weight:600;
+    color:var(--text3);cursor:pointer;border:none;background:none;
+    font-family:inherit;position:relative;transition:color .2s;border-bottom:2px solid transparent;margin-bottom:-2px;
+}
+.tab:hover{color:var(--text2);}
+.tab.on{color:var(--accent);border-bottom-color:var(--accent);}
+
+/* Forgot + remember row */
+.meta-row{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:22px;margin-top:-6px;
+}
+.meta-row .forgot{font-size:13px;color:var(--accent);text-decoration:none;font-weight:500;}
+.meta-row .forgot:hover{text-decoration:underline;}
+.check-label{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text2);cursor:pointer;user-select:none;}
+.check-label input{accent-color:var(--accent);}
+
+/* Error msg */
+.err-msg{
+    display:none;align-items:center;gap:8px;
+    padding:10px 14px;background:var(--red-light);
+    border:1px solid rgba(234,67,53,.2);border-radius:var(--radius);
+    margin-bottom:16px;font-size:13px;color:var(--red);line-height:1.5;
+}
+.err-msg.show{display:flex;}
+.err-icon{font-size:15px;flex-shrink:0;}
+
+/* OTP */
+.otp-row{display:flex;gap:10px;justify-content:center;margin:10px 0 18px;}
+.otp-row input{
+    width:48px;height:52px;text-align:center;
+    font-size:20px;font-weight:700;border:1px solid var(--border);
+    border-radius:var(--radius);outline:none;color:var(--text);
+    font-family:inherit;transition:border-color .15s,box-shadow .15s;background:var(--card);
+}
+.otp-row input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light);}
+
+/* Resend */
+.resend-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;}
+.resend-row span{font-size:12px;color:var(--text3);}
+.resend-row button{
+    font-size:12px;color:var(--accent);background:none;border:none;
+    cursor:pointer;font-family:inherit;font-weight:600;
+    padding:3px 8px;border-radius:6px;transition:background .15s;
+}
+.resend-row button:hover{background:var(--accent-light);}
+.resend-row button:disabled{color:var(--text3);cursor:default;background:none;}
+
+/* Buttons */
+.btn{
+    width:100%;padding:12px 24px;border-radius:var(--radius);
+    font-size:14px;font-weight:600;cursor:pointer;border:none;
+    font-family:inherit;transition:all .15s;
+}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{background:var(--accent-hover);box-shadow:0 2px 8px rgba(26,115,232,.3);}
+.btn-primary:active{transform:scale(.99);}
+.btn-outline{background:var(--card);color:var(--text);border:1px solid var(--border);}
+.btn-outline:hover{background:#f1f3f4;}
+.btn-text{background:none;color:var(--accent);margin-top:6px;}
+.btn-text:hover{background:var(--accent-light);}
+.action-row{display:flex;gap:10px;margin-top:4px;}
+.step-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.back-btn{width:32px;height:32px;border:none;background:var(--accent-light);color:var(--accent);border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s;}
+.back-btn:hover{background:rgba(26,115,232,.15);}
+.action-row .btn{flex:1;}
+
+/* Views */
+.v{display:none;animation:fadeUp .22s ease;}
+.v.on{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* Lock / Success */
+.lock-icon{
+    width:80px;height:80px;margin:0 auto 20px;border-radius:50%;
+    background:linear-gradient(135deg,#fef2f2,#fee2e2);
+    display:flex;align-items:center;justify-content:center;
+    font-size:32px;box-shadow:0 4px 16px rgba(234,67,53,.1);
+}
+.lock-body{text-align:center;}
+.lock-body h2{font-size:22px;font-weight:700;margin-bottom:10px;color:var(--text);}
+.lock-body p{font-size:13px;color:var(--text2);line-height:1.7;}
+.lock-timer{
+    display:inline-flex;align-items:center;gap:8px;
+    background:#fef2f2;border:1px solid rgba(234,67,53,.12);
+    border-radius:12px;padding:12px 24px;margin:20px 0;
+    font-size:14px;color:var(--red);font-weight:700;
+    font-variant-numeric:tabular-nums;letter-spacing:.5px;
+}
+.lock-timer .timer-label{font-weight:500;font-size:12px;color:#b91c1c;letter-spacing:0;}
+.lock-actions{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:24px;}
+.lock-actions a{font-size:13px;color:var(--accent);text-decoration:none;font-weight:600;padding:6px 14px;border-radius:8px;transition:background .15s;}
+.lock-actions a:hover{background:var(--accent-light);}
+.lock-actions .lock-divider{width:1px;height:14px;background:var(--border-light);}
+.lock-actions-row{display:flex;align-items:center;gap:4px;}
+.lock-back{font-size:13px;color:var(--text3);text-decoration:none;cursor:pointer;border:none;background:none;font-family:inherit;padding:6px 14px;border-radius:8px;transition:all .15s;}
+.lock-back:hover{color:var(--text2);background:#f1f3f4;}
+
+.success-icon{
+    width:60px;height:60px;margin:0 auto 18px;border-radius:50%;
+    background:var(--green);display:flex;align-items:center;justify-content:center;
+    color:#fff;font-size:26px;font-weight:700;
+    animation:popIn .4s cubic-bezier(.175,.885,.32,1.275);
+}
+@keyframes popIn{0%{transform:scale(0);opacity:0;}100%{transform:scale(1);opacity:1;}}
+
+/* Password meter */
+.pwd-meter{display:flex;gap:4px;margin-top:8px;}
+.pwd-seg{flex:1;height:3px;border-radius:2px;background:var(--border-light);transition:background .3s;}
+
+/* CAPTCHA overlay */
+.captcha-overlay{
+    display:none;position:fixed;inset:0;
+    background:rgba(0,0,0,.4);z-index:9999;
+    align-items:center;justify-content:center;
+    animation:fadeIn .15s ease;
+}
+.captcha-overlay.show{display:flex;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.captcha-modal{
+    background:var(--card);border-radius:16px;width:380px;max-width:90vw;
+    box-shadow:0 20px 60px rgba(0,0,0,.15);overflow:hidden;
+    animation:slideUp .2s ease;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.captcha-modal-header{padding:20px 24px 0;display:flex;justify-content:space-between;align-items:center;}
+.captcha-modal-header h3{font-size:15px;font-weight:700;color:var(--text);}
+.captcha-modal-header .close-btn{background:none;border:none;font-size:18px;cursor:pointer;color:var(--text3);padding:4px 8px;border-radius:6px;line-height:1;}
+.captcha-modal-header .close-btn:hover{background:#f1f3f4;}
+.captcha-modal-desc{padding:4px 24px 14px;font-size:12px;color:var(--text3);}
+.captcha-img{
+    width:100%;height:140px;
+    background:linear-gradient(135deg,#e8eaed 25%,#f1f3f4 25%,#f1f3f4 50%,#e8eaed 50%,#e8eaed 75%,#f1f3f4 75%);
+    background-size:40px 40px;
+    display:flex;align-items:center;justify-content:center;
+    flex-direction:column;gap:6px;color:var(--text3);font-size:12px;
+}
+.captcha-img .puzzle-icon{font-size:36px;opacity:.4;}
+.captcha-slider{padding:14px 24px 18px;}
+.slider-track{
+    height:42px;background:#f1f3f4;border-radius:21px;
+    position:relative;cursor:pointer;display:flex;align-items:center;
+}
+.slider-thumb{
+    width:44px;height:38px;background:var(--card);border:1.5px solid var(--border);
+    border-radius:19px;display:flex;align-items:center;justify-content:center;
+    cursor:grab;position:absolute;left:2px;
+    transition:left .3s,background .2s,border-color .2s;
+    font-size:14px;color:var(--text3);box-shadow:0 2px 6px rgba(0,0,0,.1);user-select:none;
+}
+.slider-thumb:hover{border-color:var(--accent);color:var(--accent);}
+.slider-thumb.done{background:var(--green);border-color:var(--green);color:#fff;left:calc(100% - 48px);}
+.slider-text{width:100%;text-align:center;font-size:12px;color:var(--text3);pointer-events:none;user-select:none;}
+
+/* Demo bar */
+.demo-bar{
+    position:fixed;bottom:0;left:0;right:0;background:var(--card);
+    border-top:1px solid var(--border-light);padding:10px 32px;
+    display:flex;align-items:center;gap:14px;z-index:100;
+    box-shadow:0 -2px 8px rgba(0,0,0,.04);
+}
+.demo-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
+.demo-btns{display:flex;gap:6px;}
+.demo-btn{
+    padding:5px 14px;border-radius:6px;font-size:11px;font-weight:600;
+    cursor:pointer;border:1px solid var(--border);background:var(--card);
+    color:var(--text2);font-family:inherit;transition:all .15s;white-space:nowrap;
+}
+.demo-btn:hover{border-color:var(--accent);color:var(--accent);}
+.demo-btn.on{background:var(--accent);color:#fff;border-color:var(--accent);}
+.demo-desc{font-size:11px;color:var(--text3);flex:1;line-height:1.4;}
+</style>
+</head>
+<body>
+
+<!-- ===== Split card ===== -->
+<div class="split-card">
+
+    <!-- ===== Left panel: illustration ===== -->
+    <div class="left-panel">
+        <div class="illus">
+            <!-- Platform base -->
+            <div class="plat-base"></div>
+
+            <!-- Monitor stand -->
+            <div class="monitor-stand"></div>
+
+            <!-- Monitor with bar chart -->
+            <div class="monitor">
+                <div class="line-chart">
+                    <svg viewBox="0 0 160 44" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                        <polyline points="0,40 30,28 60,18 90,24 120,10 160,16" stroke="rgba(255,255,255,0.6)" stroke-width="2" fill="none" stroke-linejoin="round"/>
+                        <circle cx="120" cy="10" r="3" fill="white" opacity="0.8"/>
+                    </svg>
+                </div>
+                <div class="bar b1"></div>
+                <div class="bar b2"></div>
+                <div class="bar b3"></div>
+                <div class="bar b4"></div>
+                <div class="bar b5"></div>
+            </div>
+
+            <!-- Tablet (secondary screen) -->
+            <div class="tablet">
+                <div class="tab-line accent"></div>
+                <div class="tab-line"></div>
+                <div class="tab-line short"></div>
+                <div class="tab-line"></div>
+                <div class="tab-line short"></div>
+            </div>
+
+            <!-- Document card -->
+            <div class="doc-card">
+                <div class="doc-dot"></div>
+                <div class="doc-line blue"></div>
+                <div class="doc-line"></div>
+                <div class="doc-line"></div>
+                <div class="doc-line short" style="width:50%"></div>
+                <div class="doc-line"></div>
+                <div class="doc-line short" style="width:55%"></div>
+            </div>
+
+            <!-- Coins -->
+            <div class="coin coin1">$</div>
+            <div class="coin coin2">$</div>
+            <div class="coin coin3">$</div>
+
+            <!-- People -->
+            <div class="person person1"><div class="head"></div><div class="body"></div></div>
+            <div class="person person2"><div class="head"></div><div class="body"></div></div>
+            <div class="person person3"><div class="head"></div><div class="body"></div></div>
+
+            <!-- Ladder -->
+            <div class="ladder">
+                <div class="rung"></div>
+                <div class="rung"></div>
+                <div class="rung"></div>
+                <div class="rung"></div>
+                <div class="rung"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Right panel: login form ===== -->
+    <div class="right-panel">
+
+        <!-- Logo -->
+        <div class="rp-logo">
+            <div class="mark">EX</div>
+            <span class="brand">EX Platform</span>
+        </div>
+
+        <!-- ==================== 1. 登录（单页表单） ==================== -->
+        <div class="v on" id="v-start">
+            <div class="rp-title">登录</div>
+
+            <!-- 账号类型 tabs -->
+            <div class="tabs">
+                <button class="tab on" onclick="swTab(this,'email')">邮箱</button>
+                <button class="tab" onclick="swTab(this,'phone')">手机号</button>
+            </div>
+
+            <!-- 账号输入 -->
+            <div id="f-email">
+                <div class="field">
+                    <label class="field-label">邮箱地址</label>
+                    <input class="field-input" type="email" placeholder="name@company.com" id="inEmail">
+                </div>
+            </div>
+            <div id="f-phone" style="display:none">
+                <div class="field">
+                    <label class="field-label">手机号</label>
+                    <div class="phone-row">
+                        <select id="ccSel">
+                            <option>+86</option><option>+852</option>
+                            <option>+1</option><option>+44</option>
+                            <option>+81</option><option>+65</option>
+                        </select>
+                        <input class="field-input" type="tel" placeholder="输入手机号" id="inPhone">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 错误提示 -->
+            <div class="err-msg" id="loginErr">
+                <span class="err-icon">⚠</span>
+                <span id="loginErrText">登录失败，请重试</span>
+            </div>
+
+            <!-- 密码区块 -->
+            <div id="block-pwd">
+                <div class="field">
+                    <label class="field-label">密码</label>
+                    <div class="pwd-wrap">
+                        <input class="field-input" type="password" placeholder="输入登录密码" id="inPwd">
+                        <button class="pwd-toggle" onclick="togglePwd()" id="pwdEye">显示</button>
+                    </div>
+                </div>
+                <div class="meta-row">
+                    <label class="check-label">
+                        <input type="checkbox" id="rememberMe" checked>记住密码
+                    </label>
+                    <a href="#" class="forgot" onclick="goForgot(); return false;">忘记密码？</a>
+                </div>
+            </div>
+
+            <!-- 验证码区块 -->
+            <div id="block-code" style="display:none">
+                <div class="field">
+                    <label class="field-label">验证码</label>
+                    <div class="otp-row" id="otp1" style="justify-content:flex-start;margin:8px 0 4px;"></div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
+                        <span style="font-size:12px;color:var(--text3);">有效期 10 分钟</span>
+                        <button class="send-code-btn" id="rs1" onclick="sendCodeAndStart(this)">发送验证码</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 验证码登录·未注册·直接注册 banner -->
+            <div id="codeRegisterBanner" style="display:none;background:rgba(26,115,232,.06);border:1px solid rgba(26,115,232,.2);border-radius:var(--radius);padding:14px 16px;margin-bottom:14px;">
+                <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;">该账号尚未注册</div>
+                <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.6;">验证码验证通过，系统将为您自动创建账户。</div>
+                <label style="display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--text2);line-height:1.5;cursor:pointer;">
+                    <input type="checkbox" id="ckRegisterAgree" style="margin-top:2px;accent-color:var(--accent);width:15px;height:15px;flex-shrink:0;">
+                    <span>我已阅读并同意 <a href="#" style="color:var(--accent);text-decoration:none;font-weight:500;">《会员服务协议》</a>、<a href="#" style="color:var(--accent);text-decoration:none;font-weight:500;">《支付服务协议》</a></span>
+                </label>
+                <button class="btn btn-primary" style="margin-top:12px;padding:10px;font-size:13px;" onclick="confirmRegisterAndLogin()">同意并完成注册 & 登录</button>
+            </div>
+
+            <!-- 未注册「去注册」提示 -->
+            <div id="toRegisterHint" style="display:none;text-align:center;margin-bottom:12px;font-size:13px;color:var(--text2);">
+                <a href="#" style="color:var(--accent);font-weight:600;text-decoration:none;" onclick="alert('跳转注册页…'); return false;">立即注册 →</a>
+            </div>
+
+            <button class="btn btn-primary" onclick="submitLogin()">登录</button>
+            <div class="method-switch">
+                <a href="#" id="linkCode" onclick="switchMethod('code'); return false;">用验证码登录</a>
+                <a href="#" id="linkPwd" onclick="switchMethod('pwd'); return false;" style="display:none">用密码登录</a>
+            </div>
+        </div>
+
+        <!-- ==================== 5. 2FA 二次验证 ==================== -->
+        <div class="v" id="v-2fa">
+            <div class="rp-title">安全验证</div>
+            <div style="font-size:13px;color:var(--text2);margin-bottom:18px;">为保护账户安全，请完成二次身份验证。<br>验证码已发送至 <b id="t-2fa-target">—</b></div>
+
+            <div class="err-msg" id="twoFaErr">
+                <span class="err-icon">⚠</span>
+                <span id="twoFaErrText">验证码错误，请重试</span>
+            </div>
+
+            <div id="twoFa-sms-block">
+                <div class="otp-row" id="otp-2fa"></div>
+                <div class="resend-row">
+                    <span>有效期 10 分钟</span>
+                    <button id="rs-2fa" onclick="countdown(this)">重新发送</button>
+                </div>
+            </div>
+
+            <div id="twoFa-app-block" style="display:none">
+                <div class="field">
+                    <label class="field-label">Authenticator 动态码</label>
+                    <input class="field-input" type="text" placeholder="输入 6 位动态码" id="in2faApp" maxlength="6" style="text-align:center;letter-spacing:6px;font-size:18px;font-weight:700">
+                </div>
+            </div>
+
+            <div class="action-row">
+                <button class="btn btn-outline" onclick="go('v-start')">返回登录</button>
+                <button class="btn btn-primary" onclick="submit2fa()">验证并登录</button>
+            </div>
+            <div style="text-align:center;margin-top:12px;">
+                <a href="#" style="font-size:12px;color:var(--text3);text-decoration:none;" onclick="switch2faMethod(); return false;" id="switch2faLink">改用 Authenticator 验证</a>
+            </div>
+        </div>
+
+        <!-- ==================== 5.5 账户被禁用（SUSPENDED）==================== -->
+        <div class="v" id="v-suspended">
+            <div class="lock-icon" style="background:rgba(249,171,0,.12);">🚫</div>
+            <div class="lock-body">
+                <h2>账户已被禁用</h2>
+                <p>您的账户已被管理员禁用，无法登录。</p>
+                <p style="font-size:12px;color:var(--text3);margin-top:8px">如有疑问，请联系您的账户管理员或客服。</p>
+            </div>
+            <div class="lock-actions">
+                <div class="lock-actions-row">
+                    <a href="#" onclick="alert('联系客服…'); return false;">联系客服</a>
+                </div>
+                <button class="lock-back" onclick="go('v-start')">← 返回登录</button>
+            </div>
+        </div>
+
+        <!-- ==================== 6. 账户冻结 ==================== -->
+        <div class="v" id="v-locked">
+            <div class="lock-icon">🔒</div>
+            <div class="lock-body">
+                <h2>账户已冻结</h2>
+                <p>为保护您的账户安全，登录功能已暂时冻结。</p>
+                <p style="font-size:12px;color:var(--text3);margin-top:8px">我们已向您的注册邮箱/手机发送了安全通知。</p>
+                <div class="lock-timer">
+                    <span class="timer-label">剩余冻结时间</span>
+                    <span id="lockTime">23:59:59</span>
+                </div>
+            </div>
+            <div class="lock-actions">
+                <div class="lock-actions-row">
+                    <a href="#" onclick="alert('发送解冻邮件…'); return false;">通过邮件解冻</a>
+                    <span class="lock-divider"></span>
+                    <a href="#" onclick="alert('联系客服…'); return false;">联系客服</a>
+                </div>
+                <button class="lock-back" onclick="go('v-start')">← 返回登录</button>
+            </div>
+        </div>
+
+        <!-- ==================== 7. 登录成功 ==================== -->
+        <div class="v" id="v-success">
+            <div class="success-icon">✓</div>
+            <div class="lock-body">
+                <h2>登录成功</h2>
+                <p>正在跳转到控制台…</p>
+                <div class="lock-timer" style="background:rgba(52,168,83,.08);border-color:rgba(52,168,83,.15);color:var(--green);">
+                    <span id="successSec">3</span> 秒后自动跳转
+                </div>
+            </div>
+            <button class="btn btn-primary" style="margin-top:12px" onclick="alert('进入 MP 控制台…')">立即进入</button>
+        </div>
+
+        <!-- ==================== 8. 忘记密码 Step 1：输入账号 ==================== -->
+        <div class="v" id="v-forgot">
+            <div class="step-header">
+                <button class="back-btn" onclick="go('v-start')">←</button>
+                <div>
+                    <div class="rp-title" style="margin-bottom:2px;">重置密码</div>
+                    <div style="font-size:12px;color:var(--text3);">步骤 1 / 3</div>
+                </div>
+            </div>
+            <div style="font-size:13px;color:var(--text2);margin-bottom:20px;">输入您的注册邮箱或手机号，我们将发送验证码</div>
+
+            <div class="field">
+                <label class="field-label">邮箱 / 手机号</label>
+                <input class="field-input" type="text" placeholder="name@company.com 或 手机号" id="inForgot">
+            </div>
+
+            <div class="err-msg" id="forgotErr">
+                <span class="err-icon">⚠</span>
+                <span id="forgotErrText">请输入注册邮箱或手机号</span>
+            </div>
+
+            <button class="btn btn-primary" onclick="forgotStep1()">继续</button>
+            <button class="btn btn-text" onclick="go('v-start')">返回登录</button>
+        </div>
+
+        <!-- ==================== 9. 忘记密码 Step 2：输入验证码 ==================== -->
+        <div class="v" id="v-forgot-code">
+            <div class="step-header">
+                <button class="back-btn" onclick="go('v-forgot')">←</button>
+                <div>
+                    <div class="rp-title" style="margin-bottom:2px;">验证身份</div>
+                    <div style="font-size:12px;color:var(--text3);">步骤 2 / 3</div>
+                </div>
+            </div>
+            <div style="font-size:13px;color:var(--text2);margin-bottom:20px;">
+                验证码已发送至 <b id="t-forgot-acct">—</b>，请在 10 分钟内输入
+            </div>
+
+            <div class="field">
+                <label class="field-label">6 位验证码</label>
+                <div class="otp-row" id="otp-forgot" style="justify-content:flex-start;margin:8px 0 4px;"></div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+                    <span style="font-size:12px;color:var(--text3);">有效期 10 分钟</span>
+                    <button class="send-code-btn" id="rs-forgot" onclick="resendForgotCode(this)">重新发送</button>
+                </div>
+            </div>
+
+            <div class="err-msg" id="forgotCodeErr">
+                <span class="err-icon">⚠</span>
+                <span id="forgotCodeErrText">验证码错误，请重试</span>
+            </div>
+
+            <button class="btn btn-primary" onclick="forgotStep2()">验证</button>
+        </div>
+
+        <!-- ==================== 10. 忘记密码 Step 3：设置新密码 ==================== -->
+        <div class="v" id="v-reset-pwd">
+            <div class="step-header">
+                <button class="back-btn" onclick="go('v-forgot-code')">←</button>
+                <div>
+                    <div class="rp-title" style="margin-bottom:2px;">设置新密码</div>
+                    <div style="font-size:12px;color:var(--text3);">步骤 3 / 3</div>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="field-label">新密码</label>
+                <div class="pwd-wrap">
+                    <input class="field-input" type="password" placeholder="至少 8 位，含大小写字母和数字" id="inNewPwd" oninput="meter(this.value)">
+                    <button class="pwd-toggle" onclick="toggleNewPwd()" id="newPwdEye">显示</button>
+                </div>
+                <div class="pwd-meter" style="margin-top:8px;">
+                    <div class="pwd-seg" id="s1"></div>
+                    <div class="pwd-seg" id="s2"></div>
+                    <div class="pwd-seg" id="s3"></div>
+                    <div class="pwd-seg" id="s4"></div>
+                </div>
+                <div id="pwdH" style="font-size:12px;color:var(--text3);margin-top:4px;font-weight:500;"></div>
+            </div>
+            <div class="field">
+                <label class="field-label">确认新密码</label>
+                <div class="pwd-wrap">
+                    <input class="field-input" type="password" placeholder="再次输入新密码" id="inNewPwd2">
+                    <button class="pwd-toggle" onclick="toggleNewPwd2()" id="newPwd2Eye">显示</button>
+                </div>
+            </div>
+
+            <div class="err-msg" id="resetPwdErr">
+                <span class="err-icon">⚠</span>
+                <span id="resetPwdErrText">两次密码不一致</span>
+            </div>
+
+            <button class="btn btn-primary" onclick="resetDone()">重置密码</button>
+        </div>
+
+        <!-- ==================== 11. 密码重置成功 ==================== -->
+        <div class="v" id="v-reset-done">
+            <div class="success-icon">✓</div>
+            <div style="text-align:center;margin-bottom:24px;">
+                <h2 style="font-size:20px;font-weight:700;margin-bottom:6px;">密码已重置</h2>
+                <p style="font-size:13px;color:var(--text2);">新密码已生效，请重新登录</p>
+            </div>
+            <button class="btn btn-primary" onclick="go('v-start')">返回登录</button>
+        </div>
+
+    </div><!-- /right-panel -->
+</div><!-- /split-card -->
+
+<!-- ===== CAPTCHA Overlay ===== -->
+<div class="captcha-overlay" id="captchaOverlay">
+    <div class="captcha-modal">
+        <div class="captcha-modal-header">
+            <h3>安全验证</h3>
+            <button class="close-btn" onclick="closeCaptcha()">✕</button>
+        </div>
+        <div class="captcha-modal-desc">检测到新的登录环境，请完成以下验证</div>
+        <div class="captcha-img">
+            <div class="puzzle-icon">🧩</div>
+            <span>滑动拼图验证区域</span>
+        </div>
+        <div class="captcha-slider">
+            <div class="slider-track" id="sliderTrack" onclick="completeCaptcha()">
+                <div class="slider-thumb" id="sliderThumb">→</div>
+                <span class="slider-text">向右滑动完成验证</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== Demo bar ===== -->
+<div class="demo-bar">
+    <span class="demo-label">风险等级</span>
+    <div class="demo-btns">
+        <button class="demo-btn on" data-r="0" onclick="setRisk(0,this)">L0 无风险</button>
+        <button class="demo-btn" data-r="1" onclick="setRisk(1,this)">L1 新设备/IP</button>
+        <button class="demo-btn" data-r="e3" onclick="setRisk('e3',this)">密码错误3次</button>
+        <button class="demo-btn" data-r="e5" onclick="setRisk('e5',this)">错误5次→冻结</button>
+    </div>
+    <span class="demo-desc" id="demoDesc">同设备 + 同 IP → 直接输入凭证登录，无额外验证</span>
+    <span style="margin-left:16px;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;">异常场景</span>
+    <div class="demo-btns">
+        <button class="demo-btn on" onclick="setEdge('none',this)">正常</button>
+        <button class="demo-btn" onclick="setEdge('unregistered',this)">账号未注册</button>
+        <button class="demo-btn" onclick="setEdge('code_unregistered',this)">验证码·未注册→直接注册</button>
+        <button class="demo-btn" onclick="setEdge('code_err',this)">验证码错误</button>
+        <button class="demo-btn" onclick="setEdge('suspended',this)">账户被禁用</button>
+    </div>
+    <span style="margin-left:16px;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;">2FA <span style="font-weight:400;font-size:10px;color:#bdc1c6;text-transform:none;">（仅密码登录）</span></span>
+    <div class="demo-btns">
+        <button class="demo-btn" id="btn2faOff" onclick="set2fa(false,this)">关闭</button>
+        <button class="demo-btn on" id="btn2faOn" onclick="set2fa(true,this)">开启（SMS）</button>
+        <button class="demo-btn" id="btn2faApp" onclick="set2faApp(this)">开启（App）</button>
+    </div>
+</div>
+
+<script>
+/* ===== State ===== */
+let acctType = 'email';
+let loginMethod = 'pwd';   // 'pwd' | 'code' | 'otp'
+let riskLevel = 0;
+let errCount = 0;
+let captchaPassed = false;
+let twoFaEnabled = true;
+let twoFaMethod = 'sms';
+let forgotCaptchaMode = false;
+let edgeCase = 'none'; // none | unregistered | code_unregistered | code_err | suspended
+
+/* ===== Navigation ===== */
+function go(id) {
+    document.querySelectorAll('.v').forEach(v => v.classList.remove('on'));
+    document.getElementById(id).classList.add('on');
+}
+
+function swTab(el, m) {
+    acctType = m;
+    el.parentElement.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
+    el.classList.add('on');
+    document.getElementById('f-email').style.display = m === 'email' ? '' : 'none';
+    document.getElementById('f-phone').style.display = m === 'phone' ? '' : 'none';
+}
+
+function switchMethod(m) {
+    loginMethod = m;
+    document.getElementById('block-pwd').style.display  = m === 'pwd'  ? '' : 'none';
+    document.getElementById('block-code').style.display = m === 'code' ? '' : 'none';
+    // toggle footer links
+    document.getElementById('linkPwd').style.display  = m !== 'pwd'  ? '' : 'none';
+    document.getElementById('linkCode').style.display = m !== 'code' ? '' : 'none';
+    // reset error & banners
+    document.getElementById('loginErr').classList.remove('show');
+    document.getElementById('codeRegisterBanner').style.display = 'none';
+    document.getElementById('toRegisterHint').style.display = 'none';
+    // build OTP boxes once
+    if (m === 'code') buildOtp('otp1');
+}
+
+function sendCodeAndStart(btn) {
+    countdown(btn);
+}
+
+function getAcct() {
+    return acctType === 'email'
+        ? (document.getElementById('inEmail').value || 'name@company.com')
+        : (document.getElementById('inPhone').value || '手机号');
+}
+
+function maskAcct(a) {
+    if (a.includes('@')) { const [u,d] = a.split('@'); return u.slice(0,2)+'***@'+d; }
+    return a.slice(0,3)+'****'+a.slice(-4);
+}
+
+const riskDescs = {
+    0: '同设备 + 同 IP → 直接输入凭证登录，无额外验证',
+    1: '新设备 / 不同 IP → 需先完成图形验证码',
+    'e3': '密码错误 3 次 → 触发图形验证码',
+    'e5': '密码连续错误 5 次 → 直接冻结账户 24 小时'
+};
+
+/* ===== 2FA demo toggle ===== */
+function set2fa(on, btn) {
+    twoFaEnabled = on;
+    twoFaMethod = 'sms';
+    ['btn2faOff','btn2faOn','btn2faApp'].forEach(id => document.getElementById(id).classList.remove('on'));
+    btn.classList.add('on');
+}
+function set2faApp(btn) {
+    twoFaEnabled = true;
+    twoFaMethod = 'app';
+    ['btn2faOff','btn2faOn','btn2faApp'].forEach(id => document.getElementById(id).classList.remove('on'));
+    btn.classList.add('on');
+}
+
+/* ===== Risk demo ===== */
+function setRisk(r, btn) {
+    document.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    if (r === 'e3') { riskLevel = 0; errCount = 3; }
+    else if (r === 'e5') { riskLevel = 0; errCount = 5; }
+    else { riskLevel = r; errCount = 0; }
+    document.getElementById('demoDesc').textContent = riskDescs[r];
+    captchaPassed = false; resetCaptcha();
+    if (r === 'e5') go('v-start');
+}
+
+/* ===== Main submit ===== */
+function submitLogin() {
+    captchaPassed = false; resetCaptcha();
+    if (errCount >= 5) { go('v-locked'); startLockTimer(); return; }
+    if (riskLevel >= 1) { showCaptcha(); return; }
+    doLogin();
+}
+
+function doLogin() {
+    if (loginMethod === 'pwd') { submitPwd(); }
+    else { submitCode(); }
+}
+
+/* ===== CAPTCHA ===== */
+function showCaptcha() { document.getElementById('captchaOverlay').classList.add('show'); }
+function closeCaptcha() { document.getElementById('captchaOverlay').classList.remove('show'); resetCaptcha(); }
+function completeCaptcha() {
+    captchaPassed = true;
+    const thumb = document.getElementById('sliderThumb');
+    thumb.classList.add('done'); thumb.textContent = '✓';
+    setTimeout(() => {
+        closeCaptcha();
+        if (forgotCaptchaMode) {
+            forgotCaptchaMode = false;
+            const val = document.getElementById('inForgot').value.trim();
+            document.getElementById('t-forgot-acct').textContent = maskAcct(val);
+            buildOtp('otp-forgot');
+            go('v-forgot-code');
+            countdown(document.getElementById('rs-forgot'));
+        } else {
+            doLogin();
+        }
+    }, 500);
+}
+function resetCaptcha() {
+    captchaPassed = false;
+    const thumb = document.getElementById('sliderThumb');
+    if (thumb) { thumb.classList.remove('done'); thumb.textContent = '→'; }
+}
+
+/* ===== 2FA flow ===== */
+let _2faUseSms = true;
+function show2fa() {
+    const acct = getAcct();
+    if (twoFaMethod === 'app') {
+        _2faUseSms = false;
+        document.getElementById('t-2fa-target').textContent = 'Authenticator App';
+        document.getElementById('twoFa-sms-block').style.display = 'none';
+        document.getElementById('twoFa-app-block').style.display = '';
+        document.getElementById('switch2faLink').textContent = '改用短信验证码';
+    } else {
+        _2faUseSms = true;
+        document.getElementById('t-2fa-target').textContent = acct.includes('@') ? acct.replace(/(.)(.*)(@)/, (m,a,b,c) => a+'***'+c+acct.split('@')[1]) : acct.slice(0,3)+'****'+acct.slice(-4);
+        document.getElementById('twoFa-sms-block').style.display = '';
+        document.getElementById('twoFa-app-block').style.display = 'none';
+        document.getElementById('switch2faLink').textContent = '改用 Authenticator 验证';
+        buildOtp('otp-2fa');
+        countdown(document.getElementById('rs-2fa'));
+    }
+    document.getElementById('twoFaErr').classList.remove('show');
+    go('v-2fa');
+}
+function switch2faMethod() {
+    _2faUseSms = !_2faUseSms;
+    if (_2faUseSms) {
+        document.getElementById('t-2fa-target').textContent = maskAcct(getAcct());
+        document.getElementById('twoFa-sms-block').style.display = '';
+        document.getElementById('twoFa-app-block').style.display = 'none';
+        document.getElementById('switch2faLink').textContent = '改用 Authenticator 验证';
+        buildOtp('otp-2fa');
+    } else {
+        document.getElementById('t-2fa-target').textContent = 'Authenticator App';
+        document.getElementById('twoFa-sms-block').style.display = 'none';
+        document.getElementById('twoFa-app-block').style.display = '';
+        document.getElementById('switch2faLink').textContent = '改用短信验证码';
+    }
+}
+function submit2fa() { loginSuccess(); }
+
+/* ===== Submit handlers ===== */
+function submitPwd() {
+    if (errCount > 0 && errCount < 5) {
+        errCount++;
+        const el = document.getElementById('loginErr');
+        const txt = document.getElementById('loginErrText');
+        el.classList.add('show');
+        if (errCount >= 5) {
+            txt.textContent = '连续错误 '+errCount+' 次，账户已冻结 24 小时';
+            setTimeout(() => { go('v-locked'); startLockTimer(); }, 1500);
+        } else if (errCount >= 3) {
+            txt.textContent = '密码错误（第 '+errCount+' 次），请完成图形验证后重试';
+            setTimeout(() => showCaptcha(), 800);
+        } else {
+            txt.textContent = '密码错误，请重试（第 '+errCount+' 次，连续错误 5 次将冻结账户）';
+        }
+        return;
+    }
+    if (errCount >= 5) { go('v-locked'); startLockTimer(); return; }
+    if (edgeCase === 'unregistered') {
+        const el = document.getElementById('loginErr');
+        const txt = document.getElementById('loginErrText');
+        txt.textContent = '该账号尚未注册，请先前往注册'; el.classList.add('show');
+        document.getElementById('toRegisterHint').style.display = '';
+        return;
+    }
+    if (edgeCase === 'suspended') { go('v-suspended'); return; }
+    if (twoFaEnabled) { show2fa(); } else { loginSuccess(); }
+}
+
+function submitCode() {
+    const el = document.getElementById('loginErr');
+    const txt = document.getElementById('loginErrText');
+    if (edgeCase === 'code_err') {
+        txt.textContent = '验证码错误，请重新输入（已发送新验证码）';
+        el.classList.add('show'); return;
+    }
+    if (edgeCase === 'code_unregistered') {
+        // 展示「未注册→直接注册」banner
+        document.getElementById('codeRegisterBanner').style.display = '';
+        el.classList.remove('show'); return;
+    }
+    if (edgeCase === 'unregistered') {
+        txt.textContent = '该账号尚未注册，请先前往注册';
+        el.classList.add('show');
+        document.getElementById('toRegisterHint').style.display = '';
+        return;
+    }
+    if (edgeCase === 'suspended') {
+        go('v-suspended'); return;
+    }
+    loginSuccess();
+}
+
+function loginSuccess() {
+    go('v-success');
+    let s = 3;
+    const el = document.getElementById('successSec');
+    const t = setInterval(() => {
+        if (--s <= 0) { clearInterval(t); alert('进入 MP 控制台…'); }
+        else el.textContent = s;
+    }, 1000);
+}
+
+/* ===== Edge case demo ===== */
+function setEdge(e, btn) {
+    btn.parentElement.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    edgeCase = e;
+    // reset inline banners
+    document.getElementById('codeRegisterBanner').style.display = 'none';
+    document.getElementById('toRegisterHint').style.display = 'none';
+    document.getElementById('loginErr').classList.remove('show');
+}
+
+function confirmRegisterAndLogin() {
+    const ck = document.getElementById('ckRegisterAgree');
+    if (!ck.checked) {
+        alert('请先勾选同意协议');
+        return;
+    }
+    document.getElementById('codeRegisterBanner').style.display = 'none';
+    loginSuccess();
+}
+
+/* ===== Forgot password ===== */
+function goForgot() { go('v-forgot'); }
+
+// Step 1: validate input → show CAPTCHA
+function forgotStep1() {
+    const val = document.getElementById('inForgot').value.trim();
+    const errEl = document.getElementById('forgotErr');
+    if (!val) { errEl.classList.add('show'); return; }
+    errEl.classList.remove('show');
+    // trigger CAPTCHA overlay (reuse login captcha, set mode flag)
+    forgotCaptchaMode = true;
+    showCaptcha();
+}
+
+function resendForgotCode(btn) { countdown(btn); }
+
+// Step 2: verify code → go to set new password
+function forgotStep2() {
+    const w = document.getElementById('otp-forgot');
+    const code = Array.from(w.children).map(i => i.value).join('');
+    const errEl = document.getElementById('forgotCodeErr');
+    if (code.length < 6) { errEl.classList.add('show'); return; }
+    errEl.classList.remove('show');
+    go('v-reset-pwd');
+}
+
+// Step 3: validate password + confirm → success
+function resetDone() {
+    const p1 = document.getElementById('inNewPwd').value;
+    const p2 = document.getElementById('inNewPwd2').value;
+    const errEl = document.getElementById('resetPwdErr');
+    const errTxt = document.getElementById('resetPwdErrText');
+    // strength check
+    let sc = 0;
+    if (p1.length >= 8) sc++;
+    if (/[a-z]/.test(p1) && /[A-Z]/.test(p1)) sc++;
+    if (/\d/.test(p1)) sc++;
+    if (sc < 2) { errTxt.textContent = '密码强度不足，请包含大小写字母和数字，至少 8 位'; errEl.classList.add('show'); return; }
+    if (p1 !== p2) { errTxt.textContent = '两次密码不一致，请重新输入'; errEl.classList.add('show'); return; }
+    errEl.classList.remove('show');
+    go('v-reset-done');
+}
+
+function toggleNewPwd() {
+    const inp = document.getElementById('inNewPwd');
+    const btn = document.getElementById('newPwdEye');
+    if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '隐藏'; }
+    else { inp.type = 'password'; btn.textContent = '显示'; }
+}
+function toggleNewPwd2() {
+    const inp = document.getElementById('inNewPwd2');
+    const btn = document.getElementById('newPwd2Eye');
+    if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '隐藏'; }
+    else { inp.type = 'password'; btn.textContent = '显示'; }
+}
+
+/* ===== Lock timer ===== */
+function startLockTimer() {
+    let total = 24*60*60;
+    const el = document.getElementById('lockTime');
+    const t = setInterval(() => {
+        if (--total <= 0) { clearInterval(t); el.textContent = '00:00:00'; return; }
+        const h = Math.floor(total/3600);
+        const m = Math.floor((total%3600)/60);
+        const s = total%60;
+        el.textContent = String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    }, 1000);
+}
+
+/* ===== OTP builder ===== */
+function buildOtp(id) {
+    const w = document.getElementById(id);
+    if (w.children.length) return;
+    for (let i = 0; i < 6; i++) {
+        const inp = document.createElement('input');
+        inp.maxLength = 1; inp.type = 'text';
+        inp.oninput = function() { if (this.value && i < 5) w.children[i+1].focus(); };
+        inp.onkeydown = function(e) { if (e.key==='Backspace' && !this.value && i>0) w.children[i-1].focus(); };
+        w.appendChild(inp);
+    }
+    setTimeout(() => w.children[0].focus(), 100);
+}
+
+/* ===== Countdown ===== */
+function countdown(btn) {
+    btn.disabled = true; let s = 60; btn.textContent = s+'s';
+    const t = setInterval(() => {
+        if (--s <= 0) { clearInterval(t); btn.disabled = false; btn.textContent = '重新发送'; }
+        else btn.textContent = s+'s';
+    }, 1000);
+}
+
+/* ===== Password toggle ===== */
+function togglePwd() {
+    const inp = document.getElementById('inPwd');
+    const btn = document.getElementById('pwdEye');
+    if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '隐藏'; }
+    else { inp.type = 'password'; btn.textContent = '显示'; }
+}
+
+/* ===== Password meter ===== */
+function meter(p) {
+    const ss = ['s1','s2','s3','s4'].map(id => document.getElementById(id));
+    const h = document.getElementById('pwdH');
+    ss.forEach(s => s.style.background = 'var(--border-light)');
+    if (!p) { h.textContent = ''; return; }
+    let sc = 0;
+    if (p.length >= 8) sc++;
+    if (/[a-z]/.test(p) && /[A-Z]/.test(p)) sc++;
+    if (/\d/.test(p)) sc++;
+    if (/[^a-zA-Z0-9]/.test(p)) sc++;
+    const mp = [
+        { t:'弱 — 请增加复杂度', cl:'#ea4335' },
+        { t:'中等', cl:'#f9ab00' },
+        { t:'强', cl:'#34a853' },
+        { t:'非常强', cl:'#34a853' }
+    ];
+    for (let i = 0; i < sc; i++) ss[i].style.background = mp[sc-1].cl;
+    h.textContent = mp[sc-1].t; h.style.color = mp[sc-1].cl;
+}
+</script>
+</body>
+</html>

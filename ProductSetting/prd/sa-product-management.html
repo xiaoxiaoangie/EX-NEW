@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SA 服务商产品管理</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #eef2ff;
+            --primary-hover: #4338ca;
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --danger: #ef4444;
+            --radius: 8px;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', sans-serif; background: var(--gray-50); color: var(--gray-800); font-size:14px; }
+        .app { display:flex; height:100vh; }
+
+        /* Sidebar */
+        .sidebar { width:240px; background:#fff; border-right:1px solid var(--gray-200); display:flex; flex-direction:column; }
+        .sidebar-logo { padding:20px 20px 16px; font-size:15px; font-weight:700; color:var(--gray-900); border-bottom:1px solid var(--gray-100); }
+        .sidebar-nav { padding:12px 8px; flex:1; }
+        .nav-item { padding:10px 16px; border-radius:6px; cursor:pointer; color:var(--gray-500); font-weight:500; font-size:14px; margin-bottom:2px; transition:all .15s; }
+        .nav-item:hover { background:var(--gray-100); color:var(--gray-700); }
+        .nav-item.active { background:var(--primary-light); color:var(--primary); }
+
+        /* Main */
+        .main { flex:1; overflow-y:auto; }
+        .main-header { padding:24px 32px 0; }
+        .main-body { padding:16px 32px 32px; }
+        .page-title { font-size:20px; font-weight:700; color:var(--gray-900); }
+        .page-desc { font-size:13px; color:var(--gray-400); margin-top:4px; }
+        .toolbar { display:flex; justify-content:space-between; align-items:center; margin:16px 0; }
+
+        /* Buttons */
+        .btn { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border:none; border-radius:6px; font-size:13px; font-weight:500; cursor:pointer; transition:all .15s; }
+        .btn-sm { padding:6px 12px; font-size:12px; }
+        .btn-primary { background:var(--primary); color:#fff; }
+        .btn-primary:hover { background:var(--primary-hover); }
+        .btn-ghost { background:transparent; color:var(--gray-500); border:1px solid var(--gray-200); }
+        .btn-ghost:hover { background:var(--gray-50); color:var(--gray-700); border-color:var(--gray-300); }
+        .btn-link { background:none; color:var(--primary); padding:4px 8px; }
+        .btn-link:hover { text-decoration:underline; }
+
+        /* Table */
+        .tbl { width:100%; background:#fff; border-radius:var(--radius); border:1px solid var(--gray-200); border-collapse:separate; border-spacing:0; overflow:hidden; }
+        .tbl th { background:var(--gray-50); padding:10px 16px; font-size:12px; font-weight:600; color:var(--gray-500); text-align:left; text-transform:uppercase; letter-spacing:.04em; border-bottom:1px solid var(--gray-200); }
+        .tbl td { padding:12px 16px; border-bottom:1px solid var(--gray-100); color:var(--gray-600); font-size:13px; }
+        .tbl tbody tr:hover { background:var(--gray-50); }
+        .tbl tbody tr:last-child td { border-bottom:none; }
+        .badge { display:inline-block; padding:2px 8px; border-radius:10px; font-size:12px; font-weight:500; }
+        .badge-green { background:var(--success-light); color:var(--success); }
+        .badge-gray { background:var(--gray-100); color:var(--gray-400); }
+        .tag { display:inline-block; padding:2px 8px; border-radius:4px; font-size:12px; background:var(--primary-light); color:var(--primary); margin-right:4px; }
+
+        /* Card */
+        .card { background:#fff; border:1px solid var(--gray-200); border-radius:var(--radius); }
+        .card-header { padding:16px 20px; border-bottom:1px solid var(--gray-100); display:flex; justify-content:space-between; align-items:center; }
+        .card-title { font-size:15px; font-weight:600; color:var(--gray-900); }
+        .card-body { padding:20px; }
+
+        /* Steps */
+        .steps { display:flex; gap:4px; padding:20px 0; }
+        .stp { flex:1; display:flex; align-items:center; gap:8px; padding:12px 16px; border-radius:6px; cursor:pointer; transition:all .15s; }
+        .stp-num { width:28px; height:28px; border-radius:50%; background:var(--gray-200); color:var(--gray-400); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; }
+        .stp-label { font-size:13px; color:var(--gray-400); font-weight:500; white-space:nowrap; }
+        .stp.active .stp-num { background:var(--primary); color:#fff; }
+        .stp.active .stp-label { color:var(--primary); }
+        .stp.done .stp-num { background:var(--success); color:#fff; }
+        .stp.done .stp-num::after { content:'✓'; }
+        .stp.done .stp-label { color:var(--success); }
+
+        /* Form */
+        .form-section { margin-bottom:28px; }
+        .form-section:last-child { margin-bottom:0; }
+        .section-title { font-size:14px; font-weight:600; color:var(--gray-700); margin-bottom:16px; padding-bottom:8px; border-bottom:1px solid var(--gray-100); }
+        .field { margin-bottom:16px; }
+        .field:last-child { margin-bottom:0; }
+        .field-label { display:block; font-size:13px; font-weight:600; color:var(--gray-700); margin-bottom:6px; }
+        .field-label .req { color:var(--danger); margin-right:2px; }
+        .field-label .en { color:var(--gray-400); font-weight:400; margin-left:6px; font-size:12px; }
+        .field-hint { font-size:12px; color:var(--gray-400); margin-top:4px; }
+        .input { width:100%; padding:8px 12px; border:1px solid var(--gray-200); border-radius:6px; font-size:13px; color:var(--gray-800); transition:all .15s; background:#fff; }
+        .input:hover { border-color:var(--gray-300); }
+        .input:focus { outline:none; border-color:var(--primary); box-shadow:0 0 0 3px rgba(79,70,229,.1); }
+        .input:disabled { background:var(--gray-50); color:var(--gray-400); cursor:not-allowed; }
+        .input-sm { max-width:200px; }
+        .input-md { max-width:320px; }
+        textarea.input { resize:vertical; }
+        select.input { cursor:pointer; }
+        .row { display:grid; gap:16px; }
+        .row-2 { grid-template-columns:1fr 1fr; }
+        .row-3 { grid-template-columns:1fr 1fr 1fr; }
+        .row-4 { grid-template-columns:1fr 1fr 1fr 1fr; }
+        .checks { display:flex; flex-wrap:wrap; gap:12px; }
+        .chk { display:flex; align-items:center; gap:6px; font-size:13px; color:var(--gray-600); cursor:pointer; }
+        .chk input { margin:0; accent-color:var(--primary); }
+        .radios { display:flex; gap:16px; }
+        .rad { display:flex; align-items:center; gap:6px; font-size:13px; color:var(--gray-600); cursor:pointer; }
+        .rad input { margin:0; accent-color:var(--primary); }
+
+        /* Limit Table */
+        .limit-tbl { width:100%; max-width:860px; border-collapse:separate; border-spacing:0; border:1px solid var(--gray-200); border-radius:var(--radius); overflow:hidden; }
+        .limit-tbl th { background:var(--gray-50); padding:10px 12px; font-size:12px; font-weight:600; color:var(--gray-500); text-align:left; border-bottom:1px solid var(--gray-200); }
+        .limit-tbl td { padding:10px 12px; border-bottom:1px solid var(--gray-100); font-size:13px; vertical-align:middle; }
+        .limit-tbl tr:last-child td { border-bottom:none; }
+        .limit-tbl .limit-name { font-weight:600; color:var(--gray-700); white-space:nowrap; }
+        .limit-tbl .limit-en { font-size:11px; color:var(--gray-400); display:block; }
+        .limit-tbl .unit { color:var(--gray-400); font-size:12px; white-space:nowrap; padding-left:0; }
+        .limit-tbl .input { max-width:140px; padding:6px 10px; }
+        .limit-tbl .chk { justify-content:center; }
+        .limit-off td:not(:first-child) { opacity:.4; }
+        .limit-val { display:flex; align-items:center; gap:8px; }
+        .limit-val select { padding:5px 8px; border:1px solid var(--gray-200); border-radius:4px; font-size:12px; color:var(--gray-600); background:#fff; cursor:pointer; }
+        .limit-val select:focus { outline:none; border-color:var(--primary); }
+        .limit-val .input { margin:0; }
+        .range-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+        .range-item { display:flex; align-items:center; gap:6px; }
+        .range-label { font-size:12px; color:var(--gray-400); white-space:nowrap; }
+        .limit-tbl th { white-space:nowrap; }
+
+        /* Tag Picker (multi select with search) */
+        .picker { position:relative; }
+        .picker-box { min-height:36px; padding:4px 8px; border:1px solid var(--gray-200); border-radius:6px; display:flex; flex-wrap:wrap; gap:4px; align-items:center; cursor:pointer; background:#fff; transition:all .15s; }
+        .picker-box:hover { border-color:var(--gray-300); }
+        .picker-box.open { border-color:var(--primary); box-shadow:0 0 0 3px rgba(79,70,229,.1); }
+        .picker-tag { display:inline-flex; align-items:center; gap:4px; padding:2px 8px; background:var(--primary-light); color:var(--primary); border-radius:4px; font-size:12px; font-weight:500; }
+        .picker-tag-x { cursor:pointer; font-size:14px; line-height:1; opacity:.6; }
+        .picker-tag-x:hover { opacity:1; }
+        .picker-ph { color:var(--gray-400); font-size:13px; }
+        .picker-dd { display:none; position:absolute; top:calc(100% + 4px); left:0; right:0; background:#fff; border:1px solid var(--gray-200); border-radius:6px; box-shadow:var(--shadow-md); z-index:100; max-height:280px; overflow:hidden; }
+        .picker-dd.open { display:flex; flex-direction:column; }
+        .picker-search { padding:8px; border-bottom:1px solid var(--gray-100); position:sticky; top:0; background:#fff; }
+        .picker-search input { width:100%; padding:6px 10px; border:1px solid var(--gray-200); border-radius:4px; font-size:13px; }
+        .picker-search input:focus { outline:none; border-color:var(--primary); }
+        .picker-list { overflow-y:auto; flex:1; }
+        .picker-opt { padding:8px 12px; display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px; color:var(--gray-600); transition:background .1s; }
+        .picker-opt:hover { background:var(--gray-50); }
+        .picker-opt.sel { background:var(--primary-light); color:var(--primary); }
+        .picker-opt input[type="checkbox"] { margin:0; accent-color:var(--primary); }
+        .picker-empty { padding:16px; text-align:center; color:var(--gray-400); font-size:13px; }
+
+        /* 3DS subsection */
+        .sub-box { background:var(--gray-50); border:1px solid var(--gray-200); border-radius:var(--radius); padding:16px; margin-top:12px; }
+        .sub-title { font-size:13px; font-weight:600; color:var(--gray-600); margin-bottom:12px; }
+
+        /* Modal */
+        .modal-mask { display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:200; align-items:center; justify-content:center; }
+        .modal-mask.open { display:flex; }
+        .modal { background:#fff; border-radius:12px; width:560px; max-width:90vw; box-shadow:0 20px 60px rgba(0,0,0,.15); }
+        .modal-head { padding:20px 24px; border-bottom:1px solid var(--gray-100); }
+        .modal-head h3 { font-size:16px; font-weight:700; }
+        .modal-body { padding:24px; }
+        .modal-foot { padding:16px 24px; border-top:1px solid var(--gray-100); display:flex; justify-content:flex-end; gap:8px; }
+        .product-option { border:2px solid var(--gray-200); border-radius:var(--radius); padding:16px; margin-bottom:12px; cursor:pointer; transition:all .15s; display:flex; gap:16px; align-items:center; }
+        .product-option:hover { border-color:var(--primary); background:var(--primary-light); }
+        .product-option .icon { width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
+        .product-option .icon.vcc { background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; }
+        .product-option .icon.crypto { background:linear-gradient(135deg,#f472b6,#ec4899); color:#fff; }
+        .product-option h4 { font-size:14px; font-weight:600; color:var(--gray-800); }
+        .product-option p { font-size:12px; color:var(--gray-500); margin-top:2px; }
+
+        /* Drawer */
+        .drawer-mask { display:none; position:fixed; inset:0; background:rgba(0,0,0,.3); z-index:200; }
+        .drawer-mask.open { display:block; }
+        .drawer { position:fixed; top:0; right:-560px; width:560px; height:100vh; background:#fff; z-index:201; transition:right .25s; display:flex; flex-direction:column; box-shadow:-4px 0 16px rgba(0,0,0,.1); }
+        .drawer.open { right:0; }
+        .drawer-head { padding:16px 24px; border-bottom:1px solid var(--gray-100); display:flex; justify-content:space-between; align-items:center; }
+        .drawer-head h3 { font-size:16px; font-weight:600; }
+        .drawer-close { cursor:pointer; font-size:20px; color:var(--gray-400); }
+        .drawer-close:hover { color:var(--gray-700); }
+        .drawer-body { flex:1; overflow-y:auto; padding:24px; }
+        .detail-row { display:flex; padding:10px 0; border-bottom:1px solid var(--gray-100); }
+        .detail-label { width:100px; font-size:13px; color:var(--gray-400); flex-shrink:0; }
+        .detail-value { font-size:13px; color:var(--gray-700); font-weight:500; }
+
+        /* Bin cards */
+        .bin-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(380px,1fr)); gap:16px; }
+        .bin-card { background:#fff; border:1px solid var(--gray-200); border-radius:var(--radius); overflow:hidden; transition:all .15s; }
+        .bin-card:hover { box-shadow:var(--shadow-md); transform:translateY(-1px); }
+        .bin-card-top { padding:16px 20px; display:flex; justify-content:space-between; align-items:center; background:var(--gray-50); border-bottom:1px solid var(--gray-100); }
+        .bin-num { font-size:22px; font-weight:700; color:var(--gray-900); letter-spacing:.5px; }
+        .bin-card-body { padding:16px 20px; }
+        .bin-meta { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+        .bin-meta-label { font-size:11px; color:var(--gray-400); text-transform:uppercase; letter-spacing:.04em; }
+        .bin-meta-val { font-size:13px; color:var(--gray-700); font-weight:600; margin-top:2px; }
+        .bin-card-foot { padding:12px 20px; border-top:1px solid var(--gray-100); display:flex; justify-content:space-between; align-items:center; }
+        .bin-time { font-size:12px; color:var(--gray-400); }
+        .bin-log-toggle { padding:8px 20px; border-top:1px solid var(--gray-100); text-align:center; }
+        .bin-log-toggle a { font-size:12px; color:var(--primary); cursor:pointer; text-decoration:none; }
+        .bin-log-toggle a:hover { text-decoration:underline; }
+        .bin-log { display:none; border-top:1px solid var(--gray-100); padding:12px 20px; max-height:200px; overflow-y:auto; }
+        .bin-log.show { display:block; }
+        .log-entry { display:flex; gap:10px; font-size:12px; padding:6px 0; border-bottom:1px dashed var(--gray-100); }
+        .log-entry:last-child { border-bottom:none; }
+        .log-time { color:var(--gray-400); white-space:nowrap; flex-shrink:0; }
+        .log-action { font-weight:600; white-space:nowrap; flex-shrink:0; }
+        .log-action.enable { color:var(--success); }
+        .log-action.disable { color:var(--danger); }
+        .log-user { color:var(--gray-500); white-space:nowrap; flex-shrink:0; }
+        .log-remark { color:var(--gray-600); word-break:break-all; }
+
+        /* Step actions */
+        .step-bar { display:flex; justify-content:space-between; margin-top:24px; padding-top:20px; border-top:1px solid var(--gray-100); }
+        .step-bar-right { display:flex; gap:8px; }
+
+        /* Hide pages */
+        .page { display:none; }
+        .page.show { display:block; }
+        .step-panel { display:none; }
+        .step-panel.show { display:block; }
+        .crypto-step { display:none; }
+        .crypto-step.show { display:block; }
+
+        /* Lang tabs */
+        .lang-tabs { display:flex; gap:0; border-bottom:1px solid var(--gray-200); margin-bottom:12px; }
+        .lang-tab { padding:8px 16px; font-size:13px; font-weight:500; color:var(--gray-400); cursor:pointer; border-bottom:2px solid transparent; transition:all .15s; }
+        .lang-tab:hover { color:var(--gray-600); }
+        .lang-tab.active { color:var(--primary); border-bottom-color:var(--primary); }
+        .lang-panel { display:none; }
+        .lang-panel.show { display:block; }
+    </style>
+</head>
+<body>
+<div class="app">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-logo">SA 管理后台</div>
+        <div class="sidebar-nav">
+            <div class="nav-item" onclick="go('pg-sp')">服务商管理</div>
+            <div class="nav-item active" onclick="go('pg-product')">服务商产品管理</div>
+        </div>
+    </div>
+
+    <div class="main">
+        <!-- 服务商管理 -->
+        <div id="pg-sp" class="page">
+            <div class="main-header"><div class="page-title">服务商管理</div><div class="page-desc">管理平台所有服务商信息</div></div>
+            <div class="main-body">
+                <div class="toolbar"><div></div><button class="btn btn-primary">+ 新增服务商</button></div>
+                <table class="tbl">
+                    <thead><tr><th>服务商ID</th><th>服务商名称</th><th>所在地区</th><th>提供产品</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead>
+                    <tbody>
+                        <tr><td>SP001</td><td style="color:var(--gray-800);font-weight:500">GlobalCard Solutions</td><td>香港</td><td><span class="tag">VCC发卡</span></td><td><span class="badge badge-green">启用</span></td><td>2026-01-15</td><td><button class="btn btn-link btn-sm" onclick="openDrawer()">详情</button></td></tr>
+                        <tr><td>SP002</td><td style="color:var(--gray-800);font-weight:500">CryptoPayment Inc</td><td>新加坡</td><td><span class="tag">数币收单</span></td><td><span class="badge badge-green">启用</span></td><td>2026-02-01</td><td><button class="btn btn-link btn-sm" onclick="openDrawer()">详情</button></td></tr>
+                        <tr><td>SP003</td><td style="color:var(--gray-800);font-weight:500">Asia Payment Gateway</td><td>美国</td><td><span class="tag">VCC发卡</span><span class="tag">数币收单</span></td><td><span class="badge badge-green">启用</span></td><td>2026-02-10</td><td><button class="btn btn-link btn-sm" onclick="openDrawer()">详情</button></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 服务商产品管理 -->
+        <div id="pg-product" class="page show">
+            <div class="main-header"><div class="page-title">服务商产品管理</div><div class="page-desc">管理服务商上架的产品及配置</div></div>
+            <div class="main-body">
+                <div class="toolbar"><div></div><button class="btn btn-primary" onclick="openModal('productModal')">+ 上架产品</button></div>
+                <table class="tbl">
+                    <thead><tr><th>产品Code</th><th>产品名称</th><th>服务商MID</th><th>服务商名称</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead>
+                    <tbody>
+                        <tr><td style="font-weight:600">VCC_53422618</td><td>VCC - Visa USD</td><td>SP001</td><td>GlobalCard Solutions</td><td><span class="badge badge-green">启用</span></td><td>2026-02-15</td><td><button class="btn btn-link btn-sm" onclick="go('pg-binlist')">详情</button><button class="btn btn-link btn-sm" onclick="go('pg-binlist')">编辑</button></td></tr>
+                        <tr><td style="font-weight:600">CRYPTO_001</td><td>数币收单 - USDT</td><td>SP002</td><td>CryptoPayment Inc</td><td><span class="badge badge-green">启用</span></td><td>2026-02-20</td><td><button class="btn btn-link btn-sm">详情</button><button class="btn btn-link btn-sm">编辑</button></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Bin 列表 -->
+        <div id="pg-binlist" class="page">
+            <div class="main-header"><div class="page-title">VCC 产品 — Bin 管理</div><div class="page-desc">管理该 VCC 产品下的所有 Bin 配置</div></div>
+            <div class="main-body">
+                <div class="toolbar">
+                    <button class="btn btn-ghost" onclick="go('pg-product')">← 返回产品列表</button>
+                    <button class="btn btn-primary" onclick="goStep('pg-bin-edit',1,'添加 Bin')">+ 添加 Bin</button>
+                </div>
+                <div class="bin-grid">
+                    <div class="bin-card">
+                        <div class="bin-card-top">
+                            <div style="display:flex;align-items:center;gap:12px"><span class="bin-num">53422618</span><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='46' height='28'%3E%3Crect fill='%231434CB' width='46' height='28' rx='3'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='11' font-weight='bold'%3EVISA%3C/text%3E%3C/svg%3E" alt="Visa"></div>
+                            <span class="badge badge-green">启用</span>
+                        </div>
+                        <div class="bin-card-body"><div class="bin-meta">
+                            <div><div class="bin-meta-label">发卡地区</div><div class="bin-meta-val">美国</div></div>
+                            <div><div class="bin-meta-label">币种</div><div class="bin-meta-val">USD</div></div>
+                            <div><div class="bin-meta-label">资金模式</div><div class="bin-meta-val">Programme Managed</div></div>
+                            <div><div class="bin-meta-label">卡类别</div><div class="bin-meta-val">Corporate</div></div>
+                        </div></div>
+                        <div class="bin-card-foot">
+                            <span class="bin-time">2026-02-15 10:30</span>
+                            <div style="display:flex;gap:6px">
+                                <button class="btn btn-ghost btn-sm" style="color:var(--danger);border-color:var(--danger)" onclick="openBinToggle(this)">禁用</button>
+                                <button class="btn btn-ghost btn-sm" onclick="editBin('53422618','编辑 Bin — 53422618')">编辑配置</button>
+                            </div>
+                        </div>
+                        <div class="bin-log-toggle"><a onclick="toggleBinLog(this)">查看操作日志 ▾</a></div>
+                        <div class="bin-log">
+                            <div class="log-entry"><span class="log-time">2026-02-15 10:30</span><span class="log-action enable">启用</span><span class="log-user">admin@ipaylinks.com</span><span class="log-remark">新 Bin 上架启用</span></div>
+                        </div>
+                    </div>
+                    <div class="bin-card">
+                        <div class="bin-card-top">
+                            <div style="display:flex;align-items:center;gap:12px"><span class="bin-num">52345678</span><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='46' height='28'%3E%3Crect fill='%23EB001B' width='46' height='28' rx='3'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='9' font-weight='bold'%3EMC%3C/text%3E%3C/svg%3E" alt="MC"></div>
+                            <span class="badge badge-green">启用</span>
+                        </div>
+                        <div class="bin-card-body"><div class="bin-meta">
+                            <div><div class="bin-meta-label">发卡地区</div><div class="bin-meta-val">香港</div></div>
+                            <div><div class="bin-meta-label">币种</div><div class="bin-meta-val">USD</div></div>
+                            <div><div class="bin-meta-label">资金模式</div><div class="bin-meta-val">Cardholder Managed</div></div>
+                            <div><div class="bin-meta-label">卡类别</div><div class="bin-meta-val">Consumer</div></div>
+                        </div></div>
+                        <div class="bin-card-foot">
+                            <span class="bin-time">2026-02-20 14:20</span>
+                            <div style="display:flex;gap:6px">
+                                <button class="btn btn-ghost btn-sm" style="color:var(--danger);border-color:var(--danger)" onclick="openBinToggle(this)">禁用</button>
+                                <button class="btn btn-ghost btn-sm" onclick="editBin('52345678','编辑 Bin — 52345678')">编辑配置</button>
+                            </div>
+                        </div>
+                        <div class="bin-log-toggle"><a onclick="toggleBinLog(this)">查看操作日志 ▾</a></div>
+                        <div class="bin-log">
+                            <div class="log-entry"><span class="log-time">2026-02-20 14:20</span><span class="log-action enable">启用</span><span class="log-user">admin@ipaylinks.com</span><span class="log-remark">新 Bin 上架启用</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bin 编辑（分步骤） -->
+        <div id="pg-bin-edit" class="page">
+            <div class="main-header"><div class="page-title" id="binEditTitle">添加 Bin</div><div class="page-desc">配置该 Bin 下的所有属性</div></div>
+            <div class="main-body">
+                <div class="toolbar"><button class="btn btn-ghost" onclick="go('pg-binlist')">← 返回 Bin 列表</button><div></div></div>
+                <!-- Steps -->
+                <div class="steps" id="stepsBar">
+                    <div class="stp active" onclick="jumpStep(1)"><div class="stp-num">1</div><div class="stp-label">基本信息</div></div>
+                    <div class="stp" onclick="jumpStep(2)"><div class="stp-num">2</div><div class="stp-label">卡账户能力</div></div>
+                    <div class="stp" onclick="jumpStep(3)"><div class="stp-num">3</div><div class="stp-label">交易能力</div></div>
+                    <div class="stp" onclick="jumpStep(4)"><div class="stp-num">4</div><div class="stp-label">卡限制</div></div>
+                    <div class="stp" onclick="jumpStep(5)"><div class="stp-num">5</div><div class="stp-label">风控能力</div></div>
+                </div>
+
+                <!-- Step 1 基本信息 -->
+                <div class="step-panel show" data-step="1">
+                    <div class="card"><div class="card-header"><div class="card-title">卡 Bin 基本信息</div></div><div class="card-body">
+                        <div class="row row-3">
+                            <div class="field"><label class="field-label"><span class="req">*</span>卡 Bin<span class="en">bin</span></label><input id="binInput" class="input input-sm" placeholder="如：53422618" maxlength="8"></div>
+                            <div class="field"><label class="field-label"><span class="req">*</span>卡组织<span class="en">card-scheme</span></label><select class="input input-sm"><option value="">请选择</option><option>Visa</option><option>Mastercard</option></select></div>
+                            <div class="field"><label class="field-label"><span class="req">*</span>发卡地区<span class="en">region</span></label><select class="input input-sm"><option value="">请选择</option><option>美国</option><option>英国</option><option>香港</option><option>新加坡</option></select></div>
+                        </div>
+                        <div class="row row-3" style="margin-top:16px">
+                            <div class="field"><label class="field-label"><span class="req">*</span>卡账户币种<span class="en">card-account ccy</span></label><select class="input input-sm"><option value="">请选择</option><option>USD</option><option>EUR</option><option>GBP</option></select></div>
+                            <div class="field"><label class="field-label"><span class="req">*</span>资金模式<span class="en">funding_model</span></label><select class="input input-sm"><option value="">请选择</option><option>Programme Managed</option><option>Cardholder Managed</option></select></div>
+                            <div class="field"><label class="field-label"><span class="req">*</span>卡类别<span class="en">Card Programme Type</span></label><select class="input input-sm"><option value="">请选择</option><option>Corporate（企业卡）</option><option>Consumer（个人卡）</option></select></div>
+                        </div>
+                        <div class="row row-2" style="margin-top:16px">
+                            <div class="field"><label class="field-label"><span class="req">*</span>卡有效期<span class="en">Card Validity Period</span></label><input class="input input-sm" placeholder="如：3 years"></div>
+                            <div class="field"><label class="field-label">卡面 Logo<span class="en">logo</span></label><input type="file" class="input input-sm" accept="image/*"></div>
+                        </div>
+                        <!-- Bin 描述 (多语言) -->
+                        <div class="field" style="margin-top:16px">
+                            <label class="field-label"><span class="req">*</span>Bin 描述<span class="en">bin description</span></label>
+                            <div class="lang-tabs">
+                                <div class="lang-tab active" onclick="switchLang(this,'lang1')">简体中文 *</div>
+                                <div class="lang-tab" onclick="switchLang(this,'lang1')">English *</div>
+                                <div class="lang-tab" onclick="switchLang(this,'lang1')">粤語</div>
+                            </div>
+                            <div class="lang-panel show" data-lang="lang1-0"><textarea class="input" rows="3" placeholder="第1行：适用场景（≤50字）&#10;第2行：支持平台/功能（≤50字）&#10;第3行：限额等特点（≤50字，可选）"></textarea></div>
+                            <div class="lang-panel" data-lang="lang1-1"><textarea class="input" rows="3" placeholder="Line 1: Scenario (≤100 chars)&#10;Line 2: Platforms (≤100 chars)&#10;Line 3: Features (≤100 chars, optional)"></textarea></div>
+                            <div class="lang-panel" data-lang="lang1-2"><textarea class="input" rows="3" placeholder="第1行：適用場景（≤50字）&#10;第2行：支持平台/功能（≤50字）&#10;第3行：限額等特點（≤50字，可選）"></textarea></div>
+                            <div class="field-hint">2-3行描述，用于商户端、TP 端展示该 Bin 的用途和特点</div>
+                        </div>
+                    </div></div>
+                    <div class="step-bar"><button class="btn btn-ghost" onclick="go('pg-binlist')">取消</button><div class="step-bar-right"><button class="btn btn-ghost" onclick="saveDraft()">保存草稿</button><button class="btn btn-primary" onclick="nextStep()">保存并下一步 →</button></div></div>
+                </div>
+
+                <!-- Step 2 卡账户能力 -->
+                <div class="step-panel" data-step="2">
+                    <div class="card"><div class="card-header"><div class="card-title">卡账户能力</div></div><div class="card-body">
+                        <div class="field"><label class="field-label"><span class="req">*</span>卡产品类型<span class="en">Card Product Type</span></label><select class="input input-sm"><option>Prepaid（预付卡）</option><option disabled>Credit（信用卡 - 下期）</option></select><div class="field-hint">本期仅支持 Prepaid</div></div>
+                        <div class="field"><label class="field-label"><span class="req">*</span>支持的卡片类型<span class="en">Supported Card Types</span></label>
+                            <div class="checks"><label class="chk"><input type="checkbox" checked> 普通卡（Standard）</label><label class="chk"><input type="checkbox" onchange="toggle(this.closest('.card-body').querySelector('.shared-cfg'),this.checked)"> 共享卡（Shared）</label></div>
+                            <div class="field-hint">可同时支持，至少选一种</div>
+                        </div>
+                        <div class="shared-cfg" style="display:none"><div class="field"><label class="field-label"><span class="req">*</span>共享卡账户最大卡片数<span class="en">shared account max cards</span></label><div style="display:flex;align-items:center;gap:8px"><input class="input input-sm" type="number" placeholder="10" min="1" style="max-width:120px"><span style="color:var(--gray-400);font-size:13px">张</span></div></div></div>
+                        <div class="field"><label class="field-label"><span class="req">*</span>转入币种<span class="en">recharge ccy</span></label>
+                            <div class="picker" data-id="pk-ccy">
+                                <div class="picker-box" onclick="togglePicker('pk-ccy')"><span class="picker-ph">请选择转入币种</span></div>
+                                <div class="picker-dd" id="pk-ccy">
+                                    <div class="picker-search"><input placeholder="搜索币种…" oninput="filterPk(this)"></div>
+                                    <div class="picker-list">
+                                        <div class="picker-opt" onclick="pickOpt(this)"><input type="checkbox"><span>USD - 美元</span></div>
+                                        <div class="picker-opt" onclick="pickOpt(this)"><input type="checkbox"><span>EUR - 欧元</span></div>
+                                        <div class="picker-opt" onclick="pickOpt(this)"><input type="checkbox"><span>GBP - 英镑</span></div>
+                                        <div class="picker-opt" onclick="pickOpt(this)"><input type="checkbox"><span>HKD - 港币</span></div>
+                                        <div class="picker-opt" onclick="pickOpt(this)"><input type="checkbox"><span>USDT - 泰达币</span></div>
+                                        <div class="picker-opt" onclick="pickOpt(this)"><input type="checkbox"><span>USDC</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div></div>
+                    <div class="step-bar"><button class="btn btn-ghost" onclick="prevStep()">← 上一步</button><div class="step-bar-right"><button class="btn btn-ghost" onclick="saveDraft()">保存草稿</button><button class="btn btn-primary" onclick="nextStep()">保存并下一步 →</button></div></div>
+                </div>
+
+                <!-- Step 3 交易能力 -->
+                <div class="step-panel" data-step="3">
+                    <div class="card"><div class="card-header"><div class="card-title">交易能力</div></div><div class="card-body">
+                        <div class="field"><label class="field-label"><span class="req">*</span>交易受理渠道<span class="en">transaction acceptance channel</span></label>
+                            <div class="checks"><label class="chk"><input type="checkbox" value="ATM"> ATM</label><label class="chk"><input type="checkbox" value="POS"> POS</label><label class="chk"><input type="checkbox" value="Online" checked> 线上</label></div>
+                        </div>
+                        <div class="row row-3">
+                            <div class="field"><label class="field-label"><span class="req">*</span>卡消费次数<span class="en">card usage type</span></label><select class="input input-sm"><option value="">请选择</option><option>Single-use（单次）</option><option>Multi-use（多次）</option></select></div>
+                            <div class="field"><label class="field-label"><span class="req">*</span>授权模式<span class="en">authorization_mode</span></label><select class="input input-sm"><option value="">请选择</option><option>Real-time</option><option>Standard</option></select></div>
+                            <div class="field"><label class="field-label"><span class="req">*</span>授权浮动<span class="en">auth-padding</span></label>
+                                <div style="display:flex;gap:8px;align-items:center"><select class="input input-sm" style="max-width:100px" onchange="toggle(this.parentElement.querySelector('.ap-val'),this.value==='允许')"><option value="">请选择</option><option>允许</option><option>不允许</option></select><div class="ap-val" style="display:none;display:flex;align-items:center;gap:4px"><input class="input" type="number" placeholder="5" style="max-width:80px" step="0.1"><span style="color:var(--gray-400);font-size:13px">%</span></div></div>
+                            </div>
+                        </div>
+                        <!-- 3DS -->
+                        <div class="sub-box" style="margin-top:16px">
+                            <div class="sub-title">3DS 配置</div>
+                            <div class="field"><label class="field-label"><span class="req">*</span>3DS 开关</label>
+                                <div class="radios"><label class="rad"><input type="radio" name="r3ds" value="on" onchange="toggle(document.getElementById('tds-cfg'),true)"> Enabled</label><label class="rad"><input type="radio" name="r3ds" value="off" checked onchange="toggle(document.getElementById('tds-cfg'),false)"> Disabled</label></div>
+                            </div>
+                            <div id="tds-cfg" style="display:none">
+                                <div class="field"><label class="field-label"><span class="req">*</span>默认挑战策略<span class="en">challenge_policy</span></label><select class="input input-md"><option value="">请选择</option><option>Prefer Frictionless</option><option>Prefer Challenge</option><option>Always Challenge</option></select></div>
+                                <div class="field"><label class="field-label"><span class="req">*</span>挑战方式<span class="en">challenge_method</span></label>
+                                    <div class="checks"><label class="chk"><input type="checkbox"> OTP（一次性验证码）</label><label class="chk"><input type="checkbox"> Static Password（静态密码）</label><label class="chk"><input type="checkbox"> Out-of-Band（APP推送）</label></div>
+                                </div>
+                                <div class="field"><label class="field-label"><span class="req">*</span>通知递送<span class="en">notification_delivery</span></label><select class="input input-md"><option value="">请选择</option><option>Direct to Cardholder</option><option>Webhook to Merchant</option></select></div>
+                            </div>
+                        </div>
+                    </div></div>
+                    <div class="step-bar"><button class="btn btn-ghost" onclick="prevStep()">← 上一步</button><div class="step-bar-right"><button class="btn btn-ghost" onclick="saveDraft()">保存草稿</button><button class="btn btn-primary" onclick="nextStep()">保存并下一步 →</button></div></div>
+                </div>
+
+                <!-- Step 4 卡限制 -->
+                <div class="step-panel" data-step="4">
+                    <div class="card"><div class="card-header"><div class="card-title">卡限制配置</div></div><div class="card-body">
+                        <!-- 4.1 卡片数量 -->
+                        <div class="form-section">
+                            <div class="section-title">卡片数量限制</div>
+                            <table class="limit-tbl">
+                                <thead><tr><th style="width:40px">启用</th><th>限制维度</th><th>限额值</th><th style="width:50px">单位</th></tr></thead>
+                                <tbody>
+                                    <tr><td><label class="chk"><input type="checkbox" checked onchange="toggleLimit(this)"></label></td><td><span class="limit-name">单商户最大卡数量</span><span class="limit-en">card limit - per merchant</span></td><td><div class="limit-val"><select onchange="toggleLimitVal(this)"><option value="limit">有限额</option><option value="nolimit">无限额</option></select><input class="input" type="number" placeholder="100" style="max-width:140px"></div></td><td class="unit">张</td></tr>
+                                    <tr><td><label class="chk"><input type="checkbox" checked onchange="toggleLimit(this)"></label></td><td><span class="limit-name">单日开卡数量</span><span class="limit-en">card limit - daily</span></td><td><div class="limit-val"><select onchange="toggleLimitVal(this)"><option value="limit">有限额</option><option value="nolimit">无限额</option></select><input class="input" type="number" placeholder="10" style="max-width:140px"></div></td><td class="unit">张</td></tr>
+                                    <tr><td><label class="chk"><input type="checkbox" checked onchange="toggleLimit(this)"></label></td><td><span class="limit-name">单月开卡数量</span><span class="limit-en">card limit - monthly</span></td><td><div class="limit-val"><select onchange="toggleLimitVal(this)"><option value="limit">有限额</option><option value="nolimit">无限额</option></select><input class="input" type="number" placeholder="50" style="max-width:140px"></div></td><td class="unit">张</td></tr>
+                                    <tr class="limit-off"><td><label class="chk"><input type="checkbox" onchange="toggleLimit(this)"></label></td><td><span class="limit-name">单年开卡数量</span><span class="limit-en">card limit - yearly</span></td><td><div class="limit-val"><select disabled onchange="toggleLimitVal(this)"><option value="limit">有限额</option><option value="nolimit">无限额</option></select><input class="input" type="number" placeholder="—" style="max-width:140px" disabled></div></td><td class="unit">张</td></tr>
+                                    <tr class="limit-off"><td><label class="chk"><input type="checkbox" onchange="toggleLimit(this)"></label></td><td><span class="limit-name">累计开卡数量</span><span class="limit-en">card limit - total</span></td><td><div class="limit-val"><select disabled onchange="toggleLimitVal(this)"><option value="limit">有限额</option><option value="nolimit">无限额</option></select><input class="input" type="number" placeholder="—" style="max-width:140px" disabled></div></td><td class="unit">张</td></tr>
+                                </tbody>
+                            </table>
+                            <div class="field-hint" style="margin-top:8px">校验规则：单日 ≤ 单月 ≤ 单年 ≤ 累计 ≤ 单商户最大</div>
+                        </div>
+                        <!-- 4.2 转入/转出限额 -->
+                        <div class="form-section">
+                            <div class="section-title">转入 / 转出限额</div>
+                            <table class="limit-tbl">
+                                <thead><tr><th style="width:40px">启用</th><th>限制维度</th><th>限额值</th><th style="width:50px">单位</th></tr></thead>
+                                <tbody>
+                                    <tr><td><label class="chk"><input type="checkbox" checked onchange="toggleLimit(this)"></label></td><td><span class="limit-name">单次转入限额</span><span class="limit-en">recharge limit</span></td><td>
+                                        <div class="range-row">
+                                            <div class="range-item"><span class="range-label">最小</span><select onchange="toggleLimitVal(this)"><option value="limit">有</option><option value="nolimit">无</option></select><input class="input" type="number" placeholder="1" style="max-width:100px"></div>
+                                            <div class="range-item"><span class="range-label">最大</span><select onchange="toggleLimitVal(this)"><option value="limit">有</option><option value="nolimit">无</option></select><input class="input" type="number" placeholder="50000" style="max-width:100px"></div>
+                                        </div>
+                                    </td><td class="unit">USD</td></tr>
+                                    <tr><td><label class="chk"><input type="checkbox" checked onchange="toggleLimit(this)"></label></td><td><span class="limit-name">单次转出限额</span><span class="limit-en">withdraw limit</span></td><td>
+                                        <div class="range-row">
+                                            <div class="range-item"><span class="range-label">最小</span><select onchange="toggleLimitVal(this)"><option value="limit">有</option><option value="nolimit">无</option></select><input class="input" type="number" placeholder="1" style="max-width:100px"></div>
+                                            <div class="range-item"><span class="range-label">最大</span><select onchange="toggleLimitVal(this)"><option value="limit">有</option><option value="nolimit">无</option></select><input class="input" type="number" placeholder="50000" style="max-width:100px"></div>
+                                        </div>
+                                    </td><td class="unit">USD</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- 4.3 交易消费限额 -->
+                        <div class="form-section">
+                            <div class="section-title">交易消费限额</div>
+                            <table class="limit-tbl">
+                                <thead><tr><th style="width:40px">启用</th><th>限制维度</th><th>限额值</th><th style="width:50px">单位</th></tr></thead>
+                                <tbody>
+                                    <tr><td><label class="chk"><input type="checkbox" checked onchange="toggleLimit(this)"></label></td><td><span class="limit-name">单笔限额</span><span class="limit-en">PER_TRANSACTION</span></td><td>
+                                        <div class="range-row">
+                                            <div class="range-item"><span class="range-label">最小</span><select onchange="toggleLimitVal(this)"><option value="limit">有</option><option value="nolimit">无</option></select><input class="input" type="number" placeholder="1" style="max-width:100px"></div>
+                                            <div class="range-item"><span class="range-label">最大</span><select onchange="toggleLimitVal(this)"><option value="limit">有</option><option value="nolimit">无</option></select><input class="input" type="number" placeholder="5000" style="max-width:100px"></div>
+                                        </div>
+                                    </td><td class="unit">USD/笔</td></tr>
+                                    <tr><td><label class="chk"><input type="checkbox" checked onchange="toggleLimit(this)"></label></td><td><span class="limit-name">单日限额</span><span class="limit-en">DAILY</span></td><td><div class="limit-val"><select onchange="toggleLimitVal(this)"><option value="limit">有限额</option><option value="nolimit">无限额</option></select><input class="input" type="number" placeholder="10000" style="max-width:140px"></div></td><td class="unit">USD/日</td></tr>
+                                    <tr class="limit-off"><td><label class="chk"><input type="checkbox" onchange="toggleLimit(this)"></label></td><td><span class="limit-name">单周限额</span><span class="limit-en">WEEKLY</span></td><td><div class="limit-val"><select disabled onchange="toggleLimitVal(this)"><option value="limit">有限额</option><option value="nolimit">无限额</option></select><input class="input" type="number" placeholder="—" style="max-width:140px" disabled></div></td><td class="unit">USD/周</td></tr>
+                                    <tr><td><label class="chk"><input type="checkbox" checked onchange="toggleLimit(this)"></label></td><td><span class="limit-name">单月限额</span><span class="limit-en">MONTHLY</span></td><td><div class="limit-val"><select onchange="toggleLimitVal(this)"><option value="limit">有限额</option><option value="nolimit">无限额</option></select><input class="input" type="number" placeholder="100000" style="max-width:140px"></div></td><td class="unit">USD/月</td></tr>
+                                    <tr class="limit-off"><td><label class="chk"><input type="checkbox" onchange="toggleLimit(this)"></label></td><td><span class="limit-name">单年限额</span><span class="limit-en">YEARLY</span></td><td><div class="limit-val"><select disabled onchange="toggleLimitVal(this)"><option value="limit">有限额</option><option value="nolimit">无限额</option></select><input class="input" type="number" placeholder="—" style="max-width:140px" disabled></div></td><td class="unit">USD/年</td></tr>
+                                    <tr><td><label class="chk"><input type="checkbox" checked onchange="toggleLimit(this)"></label></td><td><span class="limit-name">单卡累计限额</span><span class="limit-en">PER CARD</span></td><td><div class="limit-val"><select onchange="toggleLimitVal(this)"><option value="limit">有限额</option><option value="nolimit">无限额</option></select><input class="input" type="number" placeholder="500000" style="max-width:140px"></div></td><td class="unit">USD/卡</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- 4.4 交易次数 -->
+                        <div class="form-section">
+                            <div class="section-title">交易次数限制</div>
+                            <table class="limit-tbl">
+                                <thead><tr><th style="width:40px">启用</th><th>限制维度</th><th>限额值</th><th style="width:50px">单位</th></tr></thead>
+                                <tbody>
+                                    <tr><td><label class="chk"><input type="checkbox" checked onchange="toggleLimit(this)"></label></td><td><span class="limit-name">交易次数上限</span><span class="limit-en">allowed_transaction_count</span></td><td><div class="limit-val"><select onchange="toggleLimitVal(this)"><option value="limit">有限额</option><option value="nolimit">无限额</option></select><input class="input" type="number" placeholder="100" style="max-width:140px"></div></td><td class="unit">次/卡</td></tr>
+                                    <tr><td><label class="chk"><input type="checkbox" checked onchange="toggleLimit(this)"></label></td><td><span class="limit-name">单日交易次数</span><span class="limit-en">daily</span></td><td><div class="limit-val"><select onchange="toggleLimitVal(this)"><option value="limit">有限额</option><option value="nolimit">无限额</option></select><input class="input" type="number" placeholder="10" style="max-width:140px"></div></td><td class="unit">次/日</td></tr>
+                                    <tr><td><label class="chk"><input type="checkbox" checked onchange="toggleLimit(this)"></label></td><td><span class="limit-name">单月交易次数</span><span class="limit-en">monthly</span></td><td><div class="limit-val"><select onchange="toggleLimitVal(this)"><option value="limit">有限额</option><option value="nolimit">无限额</option></select><input class="input" type="number" placeholder="100" style="max-width:140px"></div></td><td class="unit">次/月</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div></div>
+                    <div class="step-bar"><button class="btn btn-ghost" onclick="prevStep()">← 上一步</button><div class="step-bar-right"><button class="btn btn-ghost" onclick="saveDraft()">保存草稿</button><button class="btn btn-primary" onclick="nextStep()">保存并下一步 →</button></div></div>
+                </div>
+
+                <!-- Step 5 风控能力 -->
+                <div class="step-panel" data-step="5">
+                    <div class="card"><div class="card-header"><div class="card-title">风控能力</div></div><div class="card-body">
+                        <!-- MCC -->
+                        <div class="form-section">
+                            <div class="section-title">MCC 控制</div>
+                            <div class="field"><label class="field-label">控制模式<span class="en">MCC CONTROL MODE</span></label>
+                                <div class="radios"><label class="rad"><input type="radio" name="rmcc" value="" checked onchange="toggleMcc(this.value)"> 不限制</label><label class="rad"><input type="radio" name="rmcc" value="white" onchange="toggleMcc(this.value)"> 正向选择（白名单）</label><label class="rad"><input type="radio" name="rmcc" value="black" onchange="toggleMcc(this.value)"> 反向选择（黑名单）</label></div>
+                            </div>
+                            <div id="mcc-white" style="display:none"><div class="field"><label class="field-label"><span class="req">*</span>MCC 白名单</label><input class="input input-md" placeholder="如：5411, 5812, 7311（逗号分隔）"><div class="field-hint">只允许白名单内的 MCC 交易</div></div></div>
+                            <div id="mcc-black" style="display:none"><div class="field"><label class="field-label"><span class="req">*</span>MCC 黑名单</label><input class="input input-md" placeholder="如：7995, 6012（逗号分隔）"><div class="field-hint">禁止黑名单内的 MCC 交易</div></div></div>
+                        </div>
+                        <!-- Region -->
+                        <div class="form-section">
+                            <div class="section-title">地区控制</div>
+                            <div class="field"><label class="field-label">控制模式<span class="en">REGION CONTROL MODE</span></label>
+                                <div class="radios"><label class="rad"><input type="radio" name="rreg" value="" checked onchange="toggleReg(this.value)"> 不限制</label><label class="rad"><input type="radio" name="rreg" value="accept" onchange="toggleReg(this.value)"> 正向选择（支持）</label><label class="rad"><input type="radio" name="rreg" value="restrict" onchange="toggleReg(this.value)"> 反向选择（不支持）</label></div>
+                            </div>
+                            <div id="reg-accept" style="display:none"><div class="field"><label class="field-label"><span class="req">*</span>支持业务地区</label>
+                                <div class="picker" data-id="pk-reg-a"><div class="picker-box" onclick="togglePicker('pk-reg-a')"><span class="picker-ph">请选择支持的国家/地区</span></div>
+                                    <div class="picker-dd" id="pk-reg-a"><div class="picker-search"><input placeholder="搜索国家/地区…" oninput="filterPk(this)"></div><div class="picker-list" id="pk-reg-a-list"></div></div>
+                                </div><div class="field-hint">只允许这些国家/地区的交易</div>
+                            </div></div>
+                            <div id="reg-restrict" style="display:none"><div class="field"><label class="field-label"><span class="req">*</span>不支持业务地区</label>
+                                <div class="picker" data-id="pk-reg-r"><div class="picker-box" onclick="togglePicker('pk-reg-r')"><span class="picker-ph">请选择禁止的国家/地区</span></div>
+                                    <div class="picker-dd" id="pk-reg-r"><div class="picker-search"><input placeholder="搜索国家/地区…" oninput="filterPk(this)"></div><div class="picker-list" id="pk-reg-r-list"></div></div>
+                                </div><div class="field-hint">禁止这些国家/地区的交易</div>
+                            </div></div>
+                        </div>
+                        <!-- Entity -->
+                        <div class="form-section">
+                            <div class="section-title">客户主体限制<span class="en" style="margin-left:8px">ENTITY RESTRICTIONS</span></div>
+                            <div id="entity-list">
+                                <div class="row row-3" style="align-items:end;margin-bottom:8px">
+                                    <div class="field" style="margin:0"><label class="field-label">国家/地区</label><select class="input input-sm"><option value="">请选择</option><option>中国大陆</option><option>美国</option><option>英国</option><option>香港</option><option>新加坡</option></select></div>
+                                    <div class="field" style="margin:0"><label class="field-label">主体类型</label><div class="checks"><label class="chk"><input type="checkbox"> 个人</label><label class="chk"><input type="checkbox"> 企业</label></div></div>
+                                    <div><button class="btn btn-ghost btn-sm" onclick="this.closest('.row').remove()">删除</button></div>
+                                </div>
+                            </div>
+                            <button class="btn btn-ghost btn-sm" onclick="addEntity()">+ 添加组合</button>
+                        </div>
+                        <!-- 持卡人要求 -->
+                        <div class="form-section">
+                            <div class="section-title">持卡人要求<span class="en" style="margin-left:8px">CARDHOLDER REQUIREMENTS</span></div>
+                            <div class="field"><label class="field-label"><span class="req">*</span>是否需要持卡人<span class="en">cardholder needed</span></label>
+                                <div class="radios"><label class="rad"><input type="radio" name="rch" value="yes" onchange="toggle(document.getElementById('ch-cfg'),true)"> Yes</label><label class="rad"><input type="radio" name="rch" value="no" checked onchange="toggle(document.getElementById('ch-cfg'),false)"> No</label></div>
+                            </div>
+                            <div id="ch-cfg" style="display:none">
+                                <div class="field"><label class="field-label"><span class="req">*</span>持卡人类型</label><select class="input input-sm"><option value="">请选择</option><option>Individual（个人）</option><option>Enterprise（企业）</option></select></div>
+                                <div class="field"><label class="field-label"><span class="req">*</span>持卡人地区</label>
+                                    <div class="picker" data-id="pk-ch-reg"><div class="picker-box" onclick="togglePicker('pk-ch-reg')"><span class="picker-ph">请选择持卡人地区</span></div>
+                                        <div class="picker-dd" id="pk-ch-reg"><div class="picker-search"><input placeholder="搜索国家/地区…" oninput="filterPk(this)"></div><div class="picker-list" id="pk-ch-reg-list"></div></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div></div>
+                    <div class="step-bar"><button class="btn btn-ghost" onclick="prevStep()">← 上一步</button><div class="step-bar-right"><button class="btn btn-ghost" onclick="saveDraft()">保存草稿</button><button class="btn btn-primary" onclick="submitBin()">保存并启用</button></div></div>
+                </div>
+            </div>
+        </div>
+        <!-- 数币收单产品配置页面 -->
+        <div id="pg-crypto-config" class="page">
+            <div class="main-header"><div class="page-title" id="cryptoConfigTitle">上架数币收单产品</div><div class="page-desc">配置 Crypto Checkout 产品的所有属性（产品层）</div></div>
+            <div class="main-body">
+                <div class="toolbar"><button class="btn btn-ghost" onclick="go('pg-product')">← 返回产品列表</button><div></div></div>
+                <!-- Steps -->
+                <div class="steps" id="cryptoStepsBar">
+                    <div class="stp active" onclick="jumpCryptoStep(1)"><div class="stp-num">1</div><div class="stp-label">支付能力</div></div>
+                    <div class="stp" onclick="jumpCryptoStep(2)"><div class="stp-num">2</div><div class="stp-label">订单配置</div></div>
+                    <div class="stp" onclick="jumpCryptoStep(3)"><div class="stp-num">3</div><div class="stp-label">支付阈值</div></div>
+                    <div class="stp" onclick="jumpCryptoStep(4)"><div class="stp-num">4</div><div class="stp-label">结算配置</div></div>
+                    <div class="stp" onclick="jumpCryptoStep(5)"><div class="stp-num">5</div><div class="stp-label">风控配置</div></div>
+                </div>
+
+                <!-- Crypto Step 1: 支付能力 -->
+                <div class="crypto-step show" data-cstep="1">
+                    <div class="card"><div class="card-header"><div class="card-title">1. 支付能力 Payment Capability</div></div><div class="card-body">
+                        <div class="row row-2">
+                            <div class="field">
+                                <label class="field-label"><span class="req">*</span>订单计价币种<span class="en">pricing_currency</span></label>
+                                <input class="input input-sm" value="USD" disabled>
+                                <div class="field-hint">固定 USD，商户以法币计价发起收款</div>
+                            </div>
+                            <div class="field">
+                                <label class="field-label"><span class="req">*</span>地址分配模式<span class="en">address_mode</span></label>
+                                <input class="input input-sm" value="每单独立地址（One-time Address）" disabled>
+                                <div class="field-hint">每笔订单生成唯一收款地址，不复用</div>
+                            </div>
+                        </div>
+                        <div class="field" style="margin-top:16px">
+                            <label class="field-label"><span class="req">*</span>支持的币种 + 网络组合<span class="en">accepted crypto &amp; networks</span></label>
+                            <div class="checks" style="flex-wrap:wrap;gap:8px 16px">
+                                <label class="chk"><input type="checkbox" value="USDT-TRC20" checked> USDT — TRC-20（Tron）</label>
+                                <label class="chk"><input type="checkbox" value="USDT-ERC20" checked> USDT — ERC-20（Ethereum）</label>
+                                <label class="chk"><input type="checkbox" value="USDC-TRC20"> USDC — TRC-20（Tron）</label>
+                                <label class="chk"><input type="checkbox" value="USDC-ERC20" checked> USDC — ERC-20（Ethereum）</label>
+                            </div>
+                            <div class="field-hint">币种 + 网络的组合由接入通道决定，至少选一种</div>
+                        </div>
+                        <div class="field" style="margin-top:16px">
+                            <label class="field-label">汇率来源<span class="en">exchange_rate_source</span></label>
+                            <input class="input input-md" value="通道实时汇率（USD → 稳定币等值换算）" disabled>
+                            <div class="field-hint">创建订单时换算应付稳定币金额</div>
+                        </div>
+                    </div></div>
+                    <div class="step-bar"><button class="btn btn-ghost" onclick="go('pg-product')">取消</button><div class="step-bar-right"><button class="btn btn-ghost" onclick="saveCryptoDraft()">保存草稿</button><button class="btn btn-primary" onclick="nextCryptoStep()">保存并下一步 →</button></div></div>
+                </div>
+
+                <!-- Crypto Step 2: 订单配置 -->
+                <div class="crypto-step" data-cstep="2">
+                    <div class="card"><div class="card-header"><div class="card-title">2. 订单配置 Order Settings</div></div><div class="card-body">
+                        <div class="row row-2">
+                            <div class="field">
+                                <label class="field-label"><span class="req">*</span>最短订单有效期<span class="en">order_ttl_min</span></label>
+                                <div style="display:flex;align-items:center;gap:8px"><input class="input" type="number" value="15" min="1" style="max-width:100px"><span style="color:var(--gray-400);font-size:13px">分钟</span></div>
+                                <div class="field-hint">TP/商户配置的有效期不可低于此值（参考：BitPay 默认 15 分钟）</div>
+                            </div>
+                            <div class="field">
+                                <label class="field-label"><span class="req">*</span>最长订单有效期<span class="en">order_ttl_max</span></label>
+                                <div style="display:flex;align-items:center;gap:8px"><input class="input" type="number" value="24" min="1" style="max-width:100px"><span style="color:var(--gray-400);font-size:13px">小时</span></div>
+                                <div class="field-hint">TP/商户配置的有效期不可超过此值（参考：Coinbase Commerce 默认 60 分钟）</div>
+                            </div>
+                        </div>
+                    </div></div>
+                    <div class="step-bar"><button class="btn btn-ghost" onclick="prevCryptoStep()">← 上一步</button><div class="step-bar-right"><button class="btn btn-ghost" onclick="saveCryptoDraft()">保存草稿</button><button class="btn btn-primary" onclick="nextCryptoStep()">保存并下一步 →</button></div></div>
+                </div>
+
+                <!-- Crypto Step 3: 支付阈值配置 -->
+                <div class="crypto-step" data-cstep="3">
+                    <div class="card"><div class="card-header"><div class="card-title">3. 支付阈值配置 Payment Tolerance</div></div><div class="card-body">
+
+                        <!-- Underpayment -->
+                        <div class="form-section">
+                            <div class="section-title">3.1 Underpayment 配置（少付）</div>
+                            <div class="sub-box">
+                                <div class="field-hint" style="margin-bottom:12px">付款人实际到账金额 <b>低于</b> 订单应付金额时的处理规则</div>
+                                <div class="row row-2">
+                                    <div class="field">
+                                        <label class="field-label"><span class="req">*</span>阈值模式<span class="en">threshold_mode</span></label>
+                                        <input class="input input-sm" value="Min of Both（两者取小）" disabled>
+                                    </div>
+                                    <div class="field">
+                                        <label class="field-label"><span class="req">*</span>处理方式<span class="en">underpayment_action</span></label>
+                                        <select class="input input-sm">
+                                            <option value="Await Top-Up">等待补款（Await Top-Up）</option>
+                                            <option value="Auto Close" disabled>自动关单（Auto Close — 下期）</option>
+                                        </select>
+                                        <div class="field-hint">本期仅支持"等待补款"</div>
+                                    </div>
+                                </div>
+                                <div class="row row-2" style="margin-top:12px">
+                                    <div class="field">
+                                        <label class="field-label"><span class="req">*</span>百分比阈值<span class="en">threshold_pct</span></label>
+                                        <div style="display:flex;align-items:center;gap:8px"><input class="input" type="number" value="1" min="0" max="10" step="0.1" style="max-width:100px"><span style="color:var(--gray-400);font-size:13px">%</span></div>
+                                        <div class="field-hint">系统允许范围：0% ～ 10%</div>
+                                    </div>
+                                    <div class="field">
+                                        <label class="field-label"><span class="req">*</span>固定金额阈值<span class="en">threshold_amt</span></label>
+                                        <div style="display:flex;align-items:center;gap:8px"><input class="input" type="number" value="5" min="0" max="100" step="0.01" style="max-width:100px"><span style="color:var(--gray-400);font-size:13px">USD</span></div>
+                                        <div class="field-hint">系统允许范围：0 ～ 100 USD</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Overpayment -->
+                        <div class="form-section">
+                            <div class="section-title">3.2 Overpayment 配置（多付）</div>
+                            <div class="sub-box">
+                                <div class="field-hint" style="margin-bottom:12px">付款人实际到账金额 <b>高于</b> 订单应付金额时的处理规则</div>
+                                <div class="row row-2">
+                                    <div class="field">
+                                        <label class="field-label"><span class="req">*</span>阈值模式<span class="en">threshold_mode</span></label>
+                                        <input class="input input-sm" value="Min of Both（两者取小）" disabled>
+                                    </div>
+                                    <div class="field">
+                                        <label class="field-label"><span class="req">*</span>处理方式<span class="en">overpayment_action</span></label>
+                                        <select class="input input-sm">
+                                            <option value="Auto Accept">自动接受全额入账（Auto Accept & Settle All）</option>
+                                            <option value="Hold" selected>全额暂挂（Hold & Await Merchant Decision）</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row row-2" style="margin-top:12px">
+                                    <div class="field">
+                                        <label class="field-label"><span class="req">*</span>百分比阈值<span class="en">threshold_pct</span></label>
+                                        <div style="display:flex;align-items:center;gap:8px"><input class="input" type="number" value="3" min="0" max="50" step="0.1" style="max-width:100px"><span style="color:var(--gray-400);font-size:13px">%</span></div>
+                                        <div class="field-hint">系统允许范围：0% ～ 50%</div>
+                                    </div>
+                                    <div class="field">
+                                        <label class="field-label"><span class="req">*</span>固定金额阈值<span class="en">threshold_amt</span></label>
+                                        <div style="display:flex;align-items:center;gap:8px"><input class="input" type="number" value="50" min="0" max="500" step="0.01" style="max-width:100px"><span style="color:var(--gray-400);font-size:13px">USD</span></div>
+                                        <div class="field-hint">系统允许范围：0 ～ 500 USD</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 示例说明 -->
+                        <div class="sub-box" style="margin-top:8px;background:var(--primary-light);border-color:rgba(79,70,229,.15)">
+                            <div class="sub-title" style="color:var(--primary)">阈值计算示例（Underpayment，百分比=1%，固定金额=5 USD，Min of Both）</div>
+                            <table class="tbl" style="font-size:12px">
+                                <thead><tr><th>订单金额</th><th>百分比容忍</th><th>固定金额容忍</th><th>实际容忍额</th></tr></thead>
+                                <tbody>
+                                    <tr><td>$100</td><td>$1</td><td>$5</td><td style="font-weight:600;color:var(--primary)">$1（取小）</td></tr>
+                                    <tr><td>$1,000</td><td>$10</td><td>$5</td><td style="font-weight:600;color:var(--primary)">$5（取小）</td></tr>
+                                    <tr><td>$10,000</td><td>$100</td><td>$5</td><td style="font-weight:600;color:var(--primary)">$5（封顶）</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div></div>
+                    <div class="step-bar"><button class="btn btn-ghost" onclick="prevCryptoStep()">← 上一步</button><div class="step-bar-right"><button class="btn btn-ghost" onclick="saveCryptoDraft()">保存草稿</button><button class="btn btn-primary" onclick="nextCryptoStep()">保存并下一步 →</button></div></div>
+                </div>
+
+                <!-- Crypto Step 4: 结算配置 -->
+                <div class="crypto-step" data-cstep="4">
+                    <div class="card"><div class="card-header"><div class="card-title">4. 结算配置 Settlement Settings</div></div><div class="card-body">
+                        <div class="row row-2">
+                            <div class="field">
+                                <label class="field-label"><span class="req">*</span>结算模式<span class="en">settlement_mode</span></label>
+                                <input class="input input-sm" value="逐笔结算" disabled>
+                                <div class="field-hint">每笔订单确认到账后单独结算，不做批次合并</div>
+                            </div>
+                            <div class="field">
+                                <label class="field-label"><span class="req">*</span>结算币种规则<span class="en">settlement_currency</span></label>
+                                <input class="input input-sm" value="同货币同网络" disabled>
+                                <div class="field-hint">收到 USDT TRC-20 → 结算 USDT TRC-20，不做换汇</div>
+                            </div>
+                        </div>
+                        <div class="row row-2" style="margin-top:16px">
+                            <div class="field">
+                                <label class="field-label"><span class="req">*</span>结算目标账户类型<span class="en">settlement_account</span></label>
+                                <input class="input input-sm" value="商户数币钱包" disabled>
+                                <div class="field-hint">结算入商户在平台的数币钱包余额</div>
+                            </div>
+                            <div class="field">
+                                <label class="field-label">自动换汇<span class="en">auto_conversion</span></label>
+                                <input class="input input-sm" value="不支持（Phase 2）" disabled>
+                                <div class="field-hint">本期不支持收数币→换汇→入法币账户</div>
+                            </div>
+                        </div>
+
+                        <!-- Phase 提示 -->
+                        <div class="sub-box" style="margin-top:20px">
+                            <div class="sub-title">Phase 1 结算规则说明</div>
+                            <ul style="font-size:13px;color:var(--gray-600);line-height:1.8;padding-left:20px">
+                                <li>每笔订单确认到账后 <b>逐笔结算</b>，不做批次合并</li>
+                                <li>结算币种 = 收款币种（如收 USDT TRC-20 → 结算 USDT TRC-20）</li>
+                                <li>结算目标 = 商户在平台的 <b>数币钱包</b></li>
+                                <li>Webhook 通知事件（checkout.paid / settled / expired / underpaid）在开发者中心管理</li>
+                            </ul>
+                        </div>
+                    </div></div>
+                    <div class="step-bar"><button class="btn btn-ghost" onclick="prevCryptoStep()">← 上一步</button><div class="step-bar-right"><button class="btn btn-ghost" onclick="saveCryptoDraft()">保存草稿</button><button class="btn btn-primary" onclick="nextCryptoStep()">保存并下一步 →</button></div></div>
+                </div>
+
+                <!-- Crypto Step 5: 风控配置 -->
+                <div class="crypto-step" data-cstep="5">
+                    <div class="card"><div class="card-header"><div class="card-title">5. 风控配置 Risk Control</div></div><div class="card-body">
+
+                        <!-- 商户主体限制 -->
+                        <div class="form-section">
+                            <div class="section-title">商户主体限制</div>
+                            <div class="field">
+                                <label class="field-label"><span class="req">*</span>支持的商户主体类型<span class="en">accepted_entity_types</span></label>
+                                <div class="checks">
+                                    <label class="chk"><input type="checkbox" value="Individual" checked> Individual（个人）</label>
+                                    <label class="chk"><input type="checkbox" value="Enterprise" checked> Enterprise（企业）</label>
+                                </div>
+                                <div class="field-hint">允许接入该产品的商户主体类型，至少选一种</div>
+                            </div>
+                            <div class="field">
+                                <label class="field-label"><span class="req">*</span>商户国家/地区控制<span class="en">country_control_mode</span></label>
+                                <div class="radios">
+                                    <label class="rad"><input type="radio" name="r-crypto-country" value="" checked onchange="toggleCryptoCountry(this.value)"> 不限制</label>
+                                    <label class="rad"><input type="radio" name="r-crypto-country" value="white" onchange="toggleCryptoCountry(this.value)"> 正向选择（白名单）</label>
+                                    <label class="rad"><input type="radio" name="r-crypto-country" value="black" onchange="toggleCryptoCountry(this.value)"> 反向选择（黑名单）</label>
+                                </div>
+                            </div>
+                            <div id="crypto-country-white" style="display:none">
+                                <div class="field">
+                                    <label class="field-label"><span class="req">*</span>支持的国家/地区</label>
+                                    <div class="picker" data-id="pk-crypto-cw"><div class="picker-box" onclick="togglePicker('pk-crypto-cw')"><span class="picker-ph">请选择支持的国家/地区</span></div>
+                                        <div class="picker-dd" id="pk-crypto-cw"><div class="picker-search"><input placeholder="搜索国家/地区…" oninput="filterPk(this)"></div><div class="picker-list" id="pk-crypto-cw-list"></div></div>
+                                    </div>
+                                    <div class="field-hint">只允许这些国家/地区的商户接入</div>
+                                </div>
+                            </div>
+                            <div id="crypto-country-black" style="display:none">
+                                <div class="field">
+                                    <label class="field-label"><span class="req">*</span>禁止的国家/地区</label>
+                                    <div class="picker" data-id="pk-crypto-cb"><div class="picker-box" onclick="togglePicker('pk-crypto-cb')"><span class="picker-ph">请选择禁止的国家/地区</span></div>
+                                        <div class="picker-dd" id="pk-crypto-cb"><div class="picker-search"><input placeholder="搜索国家/地区…" oninput="filterPk(this)"></div><div class="picker-list" id="pk-crypto-cb-list"></div></div>
+                                    </div>
+                                    <div class="field-hint">禁止这些国家/地区的商户接入</div>
+                                </div>
+                            </div>
+                            <!-- 国家+主体组合 -->
+                            <div class="field" style="margin-top:12px">
+                                <label class="field-label">国家 + 主体类型组合限制<span class="en">entity restrictions</span></label>
+                                <div class="field-hint" style="margin-bottom:8px">可按「国家 + 主体类型」精细化限制，如：仅允许美国企业、香港个人+企业</div>
+                                <div id="crypto-entity-list">
+                                    <div class="row row-3" style="align-items:end;margin-bottom:8px">
+                                        <div class="field" style="margin:0"><label class="field-label">国家/地区</label><select class="input input-sm"><option value="">请选择</option><option>美国</option><option>英国</option><option>香港</option><option>新加坡</option><option>中国大陆</option><option>日本</option><option>澳大利亚</option><option>加拿大</option></select></div>
+                                        <div class="field" style="margin:0"><label class="field-label">主体类型</label><div class="checks"><label class="chk"><input type="checkbox" checked> 个人</label><label class="chk"><input type="checkbox" checked> 企业</label></div></div>
+                                        <div><button class="btn btn-ghost btn-sm" onclick="this.closest('.row').remove()">删除</button></div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-ghost btn-sm" onclick="addCryptoEntity()">+ 添加组合</button>
+                            </div>
+                        </div>
+
+                    </div></div>
+                    <div class="step-bar"><button class="btn btn-ghost" onclick="prevCryptoStep()">← 上一步</button><div class="step-bar-right"><button class="btn btn-ghost" onclick="saveCryptoDraft()">保存草稿</button><button class="btn btn-primary" onclick="submitCrypto()">保存并启用</button></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 产品选择弹窗 -->
+<div class="modal-mask" id="productModal">
+    <div class="modal">
+        <div class="modal-head"><h3>选择产品类型</h3></div>
+        <div class="modal-body">
+            <div class="product-option" onclick="closeModal('productModal');go('pg-binlist')"><div class="icon vcc">💳</div><div><h4>VCC（虚拟卡）</h4><p>虚拟卡发卡产品，支持线上消费、广告投放等场景</p></div></div>
+            <div class="product-option" onclick="closeModal('productModal');goCrypto()"><div class="icon crypto">₿</div><div><h4>数币收单</h4><p>数字货币收单产品，支持 USDT、USDC 等稳定币收款</p></div></div>
+        </div>
+        <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('productModal')">取消</button></div>
+    </div>
+</div>
+
+<!-- Bin 启用/禁用确认弹窗 -->
+<div class="modal-mask" id="binToggleModal">
+    <div class="modal" style="width:480px">
+        <div class="modal-head"><h3 id="binToggleTitle">确认禁用 Bin</h3></div>
+        <div class="modal-body">
+            <div id="binToggleMsg" style="font-size:14px;color:var(--gray-700);margin-bottom:16px">确定要禁用该 Bin 吗？禁用后将停止新建卡，已有卡不受影响。</div>
+            <div class="field">
+                <label class="field-label"><span class="req">*</span>内部备注</label>
+                <textarea id="binToggleRemark" class="input" rows="3" placeholder="请输入操作原因或备注信息…"></textarea>
+                <div class="field-hint">该备注仅内部可见，将记录在操作日志中</div>
+            </div>
+        </div>
+        <div class="modal-foot">
+            <button class="btn btn-ghost" onclick="closeModal('binToggleModal')">取消</button>
+            <button class="btn btn-primary" id="binToggleConfirmBtn" onclick="confirmBinToggle()">确认禁用</button>
+        </div>
+    </div>
+</div>
+
+<!-- 服务商详情抽屉 -->
+<div class="drawer-mask" id="drawerMask" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawerEl">
+    <div class="drawer-head"><h3>服务商详情</h3><span class="drawer-close" onclick="closeDrawer()">✕</span></div>
+    <div class="drawer-body">
+        <div class="detail-row"><div class="detail-label">服务商ID</div><div class="detail-value">SP001</div></div>
+        <div class="detail-row"><div class="detail-label">名称</div><div class="detail-value">GlobalCard Solutions</div></div>
+        <div class="detail-row"><div class="detail-label">所在地区</div><div class="detail-value">香港</div></div>
+        <div class="detail-row"><div class="detail-label">提供产品</div><div class="detail-value"><span class="tag">VCC发卡</span></div></div>
+        <div class="detail-row"><div class="detail-label">状态</div><div class="detail-value"><span class="badge badge-green">启用</span></div></div>
+        <div class="detail-row"><div class="detail-label">创建时间</div><div class="detail-value">2026-01-15 10:30:00</div></div>
+    </div>
+</div>
+
+<script>
+// 国家数据
+const COUNTRIES = [
+    {code:'US',name:'美国'},{code:'GB',name:'英国'},{code:'HK',name:'香港'},{code:'SG',name:'新加坡'},
+    {code:'CN',name:'中国大陆'},{code:'JP',name:'日本'},{code:'AU',name:'澳大利亚'},{code:'CA',name:'加拿大'},
+    {code:'FR',name:'法国'},{code:'DE',name:'德国'},{code:'IT',name:'意大利'},{code:'ES',name:'西班牙'},
+    {code:'KR',name:'韩国'},{code:'TH',name:'泰国'},{code:'MY',name:'马来西亚'},{code:'ID',name:'印度尼西亚'},
+    {code:'VN',name:'越南'},{code:'PH',name:'菲律宾'},{code:'IR',name:'伊朗'},{code:'KP',name:'朝鲜'},
+    {code:'CU',name:'古巴'},{code:'SY',name:'叙利亚'},{code:'SD',name:'苏丹'},{code:'VE',name:'委内瑞拉'}
+];
+
+// 初始化国家列表
+function initCountryPickers() {
+    ['pk-reg-a-list','pk-reg-r-list','pk-ch-reg-list','pk-crypto-cw-list','pk-crypto-cb-list'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.innerHTML = COUNTRIES.map(c =>
+            `<div class="picker-opt" onclick="pickOpt(this)"><input type="checkbox"><span>${c.code} - ${c.name}</span></div>`
+        ).join('');
+    });
+}
+
+// 页面切换
+function go(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('show'));
+    document.getElementById(id)?.classList.add('show');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    if (id === 'pg-sp') document.querySelectorAll('.nav-item')[0].classList.add('active');
+    else document.querySelectorAll('.nav-item')[1].classList.add('active');
+}
+
+// 步骤
+let curStep = 1;
+function goStep(pageId, step, title) {
+    go(pageId);
+    curStep = step;
+    document.getElementById('binEditTitle').textContent = title || '添加 Bin';
+    // 添加 Bin 时重置输入框为可编辑
+    const inp = document.getElementById('binInput');
+    if (inp && (!title || title === '添加 Bin')) {
+        inp.value = '';
+        inp.readOnly = false;
+        inp.style.background = '#fff';
+        inp.style.color = 'var(--gray-800)';
+    }
+    renderSteps();
+    showStepPanel();
+}
+function renderSteps() {
+    document.querySelectorAll('#stepsBar .stp').forEach((s, i) => {
+        s.classList.remove('active','done');
+        if (i + 1 < curStep) s.classList.add('done');
+        else if (i + 1 === curStep) s.classList.add('active');
+    });
+}
+function showStepPanel() {
+    document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('show'));
+    document.querySelector(`.step-panel[data-step="${curStep}"]`)?.classList.add('show');
+    window.scrollTo({top:0,behavior:'smooth'});
+}
+function nextStep() { if (curStep < 5) { curStep++; renderSteps(); showStepPanel(); } }
+function prevStep() { if (curStep > 1) { curStep--; renderSteps(); showStepPanel(); } }
+function jumpStep(n) { curStep = n; renderSteps(); showStepPanel(); }
+function saveDraft() { alert('已保存草稿'); }
+function submitBin() { alert('Bin 配置保存成功！'); go('pg-binlist'); }
+
+// Bin 启用/禁用 — 弹层确认
+let _binToggleBtn = null;
+function openBinToggle(btn) {
+    _binToggleBtn = btn;
+    const card = btn.closest('.bin-card');
+    const isEnabled = card.querySelector('.badge').textContent.trim() === '启用';
+    const binNum = card.querySelector('.bin-num').textContent;
+    document.getElementById('binToggleTitle').textContent = isEnabled ? '确认禁用 Bin — ' + binNum : '确认启用 Bin — ' + binNum;
+    document.getElementById('binToggleMsg').textContent = isEnabled
+        ? '确定要禁用该 Bin 吗？禁用后将停止新建卡，已有卡不受影响。'
+        : '确定要启用该 Bin 吗？启用后可正常新建卡。';
+    document.getElementById('binToggleConfirmBtn').textContent = isEnabled ? '确认禁用' : '确认启用';
+    document.getElementById('binToggleConfirmBtn').style.background = isEnabled ? 'var(--danger)' : 'var(--success)';
+    document.getElementById('binToggleRemark').value = '';
+    openModal('binToggleModal');
+}
+function confirmBinToggle() {
+    const remark = document.getElementById('binToggleRemark').value.trim();
+    if (!remark) { alert('请输入内部备注'); return; }
+    const btn = _binToggleBtn;
+    const card = btn.closest('.bin-card');
+    const badge = card.querySelector('.badge');
+    const isEnabled = badge.textContent.trim() === '启用';
+    const now = new Date();
+    const ts = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+    // 切换状态
+    if (isEnabled) {
+        badge.textContent = '已禁用';
+        badge.className = 'badge badge-gray';
+        btn.textContent = '启用';
+        btn.style.color = 'var(--success)';
+        btn.style.borderColor = 'var(--success)';
+    } else {
+        badge.textContent = '启用';
+        badge.className = 'badge badge-green';
+        btn.textContent = '禁用';
+        btn.style.color = 'var(--danger)';
+        btn.style.borderColor = 'var(--danger)';
+    }
+    // 添加操作日志
+    const logBox = card.querySelector('.bin-log');
+    const entry = document.createElement('div');
+    entry.className = 'log-entry';
+    entry.innerHTML = `<span class="log-time">${ts}</span><span class="log-action ${isEnabled?'disable':'enable'}">${isEnabled?'禁用':'启用'}</span><span class="log-user">admin@ipaylinks.com</span><span class="log-remark">${remark}</span>`;
+    logBox.insertBefore(entry, logBox.firstChild);
+    // 自动展开日志
+    logBox.classList.add('show');
+    const toggleLink = card.querySelector('.bin-log-toggle a');
+    if (toggleLink) toggleLink.textContent = '收起操作日志 ▴';
+    closeModal('binToggleModal');
+}
+// 操作日志展开/收起
+function toggleBinLog(a) {
+    const card = a.closest('.bin-card');
+    const logBox = card.querySelector('.bin-log');
+    if (logBox.classList.contains('show')) {
+        logBox.classList.remove('show');
+        a.textContent = '查看操作日志 ▾';
+    } else {
+        logBox.classList.add('show');
+        a.textContent = '收起操作日志 ▴';
+    }
+}
+
+// 编辑 Bin（Bin 号只读）
+function editBin(binNum, title) {
+    const inp = document.getElementById('binInput');
+    inp.value = binNum;
+    inp.readOnly = true;
+    inp.style.background = 'var(--gray-50)';
+    inp.style.color = 'var(--gray-400)';
+    goStep('pg-bin-edit', 1, title);
+}
+
+// === Crypto Checkout Steps ===
+let curCryptoStep = 1;
+function goCrypto() {
+    curCryptoStep = 1;
+    go('pg-crypto-config');
+    renderCryptoSteps();
+    showCryptoPanel();
+}
+function renderCryptoSteps() {
+    document.querySelectorAll('#cryptoStepsBar .stp').forEach((s, i) => {
+        s.classList.remove('active','done');
+        if (i + 1 < curCryptoStep) s.classList.add('done');
+        else if (i + 1 === curCryptoStep) s.classList.add('active');
+    });
+}
+function showCryptoPanel() {
+    document.querySelectorAll('.crypto-step').forEach(p => p.classList.remove('show'));
+    document.querySelector(`.crypto-step[data-cstep="${curCryptoStep}"]`)?.classList.add('show');
+    window.scrollTo({top:0,behavior:'smooth'});
+}
+function nextCryptoStep() { if (curCryptoStep < 5) { curCryptoStep++; renderCryptoSteps(); showCryptoPanel(); } }
+function prevCryptoStep() { if (curCryptoStep > 1) { curCryptoStep--; renderCryptoSteps(); showCryptoPanel(); } }
+function jumpCryptoStep(n) { curCryptoStep = n; renderCryptoSteps(); showCryptoPanel(); }
+function saveCryptoDraft() { alert('数币收单配置已保存草稿'); }
+function submitCrypto() { alert('数币收单产品配置保存成功！'); go('pg-product'); }
+
+// Crypto country control
+function toggleCryptoCountry(v) {
+    document.getElementById('crypto-country-white').style.display = v === 'white' ? 'block' : 'none';
+    document.getElementById('crypto-country-black').style.display = v === 'black' ? 'block' : 'none';
+}
+
+// Add crypto entity restriction row
+function addCryptoEntity() {
+    const list = document.getElementById('crypto-entity-list');
+    const row = list.querySelector('.row').cloneNode(true);
+    row.querySelectorAll('select').forEach(s => s.value = '');
+    row.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
+    list.appendChild(row);
+}
+
+// Toggle
+function toggle(el, show) { if (el) el.style.display = show ? 'block' : 'none'; }
+
+// MCC
+function toggleMcc(v) {
+    document.getElementById('mcc-white').style.display = v === 'white' ? 'block' : 'none';
+    document.getElementById('mcc-black').style.display = v === 'black' ? 'block' : 'none';
+}
+
+// Region
+function toggleReg(v) {
+    document.getElementById('reg-accept').style.display = v === 'accept' ? 'block' : 'none';
+    document.getElementById('reg-restrict').style.display = v === 'restrict' ? 'block' : 'none';
+}
+
+// Modal
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// Drawer
+function openDrawer() { document.getElementById('drawerMask').classList.add('open'); document.getElementById('drawerEl').classList.add('open'); }
+function closeDrawer() { document.getElementById('drawerMask').classList.remove('open'); document.getElementById('drawerEl').classList.remove('open'); }
+
+// Picker (multi-select with search)
+let openPk = null;
+function togglePicker(id) {
+    const dd = document.getElementById(id);
+    if (!dd) return;
+    const isOpen = dd.classList.contains('open');
+    closeAllPickers();
+    if (!isOpen) {
+        dd.classList.add('open');
+        dd.previousElementSibling.classList.add('open');
+        openPk = dd;
+        const si = dd.querySelector('.picker-search input');
+        if (si) setTimeout(() => si.focus(), 50);
+    }
+}
+function closeAllPickers() {
+    document.querySelectorAll('.picker-dd.open').forEach(d => {
+        d.classList.remove('open');
+        d.previousElementSibling?.classList.remove('open');
+    });
+    openPk = null;
+}
+document.addEventListener('click', e => { if (openPk && !e.target.closest('.picker')) closeAllPickers(); });
+
+function pickOpt(el) {
+    event.stopPropagation();
+    const cb = el.querySelector('input[type="checkbox"]');
+    cb.checked = !cb.checked;
+    el.classList.toggle('sel', cb.checked);
+    refreshPickerTags(el.closest('.picker'));
+}
+function refreshPickerTags(picker) {
+    const box = picker.querySelector('.picker-box');
+    box.querySelectorAll('.picker-tag').forEach(t => t.remove());
+    const ph = box.querySelector('.picker-ph');
+    const sels = picker.querySelectorAll('.picker-opt.sel span');
+    if (sels.length > 0) {
+        ph.style.display = 'none';
+        sels.forEach(s => {
+            const tag = document.createElement('span');
+            tag.className = 'picker-tag';
+            tag.innerHTML = `${s.textContent} <span class="picker-tag-x" onclick="event.stopPropagation();rmTag(this)">×</span>`;
+            box.insertBefore(tag, ph);
+        });
+    } else {
+        ph.style.display = '';
+    }
+}
+function rmTag(x) {
+    const picker = x.closest('.picker');
+    const text = x.parentElement.textContent.slice(0,-1).trim();
+    picker.querySelectorAll('.picker-opt').forEach(o => {
+        if (o.querySelector('span').textContent.trim() === text) {
+            o.classList.remove('sel');
+            o.querySelector('input').checked = false;
+        }
+    });
+    refreshPickerTags(picker);
+}
+function filterPk(input) {
+    const q = input.value.toLowerCase();
+    const list = input.closest('.picker-dd').querySelector('.picker-list');
+    list.querySelectorAll('.picker-opt').forEach(o => {
+        o.style.display = o.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+}
+
+// Language tabs
+function switchLang(tab, group) {
+    const tabs = tab.parentElement;
+    tabs.querySelectorAll('.lang-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const idx = Array.from(tabs.children).indexOf(tab);
+    const parent = tabs.parentElement;
+    parent.querySelectorAll('.lang-panel').forEach((p, i) => {
+        p.classList.toggle('show', i === idx);
+    });
+}
+
+// Add entity restriction row
+function addEntity() {
+    const list = document.getElementById('entity-list');
+    const row = list.querySelector('.row').cloneNode(true);
+    row.querySelectorAll('select').forEach(s => s.value = '');
+    row.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
+    list.appendChild(row);
+}
+
+// Limit: toggle entire row (启用/禁用该统计维度)
+function toggleLimit(cb) {
+    const tr = cb.closest('tr');
+    tr.classList.toggle('limit-off', !cb.checked);
+    // Handle all selects and inputs in the row
+    tr.querySelectorAll('.limit-val select, .range-item select').forEach(sel => {
+        sel.disabled = !cb.checked;
+    });
+    tr.querySelectorAll('.limit-val input[type="number"], .range-item input[type="number"]').forEach(inp => {
+        if (!cb.checked) {
+            inp.disabled = true;
+            inp.value = '';
+        } else {
+            // Re-enable based on its paired select
+            const parent = inp.closest('.limit-val') || inp.closest('.range-item');
+            const sel = parent ? parent.querySelector('select') : null;
+            inp.disabled = sel && sel.value === 'nolimit';
+        }
+    });
+}
+
+// Limit: toggle 有限额/无限额
+function toggleLimitVal(sel) {
+    const parent = sel.closest('.limit-val') || sel.closest('.range-item');
+    if (!parent) return;
+    const inp = parent.querySelector('input[type="number"]');
+    if (!inp) return;
+    if (sel.value === 'nolimit') {
+        inp.disabled = true;
+        inp.value = '';
+        inp.placeholder = '∞';
+    } else {
+        inp.disabled = false;
+        inp.placeholder = '';
+    }
+}
+
+// Init
+initCountryPickers();
+</script>
+</body>
+</html>

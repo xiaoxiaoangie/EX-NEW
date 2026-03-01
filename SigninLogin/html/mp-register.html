@@ -3,924 +3,494 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>创建账户</title>
+<title>注册 — EX Platform</title>
 <style>
-:root {
-    --bg: #f8f9fa;
-    --card: #ffffff;
-    --text: #1a1a1a;
-    --text2: #5f6368;
-    --text3: #9aa0a6;
-    --border: #dadce0;
-    --border-light: #e8eaed;
-    --accent: #1a73e8;
-    --accent-hover: #1557b0;
-    --accent-light: rgba(26,115,232,.08);
-    --green: #34a853;
-    --orange: #f9ab00;
-    --red: #ea4335;
-    --radius: 8px;
+:root{
+    --bg:#eef2f8;--card:#ffffff;
+    --text:#1a1a1a;--text2:#5f6368;--text3:#9aa0a6;
+    --border:#dadce0;--border-light:#e8eaed;
+    --accent:#1a73e8;--accent-hover:#1557b0;--accent-light:rgba(26,115,232,.08);
+    --green:#34a853;--orange:#f9ab00;--red:#ea4335;--red-light:rgba(234,67,53,.08);
+    --radius:8px;
 }
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Google Sans', 'PingFang SC', 'Helvetica Neue', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+    font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Google Sans','PingFang SC','Helvetica Neue',sans-serif;
+    background:var(--bg);color:var(--text);min-height:100vh;
+    display:flex;align-items:center;justify-content:center;
+    -webkit-font-smoothing:antialiased;
 }
 
-/* ===== Top navigation bar ===== */
-.topbar {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    height: 64px;
-    background: var(--card);
-    border-bottom: 1px solid var(--border-light);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 40px;
-    z-index: 100;
-}
-.topbar-logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    text-decoration: none;
-    color: var(--text);
-}
-.topbar-logo .mark {
-    width: 36px; height: 36px;
-    background: var(--text);
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    color: #fff; font-size: 14px; font-weight: 800; letter-spacing: -.5px;
-}
-.topbar-logo .brand {
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: -.3px;
-}
-.topbar-right {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    color: var(--text2);
-}
-.topbar-right a {
-    color: var(--accent);
-    text-decoration: none;
-    font-weight: 600;
-    padding: 8px 20px;
-    border: 1.5px solid var(--accent);
-    border-radius: var(--radius);
-    transition: all .15s;
-}
-.topbar-right a:hover {
-    background: var(--accent);
-    color: #fff;
-    box-shadow: 0 2px 6px rgba(26,115,232,.25);
+/* ===== Split card ===== */
+.split-card{
+    display:flex;width:920px;max-width:96vw;min-height:560px;
+    background:var(--card);border-radius:20px;
+    box-shadow:0 4px 6px rgba(0,0,0,.05),0 10px 40px rgba(0,0,0,.08);
+    overflow:hidden;
 }
 
-/* ===== Main layout ===== */
-.main {
-    min-height: 100vh;
-    padding-top: 64px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+/* ===== Left illustration panel ===== */
+.left-panel{
+    width:380px;flex-shrink:0;
+    background:linear-gradient(145deg,#1a73e8 0%,#0d47a1 100%);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:48px 40px;position:relative;overflow:hidden;
 }
-.container {
-    width: 100%;
-    max-width: 520px;
-    padding: 48px 24px 60px;
+.left-panel::before{
+    content:'';position:absolute;top:-80px;right:-80px;
+    width:280px;height:280px;border-radius:50%;
+    background:rgba(255,255,255,.06);
 }
+.left-panel::after{
+    content:'';position:absolute;bottom:-60px;left:-60px;
+    width:220px;height:220px;border-radius:50%;
+    background:rgba(255,255,255,.04);
+}
+.lp-logo{display:flex;align-items:center;gap:10px;margin-bottom:40px;z-index:1;}
+.lp-mark{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.2);
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-weight:800;font-size:14px;letter-spacing:-.5px;}
+.lp-brand{font-size:20px;font-weight:700;color:#fff;letter-spacing:-.3px;}
+.lp-illo{width:200px;height:200px;position:relative;z-index:1;margin-bottom:32px;}
+/* ---- isometric fintech illustration ---- */
+.iso-base{position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+    width:160px;height:20px;background:rgba(255,255,255,.15);border-radius:4px;}
+.iso-block{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
+    width:100px;height:80px;background:rgba(255,255,255,.18);border-radius:8px 8px 0 0;}
+.iso-block2{position:absolute;bottom:20px;left:calc(50% + 52px);transform:translateX(-50%);
+    width:60px;height:52px;background:rgba(255,255,255,.12);border-radius:8px 8px 0 0;}
+.iso-block3{position:absolute;bottom:20px;left:calc(50% - 52px);transform:translateX(-50%);
+    width:60px;height:38px;background:rgba(255,255,255,.1);border-radius:8px 8px 0 0;}
+.iso-key{position:absolute;top:20px;left:50%;transform:translateX(-50%);
+    width:60px;height:60px;background:rgba(255,255,255,.2);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-size:28px;}
+.iso-dot{position:absolute;width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.4);}
+.iso-dot:nth-child(1){top:10px;left:20px;}
+.iso-dot:nth-child(2){top:10px;right:20px;}
+.iso-dot:nth-child(3){bottom:30px;left:30px;}
+.lp-tagline{color:rgba(255,255,255,.85);font-size:15px;font-weight:600;text-align:center;line-height:1.5;z-index:1;}
+.lp-sub{color:rgba(255,255,255,.55);font-size:12px;text-align:center;margin-top:8px;z-index:1;}
 
-/* ===== Card ===== */
-.card {
-    background: var(--card);
-    border: 1px solid var(--border-light);
-    border-radius: 16px;
-    padding: 40px 44px;
-    box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 4px 16px rgba(0,0,0,.04), 0 12px 32px rgba(0,0,0,.02);
+/* ===== Right form panel ===== */
+.right-panel{
+    flex:1;padding:44px 48px;display:flex;flex-direction:column;
+    justify-content:center;overflow-y:auto;
 }
-
-/* ===== Typography ===== */
-h1 {
-    font-size: 26px;
-    font-weight: 700;
-    letter-spacing: -.4px;
-    margin-bottom: 8px;
-    color: var(--text);
-}
-.desc {
-    font-size: 14px;
-    color: var(--text2);
-    line-height: 1.6;
-    margin-bottom: 32px;
-}
-.desc b { color: var(--text); font-weight: 600; }
-
-/* ===== Tabs (email / phone) ===== */
-.tabs {
-    display: flex;
-    border-bottom: 2px solid var(--border-light);
-    margin-bottom: 24px;
-    gap: 0;
-}
-.tab {
-    padding: 10px 20px;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text3);
-    cursor: pointer;
-    border: none;
-    background: none;
-    font-family: inherit;
-    position: relative;
-    transition: color .2s;
-}
-.tab:hover { color: var(--text2); }
-.tab.on { color: var(--accent); }
-.tab.on::after {
-    content: '';
-    position: absolute;
-    bottom: -2px; left: 0; right: 0;
-    height: 2px;
-    background: var(--accent);
-    border-radius: 1px 1px 0 0;
-}
-
-/* ===== Form fields ===== */
-.field { margin-bottom: 20px; }
-.field-label {
-    display: block;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 6px;
-}
-.field-input {
-    width: 100%;
-    padding: 12px 14px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    font-size: 14px;
-    color: var(--text);
-    background: var(--card);
-    outline: none;
-    font-family: inherit;
-    transition: border-color .15s, box-shadow .15s;
-}
-.field-input:hover { border-color: #bdc1c6; }
-.field-input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-light);
-    background: #fff;
-}
-.field-input::placeholder { color: #bdc1c6; }
-
-/* Phone composite */
-.phone-row { display: flex; }
-.phone-row select {
-    width: 88px;
-    padding: 12px 10px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius) 0 0 var(--radius);
-    border-right: none;
-    font-size: 14px;
-    color: var(--text);
-    background: #f8f9fa;
-    outline: none;
-    font-family: inherit;
-    appearance: none;
-    cursor: pointer;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%239aa0a6' d='M5 6L0 0h10z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    font-weight: 500;
-}
-.phone-row .field-input { border-radius: 0 var(--radius) var(--radius) 0; }
-
-/* ===== OTP 6-digit ===== */
-.otp-row { display: flex; gap: 10px; justify-content: center; margin: 12px 0 20px; }
-.otp-row input {
-    width: 52px; height: 56px;
-    text-align: center;
-    font-size: 22px;
-    font-weight: 700;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    outline: none;
-    color: var(--text);
-    font-family: inherit;
-    transition: border-color .15s, box-shadow .15s;
-    font-variant-numeric: tabular-nums;
-    background: var(--card);
-}
-.otp-row input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-light);
-}
-
-/* ===== Resend ===== */
-.resend-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 28px;
-}
-.resend-row span { font-size: 13px; color: var(--text3); }
-.resend-row button {
-    font-size: 13px;
-    color: var(--accent);
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-family: inherit;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 6px;
-    transition: background .15s;
-}
-.resend-row button:hover { background: var(--accent-light); }
-.resend-row button:disabled { color: var(--text3); cursor: default; background: none; }
-
-/* ===== Password rules checklist ===== */
-.pwd-rules { margin-top: 10px; display: flex; flex-direction: column; gap: 4px; }
-.pwd-rule {
-    display: flex; align-items: center; gap: 6px;
-    font-size: 12px; color: var(--text3); font-weight: 500;
-    transition: color .2s;
-}
-.pwd-rule .rule-icon {
-    width: 16px; height: 16px; border-radius: 50%;
-    border: 1.5px solid var(--border); display: flex;
-    align-items: center; justify-content: center;
-    font-size: 10px; transition: all .2s; flex-shrink: 0;
-}
-.pwd-rule.pass { color: var(--green); }
-.pwd-rule.pass .rule-icon {
-    border-color: var(--green); background: var(--green); color: #fff;
-}
-
-/* ===== Method card selector ===== */
-.methods { margin-bottom: 24px; display: flex; flex-direction: column; gap: 10px; }
-.mth {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 14px 18px;
-    cursor: pointer;
-    border-radius: 10px;
-    transition: all .2s cubic-bezier(.4,0,.2,1);
-    border: 1.5px solid var(--border-light);
-    background: var(--card);
-    position: relative;
-}
-.mth:hover {
-    border-color: #c4c9cf;
-    box-shadow: 0 2px 8px rgba(0,0,0,.04);
-}
-.mth.on {
-    border-color: var(--accent);
-    background: linear-gradient(135deg, rgba(26,115,232,.04), rgba(26,115,232,.08));
-    box-shadow: 0 0 0 3px rgba(26,115,232,.1), 0 2px 8px rgba(26,115,232,.06);
-}
-.mth .mth-icon {
-    width: 40px; height: 40px;
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    background: #f1f3f4;
-    transition: all .2s;
-}
-.mth .mth-icon svg { width: 20px; height: 20px; stroke: var(--text2); stroke-width: 1.8; fill: none; transition: stroke .2s; }
-.mth.on .mth-icon {
-    background: var(--accent);
-}
-.mth.on .mth-icon svg { stroke: #fff; }
-.mth .mth-check {
-    width: 20px; height: 20px;
-    border-radius: 50%;
-    border: 2px solid var(--border);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    transition: all .2s;
-    margin-left: auto;
-}
-.mth.on .mth-check {
-    border-color: var(--accent);
-    background: var(--accent);
-}
-.mth.on .mth-check::after {
-    content: '';
-    width: 5px; height: 9px;
-    border: solid #fff;
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg) translateY(-1px);
-}
-.mth .mth-body { flex: 1; min-width: 0; }
-.mth .mth-title { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.3; }
-.mth .mth-desc { font-size: 12px; color: var(--text3); margin-top: 3px; line-height: 1.4; }
-
-/* ===== Agreement ===== */
-.agree {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    margin-bottom: 28px;
-}
-.agree input[type=checkbox] {
-    margin-top: 2px;
-    accent-color: var(--accent);
-    width: 18px; height: 18px;
-    flex-shrink: 0;
-    cursor: pointer;
-    border-radius: 4px;
-}
-.agree label {
-    font-size: 13px;
-    color: var(--text2);
-    line-height: 1.6;
-}
-.agree label a {
-    color: var(--accent);
-    text-decoration: none;
-    font-weight: 500;
-}
-.agree label a:hover { text-decoration: underline; }
-
-/* ===== Buttons ===== */
-.btn {
-    width: 100%;
-    padding: 13px 24px;
-    border-radius: 10px;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    border: none;
-    font-family: inherit;
-    transition: all .2s cubic-bezier(.4,0,.2,1);
-}
-.btn-primary {
-    background: var(--accent);
-    color: #fff;
-    box-shadow: 0 1px 2px rgba(26,115,232,.2);
-}
-.btn-primary:hover { background: var(--accent-hover); box-shadow: 0 2px 8px rgba(26,115,232,.35); transform: translateY(-0.5px); }
-.btn-primary:active { transform: translateY(0) scale(.995); box-shadow: 0 1px 2px rgba(26,115,232,.2); }
-.btn-text {
-    background: none;
-    color: var(--accent);
-    margin-top: 8px;
-}
-.btn-text:hover { background: var(--accent-light); }
-
-/* ===== Action row (two buttons side by side) ===== */
-.action-row {
-    display: flex;
-    gap: 12px;
-    margin-top: 4px;
-}
-.action-row .btn { flex: 1; }
-.btn-outline {
-    background: var(--card);
-    color: var(--text);
-    border: 1px solid var(--border);
-}
-.btn-outline:hover { background: #f1f3f4; }
-
-/* ===== QR code area ===== */
-.qr-area {
-    text-align: center;
-    margin-bottom: 24px;
-}
-.qr-box {
-    width: 200px; height: 200px;
-    margin: 0 auto 16px;
-    border-radius: 12px;
-    background: #f1f3f4;
-    border: 1px solid var(--border-light);
-    display: flex; align-items: center; justify-content: center;
-    flex-direction: column; gap: 8px;
-    color: var(--text3); font-size: 13px;
-}
-.qr-box .qr-icon { font-size: 48px; opacity: .3; }
-.secret-row {
-    font-size: 13px;
-    color: var(--text2);
-    line-height: 1.6;
-}
-.secret-row code {
-    display: inline-block;
-    background: #f1f3f4;
-    padding: 5px 14px;
-    border-radius: 6px;
-    font-family: 'SF Mono', 'Roboto Mono', Menlo, monospace;
-    font-size: 14px;
-    color: var(--text);
-    letter-spacing: 2px;
-    font-weight: 600;
-    margin-top: 4px;
-    border: 1px solid var(--border-light);
-}
-
-/* ===== Email verification banner ===== */
-.verify-banner {
-    background: #e8f0fe;
-    border: 1px solid #aecbfa;
-    border-radius: var(--radius);
-    padding: 28px 24px;
-    text-align: center;
-    margin-bottom: 24px;
-}
-.verify-banner .vb-icon { font-size: 40px; margin-bottom: 12px; }
-.verify-banner p { font-size: 14px; color: var(--text); line-height: 1.6; }
-.verify-banner .vb-addr { font-weight: 700; color: var(--accent); }
-
-/* ===== Success ===== */
-.success-icon {
-    width: 64px; height: 64px;
-    margin: 0 auto 20px;
-    border-radius: 50%;
-    background: var(--green);
-    display: flex; align-items: center; justify-content: center;
-    color: #fff; font-size: 28px; font-weight: 700;
-    animation: popIn .4s cubic-bezier(.175,.885,.32,1.275);
-}
-@keyframes popIn {
-    0% { transform: scale(0); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
-}
-.success-body { text-align: center; }
-.success-body h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
-.success-body p { font-size: 14px; color: var(--text2); line-height: 1.5; }
-.success-body .countdown { font-size: 13px; color: var(--text3); margin-top: 24px; }
-.success-body .countdown b { color: var(--accent); font-weight: 700; }
+.rp-title{font-size:22px;font-weight:700;letter-spacing:-.3px;margin-bottom:6px;}
+.rp-sub{font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.5;}
+.rp-sub a{color:var(--accent);text-decoration:none;font-weight:600;}
+.rp-sub a:hover{text-decoration:underline;}
 
 /* ===== Views ===== */
-.v { display: none; animation: fadeUp .25s ease; }
-.v.on { display: block; }
-@keyframes fadeUp {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+.v{display:none;animation:fadeUp .22s ease;}
+.v.on{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 
-/* ===== Footer ===== */
-.page-footer {
-    text-align: center;
-    padding: 24px;
-    padding-bottom: 120px;
-    font-size: 12px;
-    color: var(--text3);
-}
-.page-footer a { color: var(--text3); text-decoration: none; margin: 0 12px; }
-.page-footer a:hover { color: var(--text2); }
+/* ===== Tabs ===== */
+.tabs{display:flex;border-bottom:2px solid var(--border-light);margin-bottom:20px;gap:0;}
+.tab{padding:9px 18px;font-size:13px;font-weight:600;color:var(--text3);
+    cursor:pointer;border:none;background:none;font-family:inherit;
+    position:relative;transition:color .15s;}
+.tab:hover{color:var(--text2);}
+.tab.on{color:var(--accent);}
+.tab.on::after{content:'';position:absolute;bottom:-2px;left:0;right:0;
+    height:2px;background:var(--accent);border-radius:1px 1px 0 0;}
+
+/* ===== Method switch (subtle link) ===== */
+.method-link{font-size:12px;color:var(--text3);margin-bottom:16px;display:block;}
+.method-link a{color:var(--accent);text-decoration:none;font-weight:600;cursor:pointer;}
+.method-link a:hover{text-decoration:underline;}
+
+/* ===== Step header ===== */
+.step-header{display:flex;align-items:center;gap:14px;margin-bottom:22px;}
+.back-btn{width:32px;height:32px;border:none;background:var(--accent-light);color:var(--accent);
+    border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;transition:background .15s;font-family:inherit;}
+.back-btn:hover{background:rgba(26,115,232,.15);}
+
+/* ===== Form fields ===== */
+.field{margin-bottom:16px;}
+.field-label{display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:5px;}
+.field-input{width:100%;padding:11px 13px;border:1px solid var(--border);border-radius:var(--radius);
+    font-size:14px;color:var(--text);background:var(--card);outline:none;font-family:inherit;
+    transition:border-color .15s,box-shadow .15s;}
+.field-input:hover{border-color:#bdc1c6;}
+.field-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light);}
+.field-input::placeholder{color:#bdc1c6;}
+
+/* ===== Phone row ===== */
+.phone-row{display:flex;}
+.phone-row select{width:84px;padding:11px 8px;border:1px solid var(--border);
+    border-radius:var(--radius) 0 0 var(--radius);border-right:none;
+    font-size:14px;color:var(--text);background:#f8f9fa;outline:none;
+    font-family:inherit;appearance:none;cursor:pointer;font-weight:500;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%239aa0a6' d='M5 6L0 0h10z'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 8px center;}
+.phone-row .field-input{border-radius:0 var(--radius) var(--radius) 0;}
+
+/* ===== Password ===== */
+.pwd-wrap{position:relative;}
+.pwd-wrap .field-input{padding-right:56px;}
+.pwd-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);
+    font-size:12px;font-weight:600;color:var(--accent);background:none;border:none;
+    cursor:pointer;font-family:inherit;padding:2px 4px;}
+
+/* ===== Password rules ===== */
+.pwd-rules{margin-top:8px;display:flex;flex-direction:column;gap:3px;}
+.pwd-rule{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text3);font-weight:500;transition:color .2s;}
+.pwd-rule .ri{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--border);
+    display:flex;align-items:center;justify-content:center;font-size:9px;transition:all .2s;flex-shrink:0;}
+.pwd-rule.pass{color:var(--green);}
+.pwd-rule.pass .ri{border-color:var(--green);background:var(--green);color:#fff;}
+
+/* ===== Inline code row ===== */
+.code-row{display:flex;gap:8px;align-items:flex-end;margin-bottom:16px;}
+.code-row .field-input{flex:1;letter-spacing:4px;font-size:16px;font-weight:700;text-align:center;}
+.send-btn{flex-shrink:0;height:44px;padding:0 14px;border:1.5px solid var(--accent);
+    border-radius:var(--radius);font-size:13px;font-weight:600;color:var(--accent);
+    background:none;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .15s;}
+.send-btn:hover{background:var(--accent-light);}
+.send-btn:disabled{border-color:var(--border);color:var(--text3);cursor:default;background:none;}
+
+/* ===== Agreement ===== */
+.agree{display:flex;align-items:flex-start;gap:8px;margin-bottom:20px;}
+.agree input[type=checkbox]{margin-top:2px;accent-color:var(--accent);width:16px;height:16px;flex-shrink:0;cursor:pointer;}
+.agree label{font-size:12px;color:var(--text2);line-height:1.6;}
+.agree label a{color:var(--accent);text-decoration:none;font-weight:500;}
+.agree label a:hover{text-decoration:underline;}
+
+/* ===== Buttons ===== */
+.btn{width:100%;padding:12px 24px;border-radius:10px;font-size:15px;font-weight:600;
+    cursor:pointer;border:none;font-family:inherit;transition:all .2s;margin-top:4px;}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 1px 2px rgba(26,115,232,.2);}
+.btn-primary:hover{background:var(--accent-hover);box-shadow:0 2px 8px rgba(26,115,232,.35);transform:translateY(-.5px);}
+.btn-primary:active{transform:scale(.995);}
+.btn-text{background:none;color:var(--accent);margin-top:6px;font-size:13px;}
+.btn-text:hover{background:var(--accent-light);}
 
 /* ===== Error message ===== */
-.err-msg {
-    display: none;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 14px;
-    background: rgba(234,67,53,.08);
-    border: 1px solid rgba(234,67,53,.2);
-    border-radius: var(--radius);
-    margin-bottom: 20px;
-    font-size: 13px;
-    color: var(--red);
-    line-height: 1.5;
-}
-.err-msg.show { display: flex; }
-.err-msg .err-icon { font-size: 16px; flex-shrink: 0; }
+.err-msg{display:none;align-items:center;gap:8px;padding:10px 13px;
+    background:var(--red-light);border:1px solid rgba(234,67,53,.2);
+    border-radius:var(--radius);margin-bottom:14px;font-size:13px;color:var(--red);line-height:1.5;}
+.err-msg.show{display:flex;}
+.err-icon{font-size:15px;flex-shrink:0;}
+
+/* ===== Success icon ===== */
+.success-icon{width:64px;height:64px;margin:0 auto 20px;border-radius:50%;
+    background:var(--green);display:flex;align-items:center;justify-content:center;
+    color:#fff;font-size:28px;font-weight:700;
+    animation:popIn .4s cubic-bezier(.175,.885,.32,1.275);}
+@keyframes popIn{0%{transform:scale(0);opacity:0;}100%{transform:scale(1);opacity:1;}}
 
 /* ===== Demo bar ===== */
-.demo-bar {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    background: var(--card);
-    border-top: 1px solid var(--border-light);
-    padding: 10px 32px;
-    z-index: 100;
-    box-shadow: 0 -2px 8px rgba(0,0,0,.04);
-}
-.demo-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 6px;
-}
-.demo-row:last-child { margin-bottom: 0; }
-.demo-label {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--text3);
-    text-transform: uppercase;
-    letter-spacing: .5px;
-    white-space: nowrap;
-    min-width: 64px;
-}
-.demo-btns { display: flex; gap: 6px; flex-wrap: wrap; }
-.demo-btn {
-    padding: 5px 12px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 600;
-    cursor: pointer;
-    border: 1px solid var(--border);
-    background: var(--card);
-    color: var(--text2);
-    font-family: inherit;
-    transition: all .15s;
-    white-space: nowrap;
-}
-.demo-btn:hover { border-color: var(--accent); color: var(--accent); }
-.demo-btn.on {
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
-}
-.demo-desc {
-    font-size: 11px;
-    color: var(--text3);
-    line-height: 1.4;
-    margin-left: 8px;
-}
+.demo-bar{position:fixed;bottom:0;left:0;right:0;background:var(--card);
+    border-top:1px solid var(--border-light);padding:8px 28px;z-index:100;
+    display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+    box-shadow:0 -2px 8px rgba(0,0,0,.04);}
+.demo-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;
+    letter-spacing:.5px;white-space:nowrap;}
+.demo-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.demo-btn{padding:4px 11px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;
+    border:1px solid var(--border);background:var(--card);color:var(--text2);
+    font-family:inherit;transition:all .15s;white-space:nowrap;}
+.demo-btn:hover{border-color:var(--accent);color:var(--accent);}
+.demo-btn.on{background:var(--accent);color:#fff;border-color:var(--accent);}
+.demo-desc{font-size:11px;color:var(--text3);margin-left:4px;}
 </style>
 </head>
 <body>
 
-<!-- ===== Top bar ===== -->
-<div class="topbar">
-    <a class="topbar-logo" href="#">
-        <div class="mark" id="logoMark"></div>
-        <span class="brand" id="logoBrand"></span>
-    </a>
-    <div class="topbar-right">
-        已有账户？
-        <a href="#" onclick="return false;">登录</a>
+<div class="split-card">
+
+    <!-- ===== Left panel ===== -->
+    <div class="left-panel">
+        <div class="lp-logo">
+            <div class="lp-mark">EX</div>
+            <span class="lp-brand">EX Platform</span>
+        </div>
+        <div class="lp-illo">
+            <div class="iso-dot"></div>
+            <div class="iso-dot"></div>
+            <div class="iso-dot"></div>
+            <div class="iso-key">🔐</div>
+            <div class="iso-block3"></div>
+            <div class="iso-block2"></div>
+            <div class="iso-block"></div>
+            <div class="iso-base"></div>
+        </div>
+        <div class="lp-tagline">开启您的商户账户</div>
+        <div class="lp-sub">安全注册，全程加密保护</div>
     </div>
-</div>
 
-<!-- ===== Main ===== -->
-<div class="main">
-    <div class="container">
+    <!-- ===== Right panel ===== -->
+    <div class="right-panel">
 
-        <!-- ==================== 1. 注册首页（含内联验证） ==================== -->
-        <div class="v on" id="v-start">
-            <div class="card">
-                <h1 id="startTitle">注册</h1>
-                <div class="desc" id="startDesc"></div>
+        <!-- ==================== 注册表单 ==================== -->
+        <div class="v on" id="v-form">
+            <div class="rp-title">创建账户</div>
+            <div class="rp-sub">已有账户？<a href="#" onclick="return false;">返回登录</a></div>
 
-                <div class="err-msg" id="errDup">
-                    <span class="err-icon">⚠</span>
-                    <span id="errDupText">该邮箱已注册，请直接登录</span>
+            <!-- 账号类型 tabs -->
+            <div class="tabs">
+                <button class="tab on" onclick="swTab(this,'email')">邮箱</button>
+                <button class="tab" onclick="swTab(this,'phone')">手机号</button>
+            </div>
+
+            <!-- 邮箱输入 -->
+            <div id="f-email">
+                <div class="field">
+                    <label class="field-label">邮箱地址</label>
+                    <input class="field-input" type="email" placeholder="name@company.com" id="inEmail">
                 </div>
+            </div>
 
-                <!-- Phase 1: 输入邮箱/手机号 -->
-                <div id="phase-input">
-                    <div class="tabs">
-                        <button class="tab on" onclick="sw(this,'email')">邮箱</button>
-                        <button class="tab" onclick="sw(this,'phone')">手机号</button>
-                    </div>
-
-                    <div id="f-email">
-                        <div class="field">
-                            <label class="field-label">邮箱地址</label>
-                            <input class="field-input" type="email" placeholder="name@company.com" id="inEmail">
-                        </div>
-                    </div>
-                    <div id="f-phone" style="display:none">
-                        <div class="field">
-                            <label class="field-label">手机号</label>
-                            <div class="phone-row">
-                                <select id="ccSel"><option>+86</option><option>+852</option><option>+1</option><option>+44</option><option>+81</option><option>+65</option></select>
-                                <input class="field-input" type="tel" placeholder="输入手机号" id="inPhone">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="agree">
-                        <input type="checkbox" id="ck" checked>
-                        <label for="ck">我已阅读并同意 <a href="#">《会员服务协议》</a>、<a href="#">《支付服务协议》</a> 和 <a href="#">《授权协议》</a></label>
-                    </div>
-
-                    <button class="btn btn-primary" onclick="goNext()">继续</button>
-                </div>
-
-                <!-- Phase 2: 内联验证码（同一卡片内） -->
-                <div id="phase-verify" style="display:none">
-                    <div class="err-msg" id="errCodeInline">
-                        <span class="err-icon">⚠</span>
-                        <span>验证码错误，请重新输入</span>
-                    </div>
-
-                    <div class="otp-row" id="otpInline"></div>
-                    <div class="resend-row">
-                        <span>有效期 10 分钟</span>
-                        <button id="rsInline" onclick="cd(this)">重新发送</button>
-                    </div>
-
-                    <div class="action-row">
-                        <button class="btn btn-outline" onclick="backToInput()">返回</button>
-                        <button class="btn btn-primary" id="verifyBtn" onclick="verifyAndContinue()">验证并继续</button>
+            <!-- 手机号输入 -->
+            <div id="f-phone" style="display:none">
+                <div class="field">
+                    <label class="field-label">手机号</label>
+                    <div class="phone-row">
+                        <select id="ccSel">
+                            <option>+86</option><option>+852</option>
+                            <option>+1</option><option>+44</option>
+                            <option>+81</option><option>+65</option>
+                        </select>
+                        <input class="field-input" type="tel" placeholder="输入手机号" id="inPhone">
                     </div>
                 </div>
+            </div>
 
-                <!-- Phase 3-A: 设置密码（密码注册，同一卡片内） -->
-                <div id="phase-pwd" style="display:none">
-                    <div class="field">
-                        <label class="field-label">密码</label>
-                        <input class="field-input" type="password" placeholder="至少 8 位，含字母、数字和特殊字符" id="inPwd" oninput="meter(this.value)">
-                        <div class="pwd-rules">
-                            <div class="pwd-rule" id="r-len"><span class="rule-icon">✓</span>至少 8 位字符</div>
-                            <div class="pwd-rule" id="r-letter"><span class="rule-icon">✓</span>包含字母 (a-z)</div>
-                            <div class="pwd-rule" id="r-digit"><span class="rule-icon">✓</span>包含数字 (0-9)</div>
-                            <div class="pwd-rule" id="r-special"><span class="rule-icon">✓</span>包含特殊字符 (!@#$%...)</div>
-                        </div>
+            <!-- 错误提示 -->
+            <div class="err-msg" id="regErr">
+                <span class="err-icon">⚠</span>
+                <span id="regErrText">该账号已注册，请直接登录</span>
+            </div>
+
+            <!-- ==== 验证码区块（两种方式共用）==== -->
+            <div class="field">
+                <label class="field-label">验证码</label>
+                <div class="code-row">
+                    <input class="field-input" type="text" placeholder="6 位验证码" id="inCode" maxlength="6">
+                    <button class="send-btn" id="rs-main" onclick="sendCode(this)">发送验证码</button>
+                </div>
+                <div style="font-size:12px;color:var(--text3);margin-top:4px;">有效期 10 分钟</div>
+            </div>
+
+            <!-- ==== 密码区块（仅密码注册）==== -->
+            <div id="block-pwd">
+                <div class="field">
+                    <label class="field-label">设置密码</label>
+                    <div class="pwd-wrap">
+                        <input class="field-input" type="password" placeholder="至少 8 位，含大小写字母和数字" id="inPwd" oninput="meter(this.value)">
+                        <button class="pwd-toggle" onclick="togglePwd()" id="pwdEye">显示</button>
                     </div>
-                    <div class="field">
-                        <label class="field-label">确认密码</label>
+                    <div class="pwd-rules">
+                        <div class="pwd-rule" id="r-len"><span class="ri">✓</span>至少 8 位字符</div>
+                        <div class="pwd-rule" id="r-upper"><span class="ri">✓</span>包含大写字母 (A-Z)</div>
+                        <div class="pwd-rule" id="r-lower"><span class="ri">✓</span>包含小写字母 (a-z)</div>
+                        <div class="pwd-rule" id="r-digit"><span class="ri">✓</span>包含数字 (0-9)</div>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="field-label">确认密码</label>
+                    <div class="pwd-wrap">
                         <input class="field-input" type="password" placeholder="再次输入密码" id="inPwd2">
-                    </div>
-
-                    <div class="action-row">
-                        <button class="btn btn-outline" onclick="backToInput()">返回</button>
-                        <button class="btn btn-primary" onclick="pwdSubmit()">注册</button>
-                    </div>
-                </div>
-
-                <!-- Phase 3-B: 绑定动态令牌（OTP 注册，同一卡片内） -->
-                <div id="phase-otp" style="display:none">
-                    <div class="qr-area">
-                        <div class="qr-box">
-                            <div class="qr-icon">📱</div>
-                            <span>扫描绑定</span>
-                        </div>
-                        <div class="secret-row">
-                            无法扫码？手动输入密钥<br>
-                            <code>JBSW Y3DP EHPK 3PXP</code>
-                        </div>
-                    </div>
-
-                    <div class="field">
-                        <label class="field-label">验证码</label>
-                        <input class="field-input" type="text" placeholder="输入 Authenticator 上的 6 位动态码" id="inTotp" maxlength="6" style="text-align:center;letter-spacing:6px;font-size:18px;font-weight:700">
-                    </div>
-
-                    <div class="action-row">
-                        <button class="btn btn-outline" onclick="backToInput()">返回</button>
-                        <button class="btn btn-primary" onclick="finish()">验证并注册</button>
+                        <button class="pwd-toggle" onclick="togglePwd2()" id="pwd2Eye">显示</button>
                     </div>
                 </div>
             </div>
+
+            <!-- 注册方式切换（次要入口） -->
+            <div class="method-link" id="methodLink">
+                或者 <a onclick="swMethod('code')" id="linkToCode">使用验证码注册，无需设置密码</a>
+            </div>
+
+            <!-- 协议 -->
+            <div class="agree">
+                <input type="checkbox" id="ck" checked>
+                <label for="ck">我已阅读并同意 <a href="#">《会员服务协议》</a>、<a href="#">《支付服务协议》</a> 和 <a href="#">《授权协议》</a></label>
+            </div>
+
+            <button class="btn btn-primary" onclick="doRegister()">注册</button>
         </div>
 
-        <!-- ==================== 2. 注册成功 ==================== -->
+        <!-- ==================== 注册成功 ==================== -->
         <div class="v" id="v-done">
-            <div class="card">
-                <div class="success-icon">✓</div>
-                <div class="success-body">
-                    <h2>注册成功</h2>
-                    <p>账户已创建，登录后即可开通产品</p>
-                    <div class="countdown"><b id="sec">5</b> 秒后自动跳转</div>
-                </div>
-                <div style="margin-top:28px">
-                    <button class="btn btn-primary" onclick="goLogin()">前往登录</button>
-                </div>
+            <div class="success-icon">✓</div>
+            <div style="text-align:center;margin-bottom:28px;">
+                <h2 style="font-size:22px;font-weight:700;margin-bottom:8px;">注册成功</h2>
+                <p style="font-size:13px;color:var(--text2);line-height:1.6;">账户已创建，登录后即可开通产品</p>
+                <p style="font-size:12px;color:var(--text3);margin-top:16px;"><b id="sec" style="color:var(--accent);font-size:14px;">5</b> 秒后自动跳转</p>
             </div>
+            <button class="btn btn-primary" onclick="goLogin()">前往登录</button>
         </div>
 
-    </div>
-</div>
+    </div><!-- /right-panel -->
+</div><!-- /split-card -->
 
-<!-- ===== Footer ===== -->
-<div class="page-footer">
-    <span id="footerBrand">&copy; 2026</span>
-    <a href="#">隐私政策</a>
-    <a href="#">服务条款</a>
-    <a href="#">帮助中心</a>
-</div>
-
-<!-- ===== Demo bar (prototype only) ===== -->
+<!-- ===== Demo bar ===== -->
 <div class="demo-bar">
-    <div class="demo-row">
-        <span class="demo-label">地区模拟</span>
-        <div class="demo-btns">
-            <button class="demo-btn" onclick="demoRegion('CN',this)">🇨🇳 中国大陆</button>
-            <button class="demo-btn" onclick="demoRegion('HK',this)">🇭🇰 香港</button>
-            <button class="demo-btn" onclick="demoRegion('US',this)">🌍 海外</button>
-        </div>
-        <span class="demo-desc" id="demoRegionDesc">当前：自动检测</span>
+    <span class="demo-label">地区</span>
+    <div class="demo-btns">
+        <button class="demo-btn" onclick="demoRegion('CN',this)">🇨🇳 中国大陆</button>
+        <button class="demo-btn" onclick="demoRegion('HK',this)">🇭🇰 香港</button>
+        <button class="demo-btn" onclick="demoRegion('OTHER',this)">🌍 海外</button>
     </div>
-    <div class="demo-row">
-        <span class="demo-label">注册方式</span>
-        <div class="demo-btns">
-            <button class="demo-btn on" id="dmPwd" onclick="demoMethod('pwd',this)">密码注册</button>
-            <button class="demo-btn" id="dmOtp" onclick="demoMethod('otp',this)">OTP 动态令牌</button>
-            <button class="demo-btn" id="dmCode" onclick="demoMethod('code',this)">验证码注册</button>
-        </div>
-        <span class="demo-desc" id="demoMethodDesc">手机号→密码注册（CN/HK默认）</span>
+    <span class="demo-label" style="margin-left:12px;">异常</span>
+    <div class="demo-btns">
+        <button class="demo-btn on" onclick="demoEdge('none',this)">正常</button>
+        <button class="demo-btn" onclick="demoEdge('dup',this)">已注册</button>
+        <button class="demo-btn" onclick="demoEdge('code_err',this)">验证码错误</button>
+        <button class="demo-btn" onclick="demoEdge('pwd_weak',this)">密码太弱</button>
     </div>
-    <div class="demo-row">
-        <span class="demo-label">异常场景</span>
-        <div class="demo-btns">
-            <button class="demo-btn on" onclick="demoEdge('none',this)">正常流程</button>
-            <button class="demo-btn" onclick="demoEdge('dup',this)">邮箱/手机已注册</button>
-            <button class="demo-btn" onclick="demoEdge('code_err',this)">验证码错误</button>
-            <button class="demo-btn" onclick="demoEdge('pwd_weak',this)">密码强度不足</button>
-        </div>
-    </div>
+    <span class="demo-desc" id="demoDesc">自动检测地区</span>
 </div>
 
 <script>
 /* ===== State ===== */
-let ct = 'email', rm = 'otp';
-let edgeCase = 'none'; // none | dup | code_err | pwd_weak
+let credType = 'email';  // 'email' | 'phone'
+let regMethod = 'pwd';   // 'pwd' | 'code'
+let edgeCase = 'none';
 
-/* ===== IP-based region detection → auto-select tab & method ===== */
-(function initRegion() {
+/* ===== IP-based region init ===== */
+(function initRegion(){
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
-    let region = 'other';
+    let region = 'OTHER';
     if (tz.startsWith('Asia/Shanghai') || tz.startsWith('Asia/Chongqing') || tz.startsWith('Asia/Urumqi')) region = 'CN';
     else if (tz.startsWith('Asia/Hong_Kong')) region = 'HK';
-
-    if (region === 'CN' || region === 'HK') {
-        ct = 'phone'; rm = 'pwd';
-    } else {
-        ct = 'email'; rm = 'otp';
-    }
-
-    setTimeout(() => {
-        applyTabAndMethod(region);
-        syncDemoBar();
-    }, 0);
+    setTimeout(() => applyRegion(region, true), 0);
 })();
 
-function applyTabAndMethod(region) {
+function applyRegion(region, silent) {
+    if (region === 'CN') {
+        credType = 'phone'; regMethod = 'pwd';
+        document.getElementById('ccSel').value = '+86';
+        if (!silent) document.getElementById('demoDesc').textContent = '中国大陆 → 手机号 + 密码注册';
+    } else if (region === 'HK') {
+        credType = 'phone'; regMethod = 'pwd';
+        document.getElementById('ccSel').value = '+852';
+        if (!silent) document.getElementById('demoDesc').textContent = '香港 → 手机号 + 密码注册';
+    } else {
+        credType = 'email'; regMethod = 'code';
+        if (!silent) document.getElementById('demoDesc').textContent = '海外 → 邮箱 + 验证码注册';
+    }
+    applyUI();
+}
+
+function applyUI() {
+    // Credential tab
     const tabs = document.querySelectorAll('.tab');
     tabs.forEach(t => t.classList.remove('on'));
-    if (ct === 'phone') {
-        tabs[1].classList.add('on');
-        document.getElementById('f-email').style.display = 'none';
-        document.getElementById('f-phone').style.display = '';
+    document.getElementById('f-email').style.display = credType === 'email' ? '' : 'none';
+    document.getElementById('f-phone').style.display = credType === 'phone' ? '' : 'none';
+    // Password block
+    const bp = document.getElementById('block-pwd');
+    if (bp) bp.style.display = regMethod === 'pwd' ? '' : 'none';
+    tabs[credType === 'email' ? 0 : 1].classList.add('on');
+    // Method link
+    const link = document.getElementById('linkToCode');
+    if (regMethod === 'code') {
+        link.textContent = '改用密码注册';
+        link.onclick = () => swMethod('pwd');
     } else {
-        tabs[0].classList.add('on');
-        document.getElementById('f-email').style.display = '';
-        document.getElementById('f-phone').style.display = 'none';
+        link.textContent = '使用验证码注册，无需设置密码';
+        link.onclick = () => swMethod('code');
     }
-    if (region === 'CN') document.getElementById('ccSel').value = '+86';
-    else if (region === 'HK') document.getElementById('ccSel').value = '+852';
 }
 
-/* ===== Navigation ===== */
-function go(id) {
-    document.querySelectorAll('.v').forEach(v => v.classList.remove('on'));
-    document.getElementById(id).classList.add('on');
-    clearAllErrors();
-}
-
-function sw(el, m) {
-    ct = m;
+/* ===== Tab & method switch ===== */
+function swTab(el, m) {
+    credType = m;
     el.parentElement.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
     el.classList.add('on');
     document.getElementById('f-email').style.display = m === 'email' ? '' : 'none';
     document.getElementById('f-phone').style.display = m === 'phone' ? '' : 'none';
-    rm = (m === 'phone') ? 'pwd' : 'otp';
-    syncDemoBar();
+    clearErr();
 }
 
-function val() {
-    return ct === 'email'
-        ? (document.getElementById('inEmail').value || 'name@company.com')
-        : (document.getElementById('inPhone').value || '手机号');
-}
-
-/* ===== OTP input builder ===== */
-function buildOtp(id) {
-    const w = document.getElementById(id);
-    if (w.children.length) return;
-    for (let i = 0; i < 6; i++) {
-        const inp = document.createElement('input');
-        inp.maxLength = 1; inp.type = 'text';
-        inp.oninput = function() { if (this.value && i < 5) w.children[i + 1].focus(); };
-        inp.onkeydown = function(e) { if (e.key === 'Backspace' && !this.value && i > 0) w.children[i - 1].focus(); };
-        w.appendChild(inp);
-    }
-    setTimeout(() => w.children[0].focus(), 100);
-}
-
-/* ===== Phase switching (inline on v-start) ===== */
-function showVerifyPhase() {
-    const c = val();
-    hideAllPhases();
-    document.getElementById('phase-verify').style.display = '';
-
-    // Update title and description based on method
-    document.getElementById('startTitle').textContent = '验证您的账户';
-    document.getElementById('startDesc').innerHTML = '6 位验证码已发送至 <b>' + c + '</b>';
-
-    // Update button text based on method
-    const btn = document.getElementById('verifyBtn');
-    if (rm === 'code') {
-        btn.textContent = '验证并注册';
+function swMethod(m) {
+    regMethod = m;
+    const bp = document.getElementById('block-pwd');
+    if (bp) bp.style.display = m === 'pwd' ? '' : 'none';
+    const link = document.getElementById('linkToCode');
+    if (m === 'code') {
+        link.textContent = '改用密码注册';
+        link.onclick = () => swMethod('pwd');
     } else {
-        btn.textContent = '验证并继续';
+        link.textContent = '使用验证码注册，无需设置密码';
+        link.onclick = () => swMethod('code');
     }
-
-    buildOtp('otpInline');
-    cd(document.getElementById('rsInline'));
+    clearErr();
 }
 
-function hideAllPhases() {
-    ['phase-input', 'phase-verify', 'phase-pwd', 'phase-otp'].forEach(id => {
-        document.getElementById(id).style.display = 'none';
+/* ===== Get credential value ===== */
+function getCred() {
+    return credType === 'email'
+        ? (document.getElementById('inEmail').value.trim() || 'name@company.com')
+        : (document.getElementById('inPhone').value.trim() || '138xxxx');
+}
+
+/* ===== Send code countdown ===== */
+function sendCode(btn) {
+    btn.disabled = true; let s = 60; btn.textContent = s+'s';
+    const t = setInterval(() => {
+        if (--s <= 0) { clearInterval(t); btn.disabled = false; btn.textContent = '重新发送'; }
+        else btn.textContent = s+'s';
+    }, 1000);
+}
+
+/* ===== Password toggle ===== */
+function togglePwd() {
+    const i = document.getElementById('inPwd'), b = document.getElementById('pwdEye');
+    if (i.type==='password'){i.type='text';b.textContent='隐藏';}else{i.type='password';b.textContent='显示';}
+}
+function togglePwd2() {
+    const i = document.getElementById('inPwd2'), b = document.getElementById('pwd2Eye');
+    if (i.type==='password'){i.type='text';b.textContent='隐藏';}else{i.type='password';b.textContent='显示';}
+}
+
+/* ===== Password rules ===== */
+function meter(p) {
+    const rules = [
+        {id:'r-len',   test: p => p.length >= 8},
+        {id:'r-upper', test: p => /[A-Z]/.test(p)},
+        {id:'r-lower', test: p => /[a-z]/.test(p)},
+        {id:'r-digit', test: p => /\d/.test(p)},
+    ];
+    rules.forEach(r => {
+        const el = document.getElementById(r.id);
+        if (el) el.classList.toggle('pass', !!p && r.test(p));
     });
 }
 
-function backToInput() {
-    hideAllPhases();
-    document.getElementById('phase-input').style.display = '';
-    document.getElementById('startTitle').textContent = '注册';
-    document.getElementById('startDesc').innerHTML = '';
-    clearAllErrors();
-}
+/* ===== Register (single step) ===== */
+function doRegister() {
+    clearErr();
+    const errEl  = document.getElementById('regErr');
+    const errTxt = document.getElementById('regErrText');
 
-/* ===== Main flow ===== */
-function goNext() {
-    clearAllErrors();
-
-    // Edge case: duplicate account
     if (edgeCase === 'dup') {
-        const errEl = document.getElementById('errDup');
-        const errText = document.getElementById('errDupText');
-        errText.textContent = ct === 'email'
-            ? '该邮箱已注册，请直接登录'
-            : '该手机号已注册，请直接登录';
-        errEl.classList.add('show');
-        return;
+        errTxt.textContent = credType === 'email' ? '该邮箱已注册，请直接登录' : '该手机号已注册，请直接登录';
+        errEl.classList.add('show'); return;
     }
-
-    // All methods: step 1 = input + inline verification on same card
-    showVerifyPhase();
-}
-
-/* ===== After inline verification ===== */
-function verifyAndContinue() {
-    // Edge case: verification code error
     if (edgeCase === 'code_err') {
-        document.getElementById('errCodeInline').classList.add('show');
-        return;
+        errTxt.textContent = '验证码错误，请重新输入'; errEl.classList.add('show'); return;
     }
-
-    if (rm === 'code') {
-        // 验证码注册: verify → done
-        finish();
-    } else if (rm === 'pwd') {
-        // 密码注册: verify → set password (step 2)
-        hideAllPhases();
-        document.getElementById('phase-pwd').style.display = '';
-        document.getElementById('startTitle').textContent = '设置密码';
-        document.getElementById('startDesc').innerHTML = '为 <b>' + val() + '</b> 设置登录密码';
+    if (regMethod === 'pwd') {
+        const p  = document.getElementById('inPwd').value;
+        const p2 = document.getElementById('inPwd2').value;
         if (edgeCase === 'pwd_weak') {
-            setTimeout(() => {
-                document.getElementById('inPwd').value = '123';
-                meter('123');
-            }, 200);
+            const allPass = p.length>=8 && /[A-Z]/.test(p) && /[a-z]/.test(p) && /\d/.test(p);
+            if (!allPass) { errTxt.textContent = '密码强度不足，请满足所有规则'; errEl.classList.add('show'); return; }
         }
-    } else if (rm === 'otp') {
-        // OTP注册: verify → bind authenticator (step 2)
-        hideAllPhases();
-        document.getElementById('phase-otp').style.display = '';
-        document.getElementById('startTitle').textContent = '绑定动态令牌';
-        document.getElementById('startDesc').textContent = '使用 Google Authenticator 或其他 TOTP 应用扫描下方二维码';
+        if (p !== p2) { errTxt.textContent = '两次密码不一致，请重新输入'; errEl.classList.add('show'); return; }
     }
-}
-
-function pwdSubmit() {
-    const p = document.getElementById('inPwd').value || '';
-    meter(p);
-    // Check all 4 rules pass
-    const allPass = p.length >= 8 && /[a-zA-Z]/.test(p) && /\d/.test(p) && /[^a-zA-Z0-9]/.test(p);
-    if (!allPass) return;
-    // Password set → finish
     finish();
-}
-
-function cd(btn) {
-    btn.disabled = true; let s = 60; btn.textContent = s + 's';
-    const t = setInterval(() => {
-        if (--s <= 0) { clearInterval(t); btn.disabled = false; btn.textContent = '重新发送'; }
-        else btn.textContent = s + 's';
-    }, 1000);
 }
 
 function finish() {
     go('v-done');
-    let s = 5; const el = document.getElementById('sec');
+    let s = 5;
+    const el = document.getElementById('sec');
     const t = setInterval(() => {
         if (--s <= 0) { clearInterval(t); goLogin(); }
         else el.textContent = s;
@@ -929,87 +499,26 @@ function finish() {
 
 function goLogin() { alert('跳转到登录页…'); }
 
-/* ===== Password rules checker ===== */
-function meter(p) {
-    const rules = [
-        { id: 'r-len',     test: p => p.length >= 8 },
-        { id: 'r-letter',  test: p => /[a-zA-Z]/.test(p) },
-        { id: 'r-digit',   test: p => /\d/.test(p) },
-        { id: 'r-special', test: p => /[^a-zA-Z0-9]/.test(p) }
-    ];
-    rules.forEach(r => {
-        const el = document.getElementById(r.id);
-        if (!el) return;
-        if (p && r.test(p)) {
-            el.classList.add('pass');
-        } else {
-            el.classList.remove('pass');
-        }
-    });
+/* ===== Navigation ===== */
+function go(id) {
+    document.querySelectorAll('.v').forEach(v => v.classList.remove('on'));
+    document.getElementById(id).classList.add('on');
 }
-
-/* ===== Error helpers ===== */
-function clearAllErrors() {
+function clearErr() {
     document.querySelectorAll('.err-msg').forEach(e => e.classList.remove('show'));
 }
 
-/* ===== Demo bar: Region ===== */
-function demoRegion(region, btn) {
+/* ===== Demo bar ===== */
+function demoRegion(r, btn) {
     btn.parentElement.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('on'));
     btn.classList.add('on');
-
-    if (region === 'CN') {
-        ct = 'phone'; rm = 'pwd';
-        document.getElementById('demoRegionDesc').textContent = '中国大陆 → 手机号 + 密码注册';
-    } else if (region === 'HK') {
-        ct = 'phone'; rm = 'pwd';
-        document.getElementById('demoRegionDesc').textContent = '香港 → 手机号 + 密码注册';
-    } else {
-        ct = 'email'; rm = 'otp';
-        document.getElementById('demoRegionDesc').textContent = '海外 → 邮箱 + OTP 动态令牌注册';
-    }
-
-    applyTabAndMethod(region);
-    syncDemoBar();
-    backToInput();
+    applyRegion(r, false);
 }
-
-/* ===== Demo bar: Method ===== */
-function demoMethod(method, btn) {
+function demoEdge(e, btn) {
     btn.parentElement.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('on'));
     btn.classList.add('on');
-    rm = method;
-
-    const descs = {
-        pwd: 'Step1 输入+验证 → Step2 设置密码 → 完成（2步）',
-        otp: 'Step1 输入+验证 → Step2 绑定 Authenticator → 完成（2步）',
-        code: 'Step1 输入+验证 → 直接完成（1步）'
-    };
-    document.getElementById('demoMethodDesc').textContent = descs[method];
-    backToInput();
-}
-
-/* ===== Demo bar: Edge cases ===== */
-function demoEdge(edge, btn) {
-    btn.parentElement.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('on'));
-    btn.classList.add('on');
-    edgeCase = edge;
-    clearAllErrors();
-    backToInput();
-}
-
-/* ===== Sync demo bar buttons with current state ===== */
-function syncDemoBar() {
-    document.getElementById('dmPwd').classList.toggle('on', rm === 'pwd');
-    document.getElementById('dmOtp').classList.toggle('on', rm === 'otp');
-    document.getElementById('dmCode').classList.toggle('on', rm === 'code');
-
-    const descs = {
-        pwd: 'Step1 输入+验证 → Step2 设置密码 → 完成（2步）',
-        otp: 'Step1 输入+验证 → Step2 绑定 Authenticator → 完成（2步）',
-        code: 'Step1 输入+验证 → 直接完成（1步）'
-    };
-    document.getElementById('demoMethodDesc').textContent = descs[rm];
+    edgeCase = e;
+    clearErr();
 }
 </script>
 </body>
