@@ -733,6 +733,14 @@ body{
                 </div>
             </div>
 
+            <div id="twoFa-email-block" style="display:none">
+                <div class="otp-row" id="otp-2fa-email"></div>
+                <div class="resend-row">
+                    <span>有效期 10 分钟</span>
+                    <button id="rs-2fa-email" onclick="countdown(this)">重新发送</button>
+                </div>
+            </div>
+
             <div id="twoFa-app-block" style="display:none">
                 <div class="field">
                     <label class="field-label">Authenticator 动态码</label>
@@ -951,6 +959,7 @@ body{
     <div class="demo-btns">
         <button class="demo-btn" id="btn2faOff" onclick="set2fa(false,this)">关闭</button>
         <button class="demo-btn on" id="btn2faOn" onclick="set2fa(true,this)">开启（SMS）</button>
+        <button class="demo-btn" id="btn2faEmail" onclick="set2faEmail(this)">开启（Email）</button>
         <button class="demo-btn" id="btn2faApp" onclick="set2faApp(this)">开启（App）</button>
     </div>
 </div>
@@ -1019,16 +1028,23 @@ const riskDescs = {
 };
 
 /* ===== 2FA demo toggle ===== */
+const _2faBtns = ['btn2faOff','btn2faOn','btn2faEmail','btn2faApp'];
 function set2fa(on, btn) {
     twoFaEnabled = on;
     twoFaMethod = 'sms';
-    ['btn2faOff','btn2faOn','btn2faApp'].forEach(id => document.getElementById(id).classList.remove('on'));
+    _2faBtns.forEach(id => document.getElementById(id).classList.remove('on'));
+    btn.classList.add('on');
+}
+function set2faEmail(btn) {
+    twoFaEnabled = true;
+    twoFaMethod = 'email';
+    _2faBtns.forEach(id => document.getElementById(id).classList.remove('on'));
     btn.classList.add('on');
 }
 function set2faApp(btn) {
     twoFaEnabled = true;
     twoFaMethod = 'app';
-    ['btn2faOff','btn2faOn','btn2faApp'].forEach(id => document.getElementById(id).classList.remove('on'));
+    _2faBtns.forEach(id => document.getElementById(id).classList.remove('on'));
     btn.classList.add('on');
 }
 
@@ -1085,40 +1101,53 @@ function resetCaptcha() {
 }
 
 /* ===== 2FA flow ===== */
-let _2faUseSms = true;
+let _2faActiveMethod = 'sms'; // 'sms' | 'email' | 'app'
+function _2faShowBlock(m) {
+    document.getElementById('twoFa-sms-block').style.display   = m === 'sms'   ? '' : 'none';
+    document.getElementById('twoFa-email-block').style.display = m === 'email' ? '' : 'none';
+    document.getElementById('twoFa-app-block').style.display   = m === 'app'   ? '' : 'none';
+}
 function show2fa() {
     const acct = getAcct();
-    if (twoFaMethod === 'app') {
-        _2faUseSms = false;
+    _2faActiveMethod = twoFaMethod;
+    document.getElementById('twoFaErr').classList.remove('show');
+    _2faShowBlock(_2faActiveMethod);
+    if (_2faActiveMethod === 'app') {
         document.getElementById('t-2fa-target').textContent = 'Authenticator App';
-        document.getElementById('twoFa-sms-block').style.display = 'none';
-        document.getElementById('twoFa-app-block').style.display = '';
         document.getElementById('switch2faLink').textContent = '改用短信验证码';
+    } else if (_2faActiveMethod === 'email') {
+        document.getElementById('t-2fa-target').textContent = maskAcct(acct.includes('@') ? acct : acct);
+        document.getElementById('switch2faLink').textContent = '改用 Authenticator 验证';
+        buildOtp('otp-2fa-email');
+        countdown(document.getElementById('rs-2fa-email'));
     } else {
-        _2faUseSms = true;
-        document.getElementById('t-2fa-target').textContent = acct.includes('@') ? acct.replace(/(.)(.*)(@)/, (m,a,b,c) => a+'***'+c+acct.split('@')[1]) : acct.slice(0,3)+'****'+acct.slice(-4);
-        document.getElementById('twoFa-sms-block').style.display = '';
-        document.getElementById('twoFa-app-block').style.display = 'none';
+        document.getElementById('t-2fa-target').textContent = maskAcct(acct);
         document.getElementById('switch2faLink').textContent = '改用 Authenticator 验证';
         buildOtp('otp-2fa');
         countdown(document.getElementById('rs-2fa'));
     }
-    document.getElementById('twoFaErr').classList.remove('show');
     go('v-2fa');
 }
 function switch2faMethod() {
-    _2faUseSms = !_2faUseSms;
-    if (_2faUseSms) {
-        document.getElementById('t-2fa-target').textContent = maskAcct(getAcct());
-        document.getElementById('twoFa-sms-block').style.display = '';
-        document.getElementById('twoFa-app-block').style.display = 'none';
-        document.getElementById('switch2faLink').textContent = '改用 Authenticator 验证';
-        buildOtp('otp-2fa');
-    } else {
+    // 循环切换: sms → email → app → sms
+    const order = ['sms','email','app'];
+    const next = order[(order.indexOf(_2faActiveMethod) + 1) % order.length];
+    _2faActiveMethod = next;
+    _2faShowBlock(next);
+    const acct = getAcct();
+    if (next === 'app') {
         document.getElementById('t-2fa-target').textContent = 'Authenticator App';
-        document.getElementById('twoFa-sms-block').style.display = 'none';
-        document.getElementById('twoFa-app-block').style.display = '';
         document.getElementById('switch2faLink').textContent = '改用短信验证码';
+    } else if (next === 'email') {
+        document.getElementById('t-2fa-target').textContent = maskAcct(acct);
+        document.getElementById('switch2faLink').textContent = '改用 Authenticator 验证';
+        buildOtp('otp-2fa-email');
+        countdown(document.getElementById('rs-2fa-email'));
+    } else {
+        document.getElementById('t-2fa-target').textContent = maskAcct(acct);
+        document.getElementById('switch2faLink').textContent = '改用邮箱验证码';
+        buildOtp('otp-2fa');
+        countdown(document.getElementById('rs-2fa'));
     }
 }
 function submit2fa() { loginSuccess(); }

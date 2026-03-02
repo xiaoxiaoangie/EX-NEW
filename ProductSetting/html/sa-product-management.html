@@ -553,14 +553,35 @@
                         <!-- Entity -->
                         <div class="form-section">
                             <div class="section-title">客户主体限制<span class="en" style="margin-left:8px">ENTITY RESTRICTIONS</span></div>
-                            <div id="entity-list">
-                                <div class="row row-3" style="align-items:end;margin-bottom:8px">
-                                    <div class="field" style="margin:0"><label class="field-label">国家/地区</label><select class="input input-sm"><option value="">请选择</option><option>中国大陆</option><option>美国</option><option>英国</option><option>香港</option><option>新加坡</option></select></div>
-                                    <div class="field" style="margin:0"><label class="field-label">主体类型</label><div class="checks"><label class="chk"><input type="checkbox"> 个人</label><label class="chk"><input type="checkbox"> 企业</label></div></div>
-                                    <div><button class="btn btn-ghost btn-sm" onclick="this.closest('.row').remove()">删除</button></div>
+                            <div class="field"><label class="field-label">国家/地区控制模式<span class="en">ENTITY COUNTRY CONTROL MODE</span></label>
+                                <div class="radios"><label class="rad"><input type="radio" name="rentity" value="" checked onchange="toggleEntityCountry(this.value)"> 不限制</label><label class="rad"><input type="radio" name="rentity" value="accept" onchange="toggleEntityCountry(this.value)"> 正向选择（白名单）</label><label class="rad"><input type="radio" name="rentity" value="restrict" onchange="toggleEntityCountry(this.value)"> 反向选择（黑名单）</label></div>
+                            </div>
+                            <div id="entity-accept" style="display:none">
+                                <div class="field"><label class="field-label"><span class="req">*</span>允许的国家/地区 + 主体类型</label>
+                                    <div class="field-hint" style="margin-bottom:8px">只允许以下国家/地区及主体类型的客户申请</div>
+                                    <div id="entity-accept-list">
+                                        <div class="row row-3" style="align-items:end;margin-bottom:8px">
+                                            <div class="field" style="margin:0"><label class="field-label">国家/地区</label><select class="input input-sm"><option value="">请选择</option><option>中国大陆</option><option>美国</option><option>英国</option><option>香港</option><option>新加坡</option></select></div>
+                                            <div class="field" style="margin:0"><label class="field-label">主体类型</label><div class="checks"><label class="chk"><input type="checkbox"> 个人</label><label class="chk"><input type="checkbox"> 企业</label></div></div>
+                                            <div><button class="btn btn-ghost btn-sm" onclick="this.closest('.row').remove()">删除</button></div>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-ghost btn-sm" onclick="addEntityRow('entity-accept-list')">+ 添加组合</button>
                                 </div>
                             </div>
-                            <button class="btn btn-ghost btn-sm" onclick="addEntity()">+ 添加组合</button>
+                            <div id="entity-restrict" style="display:none">
+                                <div class="field"><label class="field-label"><span class="req">*</span>禁止的国家/地区 + 主体类型</label>
+                                    <div class="field-hint" style="margin-bottom:8px">禁止以下国家/地区及主体类型的客户申请</div>
+                                    <div id="entity-restrict-list">
+                                        <div class="row row-3" style="align-items:end;margin-bottom:8px">
+                                            <div class="field" style="margin:0"><label class="field-label">国家/地区</label><select class="input input-sm"><option value="">请选择</option><option>中国大陆</option><option>美国</option><option>英国</option><option>香港</option><option>新加坡</option></select></div>
+                                            <div class="field" style="margin:0"><label class="field-label">主体类型</label><div class="checks"><label class="chk"><input type="checkbox"> 个人</label><label class="chk"><input type="checkbox"> 企业</label></div></div>
+                                            <div><button class="btn btn-ghost btn-sm" onclick="this.closest('.row').remove()">删除</button></div>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-ghost btn-sm" onclick="addEntityRow('entity-restrict-list')">+ 添加组合</button>
+                                </div>
+                            </div>
                         </div>
                         <!-- 持卡人要求 -->
                         <div class="form-section">
@@ -570,11 +591,21 @@
                             </div>
                             <div id="ch-cfg" style="display:none">
                                 <div class="field"><label class="field-label"><span class="req">*</span>持卡人类型</label><select class="input input-sm"><option value="">请选择</option><option>Individual（个人）</option><option>Enterprise（企业）</option></select></div>
-                                <div class="field"><label class="field-label"><span class="req">*</span>持卡人地区</label>
-                                    <div class="picker" data-id="pk-ch-reg"><div class="picker-box" onclick="togglePicker('pk-ch-reg')"><span class="picker-ph">请选择持卡人地区</span></div>
-                                        <div class="picker-dd" id="pk-ch-reg"><div class="picker-search"><input placeholder="搜索国家/地区…" oninput="filterPk(this)"></div><div class="picker-list" id="pk-ch-reg-list"></div></div>
-                                    </div>
+                                <div class="field"><label class="field-label"><span class="req">*</span>持卡人地区控制模式<span class="en">CARDHOLDER REGION CONTROL MODE</span></label>
+                                    <div class="radios"><label class="rad"><input type="radio" name="rchregion" value="" checked onchange="toggleChRegion(this.value)"> 不限制</label><label class="rad"><input type="radio" name="rchregion" value="accept" onchange="toggleChRegion(this.value)"> 正向选择（白名单）</label><label class="rad"><input type="radio" name="rchregion" value="restrict" onchange="toggleChRegion(this.value)"> 反向选择（黑名单）</label></div>
                                 </div>
+                                <div id="ch-reg-accept" style="display:none"><div class="field"><label class="field-label"><span class="req">*</span>允许的持卡人地区</label>
+                                    <div class="picker" data-id="pk-ch-reg-a"><div class="picker-box" onclick="togglePicker('pk-ch-reg-a')"><span class="picker-ph">请选择允许的持卡人地区</span></div>
+                                        <div class="picker-dd" id="pk-ch-reg-a"><div class="picker-search"><input placeholder="搜索国家/地区…" oninput="filterPk(this)"></div><div class="picker-list" id="pk-ch-reg-a-list"></div></div>
+                                    </div>
+                                    <div class="field-hint">只允许这些国家/地区的持卡人</div>
+                                </div></div>
+                                <div id="ch-reg-restrict" style="display:none"><div class="field"><label class="field-label"><span class="req">*</span>禁止的持卡人地区</label>
+                                    <div class="picker" data-id="pk-ch-reg-r"><div class="picker-box" onclick="togglePicker('pk-ch-reg-r')"><span class="picker-ph">请选择禁止的持卡人地区</span></div>
+                                        <div class="picker-dd" id="pk-ch-reg-r"><div class="picker-search"><input placeholder="搜索国家/地区…" oninput="filterPk(this)"></div><div class="picker-list" id="pk-ch-reg-r-list"></div></div>
+                                    </div>
+                                    <div class="field-hint">禁止这些国家/地区的持卡人</div>
+                                </div></div>
                             </div>
                         </div>
                     </div></div>
@@ -900,7 +931,7 @@ const COUNTRIES = [
 
 // 初始化国家列表
 function initCountryPickers() {
-    ['pk-reg-a-list','pk-reg-r-list','pk-ch-reg-list','pk-crypto-cw-list','pk-crypto-cb-list'].forEach(id => {
+    ['pk-reg-a-list','pk-reg-r-list','pk-ch-reg-a-list','pk-ch-reg-r-list','pk-crypto-cw-list','pk-crypto-cb-list'].forEach(id => {
         const el = document.getElementById(id);
         if (!el) return;
         el.innerHTML = COUNTRIES.map(c =>
@@ -1170,13 +1201,25 @@ function switchLang(tab, group) {
     });
 }
 
-// Add entity restriction row
-function addEntity() {
-    const list = document.getElementById('entity-list');
+// Entity country control toggle
+function toggleEntityCountry(v) {
+    document.getElementById('entity-accept').style.display = v === 'accept' ? 'block' : 'none';
+    document.getElementById('entity-restrict').style.display = v === 'restrict' ? 'block' : 'none';
+}
+
+// Add entity restriction row (generic)
+function addEntityRow(listId) {
+    const list = document.getElementById(listId);
     const row = list.querySelector('.row').cloneNode(true);
     row.querySelectorAll('select').forEach(s => s.value = '');
     row.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
     list.appendChild(row);
+}
+
+// Cardholder region control toggle
+function toggleChRegion(v) {
+    document.getElementById('ch-reg-accept').style.display = v === 'accept' ? 'block' : 'none';
+    document.getElementById('ch-reg-restrict').style.display = v === 'restrict' ? 'block' : 'none';
 }
 
 // Limit: toggle entire row (启用/禁用该统计维度)
