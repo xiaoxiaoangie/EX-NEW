@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>后端开发流程</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+  :root {
+    --bg: #ffffff;
+    --surface: #f8fafc;
+    --surface-alt: #f1f5f9;
+    --border: #e2e8f0;
+    --text: #1e293b;
+    --text-dim: #475569;
+    --text-muted: #94a3b8;
+    --stage0: #0f766e;
+    --stage0-bg: #f0fdfa;
+    --stage0-border: #99f6e4;
+    --stage1: #2563eb;
+    --stage1-bg: #eff6ff;
+    --stage1-border: #bfdbfe;
+    --stage2: #7c3aed;
+    --stage2-bg: #f5f3ff;
+    --stage2-border: #ddd6fe;
+    --stage3: #059669;
+    --stage3-bg: #ecfdf5;
+    --stage3-border: #a7f3d0;
+    --stage4: #d97706;
+    --stage4-bg: #fffbeb;
+    --stage4-border: #fde68a;
+    --human: #e11d48;
+    --human-bg: #fff1f2;
+    --human-border: #fecdd3;
+    --ai: #0891b2;
+    --ai-bg: #ecfeff;
+    --ai-border: #a5f3fc;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans SC', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    font-size: 18px;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 40px 80px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 64px;
+  }
+
+  header .badge {
+    display: inline-block;
+    padding: 10px 28px;
+    background: var(--stage1-bg);
+    border: 1px solid var(--stage1-border);
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--stage1);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  header h1 {
+    font-size: 52px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+
+  header p {
+    font-size: 20px;
+    color: var(--text-dim);
+    max-width: 640px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  .philosophy {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 720px;
+    margin: 36px auto 0;
+  }
+
+  .philosophy-card {
+    padding: 24px 28px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .philosophy-card .role {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .philosophy-card.human .role { color: var(--human); }
+  .philosophy-card.ai .role { color: var(--ai); }
+
+  .philosophy-card ul {
+    list-style: none;
+    font-size: 17px;
+    color: var(--text-dim);
+    line-height: 2;
+  }
+
+  .philosophy-card ul li::before {
+    content: '›';
+    margin-right: 10px;
+    font-weight: 700;
+  }
+
+  .philosophy-card.human ul li::before { color: var(--human); }
+  .philosophy-card.ai ul li::before { color: var(--ai); }
+
+  .overview {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 64px;
+  }
+
+  .overview-card {
+    padding: 28px 20px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .overview-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+  }
+
+  .overview-card:nth-child(1)::before { background: var(--stage0); }
+  .overview-card:nth-child(2)::before { background: var(--stage1); }
+  .overview-card:nth-child(3)::before { background: var(--stage2); }
+  .overview-card:nth-child(4)::before { background: var(--stage3); }
+  .overview-card:nth-child(5)::before { background: var(--stage4); }
+
+  .overview-card:hover { transform: translateY(-4px); }
+  .overview-card:nth-child(1):hover { border-color: var(--stage0-border); box-shadow: 0 8px 24px rgba(15, 118, 110, 0.1); }
+  .overview-card:nth-child(2):hover { border-color: var(--stage1-border); box-shadow: 0 8px 24px rgba(37, 99, 235, 0.1); }
+  .overview-card:nth-child(3):hover { border-color: var(--stage2-border); box-shadow: 0 8px 24px rgba(124, 58, 237, 0.1); }
+  .overview-card:nth-child(4):hover { border-color: var(--stage3-border); box-shadow: 0 8px 24px rgba(5, 150, 105, 0.1); }
+  .overview-card:nth-child(5):hover { border-color: var(--stage4-border); box-shadow: 0 8px 24px rgba(217, 119, 6, 0.1); }
+
+  .overview-card .num {
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+
+  .overview-card:nth-child(1) .num { color: var(--stage0); }
+  .overview-card:nth-child(2) .num { color: var(--stage1); }
+  .overview-card:nth-child(3) .num { color: var(--stage2); }
+  .overview-card:nth-child(4) .num { color: var(--stage3); }
+  .overview-card:nth-child(5) .num { color: var(--stage4); }
+
+  .overview-card .name {
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .overview-card .desc {
+    font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .stage {
+    margin-bottom: 48px;
+    position: relative;
+  }
+
+  .stage-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .stage-num {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+
+  .stage[data-stage="0"] .stage-num { background: var(--stage0-bg); color: var(--stage0); border: 1px solid var(--stage0-border); }
+  .stage[data-stage="1"] .stage-num { background: var(--stage1-bg); color: var(--stage1); border: 1px solid var(--stage1-border); }
+  .stage[data-stage="2"] .stage-num { background: var(--stage2-bg); color: var(--stage2); border: 1px solid var(--stage2-border); }
+  .stage[data-stage="3"] .stage-num { background: var(--stage3-bg); color: var(--stage3); border: 1px solid var(--stage3-border); }
+  .stage[data-stage="4"] .stage-num { background: var(--stage4-bg); color: var(--stage4); border: 1px solid var(--stage4-border); }
+
+  .stage-title {
+    font-size: 28px;
+    font-weight: 700;
+  }
+
+  .stage-goal {
+    font-size: 17px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+
+  .flow-container {
+    padding: 32px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .stage[data-stage="0"] .flow-container { border-color: var(--stage0-border); background: var(--stage0-bg); }
+  .stage[data-stage="1"] .flow-container { border-color: var(--stage1-border); background: var(--stage1-bg); }
+  .stage[data-stage="2"] .flow-container { border-color: var(--stage2-border); background: var(--stage2-bg); }
+  .stage[data-stage="3"] .flow-container { border-color: var(--stage3-border); background: var(--stage3-bg); }
+  .stage[data-stage="4"] .flow-container { border-color: var(--stage4-border); background: var(--stage4-bg); }
+
+  .flow-steps {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    flex-wrap: wrap;
+  }
+
+  .flow-step {
+    flex: 1;
+    min-width: 140px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+
+  .flow-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 29px;
+    right: -4px;
+    width: 28px;
+    height: 2px;
+    z-index: 2;
+  }
+
+  .flow-step:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    top: 24px;
+    right: -10px;
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    z-index: 3;
+  }
+
+  .stage[data-stage="0"] .flow-step:not(:last-child)::after { background: var(--stage0); opacity: 0.4; }
+  .stage[data-stage="0"] .flow-step:not(:last-child)::before { border-left: 8px solid var(--stage0); opacity: 0.4; }
+  .stage[data-stage="1"] .flow-step:not(:last-child)::after { background: var(--stage1); opacity: 0.4; }
+  .stage[data-stage="1"] .flow-step:not(:last-child)::before { border-left: 8px solid var(--stage1); opacity: 0.4; }
+  .stage[data-stage="2"] .flow-step:not(:last-child)::after { background: var(--stage2); opacity: 0.4; }
+  .stage[data-stage="2"] .flow-step:not(:last-child)::before { border-left: 8px solid var(--stage2); opacity: 0.4; }
+  .stage[data-stage="3"] .flow-step:not(:last-child)::after { background: var(--stage3); opacity: 0.4; }
+  .stage[data-stage="3"] .flow-step:not(:last-child)::before { border-left: 8px solid var(--stage3); opacity: 0.4; }
+  .stage[data-stage="4"] .flow-step:not(:last-child)::after { background: var(--stage4); opacity: 0.4; }
+  .stage[data-stage="4"] .flow-step:not(:last-child)::before { border-left: 8px solid var(--stage4); opacity: 0.4; }
+
+  .step-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    margin-bottom: 14px;
+    position: relative;
+    background: #fff;
+  }
+
+  .stage[data-stage="0"] .step-icon { border: 2px solid var(--stage0-border); }
+  .stage[data-stage="1"] .step-icon { border: 2px solid var(--stage1-border); }
+  .stage[data-stage="2"] .step-icon { border: 2px solid var(--stage2-border); }
+  .stage[data-stage="3"] .step-icon { border: 2px solid var(--stage3-border); }
+  .stage[data-stage="4"] .step-icon { border: 2px solid var(--stage4-border); }
+
+  .step-name {
+    font-size: 17px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+
+  .step-skill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--text-muted);
+    text-align: center;
+    word-break: break-all;
+    max-width: 150px;
+    line-height: 1.5;
+  }
+
+  .self-check-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    min-width: 150px;
+    position: relative;
+  }
+
+  .self-check-group:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 25px;
+    right: -4px;
+    width: 28px;
+    height: 2px;
+    z-index: 2;
+  }
+
+  .self-check-group:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    right: -10px;
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    z-index: 3;
+  }
+
+  .stage[data-stage="2"] .self-check-group:not(:last-child)::after { background: var(--stage2); opacity: 0.4; }
+  .stage[data-stage="2"] .self-check-group:not(:last-child)::before { border-left: 8px solid var(--stage2); opacity: 0.4; }
+  .stage[data-stage="3"] .self-check-group:not(:last-child)::after { background: var(--stage3); opacity: 0.4; }
+  .stage[data-stage="3"] .self-check-group:not(:last-child)::before { border-left: 8px solid var(--stage3); opacity: 0.4; }
+
+  .self-check-pair {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .self-check-pair .step-icon {
+    width: 52px;
+    height: 52px;
+    font-size: 22px;
+    margin-bottom: 0;
+  }
+
+  .self-check-loop {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 14px;
+    color: var(--human);
+    margin: 4px 0;
+    font-weight: 500;
+  }
+
+  .self-check-loop svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .self-check-label {
+    font-size: 14px;
+    color: var(--text-muted);
+    text-align: center;
+    max-width: 130px;
+  }
+
+  .stage-footer {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+  }
+
+  .outputs, .human-action {
+    flex: 1;
+  }
+
+  .outputs h4, .human-action h4 {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .outputs h4 { color: var(--ai); }
+  .human-action h4 { color: var(--human); }
+
+  .outputs ul {
+    list-style: none;
+    font-size: 16px;
+    color: var(--text-dim);
+    line-height: 2;
+  }
+
+  .outputs ul li {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+  }
+
+  .outputs ul li::before {
+    content: '📄 ';
+  }
+
+  .human-action p {
+    font-size: 17px;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+
+  .stage-connector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 0;
+    position: relative;
+  }
+
+  .connector-line {
+    width: 2px;
+    height: 36px;
+    position: relative;
+  }
+
+  .stage-connector[data-from="0"] .connector-line { background: linear-gradient(to bottom, var(--stage0), var(--stage1)); }
+  .stage-connector[data-from="1"] .connector-line { background: linear-gradient(to bottom, var(--stage1), var(--stage2)); }
+  .stage-connector[data-from="2"] .connector-line { background: linear-gradient(to bottom, var(--stage2), var(--stage3)); }
+  .stage-connector[data-from="3"] .connector-line { background: linear-gradient(to bottom, var(--stage3), var(--stage4)); }
+
+  .connector-label {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 15px;
+    font-weight: 600;
+    padding: 5px 14px;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+
+  .stage-connector[data-from="0"] .connector-label,
+  .stage-connector[data-from="1"] .connector-label,
+  .stage-connector[data-from="2"] .connector-label {
+    background: var(--human-bg);
+    border: 1px solid var(--human-border);
+    color: var(--human);
+  }
+
+  .stage-connector[data-from="3"] .connector-label {
+    background: var(--ai-bg);
+    border: 1px solid var(--ai-border);
+    color: var(--ai);
+  }
+
+  .rules-section {
+    margin-top: 64px;
+  }
+
+  .rules-section h2 {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: var(--text);
+  }
+
+  .rules-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .rule-card {
+    padding: 24px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .rule-card h4 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .rule-card p, .rule-card ul {
+    font-size: 17px;
+    color: var(--text-dim);
+    line-height: 1.8;
+  }
+
+  .rule-card ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .rule-card ul li {
+    padding: 3px 0;
+  }
+
+  .rule-card ul li::before {
+    content: '•';
+    margin-right: 8px;
+    color: var(--text-muted);
+  }
+
+  .specs-bar {
+    margin-top: 48px;
+    padding: 24px 28px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: var(--surface-alt);
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .specs-bar .label {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .specs-bar .specs {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .spec-tag {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    font-weight: 500;
+    background: #fff;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+
+  .legend {
+    margin-top: 36px;
+    display: flex;
+    gap: 28px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    color: var(--text-dim);
+  }
+
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+  }
+
+  .mode-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .mode-card {
+    padding: 16px 20px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: #fff;
+  }
+
+  .mode-card .mode-label {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .mode-card .mode-desc {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .mode-card.mode-a .mode-label { color: var(--stage1); }
+  .mode-card.mode-b .mode-label { color: var(--stage2); }
+  .mode-card.mode-c .mode-label { color: var(--human); }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <div class="badge">Agent-Oriented Development</div>
+    <h1>后端开发流程</h1>
+    <p>PRD 定义「做什么」和「做到什么程度」，AI 自主完成「怎么做」的全过程，人只在关键节点确认。</p>
+
+    <div class="philosophy">
+      <div class="philosophy-card human">
+        <div class="role">👤 人的职责</div>
+        <ul>
+          <li>提供 PRD（或简单描述）</li>
+          <li>价值判断</li>
+          <li>方案确认</li>
+        </ul>
+      </div>
+      <div class="philosophy-card ai">
+        <div class="role">🤖 AI 的职责</div>
+        <ul>
+          <li>PRD 完整性验证</li>
+          <li>技术分析与方案设计</li>
+          <li>代码实现与自检修正</li>
+          <li>文档维护</li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <div class="overview">
+    <div class="overview-card">
+      <div class="num">⚡</div>
+      <div class="name">启动</div>
+      <div class="desc">JIRA → PRD<br>选择开发模式</div>
+    </div>
+    <div class="overview-card">
+      <div class="num">01</div>
+      <div class="name">需求对齐</div>
+      <div class="desc">检查 PRD 完整性<br>技术对齐</div>
+    </div>
+    <div class="overview-card">
+      <div class="num">02</div>
+      <div class="name">方案设计</div>
+      <div class="desc">架构 + 接口 + 测试用例<br>含自检修复循环</div>
+    </div>
+    <div class="overview-card">
+      <div class="num">03</div>
+      <div class="name">实现交付</div>
+      <div class="desc">代码生成 + 自检<br>单元测试</div>
+    </div>
+    <div class="overview-card">
+      <div class="num">04</div>
+      <div class="name">提交归档</div>
+      <div class="desc">变更记录 + Git 提交<br>自动执行</div>
+    </div>
+  </div>
+
+  <div class="stage" data-stage="0">
+    <div class="stage-header">
+      <div class="stage-num">⚡</div>
+      <div>
+        <div class="stage-title">启动</div>
+        <div class="stage-goal">获取 JIRA 单号，查找 PRD，选择开发模式</div>
+      </div>
+    </div>
+    <div class="flow-container">
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="step-icon">🎫</div>
+          <div class="step-name">输入 JIRA 单号</div>
+          <div class="step-skill">强制第一步，不可跳过</div>
+        </div>
+        <div class="flow-step">
+          <div class="step-icon">🔍</div>
+          <div class="step-name">查找 PRD</div>
+          <div class="step-skill">docs/requirements/<br>{JIRA}-prd-*.md</div>
+        </div>
+        <div class="flow-step">
+          <div class="step-icon">🔀</div>
+          <div class="step-name">选择开发模式</div>
+          <div class="step-skill">全新 / 变更 / Bug修复</div>
+        </div>
+        <div class="flow-step">
+          <div class="step-icon">✅</div>
+          <div class="step-name">确认启动</div>
+          <div class="step-skill">PRD 不存在则先生成</div>
+        </div>
+      </div>
+      <div class="mode-grid">
+        <div class="mode-card mode-a">
+          <div class="mode-label">A. 全新开发</div>
+          <div class="mode-desc">全新业务需求，从阶段1开始，所有文档和代码从零创建</div>
+        </div>
+        <div class="mode-card mode-b">
+          <div class="mode-label">B. 变更开发</div>
+          <div class="mode-desc">B1 需求变更→阶段1 / B2 修改设计→阶段2 / B3 优化代码→阶段3</div>
+        </div>
+        <div class="mode-card mode-c">
+          <div class="mode-label">C. 修复 Bug</div>
+          <div class="mode-desc">调度 ex-backend-bugfix，修复完成后跳转阶段4</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stage-connector" data-from="0">
+    <div class="connector-line"></div>
+    <div class="connector-label">👤 用户确认后进入</div>
+  </div>
+
+  <div class="stage" data-stage="1">
+    <div class="stage-header">
+      <div class="stage-num">1</div>
+      <div>
+        <div class="stage-title">需求对齐</div>
+        <div class="stage-goal">确保需求完整且可开发，对齐技术实现理解</div>
+      </div>
+    </div>
+    <div class="flow-container">
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="step-icon">🔍</div>
+          <div class="step-name">需求分析</div>
+          <div class="step-skill">ex-backend-requirement-analysis</div>
+        </div>
+      </div>
+      <div class="stage-footer">
+        <div class="outputs">
+          <h4>产出物</h4>
+          <ul>
+            <li>{JIRA}-reqanalysis-{YYYYMMDD}-{SUMMARY}.md</li>
+            <li>docs/designs/full-prd.md（增量更新）</li>
+          </ul>
+        </div>
+        <div class="human-action">
+          <h4>👤 人确认 · ⚠️ 必须等待</h4>
+          <p>必须停下等待用户审阅需求分析结论并反馈，不允许跳过</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stage-connector" data-from="1">
+    <div class="connector-line"></div>
+    <div class="connector-label">👤 用户确认后进入</div>
+  </div>
+
+  <div class="stage" data-stage="2">
+    <div class="stage-header">
+      <div class="stage-num">2</div>
+      <div>
+        <div class="stage-title">方案设计</div>
+        <div class="stage-goal">输出完整的技术方案（架构 + 接口 + 测试用例），作为实现阶段的契约</div>
+      </div>
+    </div>
+    <div class="flow-container">
+      <div class="flow-steps">
+        <div class="self-check-group">
+          <div class="self-check-pair">
+            <div class="step-icon">🏗️</div>
+            <div class="step-name">架构设计</div>
+            <div class="step-skill">architecture-design</div>
+            <div class="self-check-loop">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+              自检修复 ≤3轮
+            </div>
+            <div class="self-check-label">architecture-review</div>
+          </div>
+        </div>
+        <div class="self-check-group">
+          <div class="self-check-pair">
+            <div class="step-icon">🔌</div>
+            <div class="step-name">接口设计</div>
+            <div class="step-skill">api-design</div>
+            <div class="self-check-loop">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+              自检修复 ≤3轮
+            </div>
+            <div class="self-check-label">api-review</div>
+          </div>
+        </div>
+        <div class="self-check-group">
+          <div class="self-check-pair">
+            <div class="step-icon">🧪</div>
+            <div class="step-name">测试用例</div>
+            <div class="step-skill">test-analysis</div>
+            <div class="self-check-loop">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+              自检修复 ≤3轮
+            </div>
+            <div class="self-check-label">test-review</div>
+          </div>
+        </div>
+      </div>
+      <div class="stage-footer">
+        <div class="outputs">
+          <h4>产出物</h4>
+          <ul>
+            <li>full-architecture-design.md（增量更新）</li>
+            <li>full-api-design.md（增量更新）</li>
+            <li>full-testcases.md（增量更新）</li>
+            <li>{JIRA}-testcase-{YYYYMMDD}-{SUMMARY}.md</li>
+          </ul>
+        </div>
+        <div class="human-action">
+          <h4>👤 人审阅 · ⚠️ 必须等待</h4>
+          <p>必须停下等待用户审阅架构要点、接口清单、测试覆盖概要，不允许跳过</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stage-connector" data-from="2">
+    <div class="connector-line"></div>
+    <div class="connector-label">👤 用户确认后进入</div>
+  </div>
+
+  <div class="stage" data-stage="3">
+    <div class="stage-header">
+      <div class="stage-num">3</div>
+      <div>
+        <div class="stage-title">实现交付</div>
+        <div class="stage-goal">生成可运行的代码，所有测试通过</div>
+      </div>
+    </div>
+    <div class="flow-container">
+      <div class="flow-steps">
+        <div class="self-check-group">
+          <div class="self-check-pair">
+            <div class="step-icon">💻</div>
+            <div class="step-name">代码生成</div>
+            <div class="step-skill">code-generate</div>
+            <div class="self-check-loop">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+              自检修复 ≤3轮
+            </div>
+            <div class="self-check-label">code-review</div>
+          </div>
+        </div>
+        <div class="self-check-group">
+          <div class="self-check-pair">
+            <div class="step-icon">🔬</div>
+            <div class="step-name">单元测试</div>
+            <div class="step-skill">unit-test</div>
+            <div class="self-check-loop">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+              失败自动修复 ≤3轮
+            </div>
+            <div class="self-check-label"></div>
+          </div>
+        </div>
+      </div>
+      <div class="stage-footer">
+        <div class="outputs">
+          <h4>产出物</h4>
+          <ul>
+            <li>工程代码（业务代码 + 测试代码）</li>
+            <li>full-database-schema.md（自动更新）</li>
+          </ul>
+        </div>
+        <div class="human-action">
+          <h4>👤 人确认 · ⚠️ 必须等待</h4>
+          <p>必须停下等待用户审阅代码变更概要和测试结果，不允许跳过</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stage-connector" data-from="3">
+    <div class="connector-line"></div>
+    <div class="connector-label">👤 用户确认后进入</div>
+  </div>
+
+  <div class="stage" data-stage="4">
+    <div class="stage-header">
+      <div class="stage-num">4</div>
+      <div>
+        <div class="stage-title">提交归档</div>
+        <div class="stage-goal">生成变更记录，提交代码，自动完成</div>
+      </div>
+    </div>
+    <div class="flow-container">
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="step-icon">📑</div>
+          <div class="step-name">变更记录</div>
+          <div class="step-skill">changelog</div>
+        </div>
+        <div class="flow-step">
+          <div class="step-icon">🚀</div>
+          <div class="step-name">Git Commit & Push</div>
+          <div class="step-skill">git-commit</div>
+        </div>
+      </div>
+      <div class="stage-footer">
+        <div class="outputs">
+          <h4>产出物</h4>
+          <ul>
+            <li>{JIRA}-changelog-{YYYYMMDD}-{SUMMARY}.md</li>
+            <li>Git commit & push</li>
+          </ul>
+        </div>
+        <div class="human-action">
+          <h4>🤖 自动完成</h4>
+          <p>无需人确认，AI 自动执行提交归档</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rules-section">
+    <h2>⚙️ 执行规则</h2>
+    <div class="rules-grid">
+      <div class="rule-card">
+        <h4>🔄 自检规则</h4>
+        <ul>
+          <li>生成后紧跟评审自检</li>
+          <li>P0/P1 自动修复，≤3 轮</li>
+          <li>超 3 轮报告用户</li>
+          <li>P2 展示用户确认</li>
+        </ul>
+      </div>
+      <div class="rule-card">
+        <h4>📦 上下文传递</h4>
+        <ul>
+          <li>JIRA 单号全程传递</li>
+          <li>变更简述（SUMMARY）全程传递</li>
+          <li>前序产出物 → 后续输入</li>
+          <li>发现矛盾则回退修正</li>
+        </ul>
+      </div>
+      <div class="rule-card">
+        <h4>🚦 启动模式</h4>
+        <ul>
+          <li>A 全新开发：从阶段1开始</li>
+          <li>B 变更开发：按变更类型选择起始阶段</li>
+          <li>C Bug修复：调度 bugfix → 阶段4</li>
+          <li>PRD 不存在时先生成再推进</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="specs-bar">
+    <div class="label">基础规范</div>
+    <div class="specs">
+      <div class="spec-tag">ex-backend-project-structure-spec</div>
+      <div class="spec-tag">ex-backend-coding-standards-spec</div>
+      <div class="spec-tag">ex-backend-tech-stack-spec</div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-dot" style="background: var(--stage0);"></div>
+      启动
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background: var(--stage1);"></div>
+      阶段1 · 需求对齐
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background: var(--stage2);"></div>
+      阶段2 · 方案设计
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background: var(--stage3);"></div>
+      阶段3 · 实现交付
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background: var(--stage4);"></div>
+      阶段4 · 提交归档
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background: var(--human);"></div>
+      人确认节点
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background: var(--ai);"></div>
+      AI 自动执行
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

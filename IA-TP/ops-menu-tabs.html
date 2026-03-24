@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>运营中心 — 多Tab工作区交互</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --pri:#4f46e5;--pri-l:#eef2ff;--pri-d:#4338ca;
+  --green:#16a34a;--green-bg:#dcfce7;
+  --red:#dc2626;--red-bg:#fef2f2;
+  --amber:#d97706;--amber-bg:#fffbeb;
+  --blue:#2563eb;--blue-bg:#eff6ff;
+  --text:#0f172a;--text2:#475569;--text3:#94a3b8;
+  --bg:#f1f5f9;--card:#fff;--bd:#e2e8f0;--bd2:#f8fafc;
+  --nav-w:192px;--top-h:52px;--tabbar-h:38px;--r:8px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;height:100vh;overflow:hidden;display:flex;flex-direction:column;font-size:13px;}
+
+/* TOPBAR */
+.topbar{height:var(--top-h);background:var(--card);border-bottom:1px solid var(--bd);display:flex;align-items:center;flex-shrink:0;z-index:300;}
+.brand{width:var(--nav-w);display:flex;align-items:center;gap:8px;padding:0 14px;border-right:1px solid var(--bd);height:100%;flex-shrink:0;}
+.brand-mark{width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,#7c3aed,#4f46e5);display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:800;}
+.brand-name{font-size:13px;font-weight:700;}
+.brand-tag{font-size:10px;font-weight:600;color:var(--pri);background:var(--pri-l);padding:1px 6px;border-radius:4px;}
+.gs-wrap{flex:1;display:flex;align-items:center;padding:0 16px;position:relative;}
+.gs{display:flex;align-items:center;gap:8px;background:var(--bg);border:1.5px solid var(--bd);border-radius:9px;padding:0 12px;height:34px;width:100%;max-width:480px;transition:all .15s;cursor:text;}
+.gs:focus-within{border-color:var(--pri);box-shadow:0 0 0 3px var(--pri-l);background:#fff;}
+.gs input{border:none;background:none;outline:none;font-size:13px;color:var(--text);flex:1;font-family:inherit;}
+.gs input::placeholder{color:var(--text3);}
+.gs-kbd{font-size:10px;color:var(--text3);border:1px solid var(--bd);padding:1px 5px;border-radius:4px;flex-shrink:0;}
+
+/* Search dropdown */
+.sdrop{position:absolute;top:calc(100% + 4px);left:16px;width:480px;background:var(--card);border:1px solid var(--bd);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.12);z-index:400;display:none;overflow:hidden;}
+.sdrop.show{display:block;}
+.sd-sec{padding:5px 0;}
+.sd-lbl{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;padding:4px 14px 2px;}
+.sd-item{display:flex;align-items:center;gap:10px;padding:7px 14px;cursor:pointer;transition:background .1s;}
+.sd-item:hover{background:var(--bg);}
+.sd-ico{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;}
+.sd-ico.c{background:#ede9fe;color:#7c3aed;}
+.sd-ico.o{background:#dbeafe;color:#2563eb;}
+.sd-ico.k{background:#fce7f3;color:#db2777;}
+.sd-ico.v{background:#d1fae5;color:#059669;}
+.sd-t{font-size:13px;font-weight:500;}
+.sd-s{font-size:11px;color:var(--text3);}
+.sd-a{margin-left:auto;font-size:11px;color:var(--pri);font-weight:600;opacity:0;}
+.sd-item:hover .sd-a{opacity:1;}
+.sd-hr{height:1px;background:var(--bd);margin:2px 0;}
+
+.topbar-r{display:flex;align-items:center;gap:8px;padding:0 14px;margin-left:auto;}
+.ib{width:32px;height:32px;border-radius:7px;border:1px solid var(--bd);background:transparent;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;}
+.ib:hover{background:var(--bg);}
+.ib svg{width:15px;height:15px;}
+.dot-r{position:absolute;top:5px;right:5px;width:6px;height:6px;border-radius:50%;background:var(--red);border:1.5px solid var(--card);}
+.av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;cursor:pointer;}
+
+/* LAYOUT */
+.layout{display:flex;flex:1;overflow:hidden;}
+
+/* SIDEBAR */
+.sidebar{width:var(--nav-w);background:var(--card);border-right:1px solid var(--bd);overflow-y:auto;flex-shrink:0;}
+.sidebar::-webkit-scrollbar{width:3px;}
+.sidebar::-webkit-scrollbar-thumb{background:var(--bd);}
+.ns{padding:12px 10px 4px;}
+.ns-l{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;padding:0 6px;margin-bottom:3px;}
+.ni{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:7px;cursor:pointer;transition:all .12s;color:var(--text2);font-size:13px;font-weight:500;user-select:none;}
+.ni:hover{background:var(--bg);color:var(--text);}
+.ni.active{background:var(--pri-l);color:var(--pri);font-weight:600;}
+.ni svg{width:14px;height:14px;flex-shrink:0;}
+.ni-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 5px;border-radius:9999px;}
+.ng-hd{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:7px;cursor:pointer;color:var(--text2);font-size:13px;font-weight:500;transition:all .12s;user-select:none;}
+.ng-hd:hover{background:var(--bg);color:var(--text);}
+.ng-arrow{margin-left:auto;transition:transform .2s;color:var(--text3);}
+.ng-arrow.open{transform:rotate(90deg);}
+.ng-ch{padding-left:12px;max-height:0;overflow:hidden;transition:max-height .25s ease;}
+.ng-ch.open{max-height:300px;}
+.nc{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:6px;cursor:pointer;color:var(--text3);font-size:12px;transition:all .12s;border-left:2px solid transparent;}
+.nc:hover{color:var(--text2);background:var(--bg);}
+.nc.active{color:var(--pri);border-left-color:var(--pri);font-weight:600;}
+
+/* WORKSPACE */
+.ws{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.tb{height:var(--tabbar-h);background:var(--card);border-bottom:1px solid var(--bd);display:flex;align-items:flex-end;overflow-x:auto;flex-shrink:0;}
+.tb::-webkit-scrollbar{height:0;}
+.tb-inner{display:flex;align-items:flex-end;height:100%;}
+.t{display:flex;align-items:center;gap:5px;padding:0 12px;height:34px;cursor:pointer;border:1px solid transparent;border-bottom:none;border-radius:8px 8px 0 0;font-size:12px;font-weight:500;color:var(--text3);white-space:nowrap;transition:all .12s;position:relative;top:1px;flex-shrink:0;max-width:175px;}
+.t:hover{color:var(--text2);background:var(--bg);}
+.t.active{background:var(--card);color:var(--text);border-color:var(--bd);border-bottom-color:var(--card);font-weight:600;}
+.t-ico{font-size:11px;flex-shrink:0;}
+.t-lbl{overflow:hidden;text-overflow:ellipsis;max-width:110px;}
+.t-x{width:16px;height:16px;border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:0;margin-left:2px;}
+.t:hover .t-x,.t.active .t-x{opacity:1;}
+.t-x:hover{background:var(--bd);}
+.t-x svg{width:9px;height:9px;color:var(--text3);}
+.t-add{display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--text3);border-radius:6px;flex-shrink:0;margin:0 4px;align-self:center;}
+.t-add:hover{background:var(--bg);color:var(--text2);}
+
+/* PANELS */
+.tc{flex:1;overflow:hidden;position:relative;}
+.pnl{position:absolute;inset:0;overflow-y:auto;padding:20px 24px;display:none;}
+.pnl.active{display:block;}
+.pnl::-webkit-scrollbar{width:4px;}
+.pnl::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px;}
+
+/* CONTENT SHARED */
+.ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;}
+.pt{font-size:17px;font-weight:700;margin-bottom:1px;}
+.ps{font-size:12px;color:var(--text2);}
+.btn{padding:5px 12px;border-radius:var(--r);font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--bd);background:var(--card);color:var(--text2);font-family:inherit;transition:all .12s;display:inline-flex;align-items:center;gap:5px;}
+.btn:hover{border-color:var(--pri);color:var(--pri);}
+.btn-pri{background:var(--pri);color:#fff;border-color:var(--pri);}
+.btn-pri:hover{background:var(--pri-d);color:#fff;border-color:var(--pri-d);}
+.btn-sm{padding:4px 10px;}
+.btn-xs{padding:2px 8px;font-size:11px;}
+.fbar{display:flex;align-items:center;gap:7px;margin-bottom:12px;flex-wrap:wrap;}
+.fi{padding:5px 10px;border:1px solid var(--bd);border-radius:var(--r);font-size:12px;font-family:inherit;color:var(--text);outline:none;background:var(--card);height:30px;}
+.fi:focus{border-color:var(--pri);box-shadow:0 0 0 3px var(--pri-l);}
+.fi-s{width:180px;}
+.fi-sel{width:120px;cursor:pointer;}
+.fi-full{width:100%;}
+.fi-hint{font-size:10px;color:var(--text3);margin-top:3px;}
+textarea.fi{resize:vertical;min-height:68px;height:auto;line-height:1.5;}
+
+.tcard{background:var(--card);border:1px solid var(--bd);border-radius:10px;overflow:hidden;margin-bottom:12px;}
+.tcard-hd{display:flex;align-items:center;justify-content:space-between;padding:10px 13px;border-bottom:1px solid var(--bd);}
+.tcard-t{font-size:13px;font-weight:600;}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:var(--bg);}
+th{padding:7px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--bd);white-space:nowrap;}
+td{padding:9px 12px;font-size:12px;color:var(--text);border-bottom:1px solid var(--bd2);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#fafbff;}
+.mono{font-family:'SF Mono',monospace;font-size:11px;color:var(--text2);}
+.lnk{color:var(--pri);cursor:pointer;font-weight:500;}
+.lnk:hover{text-decoration:underline;}
+
+.s{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:9999px;font-size:11px;font-weight:600;}
+.s::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0;}
+.s-ok{background:var(--green-bg);color:var(--green);}
+.s-pend{background:var(--amber-bg);color:var(--amber);}
+.s-proc{background:#f5f3ff;color:#7c3aed;}
+.s-fail{background:var(--red-bg);color:var(--red);}
+.s-rev{background:var(--blue-bg);color:var(--blue);}
+
+.tag{display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:500;background:var(--bd2);color:var(--text2);}
+.tag-p{background:var(--pri-l);color:var(--pri);}
+.tag-g{background:var(--green-bg);color:var(--green);}
+
+.ic{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:13px;margin-bottom:10px;}
+.ic-t{font-size:11px;font-weight:700;color:var(--text2);margin-bottom:7px;display:flex;align-items:center;justify-content:space-between;}
+.ic-r{display:flex;align-items:flex-start;gap:8px;padding:4px 0;border-bottom:1px solid var(--bd2);font-size:12px;}
+.ic-r:last-child{border-bottom:none;}
+.ic-l{color:var(--text3);min-width:60px;flex-shrink:0;}
+.ic-v{color:var(--text);font-weight:500;word-break:break-all;}
+
+.itabs{display:flex;border-bottom:1px solid var(--bd);margin-bottom:12px;}
+.itab{padding:7px 13px;font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .12s;white-space:nowrap;}
+.itab:hover{color:var(--text);}
+.itab.active{color:var(--pri);border-bottom-color:var(--pri);font-weight:600;}
+.ipnl{display:none;}
+.ipnl.active{display:block;}
+
+.dgrid{display:grid;grid-template-columns:240px 1fr;gap:12px;}
+
+.ds{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:13px;margin-bottom:10px;}
+.ds-t{font-size:11px;font-weight:700;color:var(--text2);margin-bottom:7px;}
+.ds-r{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--bd2);font-size:12px;}
+.ds-r:last-child{border-bottom:none;}
+.ds-l{color:var(--text3);}
+.ds-v{color:var(--text);font-weight:500;text-align:right;max-width:180px;word-break:break-all;}
+
+.tkt{background:var(--card);border:1px solid var(--bd);border-radius:9px;padding:12px 14px;margin-bottom:9px;cursor:pointer;transition:box-shadow .12s;}
+.tkt:hover{box-shadow:0 3px 12px rgba(0,0,0,.06);}
+.tkt-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;}
+.tkt-ti{font-size:13px;font-weight:600;}
+.tkt-meta{font-size:11px;color:var(--text3);margin-bottom:4px;}
+.tkt-body{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:6px;}
+.tkt-foot{font-size:11px;color:var(--text3);display:flex;gap:6px;}
+
+.tl-item{display:flex;gap:10px;padding-bottom:12px;position:relative;}
+.tl-item:last-child{padding-bottom:0;}
+.tl-item::before{content:'';position:absolute;left:9px;top:18px;bottom:0;width:1px;background:var(--bd);}
+.tl-item:last-child::before{display:none;}
+.tl-dot{width:18px;height:18px;border-radius:50%;background:var(--card);border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:1;font-size:8px;}
+.tl-dot.ok{border-color:var(--green);color:var(--green);background:var(--green-bg);}
+.tl-dot.pend{border-color:var(--amber);background:var(--amber-bg);}
+
+.overlay{position:fixed;inset:0;background:rgba(15,23,42,.4);z-index:500;display:none;align-items:center;justify-content:center;}
+.overlay.show{display:flex;}
+.modal{background:var(--card);border-radius:14px;padding:20px;width:460px;max-width:calc(100vw - 32px);box-shadow:0 20px 60px rgba(0,0,0,.15);max-height:90vh;overflow-y:auto;}
+.modal-ti{font-size:15px;font-weight:700;margin-bottom:2px;}
+.modal-sub{font-size:12px;color:var(--text2);margin-bottom:14px;}
+.modal-ft{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;padding-top:12px;border-top:1px solid var(--bd);}
+.fg{margin-bottom:10px;}
+.fl{display:block;font-size:11px;font-weight:600;color:var(--text2);margin-bottom:3px;}
+.req{color:var(--red);}
+
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);padding:9px 20px;border-radius:9px;font-size:13px;font-weight:500;color:#fff;background:#1e293b;z-index:9999;transition:transform .22s;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.ok{background:var(--green);}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="brand"><div class="brand-mark">EX</div><span class="brand-name">Partner Portal</span><span class="brand-tag">运营</span></div>
+  <div class="gs-wrap">
+    <div class="gs" onclick="$('gsi').focus()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="gsi" placeholder="搜索客户名 · 订单号 · 卡号 · VA · 手机号..." onfocus="showDrop()" onblur="setTimeout(hideDrop,200)">
+      <span class="gs-kbd">⌘K</span>
+    </div>
+    <div class="sdrop" id="sdrop">
+      <div class="sd-sec"><div class="sd-lbl">客户</div>
+        <div class="sd-item" onclick="openTab('customer','Fulunited Limited','MID-001234')"><div class="sd-ico c">F</div><div><div class="sd-t">Fulunited Limited</div><div class="sd-s">MID-001234 · +852 9123 4567</div></div><div class="sd-a">打开 →</div></div>
+        <div class="sd-item" onclick="openTab('customer','Global Trade Co.','MID-001235')"><div class="sd-ico c">G</div><div><div class="sd-t">Global Trade Co.</div><div class="sd-s">MID-001235 · ops@globaltrade.com</div></div><div class="sd-a">打开 →</div></div>
+      </div>
+      <div class="sd-hr"></div>
+      <div class="sd-sec"><div class="sd-lbl">订单</div>
+        <div class="sd-item" onclick="openTab('order','ORD-20260308-001','payin')"><div class="sd-ico o">↓</div><div><div class="sd-t">ORD-20260308-001</div><div class="sd-s">收款 · $12,500 · Fulunited · Success</div></div><div class="sd-a">打开 →</div></div>
+        <div class="sd-item" onclick="openTab('order','ORD-20260308-002','payout')"><div class="sd-ico o">↑</div><div><div class="sd-t">ORD-20260308-002</div><div class="sd-s">付款 · $3,200 · Global Trade · Processing</div></div><div class="sd-a">打开 →</div></div>
+      </div>
+      <div class="sd-hr"></div>
+      <div class="sd-sec"><div class="sd-lbl">卡片 / VA</div>
+        <div class="sd-item" onclick="openTab('card','4111 **** 7892','Visa VCC')"><div class="sd-ico k">💳</div><div><div class="sd-t">4111 **** **** 7892</div><div class="sd-s">Visa VCC · Fulunited · Active</div></div><div class="sd-a">打开 →</div></div>
+        <div class="sd-item" onclick="openTab('va','VA-HKD-88231','HKD')"><div class="sd-ico v">🏦</div><div><div class="sd-t">VA-HKD-88231</div><div class="sd-s">HKD · Fulunited · HSBC HK</div></div><div class="sd-a">打开 →</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="topbar-r">
+    <button class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="dot-r"></span></button>
+    <div class="av">LW</div>
+  </div>
+</header>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <!-- 1. 全局检索 -->
+    <div class="ns"><div class="ns-l">全局检索</div>
+      <div class="ni" onclick="$('gsi').focus();showDrop()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>搜索客户 / 订单 / 卡...</div>
+    </div>
+    <!-- 2. 客户订单查询 -->
+    <div class="ns"><div class="ns-l">客户订单查询</div>
+      <div class="ni" id="nav-customers" onclick="openList('customers','客户列表')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>客户列表</div>
+      <div class="ng-hd" onclick="toggleGrp('orders')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>订单查询<svg class="ng-arrow" id="arrow-orders" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
+      <div class="ng-ch" id="grp-orders">
+        <div class="nc" onclick="openList('payins','收款订单')">↓ 收款订单</div>
+        <div class="nc" onclick="openList('payouts','付款订单')">↑ 付款订单</div>
+        <div class="nc" onclick="openList('exchange','汇兑订单')">⇄ 汇兑订单</div>
+        <div class="nc" onclick="openList('checkout','收单订单')">🏪 收单订单</div>
+        <div class="nc" onclick="openList('cardtx','发卡订单')">💳 发卡订单</div>
+        <div class="nc" onclick="openList('fiatdeposit','充提记录')">↕ 充提记录</div>
+        <div class="nc" onclick="openList('tradedoc','贸易背景')">📄 贸易背景</div>
+      </div>
+    </div>
+    <!-- 3. 客户配置 -->
+    <div class="ns"><div class="ns-l">客户配置</div>
+      <div class="ni" id="nav-cfg" onclick="openList('cfg','客户配置')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>客户配置</div>
+    </div>
+    <!-- 4. 客户分佣结算 -->
+    <div class="ns"><div class="ns-l">客户分佣结算</div>
+      <div class="ni" id="nav-rebate-bill" onclick="openList('rebate','返点账单')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>返点账单</div>
+      <div class="ni" id="nav-settlement" onclick="openList('settlement','结算单')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>结算单</div>
+    </div>
+  </nav>
+
+  <!-- WORKSPACE -->
+  <div class="ws">
+    <div class="tb"><div class="tb-inner" id="tbi"><div class="t active" id="tEl-home" onclick="actTab('home')"><span class="t-ico">🏠</span><span class="t-lbl">工作台</span></div></div>
+      <button class="t-add" onclick="$('gsi').focus();showDrop()" title="搜索"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+    </div>
+    <div class="tc" id="tc">
+      <div class="pnl active" id="pnl-home">
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;padding:28px;">
+          <div style="font-size:42px;margin-bottom:12px;">🔍</div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:6px;">搜索即开始</div>
+          <div style="font-size:13px;color:var(--text2);max-width:340px;line-height:1.8;margin-bottom:20px;">输入<strong>客户名</strong>、<strong>订单号</strong>、<strong>卡号</strong>、<strong>VA</strong> 或 <strong>手机号</strong>，结果在独立标签页打开，可多标签并排对比。</div>
+          <div style="display:flex;gap:7px;margin-bottom:24px;">
+            <button class="btn btn-sm" onclick="openList('customers','客户列表')">客户列表</button>
+            <button class="btn btn-sm" onclick="openList('payins','收款订单')">收款订单</button>
+            <button class="btn btn-sm" onclick="openList('cfg','客户配置')">客户配置</button>
+            <button class="btn btn-sm btn-pri" onclick="openModal('pricing')">+ 新建工单</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;width:100%;max-width:400px;">
+            <div style="background:var(--card);border:1px solid var(--bd);border-radius:9px;padding:12px;text-align:left;"><div style="font-size:20px;font-weight:700;">156</div><div style="font-size:11px;color:var(--text2);margin-top:2px;">活跃客户</div></div>
+            <div style="background:var(--card);border:1px solid var(--bd);border-radius:9px;padding:12px;text-align:left;"><div style="font-size:20px;font-weight:700;color:var(--amber);">2</div><div style="font-size:11px;color:var(--text2);margin-top:2px;">待审工单</div></div>
+            <div style="background:var(--card);border:1px solid var(--bd);border-radius:9px;padding:12px;text-align:left;"><div style="font-size:20px;font-weight:700;color:var(--green);">1,284</div><div style="font-size:11px;color:var(--text2);margin-top:2px;">今日订单</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="ov" onclick="if(event.target===this)closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-ti" id="mTi">新建工单</div>
+    <div class="modal-sub" id="mSub">提交后发送至清算中心审核，通过后自动生效</div>
+    <div class="fg"><label class="fl">客户 <span class="req">*</span></label><select class="fi fi-full"><option>Fulunited Limited (MID-001234)</option><option>Global Trade Co. (MID-001235)</option><option>Pacific Imports (MID-001236)</option></select></div>
+    <div class="fg"><label class="fl">工单类型 <span class="req">*</span></label><select class="fi fi-full" id="mType" onchange="updModal()"><option value="pricing">费率调整</option><option value="rebate">返点调整</option><option value="limit">限额调整</option><option value="product">产品开通</option></select></div>
+    <div id="f-pricing"><div class="fg"><label class="fl">产品线 <span class="req">*</span></label><select class="fi fi-full"><option>Payins</option><option>Payouts</option><option>OnRamp</option></select></div><div class="fg"><label class="fl">目标费率方案 <span class="req">*</span></label><select class="fi fi-full"><option>Standard-A (MDR 1.5%)</option><option selected>Standard-B (MDR 1.2%)</option><option>Premium-A (MDR 0.9%)</option><option>Premium-B (MDR 0.75%)</option></select><div class="fi-hint">当前: Standard-B</div></div></div>
+    <div id="f-rebate" style="display:none;"><div class="fg"><label class="fl">目标返点方案 <span class="req">*</span></label><select class="fi fi-full"><option>Rebate-3%</option><option>Rebate-4%</option><option selected>Rebate-5%</option><option>Rebate-6%</option></select></div></div>
+    <div id="f-product" style="display:none;"><div class="fg"><label class="fl">申请开通产品 <span class="req">*</span></label><select class="fi fi-full"><option>OnRamp</option><option>OffRamp</option><option>Checkout</option><option>Cards (VCC)</option></select></div><div class="fg"><label class="fl">关联 SP <span class="req">*</span></label><select class="fi fi-full"><option>IPL</option><option>BB</option><option>自动匹配</option></select></div></div>
+    <div class="fg"><label class="fl">申请理由 <span class="req">*</span></label><textarea class="fi fi-full" placeholder="请说明调整原因..."></textarea></div>
+    <div class="modal-ft"><button class="btn" onclick="closeModal()">取消</button><button class="btn btn-pri" onclick="submitTkt()">提交审核</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+let tabCnt=0, activeId='home';
+const tabs={};
+const ico={customer:'👤',order:'📋',card:'💳',va:'🏦',list:'📂'};
+
+/* ── SEARCH ── */
+function showDrop(){$('sdrop').classList.add('show')}
+function hideDrop(){$('sdrop').classList.remove('show')}
+function clearS(){$('gsi').value='';}
+
+/* ── NAV GROUP ── */
+function toggleGrp(g){
+  const ch=$('grp-'+g),ar=$('arrow-'+g);
+  ch.classList.toggle('open');ar.classList.toggle('open');
+}
+// auto-open orders group
+toggleGrp('orders');
+
+/* ── TAB ENGINE ── */
+function openTab(type,title,meta){
+  for(const[id,t]of Object.entries(tabs)){
+    if(t.type===type&&t.title===title){actTab(id);hideDrop();clearS();return;}
+  }
+  const id='t-'+(++tabCnt);
+  tabs[id]={id,type,title,meta};
+  mkTabEl(id,type,title);
+  mkPanel(id,type,title,meta);
+  actTab(id);
+  hideDrop();clearS();
+}
+
+const navMap={'customers':'nav-customers','cfg':'nav-cfg','rebate':'nav-rebate-bill','settlement':'nav-settlement'};
+function openList(key,title){
+  openTab('list',title,key);
+  document.querySelectorAll('.ni,.nc').forEach(n=>n.classList.remove('active'));
+  const nid=navMap[key]; if(nid&&$(nid))$(nid).classList.add('active');
+}
+
+function mkTabEl(id,type,title){
+  const d=document.createElement('div');d.className='t';d.id='tEl-'+id;
+  d.onclick=()=>actTab(id);
+  d.innerHTML=`<span class="t-ico">${ico[type]||'📄'}</span><span class="t-lbl" title="${title}">${title}</span><span class="t-x" onclick="closeTab(event,'${id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>`;
+  $('tbi').appendChild(d);
+}
+
+function mkPanel(id,type,title,meta){
+  const d=document.createElement('div');d.className='pnl';d.id='pnl-'+id;
+  d.innerHTML=buildContent(type,title,meta,id);
+  $('tc').appendChild(d);
+}
+
+function actTab(id){
+  activeId=id;
+  document.querySelectorAll('.t').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.pnl').forEach(p=>p.classList.remove('active'));
+  $('tEl-'+id)?.classList.add('active');
+  $('pnl-'+id)?.classList.add('active');
+  $('tEl-'+id)?.scrollIntoView({inline:'nearest',behavior:'smooth'});
+}
+
+function closeTab(e,id){
+  e.stopPropagation();
+  $('tEl-'+id)?.remove();$('pnl-'+id)?.remove();
+  delete tabs[id];
+  const r=Object.keys(tabs);
+  if(activeId===id)actTab(r.length?r[r.length-1]:'home');
+}
+
+/* ── MODAL ── */
+function openModal(type){
+  $('mType').value=type||'pricing';updModal();
+  $('ov').classList.add('show');
+}
+function closeModal(){$('ov').classList.remove('show');}
+function updModal(){
+  const v=$('mType').value;
+  const titles={pricing:'费率调整',rebate:'返点调整',limit:'限额调整',product:'产品开通'};
+  $('mTi').textContent='新建工单 — '+titles[v];
+  $('f-pricing').style.display=(v==='pricing'||v==='limit')?'':'none';
+  $('f-rebate').style.display=v==='rebate'?'':'none';
+  $('f-product').style.display=v==='product'?'':'none';
+}
+function submitTkt(){closeModal();toast('✅ 工单已提交，等待审核','ok');}
+
+/* ── TOAST ── */
+function toast(msg,cls){
+  const t=$('toast');t.textContent=msg;t.className='toast show'+(cls?' '+cls:'');
+  setTimeout(()=>t.className='toast',2200);
+}
+
+/* ── CONTENT BUILDERS ── */
+function buildContent(type,title,meta,id){
+  if(type==='customer')return bCustomer(title,meta,id);
+  if(type==='order')return bOrder(title,meta,id);
+  if(type==='card')return bCard(title,meta,id);
+  if(type==='va')return bVA(title,meta,id);
+  if(type==='list')return bList(meta,id);
+  return '<div style="text-align:center;padding:40px;color:var(--text3);font-size:14px;">'+title+'</div>';
+}
+
+/* ---- CUSTOMER DETAIL ---- */
+function bCustomer(name,mid,id){
+  const ini=name.charAt(0);
+  return `<div>
+  <div class="ph">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;">${ini}</div>
+      <div><div class="pt" style="font-size:15px;">${name}</div><div style="font-size:11px;color:var(--text3);font-family:monospace;">${mid}</div></div>
+      <span class="s s-ok">Active</span><span class="tag tag-p">企业</span>
+    </div>
+    <div style="display:flex;gap:6px;"><button class="btn btn-sm" onclick="openModal('product')">开通产品</button><button class="btn btn-sm btn-pri" onclick="openModal('pricing')">+ 新建工单</button></div>
+  </div>
+  <div class="dgrid"><div>
+    <div class="ic"><div class="ic-t">基本信息</div>
+      <div class="ic-r"><span class="ic-l">邮箱</span><span class="ic-v">admin@fulunited.com</span></div>
+      <div class="ic-r"><span class="ic-l">手机号</span><span class="ic-v">+852 9123 4567</span></div>
+      <div class="ic-r"><span class="ic-l">入网</span><span class="ic-v">2025-11-01</span></div>
+      <div class="ic-r"><span class="ic-l">地区</span><span class="ic-v">Hong Kong</span></div>
+      <div class="ic-r"><span class="ic-l">产品</span><span class="ic-v"><span class="tag tag-p">Payins</span> <span class="tag tag-g">Payouts</span></span></div>
+    </div>
+    <div class="ic"><div class="ic-t">当前费率 <span class="lnk" style="font-size:11px;" onclick="openModal('pricing')">调整</span></div>
+      <div class="ic-r"><span class="ic-l">Payins</span><span class="ic-v">Standard-B (1.2%)</span></div>
+      <div class="ic-r"><span class="ic-l">Payouts</span><span class="ic-v">Standard-A ($2.50)</span></div>
+      <div class="ic-r"><span class="ic-l">返点</span><span class="ic-v">Rebate-5%</span></div>
+      <div style="margin-top:6px;padding:5px 8px;background:var(--amber-bg);border-radius:5px;font-size:11px;color:var(--amber);">⚠️ 费率调整工单审核中</div>
+    </div>
+    <div class="ic"><div class="ic-t">账户余额</div>
+      <div class="ic-r"><span class="ic-l">USD 可用</span><span class="ic-v" style="font-weight:700;">$245,830.00</span></div>
+      <div class="ic-r"><span class="ic-l">USD 冻结</span><span class="ic-v" style="color:var(--amber);">$12,500.00</span></div>
+      <div class="ic-r"><span class="ic-l">USDT</span><span class="ic-v" style="font-weight:700;">88,420.50</span></div>
+    </div>
+  </div><div>
+    <div class="itabs" id="it-${id}">
+      <div class="itab active" onclick="swIt('${id}',this,'ipC-${id}')">配置</div>
+      <div class="itab" onclick="swIt('${id}',this,'ipT-${id}')">工单 <span style="display:inline-flex;align-items:center;justify-content:center;min-width:14px;height:14px;border-radius:99px;background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:0 3px;">2</span></div>
+      <div class="itab" onclick="swIt('${id}',this,'ipU-${id}')">用户</div>
+    </div>
+    <!-- CONFIG -->
+    <div class="ipnl active" id="ipC-${id}">
+      <div style="display:flex;gap:6px;margin-bottom:10px;">
+        <button class="btn btn-xs btn-pri" onclick="showCfg('${id}','va')">VA 账号</button>
+        <button class="btn btn-xs" onclick="showCfg('${id}','card')">卡片</button>
+        <button class="btn btn-xs" onclick="showCfg('${id}','benef')">收款人</button>
+        <button class="btn btn-xs" onclick="showCfg('${id}','remit')">汇款人</button>
+      </div>
+      <div id="cf-va-${id}"><div class="tcard"><div class="tcard-hd"><span class="tcard-t">VA 账号</span></div>
+        <table><thead><tr><th>VA 号码</th><th>币种</th><th>银行</th><th>状态</th></tr></thead><tbody>
+          <tr><td class="mono lnk" onclick="openTab('va','VA-HKD-88231','HKD')">VA-HKD-88231</td><td><span class="tag">HKD</span></td><td>HSBC HK</td><td><span class="s s-ok">Active</span></td></tr>
+          <tr><td class="mono lnk" onclick="openTab('va','VA-USD-44821','USD')">VA-USD-44821</td><td><span class="tag tag-p">USD</span></td><td>Standard Chartered</td><td><span class="s s-ok">Active</span></td></tr>
+        </tbody></table></div></div>
+      <div id="cf-card-${id}" style="display:none;"><div class="tcard"><div class="tcard-hd"><span class="tcard-t">卡片</span></div>
+        <table><thead><tr><th>卡号</th><th>类型</th><th>持卡人</th><th>状态</th></tr></thead><tbody>
+          <tr><td class="mono lnk" onclick="openTab('card','4111 **** 7892','Visa VCC')">4111 **** 7892</td><td><span class="tag">Visa VCC</span></td><td>Li Wei</td><td><span class="s s-ok">Active</span></td></tr>
+        </tbody></table></div></div>
+      <div id="cf-benef-${id}" style="display:none;"><div class="tcard"><div class="tcard-hd"><span class="tcard-t">收款人</span></div>
+        <table><thead><tr><th>姓名</th><th>账号</th><th>银行</th><th>币种</th></tr></thead><tbody>
+          <tr><td style="font-weight:500;">Zhang Wei</td><td class="mono">6222 **** 1234</td><td>招商银行</td><td><span class="tag">CNY</span></td></tr>
+          <tr><td style="font-weight:500;">ABC Corp</td><td class="mono">GB29 NWBK...</td><td>NatWest</td><td><span class="tag tag-p">GBP</span></td></tr>
+        </tbody></table></div></div>
+      <div id="cf-remit-${id}" style="display:none;"><div class="tcard"><div class="tcard-hd"><span class="tcard-t">汇款人</span></div>
+        <table><thead><tr><th>姓名</th><th>证件号</th><th>国籍</th><th>状态</th></tr></thead><tbody>
+          <tr><td style="font-weight:500;">Wang Fang</td><td class="mono">G12345678</td><td>中国</td><td><span class="s s-ok">Active</span></td></tr>
+        </tbody></table></div></div>
+    </div>
+    <!-- TICKETS -->
+    <div class="ipnl" id="ipT-${id}">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:8px;"><button class="btn btn-sm btn-pri" onclick="openModal('pricing')">+ 新建工单</button></div>
+      <div class="tkt"><div class="tkt-top"><div><div class="tkt-ti">费率调整 — Payins MDR 0.9%</div><div class="tkt-meta">TKT-2026-0041 · 2026-03-08</div></div><span class="s s-rev">审核中</span></div><div class="tkt-body">将 Payins 从 Standard-B 调整为 Premium-A。</div><div class="tkt-foot"><span>💰 费率</span><span>·</span><span>等待清算中心</span></div></div>
+      <div class="tkt"><div class="tkt-top"><div><div class="tkt-ti">产品开通 — OnRamp</div><div class="tkt-meta">TKT-2026-0038 · 2026-03-04</div></div><span class="s s-fail">已驳回</span></div><div class="tkt-body">合规材料不完整。<span class="lnk" onclick="openModal('product')">重新开单</span></div><div class="tkt-foot"><span>📦 产品</span></div></div>
+    </div>
+    <!-- USERS -->
+    <div class="ipnl" id="ipU-${id}">
+      <div class="tcard"><table><thead><tr><th>姓名</th><th>邮箱</th><th>角色</th><th>状态</th><th>登录</th></tr></thead><tbody>
+        <tr><td style="font-weight:600;">Li Wei</td><td>liwei@fulunited.com</td><td><span class="tag tag-p">Owner</span></td><td><span class="s s-ok">Active</span></td><td style="color:var(--text3);">今天</td></tr>
+        <tr><td style="font-weight:600;">Zhang San</td><td>zhangsan@fulunited.com</td><td><span class="tag">Finance</span></td><td><span class="s s-ok">Active</span></td><td style="color:var(--text3);">昨天</td></tr>
+      </tbody></table></div>
+    </div>
+  </div></div>
+</div>`;
+}
+
+/* ---- ORDER DETAIL ---- */
+function bOrder(title,meta,id){
+  const isIn=meta==='payin';
+  const amt=isIn?'$12,500.00 USD':'$3,200.00 USD';
+  const st=isIn?'<span class="s s-ok">Success</span>':'<span class="s s-proc">Processing</span>';
+  return `<div>
+  <div class="ph"><div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:2px;">${isIn?'收款':'付款'}订单</div>
+    <div class="pt" style="font-family:monospace;font-size:14px;">${title}</div>
+    <div style="display:flex;gap:6px;margin-top:5px;">${st}<span class="tag">${isIn?'收款':'付款'}</span><span class="tag tag-p">USD</span></div>
+  </div><div style="text-align:right;"><div style="font-size:20px;font-weight:800;">${amt}</div><div style="font-size:11px;color:var(--text3);">2026-03-08 15:32</div></div></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+    <div class="ds"><div class="ds-t">订单信息</div>
+      <div class="ds-r"><span class="ds-l">订单号</span><span class="ds-v mono">${title}</span></div>
+      <div class="ds-r"><span class="ds-l">客户</span><span class="ds-v lnk" onclick="openTab('customer','Fulunited Limited','MID-001234')">Fulunited Limited</span></div>
+      <div class="ds-r"><span class="ds-l">产品</span><span class="ds-v">${isIn?'Payins':'Payouts'}</span></div>
+      <div class="ds-r"><span class="ds-l">方式</span><span class="ds-v">${isIn?'VA 收款':'银行转账'}</span></div>
+      <div class="ds-r"><span class="ds-l">SP</span><span class="ds-v">IPL</span></div>
+    </div>
+    <div class="ds"><div class="ds-t">金额明细</div>
+      <div class="ds-r"><span class="ds-l">金额</span><span class="ds-v" style="font-weight:700;">${amt}</span></div>
+      <div class="ds-r"><span class="ds-l">手续费</span><span class="ds-v">${isIn?'$150.00':'$2.50'}</span></div>
+      <div class="ds-r"><span class="ds-l">实到/付</span><span class="ds-v" style="color:var(--green);font-weight:700;">${isIn?'$12,350.00':'$3,202.50'}</span></div>
+      <div class="ds-r"><span class="ds-l">费率</span><span class="ds-v">Standard-B</span></div>
+    </div>
+  </div>
+  <div class="ds"><div class="ds-t">处理时间线</div><div style="margin-top:8px;">
+    <div class="tl-item"><div class="tl-dot ok">✓</div><div><div style="font-size:12px;font-weight:600;">订单创建</div><div style="font-size:11px;color:var(--text3);">15:32:45</div></div></div>
+    <div class="tl-item"><div class="tl-dot ok">✓</div><div><div style="font-size:12px;font-weight:600;">风控通过</div><div style="font-size:11px;color:var(--text3);">15:32:48</div></div></div>
+    <div class="tl-item"><div class="tl-dot ${isIn?'ok':'pend'}">${isIn?'✓':'…'}</div><div><div style="font-size:12px;font-weight:600;">${isIn?'资金到账':'等待渠道确认'}</div><div style="font-size:11px;color:var(--text3);">${isIn?'15:33:12':'—'}</div></div></div>
+  </div></div>
+</div>`;
+}
+
+/* ---- CARD DETAIL ---- */
+function bCard(title,meta,id){
+  return `<div>
+  <div class="ph"><div><div style="font-size:11px;color:var(--text3);">卡片详情</div><div class="pt" style="font-family:monospace;">${title}</div><div style="display:flex;gap:6px;margin-top:5px;"><span class="s s-ok">Active</span><span class="tag">Visa VCC</span><span class="tag tag-p">USD</span></div></div></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+    <div class="ds"><div class="ds-t">卡片信息</div>
+      <div class="ds-r"><span class="ds-l">卡号</span><span class="ds-v mono">${title}</span></div>
+      <div class="ds-r"><span class="ds-l">类型</span><span class="ds-v">Visa Virtual</span></div>
+      <div class="ds-r"><span class="ds-l">归属</span><span class="ds-v lnk" onclick="openTab('customer','Fulunited Limited','MID-001234')">Fulunited</span></div>
+      <div class="ds-r"><span class="ds-l">有效期</span><span class="ds-v">03/2029</span></div>
+      <div class="ds-r"><span class="ds-l">可用额度</span><span class="ds-v" style="font-weight:700;">$5,000.00</span></div>
+    </div>
+    <div class="ds"><div class="ds-t">近期消费</div>
+      <div class="ds-r"><span class="ds-l">03-08</span><span class="ds-v">AWS · $199.00</span></div>
+      <div class="ds-r"><span class="ds-l">03-07</span><span class="ds-v">Google Ads · $500.00</span></div>
+      <div class="ds-r"><span class="ds-l">03-05</span><span class="ds-v">Shopify · $79.00</span></div>
+    </div>
+  </div>
+</div>`;
+}
+
+/* ---- VA DETAIL ---- */
+function bVA(title,meta,id){
+  return `<div>
+  <div class="ph"><div><div style="font-size:11px;color:var(--text3);">VA 账号详情</div><div class="pt" style="font-family:monospace;">${title}</div><div style="display:flex;gap:6px;margin-top:5px;"><span class="s s-ok">Active</span><span class="tag">${meta}</span></div></div></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+    <div class="ds"><div class="ds-t">账号信息</div>
+      <div class="ds-r"><span class="ds-l">VA 号码</span><span class="ds-v mono">${title}</span></div>
+      <div class="ds-r"><span class="ds-l">银行</span><span class="ds-v">HSBC Hong Kong</span></div>
+      <div class="ds-r"><span class="ds-l">币种</span><span class="ds-v">${meta}</span></div>
+      <div class="ds-r"><span class="ds-l">归属</span><span class="ds-v lnk" onclick="openTab('customer','Fulunited Limited','MID-001234')">Fulunited</span></div>
+    </div>
+    <div class="ds"><div class="ds-t">近期入账</div>
+      <div class="ds-r"><span class="ds-l">03-08</span><span class="ds-v" style="color:var(--green);">98,000 · <span class="lnk" onclick="openTab('order','ORD-20260308-001','payin')">查看</span></span></div>
+      <div class="ds-r"><span class="ds-l">03-06</span><span class="ds-v" style="color:var(--green);">50,000</span></div>
+    </div>
+  </div>
+</div>`;
+}
+
+/* ---- LIST PAGES ---- */
+function bList(key,id){
+  if(key==='customers')return bCustList();
+  if(key==='payins'||key==='payouts')return bOrdList(key==='payins');
+  if(key==='cfg')return bCfgPage(id);
+  if(key==='rebate')return bRebateBill();
+  if(key==='settlement')return bSettlement();
+  const labels={'exchange':'汇兑订单','checkout':'收单订单','cardtx':'发卡订单','fiatdeposit':'充提记录','tradedoc':'贸易背景'};
+  return `<div style="text-align:center;padding:44px;"><div style="font-size:34px;margin-bottom:8px;">📋</div><div style="font-size:14px;font-weight:600;color:var(--text);">${labels[key]||key}</div><div style="font-size:12px;color:var(--text3);margin-top:4px;">结构同收款/付款订单列表，按业务类型筛选</div></div>`;
+}
+
+function bCustList(){
+  return `<div>
+  <div class="ph"><div><div class="pt">客户列表</div><div class="ps">管理所有已入网客户</div></div><button class="btn btn-sm btn-pri" onclick="openModal('product')">申请开通</button></div>
+  <div class="fbar"><input class="fi fi-s" placeholder="搜索客户名 / MID / 手机号..."><select class="fi fi-sel"><option>全部状态</option><option>Active</option><option>Pending</option></select><select class="fi fi-sel"><option>全部产品</option><option>Payins</option><option>Payouts</option><option>OnRamp</option></select></div>
+  <div class="tcard"><div class="tcard-hd"><span class="tcard-t">156 个客户</span><button class="btn btn-xs">导出</button></div>
+  <table><thead><tr><th>客户名称</th><th>MID</th><th>开通产品</th><th>状态</th><th>入网时间</th><th>操作</th></tr></thead><tbody>
+    <tr><td><div style="font-weight:600;">Fulunited Limited</div><div style="font-size:10px;color:var(--text3);">+852 9123 4567</div></td><td class="mono">MID-001234</td><td><span class="tag tag-p">Payins</span> <span class="tag tag-g">Payouts</span></td><td><span class="s s-ok">Active</span></td><td style="color:var(--text3);">2025-11-01</td><td><span class="lnk" onclick="openTab('customer','Fulunited Limited','MID-001234')">查看</span>&nbsp;<span class="lnk" onclick="openModal('pricing')">工单</span></td></tr>
+    <tr><td><div style="font-weight:600;">Global Trade Co.</div><div style="font-size:10px;color:var(--text3);">ops@globaltrade.com</div></td><td class="mono">MID-001235</td><td><span class="tag tag-p">OnRamp</span></td><td><span class="s s-ok">Active</span></td><td style="color:var(--text3);">2025-12-15</td><td><span class="lnk" onclick="openTab('customer','Global Trade Co.','MID-001235')">查看</span>&nbsp;<span class="lnk" onclick="openModal('pricing')">工单</span></td></tr>
+    <tr><td><div style="font-weight:600;">Pacific Imports Ltd</div></td><td class="mono">MID-001236</td><td><span class="tag">Checkout</span></td><td><span class="s s-pend">Pending</span></td><td style="color:var(--text3);">2026-01-08</td><td><span class="lnk" onclick="openTab('customer','Pacific Imports Ltd','MID-001236')">查看</span></td></tr>
+    <tr><td><div style="font-weight:600;">Skyline Logistics</div><div style="font-size:10px;color:var(--text3);">info@skyline.io</div></td><td class="mono">MID-001237</td><td><span class="tag tag-p">Payins</span> <span class="tag">Cards</span></td><td><span class="s s-ok">Active</span></td><td style="color:var(--text3);">2026-02-01</td><td><span class="lnk" onclick="openTab('customer','Skyline Logistics','MID-001237')">查看</span>&nbsp;<span class="lnk" onclick="openModal('pricing')">工单</span></td></tr>
+  </tbody></table></div>
+</div>`;
+}
+
+function bOrdList(isIn){
+  const tp=isIn?'收款':'付款';
+  return `<div>
+  <div class="ph"><div><div class="pt">${tp}订单</div><div class="ps">跨客户全局查询 · 今日 ${isIn?856:428} 笔</div></div><button class="btn btn-xs">导出</button></div>
+  <div class="fbar"><input class="fi fi-s" placeholder="搜索订单号 / 客户 / VA..."><select class="fi fi-sel"><option>全部客户</option><option>Fulunited</option><option>Global Trade</option></select><select class="fi fi-sel"><option>全部状态</option><option>Success</option><option>Processing</option><option>Failed</option></select><input class="fi" type="date" value="2026-03-08" style="width:125px;"><select class="fi fi-sel"><option>全部币种</option><option>USD</option><option>HKD</option><option>USDT</option></select></div>
+  <div class="tcard"><table><thead><tr><th>订单号</th><th>客户</th><th>金额</th><th>币种</th><th>方式</th><th>状态</th><th>时间</th><th></th></tr></thead><tbody>
+    <tr><td class="mono lnk" onclick="openTab('order','ORD-20260308-001','payin')">ORD-...-001</td><td>Fulunited</td><td style="font-weight:600;">$12,500</td><td><span class="tag tag-p">USD</span></td><td>VA</td><td><span class="s s-ok">Success</span></td><td style="color:var(--text3);">15:32</td><td><span class="lnk" onclick="openTab('order','ORD-20260308-001','payin')">详情</span></td></tr>
+    <tr><td class="mono lnk" onclick="openTab('order','ORD-20260308-003','payin')">ORD-...-003</td><td>Global Trade</td><td style="font-weight:600;">8,200</td><td><span class="tag tag-g">USDT</span></td><td>链上</td><td><span class="s s-proc">Processing</span></td><td style="color:var(--text3);">14:05</td><td><span class="lnk" onclick="openTab('order','ORD-20260308-003','payin')">详情</span></td></tr>
+    <tr><td class="mono">ORD-...-004</td><td>Pacific</td><td style="font-weight:600;">¥280,000</td><td><span class="tag">CNY</span></td><td>Pay</td><td><span class="s s-fail">Failed</span></td><td style="color:var(--text3);">11:20</td><td><span class="lnk">详情</span></td></tr>
+    <tr><td class="mono">ORD-...-005</td><td>Skyline</td><td style="font-weight:600;">$4,800</td><td><span class="tag tag-p">USD</span></td><td>VA</td><td><span class="s s-ok">Success</span></td><td style="color:var(--text3);">09:15</td><td><span class="lnk">详情</span></td></tr>
+  </tbody></table></div>
+</div>`;
+}
+
+function bTktList(){
+  return `<div>
+  <div class="ph"><div><div class="pt">工单列表</div><div class="ps">发起和跟踪费率/返点/产品工单</div></div><button class="btn btn-sm btn-pri" onclick="openModal('pricing')">+ 新建工单</button></div>
+  <div class="fbar"><input class="fi fi-s" placeholder="搜索工单号 / 客户名..."><select class="fi fi-sel"><option>全部状态</option><option>审核中</option><option>已通过</option><option>已驳回</option></select><select class="fi fi-sel"><option>全部类型</option><option>费率调整</option><option>返点调整</option><option>产品开通</option></select></div>
+  <div class="tkt"><div class="tkt-top"><div><div class="tkt-ti">费率调整 — Fulunited · Payins MDR 0.9%</div><div class="tkt-meta">TKT-2026-0041 · 2026-03-08 · Li Wei</div></div><span class="s s-rev">审核中</span></div><div class="tkt-body">Payins 从 Standard-B → Premium-A (0.9%)。</div><div class="tkt-foot"><span>💰 费率</span><span>·</span><span>等待清算中心</span></div></div>
+  <div class="tkt"><div class="tkt-top"><div><div class="tkt-ti">返点调整 — Global Trade · 6%</div><div class="tkt-meta">TKT-2026-0040 · 2026-03-07</div></div><span class="s s-rev">审核中</span></div><div class="tkt-body">返点 5% → 6%，下季度生效。</div><div class="tkt-foot"><span>💹 返点</span><span>·</span><span>等待清算中心</span></div></div>
+  <div class="tkt"><div class="tkt-top"><div><div class="tkt-ti">限额调整 — Pacific · 单笔 $100,000</div><div class="tkt-meta">TKT-2026-0035 · 2026-03-05</div></div><span class="s s-ok">已通过</span></div><div class="tkt-body">单笔付款限额 $50K → $100K，已生效。</div><div class="tkt-foot"><span>📊 限额</span><span>·</span><span style="color:var(--green);">✓ 已自动生效</span></div></div>
+  <div class="tkt"><div class="tkt-top"><div><div class="tkt-ti">产品开通 — Fulunited · OnRamp</div><div class="tkt-meta">TKT-2026-0038 · 2026-03-04</div></div><span class="s s-fail">已驳回</span></div><div class="tkt-body">合规材料不完整。</div><div class="tkt-foot"><span>📦 产品</span><span>·</span><span class="lnk" onclick="openModal('product')">重新开单</span></div></div>
+</div>`;
+}
+
+/* ---- CONFIG: 客户配置（统一页面 + 内Tab） ---- */
+function bCfgPage(id){
+  return `<div>
+  <div class="ph"><div><div class="pt">客户配置</div><div class="ps">发起和跟踪产品开通、收费方案、返点方案的配置审批</div></div>
+    <div style="display:flex;gap:6px;"><button class="btn btn-sm" onclick="openModal('product')">+ 产品开通</button><button class="btn btn-sm" onclick="openModal('pricing')">+ 收费调整</button><button class="btn btn-sm btn-pri" onclick="openModal('rebate')">+ 返点调整</button></div>
+  </div>
+  <div class="itabs" id="cft-${id}">
+    <div class="itab active" onclick="swIt('${id}',this,'cfP-${id}')">产品配置</div>
+    <div class="itab" onclick="swIt('${id}',this,'cfF-${id}')">收费配置</div>
+    <div class="itab" onclick="swIt('${id}',this,'cfR-${id}')">返点配置</div>
+  </div>
+  <!-- 产品配置 -->
+  <div class="ipnl active" id="cfP-${id}">
+    <div class="fbar"><input class="fi fi-s" placeholder="搜索客户名 / MID..."><select class="fi fi-sel"><option>全部状态</option><option>已生效</option><option>审核中</option><option>已驳回</option></select><select class="fi fi-sel"><option>全部产品</option><option>Payins</option><option>Payouts</option><option>OnRamp</option><option>Checkout</option><option>Cards</option></select></div>
+    <div class="tcard"><div class="tcard-hd"><span class="tcard-t">产品开通配置</span><span style="font-size:11px;color:var(--text3);">共 8 条</span></div>
+    <table><thead><tr><th>客户</th><th>MID</th><th>产品</th><th>关联SP</th><th>申请时间</th><th>状态</th><th>审批人</th><th>操作</th></tr></thead><tbody>
+      <tr><td style="font-weight:600;"><span class="lnk" onclick="openTab('customer','Fulunited Limited','MID-001234')">Fulunited</span></td><td class="mono">MID-001234</td><td><span class="tag tag-p">OnRamp</span></td><td>BB</td><td style="color:var(--text3);">2026-03-08</td><td><span class="s s-rev">审核中</span></td><td style="color:var(--text3);">清算中心</td><td><span class="lnk">详情</span></td></tr>
+      <tr><td style="font-weight:600;"><span class="lnk" onclick="openTab('customer','Fulunited Limited','MID-001234')">Fulunited</span></td><td class="mono">MID-001234</td><td><span class="tag tag-p">Payins</span></td><td>IPL</td><td style="color:var(--text3);">2025-11-01</td><td><span class="s s-ok">已生效</span></td><td style="color:var(--text3);">—</td><td></td></tr>
+      <tr><td style="font-weight:600;"><span class="lnk" onclick="openTab('customer','Fulunited Limited','MID-001234')">Fulunited</span></td><td class="mono">MID-001234</td><td><span class="tag tag-g">Payouts</span></td><td>IPL</td><td style="color:var(--text3);">2025-11-01</td><td><span class="s s-ok">已生效</span></td><td style="color:var(--text3);">—</td><td></td></tr>
+      <tr><td style="font-weight:600;"><span class="lnk" onclick="openTab('customer','Global Trade Co.','MID-001235')">Global Trade</span></td><td class="mono">MID-001235</td><td><span class="tag">OnRamp</span></td><td>BB</td><td style="color:var(--text3);">2025-12-15</td><td><span class="s s-ok">已生效</span></td><td style="color:var(--text3);">—</td><td></td></tr>
+      <tr><td style="font-weight:600;">Skyline</td><td class="mono">MID-001237</td><td><span class="tag">Cards</span></td><td>BB</td><td style="color:var(--text3);">2026-02-01</td><td><span class="s s-ok">已生效</span></td><td style="color:var(--text3);">—</td><td></td></tr>
+    </tbody></table></div>
+  </div>
+  <!-- 收费配置 -->
+  <div class="ipnl" id="cfF-${id}">
+    <div class="fbar"><input class="fi fi-s" placeholder="搜索客户名 / MID..."><select class="fi fi-sel"><option>全部状态</option><option>已生效</option><option>审核中</option><option>已驳回</option></select><select class="fi fi-sel"><option>全部产品线</option><option>Payins</option><option>Payouts</option><option>OnRamp</option></select></div>
+    <div class="tcard"><div class="tcard-hd"><span class="tcard-t">收费方案配置</span><span style="font-size:11px;color:var(--text3);">共 6 条</span></div>
+    <table><thead><tr><th>客户</th><th>MID</th><th>产品线</th><th>当前方案</th><th>目标方案</th><th>申请时间</th><th>状态</th><th>审批人</th><th>操作</th></tr></thead><tbody>
+      <tr><td style="font-weight:600;"><span class="lnk" onclick="openTab('customer','Fulunited Limited','MID-001234')">Fulunited</span></td><td class="mono">MID-001234</td><td><span class="tag tag-p">Payins</span></td><td>Standard-B (1.2%)</td><td style="color:var(--pri);font-weight:600;">Premium-A (0.9%)</td><td style="color:var(--text3);">2026-03-08</td><td><span class="s s-rev">审核中</span></td><td style="color:var(--text3);">清算中心</td><td><span class="lnk">详情</span></td></tr>
+      <tr><td style="font-weight:600;"><span class="lnk" onclick="openTab('customer','Fulunited Limited','MID-001234')">Fulunited</span></td><td class="mono">MID-001234</td><td><span class="tag tag-g">Payouts</span></td><td>Standard-A ($2.50)</td><td>—</td><td style="color:var(--text3);">2025-11-01</td><td><span class="s s-ok">已生效</span></td><td style="color:var(--text3);">—</td><td><span class="lnk" onclick="openModal('pricing')">调整</span></td></tr>
+      <tr><td style="font-weight:600;"><span class="lnk" onclick="openTab('customer','Global Trade Co.','MID-001235')">Global Trade</span></td><td class="mono">MID-001235</td><td><span class="tag">OnRamp</span></td><td>Premium-A (0.8%+$1)</td><td>—</td><td style="color:var(--text3);">2025-12-15</td><td><span class="s s-ok">已生效</span></td><td style="color:var(--text3);">—</td><td><span class="lnk" onclick="openModal('pricing')">调整</span></td></tr>
+      <tr><td style="font-weight:600;">Pacific</td><td class="mono">MID-001236</td><td><span class="tag tag-p">Checkout</span></td><td>Standard-A (1.5%)</td><td>—</td><td style="color:var(--text3);">2026-01-08</td><td><span class="s s-ok">已生效</span></td><td style="color:var(--text3);">—</td><td><span class="lnk" onclick="openModal('pricing')">调整</span></td></tr>
+      <tr><td style="font-weight:600;">Skyline</td><td class="mono">MID-001237</td><td><span class="tag tag-p">Payins</span></td><td>Premium-B (0.75%)</td><td>—</td><td style="color:var(--text3);">2026-02-01</td><td><span class="s s-ok">已生效</span></td><td style="color:var(--text3);">—</td><td><span class="lnk" onclick="openModal('pricing')">调整</span></td></tr>
+    </tbody></table></div>
+  </div>
+  <!-- 返点配置 -->
+  <div class="ipnl" id="cfR-${id}">
+    <div class="fbar"><input class="fi fi-s" placeholder="搜索客户名 / MID..."><select class="fi fi-sel"><option>全部状态</option><option>已生效</option><option>审核中</option><option>已驳回</option></select></div>
+    <div class="tcard"><div class="tcard-hd"><span class="tcard-t">返点方案配置</span><span style="font-size:11px;color:var(--text3);">共 4 条</span></div>
+    <table><thead><tr><th>客户</th><th>MID</th><th>当前方案</th><th>目标方案</th><th>结算周期</th><th>申请时间</th><th>状态</th><th>审批人</th><th>操作</th></tr></thead><tbody>
+      <tr><td style="font-weight:600;"><span class="lnk" onclick="openTab('customer','Global Trade Co.','MID-001235')">Global Trade</span></td><td class="mono">MID-001235</td><td>Rebate-4% (4.0%)</td><td style="color:var(--pri);font-weight:600;">Rebate-6% (6.0%)</td><td>月结</td><td style="color:var(--text3);">2026-03-07</td><td><span class="s s-rev">审核中</span></td><td style="color:var(--text3);">清算中心</td><td><span class="lnk">详情</span></td></tr>
+      <tr><td style="font-weight:600;"><span class="lnk" onclick="openTab('customer','Fulunited Limited','MID-001234')">Fulunited</span></td><td class="mono">MID-001234</td><td>Rebate-5% (5.0%)</td><td>—</td><td>月结</td><td style="color:var(--text3);">2025-11-01</td><td><span class="s s-ok">已生效</span></td><td style="color:var(--text3);">—</td><td><span class="lnk" onclick="openModal('rebate')">调整</span></td></tr>
+      <tr><td style="font-weight:600;">Pacific</td><td class="mono">MID-001236</td><td>Rebate-3% (3.0%)</td><td>—</td><td>月结</td><td style="color:var(--text3);">2026-01-08</td><td><span class="s s-ok">已生效</span></td><td style="color:var(--text3);">—</td><td><span class="lnk" onclick="openModal('rebate')">调整</span></td></tr>
+      <tr><td style="font-weight:600;">Skyline</td><td class="mono">MID-001237</td><td>Rebate-6% (6.0%)</td><td>—</td><td>季结</td><td style="color:var(--text3);">2026-02-01</td><td><span class="s s-ok">已生效</span></td><td style="color:var(--text3);">—</td><td><span class="lnk" onclick="openModal('rebate')">调整</span></td></tr>
+    </tbody></table></div>
+  </div>
+</div>`;
+}
+
+/* ---- 分佣结算: 返点账单 ---- */
+function bRebateBill(){
+  return `<div>
+  <div class="ph"><div><div class="pt">返点账单</div><div class="ps">系统按结算周期自动生成，核对后确认出账</div></div></div>
+  <div class="fbar"><input class="fi fi-s" placeholder="搜索客户名 / 账单号..."><select class="fi fi-sel"><option>全部状态</option><option>待核对</option><option>已确认</option><option>已出账</option></select><select class="fi fi-sel"><option>全部周期</option><option>2026-02</option><option>2026-01</option><option>2025-12</option></select></div>
+  <div class="tcard"><div class="tcard-hd"><span class="tcard-t">返点账单</span><button class="btn btn-xs">导出</button></div>
+  <table><thead><tr><th>账单号</th><th>客户</th><th>结算周期</th><th>交易总额</th><th>返点比例</th><th>返点金额</th><th>状态</th></tr></thead><tbody>
+    <tr><td class="mono">RB-2026-02-001</td><td style="font-weight:600;">Fulunited Limited</td><td>2026-02</td><td style="font-weight:500;">$1,245,000</td><td>5.0%</td><td style="font-weight:700;color:var(--green);">$62,250</td><td><span class="s s-pend">待核对</span></td></tr>
+    <tr><td class="mono">RB-2026-02-002</td><td style="font-weight:600;">Global Trade Co.</td><td>2026-02</td><td style="font-weight:500;">$860,000</td><td>4.0%</td><td style="font-weight:700;color:var(--green);">$34,400</td><td><span class="s s-pend">待核对</span></td></tr>
+    <tr><td class="mono">RB-2026-01-001</td><td style="font-weight:600;">Fulunited Limited</td><td>2026-01</td><td style="font-weight:500;">$980,000</td><td>5.0%</td><td style="font-weight:700;color:var(--green);">$49,000</td><td><span class="s s-ok">已出账</span></td></tr>
+    <tr><td class="mono">RB-2026-01-003</td><td style="font-weight:600;">Skyline Logistics</td><td>2026 Q4</td><td style="font-weight:500;">$2,100,000</td><td>6.0%</td><td style="font-weight:700;color:var(--green);">$126,000</td><td><span class="s s-ok">已出账</span></td></tr>
+  </tbody></table></div>
+</div>`;
+}
+
+/* ---- 分佣结算: 结算单 ---- */
+function bSettlement(){
+  return `<div>
+  <div class="ph"><div><div class="pt">结算单</div><div class="ps">返点账单确认后生成结算单，完成资金划转</div></div></div>
+  <div class="fbar"><input class="fi fi-s" placeholder="搜索结算单号 / 客户..."><select class="fi fi-sel"><option>全部状态</option><option>待结算</option><option>结算中</option><option>已完成</option></select></div>
+  <div class="tcard"><div class="tcard-hd"><span class="tcard-t">结算单</span><button class="btn btn-xs">导出</button></div>
+  <table><thead><tr><th>结算单号</th><th>关联账单</th><th>客户</th><th>结算金额</th><th>币种</th><th>状态</th><th>完成时间</th></tr></thead><tbody>
+    <tr><td class="mono">ST-2026-01-001</td><td class="mono">RB-2026-01-001</td><td style="font-weight:600;">Fulunited Limited</td><td style="font-weight:700;">$49,000</td><td><span class="tag tag-p">USD</span></td><td><span class="s s-ok">已完成</span></td><td style="color:var(--text3);">2026-02-05</td></tr>
+    <tr><td class="mono">ST-2026-01-002</td><td class="mono">RB-2026-01-003</td><td style="font-weight:600;">Skyline Logistics</td><td style="font-weight:700;">$126,000</td><td><span class="tag tag-p">USD</span></td><td><span class="s s-ok">已完成</span></td><td style="color:var(--text3);">2026-02-05</td></tr>
+    <tr><td class="mono">ST-2026-02-001</td><td class="mono">RB-2026-02-001</td><td style="font-weight:600;">Fulunited Limited</td><td style="font-weight:700;">$62,250</td><td><span class="tag tag-p">USD</span></td><td><span class="s s-pend">待结算</span></td><td style="color:var(--text3);">—</td></tr>
+    <tr><td class="mono">ST-2026-02-002</td><td class="mono">RB-2026-02-002</td><td style="font-weight:600;">Global Trade Co.</td><td style="font-weight:700;">$34,400</td><td><span class="tag tag-p">USD</span></td><td><span class="s s-pend">待结算</span></td><td style="color:var(--text3);">—</td></tr>
+  </tbody></table></div>
+</div>`;
+}
+
+/* ── INNER TAB SWITCH ── */
+function swIt(id,el,target){
+  const wrap=el.closest('.itabs')||$('it-'+id);
+  wrap.querySelectorAll('.itab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const parent=wrap.parentElement;
+  parent.querySelectorAll(':scope > .ipnl').forEach(p=>p.classList.remove('active'));
+  $(target)?.classList.add('active');
+}
+
+/* ── CONFIG SUB-SWITCH ── */
+function showCfg(id,key){
+  ['va','card','benef','remit'].forEach(k=>{
+    const el=$('cf-'+k+'-'+id);if(el)el.style.display=k===key?'':'none';
+  });
+  // update button styles
+  const panel=$('ipC-'+id);
+  if(panel){
+    panel.querySelectorAll('.btn-xs').forEach(b=>{
+      b.classList.remove('btn-pri');
+    });
+    event.target.classList.add('btn-pri');
+  }
+}
+
+/* ── KEYBOARD ── */
+document.addEventListener('keydown',e=>{
+  if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();$('gsi').focus();showDrop();}
+  if(e.key==='Escape'){hideDrop();closeModal();}
+})
+</script>
+</body>
+</html>

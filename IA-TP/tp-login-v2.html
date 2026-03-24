@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EX Partner Portal — Activation & Login Flow</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+    --pri:#4f46e5;--pri-light:#eef2ff;--pri-dark:#4338ca;
+    --green:#16a34a;--green-bg:#dcfce7;--green-border:#86efac;
+    --red:#dc2626;--red-bg:#fef2f2;--red-border:#fca5a5;
+    --amber:#d97706;--amber-bg:#fefce8;--amber-border:#fde68a;
+    --blue:#2563eb;--blue-bg:#eff6ff;--blue-border:#bfdbfe;
+    --text:#1e293b;--text2:#475569;--text3:#94a3b8;
+    --bg:#f8fafc;--card:#fff;--border:#e2e8f0;--border-light:#f1f5f9;
+    --shadow:0 20px 60px rgba(0,0,0,.08);
+    --radius:8px;
+}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh;display:flex;flex-direction:column;}
+
+/* Layout */
+.center-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px;}
+.auth-card{background:var(--card);border-radius:16px;padding:40px;width:460px;max-width:100%;box-shadow:var(--shadow);border:1px solid var(--border);}
+.auth-logo{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px;}
+.auth-logo .mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#7c3aed,var(--pri));display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:700;flex-shrink:0;}
+.auth-logo .brand{font-size:20px;font-weight:700;color:var(--text);}
+.auth-title{text-align:center;font-size:18px;font-weight:700;margin-bottom:4px;color:var(--text);}
+.auth-sub{text-align:center;font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.6;}
+
+/* Form */
+.fg{margin-bottom:14px;}
+.fl{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:5px;letter-spacing:.2px;}
+.req{color:var(--red);}
+.fi{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:inherit;color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s;background:#fff;}
+.fi:focus{border-color:var(--pri);box-shadow:0 0 0 3px var(--pri-light);}
+.fi.error{border-color:var(--red);box-shadow:0 0 0 3px var(--red-bg);}
+.fi-hint{font-size:11px;color:var(--text3);margin-top:4px;}
+.fi-err{font-size:11px;color:var(--red);margin-top:4px;display:none;}
+.fi-err.show{display:block;}
+
+/* Buttons */
+.btn{padding:7px 16px;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--text2);font-family:inherit;transition:all .15s;display:inline-flex;align-items:center;justify-content:center;gap:6px;}
+.btn:hover:not(:disabled){border-color:var(--pri);color:var(--pri);}
+.btn:disabled{opacity:.5;cursor:not-allowed;}
+.btn-pri{background:var(--pri);color:#fff;border-color:var(--pri);width:100%;padding:12px;font-size:14px;}
+.btn-pri:hover:not(:disabled){background:var(--pri-dark);border-color:var(--pri-dark);color:#fff;}
+.btn-link{border:none;background:none;color:var(--pri);font-size:13px;font-weight:600;padding:0;cursor:pointer;font-family:inherit;}
+.btn-link:hover{text-decoration:underline;}
+.btn-danger{background:var(--red);color:#fff;border-color:var(--red);width:100%;padding:12px;font-size:14px;}
+
+/* Password strength */
+.pw-bar-wrap{height:4px;border-radius:2px;background:var(--border);margin-top:8px;overflow:hidden;}
+.pw-bar{height:100%;border-radius:2px;transition:width .25s,background .25s;width:0;}
+.pw-rules{margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:4px;}
+.pw-rule{font-size:11px;color:var(--text3);display:flex;align-items:center;gap:5px;}
+.pw-rule .dot{width:6px;height:6px;border-radius:50%;background:var(--border);flex-shrink:0;transition:background .2s;}
+.pw-rule.met{color:var(--green);}
+.pw-rule.met .dot{background:var(--green);}
+
+/* Alert */
+.alert{padding:12px 16px;border-radius:var(--radius);font-size:13px;line-height:1.6;display:flex;gap:10px;align-items:flex-start;margin-bottom:16px;}
+.alert-info{background:var(--blue-bg);color:#1e40af;border:1px solid var(--blue-border);}
+.alert-warn{background:var(--amber-bg);color:#92400e;border:1px solid var(--amber-border);}
+.alert-success{background:var(--green-bg);color:#166534;border:1px solid var(--green-border);}
+.alert-error{background:var(--red-bg);color:#991b1b;border:1px solid var(--red-border);}
+.alert-icon{font-size:16px;flex-shrink:0;margin-top:1px;}
+
+/* Steps */
+.steps{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:28px;}
+.step-item{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;}
+.step-circle{width:28px;height:28px;border-radius:50%;background:var(--border);color:var(--text3);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid var(--border);transition:all .2s;z-index:1;}
+.step-circle.active{background:var(--pri);border-color:var(--pri);color:#fff;}
+.step-circle.done{background:var(--green);border-color:var(--green);color:#fff;}
+.step-line{flex:1;height:2px;background:var(--border);margin:0 -2px;margin-bottom:20px;transition:background .2s;}
+.step-line.done{background:var(--green);}
+.step-label{font-size:10px;color:var(--text3);font-weight:500;text-align:center;}
+.step-label.active{color:var(--pri);}
+.step-label.done{color:var(--green);}
+
+/* Page views */
+.page-view{display:none;}
+.page-view.active{display:block;}
+
+/* Footer */
+.auth-footer{text-align:center;margin-top:20px;font-size:12px;color:var(--text3);}
+.auth-footer a{color:var(--pri);text-decoration:none;font-weight:600;}
+.auth-footer a:hover{text-decoration:underline;}
+.divider{border:none;border-top:1px solid var(--border);margin:20px 0;}
+
+/* Toast */
+.toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-80px);padding:12px 24px;border-radius:10px;font-size:13px;font-weight:500;color:#fff;background:var(--green);z-index:9999;transition:transform .25s ease;box-shadow:0 8px 24px rgba(0,0,0,.15);}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.err{background:var(--red);}
+.toast.warn{background:var(--amber);}
+
+/* Demo bar */
+.demo-bar{background:#0f172a;color:#e2e8f0;padding:10px 20px;display:flex;align-items:center;gap:10px;font-size:12px;flex-wrap:wrap;border-top:1px solid #1e293b;}
+.demo-bar .label{font-weight:700;color:#f59e0b;flex-shrink:0;}
+.demo-btn{padding:4px 12px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid #334155;background:transparent;color:#94a3b8;font-family:inherit;transition:all .15s;white-space:nowrap;}
+.demo-btn:hover{border-color:#818cf8;color:#818cf8;}
+.demo-btn.on{border-color:#818cf8;background:rgba(129,140,248,.15);color:#c7d2fe;}
+.demo-sep{color:#334155;font-size:16px;}
+
+/* Password input wrapper */
+.pw-wrap{position:relative;}
+.pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);padding:2px;display:flex;align-items:center;justify-content:center;}
+.pw-toggle:hover{color:var(--text2);}
+.pw-wrap .fi{padding-right:40px;}
+
+/* Captcha */
+.captcha-wrap{display:flex;gap:10px;align-items:stretch;}
+.captcha-img{width:120px;flex-shrink:0;border-radius:var(--radius);border:1px solid var(--border);background:linear-gradient(135deg,#e0e7ff,#ddd6fe);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;letter-spacing:6px;color:#4f46e5;font-family:'Courier New',monospace;cursor:pointer;user-select:none;position:relative;overflow:hidden;}
+.captcha-img::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 2px,rgba(79,70,229,.08) 2px,rgba(79,70,229,.08) 4px);}
+.captcha-refresh{position:absolute;bottom:4px;right:6px;font-size:9px;color:#6366f1;z-index:1;font-family:sans-serif;}
+.captcha-fi-wrap{flex:1;}
+
+/* Countdown */
+.countdown-ring{display:flex;align-items:center;justify-content:center;margin:20px 0;}
+.ring-inner{width:72px;height:72px;position:relative;}
+.ring-inner svg{transform:rotate(-90deg);}
+.ring-inner .ring-bg{fill:none;stroke:var(--border);stroke-width:6;}
+.ring-inner .ring-fill{fill:none;stroke:var(--amber);stroke-width:6;stroke-linecap:round;stroke-dasharray:188;stroke-dashoffset:0;transition:stroke-dashoffset 1s linear;}
+.ring-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--text);}
+
+/* Email mock */
+.email-client{background:#fff;border-radius:16px;box-shadow:var(--shadow);border:1px solid var(--border);width:620px;max-width:100%;overflow:hidden;}
+.email-toolbar{background:#f1f5f9;border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:8px;}
+.traffic{width:12px;height:12px;border-radius:50%;}
+.email-sidebar{width:200px;border-right:1px solid var(--border);padding:16px 0;flex-shrink:0;}
+.email-body-wrap{flex:1;min-width:0;}
+.email-list-item{padding:10px 16px;cursor:pointer;transition:background .15s;border-left:3px solid transparent;}
+.email-list-item:hover{background:#f8fafc;}
+.email-list-item.unread{border-left-color:var(--pri);background:#fafbff;}
+.email-list-item .sender{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;display:flex;align-items:center;justify-content:space-between;}
+.email-list-item .subject{font-size:12px;color:var(--text2);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.email-list-item .preview{font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.email-list-item .time{font-size:10px;color:var(--text3);}
+.email-main{display:flex;}
+.email-content{padding:24px 28px;}
+.email-header-row{display:flex;align-items:flex-start;gap:12px;margin-bottom:20px;}
+.email-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700;flex-shrink:0;}
+.email-from{flex:1;}
+.email-from-name{font-size:13px;font-weight:700;color:var(--text);}
+.email-from-addr{font-size:11px;color:var(--text3);}
+.email-date{font-size:11px;color:var(--text3);}
+.email-subject-line{font-size:16px;font-weight:700;color:var(--text);margin-bottom:20px;}
+.email-body{font-size:13px;color:var(--text2);line-height:1.8;}
+.email-body p{margin-bottom:12px;}
+.email-btn-wrap{margin:24px 0;}
+.email-cta{display:inline-block;padding:12px 32px;background:var(--pri);color:#fff;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:background .15s;}
+.email-cta:hover{background:var(--pri-dark);}
+.email-link-box{margin:16px 0;padding:12px;background:#f8fafc;border-radius:8px;border:1px solid var(--border);word-break:break-all;}
+.email-link-text{font-size:11px;color:var(--text3);}
+.email-link-url{font-size:12px;color:var(--pri);margin-top:4px;}
+.email-expire{font-size:12px;color:var(--amber);font-weight:600;display:flex;align-items:center;gap:5px;margin-top:16px;}
+.email-divider{border:none;border-top:1px solid var(--border);margin:20px 0;}
+.email-footer{font-size:11px;color:var(--text3);line-height:1.7;}
+.sidebar-item{padding:8px 16px;font-size:13px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:8px;border-radius:0;}
+.sidebar-item:hover{background:#f1f5f9;}
+.sidebar-item.active{color:var(--pri);font-weight:600;}
+.unread-dot{width:8px;height:8px;border-radius:50%;background:var(--pri);flex-shrink:0;}
+
+/* Locked state */
+.lock-icon{text-align:center;font-size:56px;margin:8px 0 16px;}
+
+/* Success check */
+.success-check{width:72px;height:72px;border-radius:50%;background:var(--green-bg);border:3px solid var(--green-border);display:flex;align-items:center;justify-content:center;margin:8px auto 20px;font-size:32px;}
+
+/* Expired state */
+.expired-icon{text-align:center;font-size:56px;margin:8px 0 16px;}
+
+/* Back link */
+.back-link{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text2);cursor:pointer;margin-bottom:20px;}
+.back-link:hover{color:var(--pri);}
+.back-link svg{width:16px;height:16px;}
+</style>
+</head>
+<body>
+
+<div class="center-wrap">
+
+  <!-- ============================
+       VIEW 0: 邮件收件箱
+  ============================= -->
+  <div class="page-view active" id="viewEmail">
+    <div class="email-client">
+      <!-- Window chrome -->
+      <div class="email-toolbar">
+        <div class="traffic" style="background:#ff5f57;"></div>
+        <div class="traffic" style="background:#ffbd2e;"></div>
+        <div class="traffic" style="background:#28ca41;"></div>
+        <span style="font-size:12px;color:#64748b;margin-left:8px;">Inbox — liwei@fulunited.com</span>
+      </div>
+      <div class="email-main">
+        <!-- Sidebar -->
+        <div class="email-sidebar">
+          <div class="sidebar-item active">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            Inbox
+            <span style="margin-left:auto;background:var(--pri);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:9999px;">1</span>
+          </div>
+          <div class="sidebar-item">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            Sent
+          </div>
+          <div class="sidebar-item">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+            Trash
+          </div>
+        </div>
+        <!-- Email content -->
+        <div class="email-body-wrap">
+          <!-- Email list item -->
+          <div class="email-list-item unread" onclick="openEmail()">
+            <div class="sender">
+              <span>EX Partner Portal</span>
+              <span class="time">Just now</span>
+            </div>
+            <div class="subject">🔐 Activate Your EX Partner Portal Account</div>
+            <div class="preview">You've been invited to join EX Partner Portal. Click to activate your account...</div>
+          </div>
+          <div class="email-list-item">
+            <div class="sender">
+              <span>IT Department</span>
+              <span class="time">Yesterday</span>
+            </div>
+            <div class="subject">Weekly system maintenance reminder</div>
+            <div class="preview">Scheduled maintenance this Sunday 02:00–04:00 UTC...</div>
+          </div>
+          <div class="email-list-item">
+            <div class="sender">
+              <span>HR Notice</span>
+              <span class="time">Mon</span>
+            </div>
+            <div class="subject">Policy update — Remote work guidelines</div>
+            <div class="preview">Please review the updated guidelines attached...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:12px;font-size:12px;color:var(--text3);">
+      Click the unread email above to open it ↑
+    </div>
+  </div>
+
+  <!-- ============================
+       VIEW 1: 打开邮件正文
+  ============================= -->
+  <div class="page-view" id="viewEmailOpen">
+    <div class="email-client">
+      <div class="email-toolbar">
+        <div class="traffic" style="background:#ff5f57;"></div>
+        <div class="traffic" style="background:#ffbd2e;"></div>
+        <div class="traffic" style="background:#28ca41;"></div>
+        <span style="font-size:12px;color:#64748b;margin-left:8px;">Inbox — liwei@fulunited.com</span>
+      </div>
+      <div class="email-content">
+        <div class="back-link" onclick="goTo('viewEmail')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+          Back to Inbox
+        </div>
+        <div class="email-subject-line">🔐 Activate Your EX Partner Portal Account</div>
+        <div class="email-header-row">
+          <div class="email-avatar">EX</div>
+          <div class="email-from">
+            <div class="email-from-name">EX Partner Portal</div>
+            <div class="email-from-addr">support@eurewax.com → liwei@fulunited.com</div>
+          </div>
+          <div class="email-date">Mar 8, 2026, 17:45</div>
+        </div>
+
+        <div class="email-body">
+          <p>Hi <strong>Li Wei</strong>,</p>
+          <p>You have been invited to join <strong>EX Partner Portal</strong> as a Tenant Administrator for <strong>Fulunited Limited</strong>.</p>
+          <p>Please click the button below to activate your account and set your password. This link is valid for <strong>24 hours</strong>.</p>
+
+          <div class="email-btn-wrap">
+            <button class="email-cta" onclick="goTo('viewSetPassword')">Activate My Account →</button>
+          </div>
+
+          <p style="font-size:12px;color:var(--text3);">If the button above doesn't work, copy and paste the link below into your browser:</p>
+          <div class="email-link-box">
+            <div class="email-link-text">Activation link (expires in 24 hours):</div>
+            <div class="email-link-url">https://portal.eurewax.com/activate?token=eyJhbGciOiJIUzI1NiJ9.eyJtaWQiOiJGVUxVTklURUQiLCJ1aWQiOiJsaXdlaUBmdWx1bml0ZWQuY29tIiwiZXhwIjoxNzQxNTIwMDAwfQ.xQr2k</div>
+          </div>
+
+          <div class="email-expire">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            This link will expire on Mar 9, 2026 at 17:45 (UTC+8)
+          </div>
+
+          <hr class="email-divider">
+          <div class="email-footer">
+            <p>If you did not request this, please ignore this email. Your account will not be activated unless you click the link above.</p>
+            <p style="margin-top:8px;">Questions? Contact us at <a href="mailto:support@eurewax.com" style="color:var(--pri);">support@eurewax.com</a></p>
+            <p style="margin-top:12px;color:#cbd5e1;">© 2026 EX Partner Portal · Powered by Eurewax · <a href="#" style="color:#94a3b8;">Unsubscribe</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================
+       VIEW 2: 设置密码（激活）
+  ============================= -->
+  <div class="page-view" id="viewSetPassword">
+    <div class="auth-card">
+      <div class="auth-logo"><div class="mark">EX</div><span class="brand">EX Partner Portal</span></div>
+      <div class="auth-title">Activate Your Account</div>
+      <div class="auth-sub">Welcome, Li Wei! Set your password to complete account activation.</div>
+
+      <!-- Steps -->
+      <div class="steps">
+        <div class="step-item">
+          <div class="step-circle done">✓</div>
+          <div class="step-label done">Email Verified</div>
+        </div>
+        <div class="step-line done"></div>
+        <div class="step-item">
+          <div class="step-circle active">2</div>
+          <div class="step-label active">Set Password</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-item">
+          <div class="step-circle">3</div>
+          <div class="step-label">Sign In</div>
+        </div>
+      </div>
+
+      <div class="alert alert-info">
+        <span class="alert-icon">ℹ️</span>
+        <div>
+          <strong>liwei@fulunited.com</strong><br>
+          Tenant: <strong>Fulunited Limited</strong> &nbsp;·&nbsp; Role: <strong>Admin</strong>
+        </div>
+      </div>
+
+      <div class="fg">
+        <label class="fl">Password <span class="req">*</span></label>
+        <div class="pw-wrap">
+          <input class="fi" id="actPw" type="password" placeholder="Create a strong password" oninput="checkStrengthV2('actPw','actBar')">
+          <button class="pw-toggle" type="button" onclick="togglePw('actPw',this)">
+            <svg id="eyeAct" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <div class="pw-bar-wrap"><div class="pw-bar" id="actBar"></div></div>
+        <div class="pw-rules" id="actRules">
+          <div class="pw-rule" id="rule-len"><span class="dot"></span>Min. 8 characters</div>
+          <div class="pw-rule" id="rule-upper"><span class="dot"></span>Uppercase letter</div>
+          <div class="pw-rule" id="rule-lower"><span class="dot"></span>Lowercase letter</div>
+          <div class="pw-rule" id="rule-num"><span class="dot"></span>Number</div>
+          <div class="pw-rule" id="rule-sym"><span class="dot"></span>Special character</div>
+        </div>
+      </div>
+
+      <div class="fg" style="margin-top:4px;">
+        <label class="fl">Confirm Password <span class="req">*</span></label>
+        <div class="pw-wrap">
+          <input class="fi" id="actPwCf" type="password" placeholder="Repeat your password">
+          <button class="pw-toggle" type="button" onclick="togglePw('actPwCf',this)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <div class="fi-err" id="cfErr">Passwords do not match</div>
+      </div>
+
+      <button class="btn btn-pri" onclick="doActivation()">Activate Account &amp; Sign In</button>
+
+      <div class="auth-footer">
+        Invitation sent by <strong>EX Partner Portal</strong> &lt;support@eurewax.com&gt;<br>
+        Link expires 24 hours after issue. <a href="#" onclick="goTo('viewExpired')">What if it expired?</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================
+       VIEW 3: 激活成功
+  ============================= -->
+  <div class="page-view" id="viewActivated">
+    <div class="auth-card" style="text-align:center;">
+      <div class="auth-logo"><div class="mark">EX</div><span class="brand">EX Partner Portal</span></div>
+
+      <!-- Steps done -->
+      <div class="steps" style="margin-bottom:24px;">
+        <div class="step-item">
+          <div class="step-circle done">✓</div>
+          <div class="step-label done">Email Verified</div>
+        </div>
+        <div class="step-line done"></div>
+        <div class="step-item">
+          <div class="step-circle done">✓</div>
+          <div class="step-label done">Set Password</div>
+        </div>
+        <div class="step-line done"></div>
+        <div class="step-item">
+          <div class="step-circle active">3</div>
+          <div class="step-label active">Sign In</div>
+        </div>
+      </div>
+
+      <div class="success-check">✓</div>
+      <div class="auth-title">Account Activated!</div>
+      <div class="auth-sub" style="margin-bottom:24px;">Your password has been set successfully. You can now sign in to EX Partner Portal.</div>
+      <button class="btn btn-pri" onclick="goTo('viewLogin')">Go to Sign In →</button>
+    </div>
+  </div>
+
+  <!-- ============================
+       VIEW 4: 链接已过期
+  ============================= -->
+  <div class="page-view" id="viewExpired">
+    <div class="auth-card" style="text-align:center;">
+      <div class="auth-logo"><div class="mark">EX</div><span class="brand">EX Partner Portal</span></div>
+      <div class="expired-icon">⏰</div>
+      <div class="auth-title">Activation Link Expired</div>
+      <div class="auth-sub" style="margin-bottom:20px;">This activation link has expired. Links are valid for <strong>24 hours</strong> after being sent.</div>
+
+      <div class="alert alert-warn" style="text-align:left;">
+        <span class="alert-icon">⚠️</span>
+        <div>
+          To receive a new activation link, please contact your EX account representative or request a resend from your portal administrator.
+        </div>
+      </div>
+
+      <button class="btn btn-pri" onclick="showToast('New activation email sent to liwei@fulunited.com','ok')">Request New Activation Link</button>
+
+      <div class="auth-footer">
+        <a href="#" onclick="goTo('viewLogin')">Already activated? Sign In</a>
+        &nbsp;·&nbsp;
+        <a href="mailto:support@eurewax.com">Contact Support</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================
+       VIEW 5: 登录页（正常 + 非常用IP验证码）
+  ============================= -->
+  <div class="page-view" id="viewLogin">
+    <div class="auth-card">
+      <div class="auth-logo"><div class="mark">EX</div><span class="brand">EX Partner Portal</span></div>
+      <div class="auth-title">Sign In</div>
+      <div class="auth-sub">Sign in to your tenant management portal</div>
+
+      <div class="alert alert-warn" id="unknownIpBanner" style="display:none;">
+        <span class="alert-icon">🔒</span>
+        <div>
+          <strong>Unrecognized device or location</strong><br>
+          A CAPTCHA is required because we don't recognize this browser or IP address.
+        </div>
+      </div>
+
+      <div class="fg">
+        <label class="fl">Email or Phone <span class="req">*</span></label>
+        <input class="fi" id="loginEmail" placeholder="Enter your email or phone number" value="liwei@fulunited.com">
+      </div>
+      <div class="fg">
+        <label class="fl">Password <span class="req">*</span></label>
+        <div class="pw-wrap">
+          <input class="fi" id="loginPw" type="password" placeholder="Enter your password">
+          <button class="pw-toggle" type="button" onclick="togglePw('loginPw',this)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <div class="fi-err show" id="loginPwErr" style="display:none !important;"></div>
+      </div>
+
+      <!-- CAPTCHA — shown when unknownIp=true -->
+      <div class="fg" id="captchaGroup" style="display:none;">
+        <label class="fl">CAPTCHA <span class="req">*</span></label>
+        <div class="captcha-wrap">
+          <div class="captcha-img" id="captchaImg" onclick="refreshCaptcha()" title="Click to refresh">
+            <span id="captchaText" style="position:relative;z-index:1;">K7M2P</span>
+            <span class="captcha-refresh">↻ refresh</span>
+          </div>
+          <div class="captcha-fi-wrap">
+            <input class="fi" id="captchaInput" placeholder="Enter the code above" style="height:100%;" autocomplete="off">
+            <div class="fi-hint">Case-insensitive · Click image to refresh</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div style="font-size:12px;color:var(--text3);" id="attemptHint"></div>
+        <button class="btn-link" onclick="goTo('viewForgot1')">Forgot Password?</button>
+      </div>
+
+      <button class="btn btn-pri" onclick="doLogin()" id="loginBtn">Sign In</button>
+
+      <div class="auth-footer">
+        Tenant Portal is by invitation only.<br>
+        Contact <a href="mailto:support@eurewax.com">support@eurewax.com</a> for access.
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================
+       VIEW 6: 账号锁定
+  ============================= -->
+  <div class="page-view" id="viewLocked">
+    <div class="auth-card" style="text-align:center;">
+      <div class="auth-logo"><div class="mark">EX</div><span class="brand">EX Partner Portal</span></div>
+      <div class="lock-icon">🔒</div>
+      <div class="auth-title">Account Temporarily Locked</div>
+      <div class="auth-sub" style="margin-bottom:20px;">
+        Your account has been locked after <strong>5 failed login attempts</strong>.<br>
+        For your security, please reset your password to unlock it.
+      </div>
+
+      <div class="alert alert-error" style="text-align:left;">
+        <span class="alert-icon">⛔</span>
+        <div>
+          Account: <strong>liwei@fulunited.com</strong><br>
+          Locked at: <strong>Mar 8, 2026 · 18:02 (UTC+8)</strong><br>
+          Reason: Exceeded maximum password attempts (5/5)
+        </div>
+      </div>
+
+      <!-- Countdown ring -->
+      <div class="countdown-ring">
+        <div class="ring-inner">
+          <svg viewBox="0 0 64 64" width="72" height="72">
+            <circle class="ring-bg" cx="32" cy="32" r="30"/>
+            <circle class="ring-fill" id="lockRing" cx="32" cy="32" r="30"/>
+          </svg>
+          <div class="ring-text" id="lockCountdown">30:00</div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--text3);margin-top:-8px;margin-bottom:20px;">Auto-unlock after 30 minutes — or reset your password immediately below</div>
+
+      <button class="btn btn-pri" onclick="goTo('viewForgot1')">Reset Password to Unlock</button>
+      <div style="margin-top:12px;">
+        <button class="btn" style="width:100%;" onclick="goTo('viewLogin')">Back to Sign In</button>
+      </div>
+      <div class="auth-footer">
+        Not you? <a href="mailto:support@eurewax.com">Report suspicious activity</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================
+       VIEW 7: 忘记密码 Step 1
+  ============================= -->
+  <div class="page-view" id="viewForgot1">
+    <div class="auth-card">
+      <div class="auth-logo"><div class="mark">EX</div><span class="brand">EX Partner Portal</span></div>
+      <div class="auth-title">Forgot Password</div>
+      <div class="auth-sub">Enter your registered email or phone number and we'll send a verification code.</div>
+
+      <div class="steps">
+        <div class="step-item">
+          <div class="step-circle active">1</div>
+          <div class="step-label active">Verify Identity</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-item">
+          <div class="step-circle">2</div>
+          <div class="step-label">Enter Code</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-item">
+          <div class="step-circle">3</div>
+          <div class="step-label">New Password</div>
+        </div>
+      </div>
+
+      <div class="fg">
+        <label class="fl">Email or Phone <span class="req">*</span></label>
+        <input class="fi" id="forgotAccount" placeholder="Enter your registered email or phone" value="liwei@fulunited.com">
+      </div>
+
+      <button class="btn btn-pri" onclick="doForgot1()">Send Verification Code</button>
+      <div class="auth-footer"><a href="#" onclick="goTo('viewLogin')">← Back to Sign In</a></div>
+    </div>
+  </div>
+
+  <!-- ============================
+       VIEW 8: 忘记密码 Step 2 — 验证码
+  ============================= -->
+  <div class="page-view" id="viewForgot2">
+    <div class="auth-card">
+      <div class="auth-logo"><div class="mark">EX</div><span class="brand">EX Partner Portal</span></div>
+      <div class="auth-title">Enter Verification Code</div>
+      <div class="auth-sub">A 6-digit code has been sent to <strong id="forgotTarget">liwei@fulunited.com</strong>.<br>Valid for 5 minutes.</div>
+
+      <div class="steps">
+        <div class="step-item">
+          <div class="step-circle done">✓</div>
+          <div class="step-label done">Verify Identity</div>
+        </div>
+        <div class="step-line done"></div>
+        <div class="step-item">
+          <div class="step-circle active">2</div>
+          <div class="step-label active">Enter Code</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-item">
+          <div class="step-circle">3</div>
+          <div class="step-label">New Password</div>
+        </div>
+      </div>
+
+      <div class="fg">
+        <label class="fl">Verification Code <span class="req">*</span></label>
+        <div style="display:flex;gap:10px;align-items:flex-start;">
+          <input class="fi" id="forgotCode" placeholder="——  ——  ——  ——  ——  ——" maxlength="6" style="flex:1;letter-spacing:10px;font-size:22px;font-weight:700;text-align:center;padding:10px 8px;">
+          <button class="btn" id="resendBtn" onclick="doResend()" style="height:42px;min-width:100px;flex-shrink:0;">Resend</button>
+        </div>
+        <div class="fi-hint" id="resendHint">Didn't receive it? You can resend in 60s.</div>
+      </div>
+
+      <button class="btn btn-pri" onclick="doForgot2()">Verify Code</button>
+      <div class="auth-footer">
+        <a href="#" onclick="goTo('viewForgot1')">← Change account</a>
+        <span style="margin:0 10px;color:var(--border);">|</span>
+        <a href="#" onclick="goTo('viewLogin')">Back to Sign In</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================
+       VIEW 9: 忘记密码 Step 3 — 设新密码
+  ============================= -->
+  <div class="page-view" id="viewForgot3">
+    <div class="auth-card">
+      <div class="auth-logo"><div class="mark">EX</div><span class="brand">EX Partner Portal</span></div>
+      <div class="auth-title">Set New Password</div>
+      <div class="auth-sub">Create a new password for your account.</div>
+
+      <div class="steps">
+        <div class="step-item">
+          <div class="step-circle done">✓</div>
+          <div class="step-label done">Verify Identity</div>
+        </div>
+        <div class="step-line done"></div>
+        <div class="step-item">
+          <div class="step-circle done">✓</div>
+          <div class="step-label done">Enter Code</div>
+        </div>
+        <div class="step-line done"></div>
+        <div class="step-item">
+          <div class="step-circle active">3</div>
+          <div class="step-label active">New Password</div>
+        </div>
+      </div>
+
+      <div class="fg">
+        <label class="fl">New Password <span class="req">*</span></label>
+        <div class="pw-wrap">
+          <input class="fi" id="resetPw" type="password" placeholder="Create a strong password" oninput="checkStrengthV2('resetPw','resetBar')">
+          <button class="pw-toggle" type="button" onclick="togglePw('resetPw',this)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <div class="pw-bar-wrap"><div class="pw-bar" id="resetBar"></div></div>
+        <div class="fi-hint" id="resetHint">At least 8 chars · uppercase · lowercase · number · special char</div>
+      </div>
+      <div class="fg">
+        <label class="fl">Confirm New Password <span class="req">*</span></label>
+        <div class="pw-wrap">
+          <input class="fi" id="resetPwCf" type="password" placeholder="Repeat your new password">
+          <button class="pw-toggle" type="button" onclick="togglePw('resetPwCf',this)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <button class="btn btn-pri" onclick="doReset()">Reset Password</button>
+    </div>
+  </div>
+
+  <!-- ============================
+       VIEW 10: 重置成功
+  ============================= -->
+  <div class="page-view" id="viewResetDone">
+    <div class="auth-card" style="text-align:center;">
+      <div class="auth-logo"><div class="mark">EX</div><span class="brand">EX Partner Portal</span></div>
+      <div class="success-check">✓</div>
+      <div class="auth-title">Password Reset Successful</div>
+      <div class="auth-sub" style="margin-bottom:24px;">Your password has been updated. Please sign in with your new password.</div>
+      <button class="btn btn-pri" onclick="goTo('viewLogin')">Go to Sign In →</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Demo Navigation Bar -->
+<div class="demo-bar">
+  <span class="label">▶ DEMO FLOW</span>
+  <button class="demo-btn on" onclick="goTo('viewEmail')">① Inbox</button>
+  <button class="demo-btn" onclick="goTo('viewEmailOpen')">② Open Email</button>
+  <button class="demo-btn" onclick="goTo('viewSetPassword')">③ Set Password</button>
+  <button class="demo-btn" onclick="goTo('viewActivated')">④ Activated</button>
+  <span class="demo-sep">|</span>
+  <button class="demo-btn" onclick="goToLoginNormal()">⑤ Login (Normal)</button>
+  <button class="demo-btn" onclick="goToLoginUnknown()">⑥ Login (Unknown IP)</button>
+  <button class="demo-btn" onclick="goTo('viewLocked')">⑦ Locked</button>
+  <span class="demo-sep">|</span>
+  <button class="demo-btn" onclick="goTo('viewForgot1')">⑧ Forgot PW</button>
+  <button class="demo-btn" onclick="goTo('viewExpired')">⑨ Link Expired</button>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---- State ---- */
+let loginAttempts = 0;
+let isUnknownIp = false;
+let lockTimer = null;
+let lockSeconds = 1800; // 30 min
+
+const CAPTCHA_CODES = ['K7M2P','R4NX8','Z9WQ3','B6TY7','H2JC5'];
+let currentCaptcha = CAPTCHA_CODES[0];
+let resendTimer = null;
+let resendCount = 60;
+
+/* ---- Navigation ---- */
+function goTo(viewId) {
+  document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active'));
+  const el = document.getElementById(viewId);
+  if (el) el.classList.add('active');
+  // Demo bar highlight
+  document.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('on'));
+  const map = {
+    viewEmail:0, viewEmailOpen:1, viewSetPassword:2, viewActivated:3,
+    viewLogin:4, viewLocked:6, viewForgot1:7, viewForgot2:7, viewForgot3:7, viewResetDone:7, viewExpired:8
+  };
+  const idx = map[viewId];
+  if (idx !== undefined) document.querySelectorAll('.demo-btn')[idx]?.classList.add('on');
+}
+
+function goToLoginNormal() {
+  isUnknownIp = false;
+  loginAttempts = 0;
+  updateLoginUI();
+  goTo('viewLogin');
+}
+
+function goToLoginUnknown() {
+  isUnknownIp = true;
+  loginAttempts = 0;
+  updateLoginUI();
+  goTo('viewLogin');
+}
+
+function openEmail() {
+  goTo('viewEmailOpen');
+}
+
+/* ---- Toast ---- */
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + (type === 'err' ? 'err' : type === 'warn' ? 'warn' : '') + ' show';
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ---- Toggle password visibility ---- */
+function togglePw(inputId, btn) {
+  const fi = document.getElementById(inputId);
+  const show = fi.type === 'password';
+  fi.type = show ? 'text' : 'password';
+  btn.querySelector('svg').style.opacity = show ? '1' : '0.4';
+}
+
+/* ---- Password strength ---- */
+function checkStrengthV2(inputId, barId) {
+  const pw = document.getElementById(inputId).value;
+  const bar = document.getElementById(barId);
+  const rules = {
+    'rule-len': pw.length >= 8,
+    'rule-upper': /[A-Z]/.test(pw),
+    'rule-lower': /[a-z]/.test(pw),
+    'rule-num': /[0-9]/.test(pw),
+    'rule-sym': /[^a-zA-Z0-9]/.test(pw)
+  };
+  let score = Object.values(rules).filter(Boolean).length;
+  Object.entries(rules).forEach(([id, met]) => {
+    const el = document.getElementById(id);
+    if (el) el.className = 'pw-rule' + (met ? ' met' : '');
+  });
+  const pct = (score / 5) * 100;
+  if (bar) {
+    bar.style.width = pct + '%';
+    if (score <= 2) bar.style.background = '#ef4444';
+    else if (score <= 3) bar.style.background = '#f59e0b';
+    else if (score <= 4) bar.style.background = '#3b82f6';
+    else bar.style.background = '#16a34a';
+  }
+}
+
+function validatePw(pw, cf) {
+  if (pw.length < 8) { showToast('Password must be at least 8 characters', 'err'); return false; }
+  if (!/[A-Z]/.test(pw)) { showToast('Must contain at least one uppercase letter', 'err'); return false; }
+  if (!/[a-z]/.test(pw)) { showToast('Must contain at least one lowercase letter', 'err'); return false; }
+  if (!/[0-9]/.test(pw)) { showToast('Must contain at least one number', 'err'); return false; }
+  if (!/[^a-zA-Z0-9]/.test(pw)) { showToast('Must contain at least one special character', 'err'); return false; }
+  if (pw !== cf) { showToast('Passwords do not match', 'err'); return false; }
+  return true;
+}
+
+/* ---- Activation ---- */
+function doActivation() {
+  const pw = document.getElementById('actPw').value;
+  const cf = document.getElementById('actPwCf').value;
+  const cfErr = document.getElementById('cfErr');
+  if (pw !== cf) {
+    cfErr.style.display = 'block';
+    document.getElementById('actPwCf').classList.add('error');
+    return;
+  } else {
+    cfErr.style.display = 'none';
+    document.getElementById('actPwCf').classList.remove('error');
+  }
+  if (!validatePw(pw, cf)) return;
+  goTo('viewActivated');
+}
+
+/* ---- CAPTCHA ---- */
+function refreshCaptcha() {
+  const codes = CAPTCHA_CODES;
+  currentCaptcha = codes[Math.floor(Math.random() * codes.length)];
+  document.getElementById('captchaText').textContent = currentCaptcha;
+  document.getElementById('captchaInput').value = '';
+  showToast('CAPTCHA refreshed', 'ok');
+}
+
+/* ---- Login ---- */
+function updateLoginUI() {
+  const banner = document.getElementById('unknownIpBanner');
+  const captchaGroup = document.getElementById('captchaGroup');
+  if (isUnknownIp) {
+    banner.style.display = 'flex';
+    captchaGroup.style.display = 'block';
+  } else {
+    banner.style.display = 'none';
+    captchaGroup.style.display = 'none';
+  }
+  const hint = document.getElementById('attemptHint');
+  if (loginAttempts > 0) {
+    const remaining = 5 - loginAttempts;
+    hint.textContent = `⚠️ ${loginAttempts}/5 failed attempts · ${remaining} remaining`;
+    hint.style.color = loginAttempts >= 4 ? '#dc2626' : '#d97706';
+  } else {
+    hint.textContent = '';
+  }
+}
+
+function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pw = document.getElementById('loginPw').value;
+  if (!email) { showToast('Please enter email or phone', 'err'); return; }
+  if (!pw) { showToast('Please enter password', 'err'); return; }
+
+  // CAPTCHA check
+  if (isUnknownIp) {
+    const cap = document.getElementById('captchaInput').value.trim().toUpperCase();
+    if (!cap) { showToast('Please enter the CAPTCHA code', 'err'); return; }
+    if (cap !== currentCaptcha) {
+      refreshCaptcha();
+      showToast('Incorrect CAPTCHA. Please try again.', 'err');
+      return;
+    }
+  }
+
+  // Simulate wrong password (anything not "Aa1@correct")
+  if (pw !== 'Aa1@correct') {
+    loginAttempts++;
+    updateLoginUI();
+    if (loginAttempts >= 5) {
+      goTo('viewLocked');
+      startLockCountdown();
+      return;
+    }
+    const remaining = 5 - loginAttempts;
+    const pwErr = document.getElementById('loginPwErr');
+    pwErr.textContent = `Incorrect password. ${remaining} attempt${remaining > 1 ? 's' : ''} remaining before account lockout.`;
+    pwErr.style.removeProperty('display');
+    pwErr.classList.add('show');
+    document.getElementById('loginPw').classList.add('error');
+    showToast(`Wrong password — ${remaining} attempt${remaining > 1 ? 's' : ''} left`, 'err');
+    if (isUnknownIp) refreshCaptcha();
+    return;
+  }
+
+  showToast('Login successful! Redirecting...');
+}
+
+/* ---- Lockout countdown ---- */
+function startLockCountdown() {
+  lockSeconds = 1800;
+  updateLockDisplay();
+  if (lockTimer) clearInterval(lockTimer);
+  lockTimer = setInterval(() => {
+    lockSeconds--;
+    updateLockDisplay();
+    if (lockSeconds <= 0) {
+      clearInterval(lockTimer);
+      document.getElementById('lockCountdown').textContent = 'Unlocked';
+      document.getElementById('lockRing').style.strokeDashoffset = '0';
+    }
+  }, 1000);
+}
+
+function updateLockDisplay() {
+  const m = Math.floor(lockSeconds / 60);
+  const s = lockSeconds % 60;
+  document.getElementById('lockCountdown').textContent = `${m}:${s.toString().padStart(2,'0')}`;
+  // Ring progress (188 = full circumference)
+  const pct = lockSeconds / 1800;
+  document.getElementById('lockRing').style.strokeDashoffset = (188 * (1 - pct)).toString();
+}
+
+/* ---- Forgot Password ---- */
+function doForgot1() {
+  const v = document.getElementById('forgotAccount').value.trim();
+  if (!v) { showToast('Please enter email or phone', 'err'); return; }
+  document.getElementById('forgotTarget').textContent = v;
+  goTo('viewForgot2');
+  startResendTimer();
+}
+
+function startResendTimer() {
+  clearInterval(resendTimer);
+  resendCount = 60;
+  const btn = document.getElementById('resendBtn');
+  const hint = document.getElementById('resendHint');
+  btn.disabled = true;
+  btn.textContent = `${resendCount}s`;
+  resendTimer = setInterval(() => {
+    resendCount--;
+    if (resendCount <= 0) {
+      clearInterval(resendTimer);
+      btn.disabled = false;
+      btn.textContent = 'Resend';
+      hint.textContent = "Didn't receive it? Click to resend.";
+    } else {
+      btn.textContent = `${resendCount}s`;
+      hint.textContent = `Didn't receive it? You can resend in ${resendCount}s.`;
+    }
+  }, 1000);
+}
+
+function doResend() {
+  showToast('Verification code resent');
+  startResendTimer();
+}
+
+function doForgot2() {
+  const code = document.getElementById('forgotCode').value.trim();
+  if (!/^\d{6}$/.test(code)) { showToast('Please enter a valid 6-digit code', 'err'); return; }
+  goTo('viewForgot3');
+}
+
+function doReset() {
+  const pw = document.getElementById('resetPw').value;
+  const cf = document.getElementById('resetPwCf').value;
+  if (!validatePw(pw, cf)) return;
+  goTo('viewResetDone');
+}
+</script>
+</body>
+</html>
