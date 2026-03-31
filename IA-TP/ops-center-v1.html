@@ -454,7 +454,7 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.5;}
               <td><span class="tag tag-pri">Payins</span> <span class="tag tag-green">Payouts</span></td>
               <td><span class="status s-active">Active</span></td>
               <td style="color:var(--text3);font-size:12px;">2025-11-01</td>
-              <td><span class="td-link" onclick="showPage('pgMemberDetail')">查看</span> &nbsp;<span class="td-link" onclick="openTicketModal('pricing')">费率工单</span></td>
+              <td><span class="td-link" onclick="showPage('pgMemberDetail')">查看</span></td>
             </tr>
             <tr>
               <td><div style="font-weight:600;">Global Trade Co.</div><div style="font-size:11px;color:var(--text3);">ops@globaltrade.com</div></td>
@@ -463,7 +463,7 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.5;}
               <td><span class="tag tag-pri">OnRamp</span></td>
               <td><span class="status s-active">Active</span></td>
               <td style="color:var(--text3);font-size:12px;">2025-12-15</td>
-              <td><span class="td-link" onclick="showPage('pgMemberDetail')">查看</span> &nbsp;<span class="td-link" onclick="openTicketModal('pricing')">费率工单</span></td>
+              <td><span class="td-link" onclick="showPage('pgMemberDetail')">查看</span></td>
             </tr>
             <tr>
               <td><div style="font-weight:600;">Pacific Imports Ltd</div></td>
@@ -503,9 +503,9 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.5;}
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
             开通产品
           </button>
-          <button class="btn btn-sm btn-pri" onclick="openTicketModal('pricing')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            新建工单
+          <button class="btn btn-sm" onclick="showToast('跳转至工作流中心发起配置工单')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            工作流中心
           </button>
         </div>
       </div>
@@ -514,14 +514,12 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.5;}
       <div class="tabs">
         <div class="tab active" onclick="switchDetailTab(this,'tabInfo')">基本信息</div>
         <div class="tab" onclick="switchDetailTab(this,'tabDetailProducts')">开通产品</div>
-        <div class="tab" onclick="switchDetailTab(this,'tabDetailOrders')">订单记录</div>
         <div class="tab" onclick="switchDetailTab(this,'tabDetailBalance')">余额</div>
-        <div class="tab" onclick="switchDetailTab(this,'tabDetailTickets')">工单历史<span class="tab-badge">2</span></div>
       </div>
 
       <!-- Tab 1: 基本信息 -->
       <div id="tabInfo">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px;">
+        <div style="margin-bottom:28px;">
           <div class="customer-card">
             <div style="font-size:13px;font-weight:700;margin-bottom:14px;">商户信息</div>
             <div class="info-row"><span class="info-label">商户名称</span><span class="info-value">全联有限公司</span></div>
@@ -530,16 +528,6 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.5;}
             <div class="info-row"><span class="info-label">注册人昵称</span><span class="info-value">Li Wei</span></div>
             <div class="info-row"><span class="info-label">联系手机</span><span class="info-value">+852 **** 8821</span></div>
             <div class="info-row"><span class="info-label">联系邮箱</span><span class="info-value">admin@fulunited.com</span></div>
-          </div>
-          <div class="customer-card">
-            <div style="font-size:13px;font-weight:700;margin-bottom:14px;">当前费率方案</div>
-            <div class="info-row"><span class="info-label">Payins</span><span class="info-value">Standard-B (MDR 1.2%)</span></div>
-            <div class="info-row"><span class="info-label">Payouts</span><span class="info-value">Standard-A (Fee $2.50)</span></div>
-            <div class="info-row"><span class="info-label">返点方案</span><span class="info-value">Rebate-5%</span></div>
-            <div style="margin-top:12px;padding:8px 12px;background:var(--amber-bg);border-radius:6px;font-size:11px;color:var(--amber);font-weight:500;display:flex;align-items:center;justify-content:space-between;">
-              <span>⚠️ 费率调整工单待审核中</span>
-              <span class="td-link" style="font-size:11px;color:var(--pri);" onclick="openTicketModal('pricing')">查看 →</span>
-            </div>
           </div>
         </div>
 
@@ -629,76 +617,116 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.5;}
         </div>
       </div>
 
-      <!-- Tab 3: 订单记录 -->
-      <div id="tabDetailOrders" style="display:none;">
-        <div class="filter-bar" style="margin-bottom:14px;">
-          <input class="fi" style="width:200px;" placeholder="订单号...">
-          <select class="fi fi-select"><option>全部类型</option><option>收款</option><option>付款</option><option>汇兑</option></select>
-          <select class="fi fi-select"><option>全部状态</option><option>成功</option><option>处理中</option><option>失败</option></select>
-          <input class="fi fi-date" type="date">
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>订单号</th><th>类型</th><th>金额</th><th>状态</th><th>时间</th></tr></thead>
-            <tbody>
-              <tr><td class="td-mono td-link">ORD-20260308-001</td><td><span class="tag">收款</span></td><td style="font-weight:600;">$12,500.00</td><td><span class="status s-success">Success</span></td><td style="font-size:12px;color:var(--text3);">2026-03-08 15:32</td></tr>
-              <tr><td class="td-mono td-link">ORD-20260308-002</td><td><span class="tag">付款</span></td><td style="font-weight:600;">$3,200.00</td><td><span class="status s-processing">Processing</span></td><td style="font-size:12px;color:var(--text3);">2026-03-08 14:10</td></tr>
-              <tr><td class="td-mono td-link">ORD-20260307-089</td><td><span class="tag">汇兑</span></td><td style="font-weight:600;">$50,000.00</td><td><span class="status s-success">Success</span></td><td style="font-size:12px;color:var(--text3);">2026-03-07 09:45</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Tab 4: 余额 -->
+      <!-- Tab 3: 余额 -->
       <div id="tabDetailBalance" style="display:none;">
-        <div class="stats-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:0;">
-          <div class="stat-card"><div class="stat-label">USD 可用余额</div><div class="stat-value">$245,830</div><div class="stat-sub">冻结 $12,500</div></div>
-          <div class="stat-card"><div class="stat-label">USDT 可用余额</div><div class="stat-value">88,420</div><div class="stat-sub">冻结 0</div></div>
-          <div class="stat-card"><div class="stat-label">CNY 可用余额</div><div class="stat-value">¥0</div><div class="stat-sub">暂无余额</div></div>
+
+        <!-- 客户总余额汇总 -->
+        <div style="margin-bottom:24px;">
+          <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;">客户总余额（所有服务商合计）</div>
+          <div class="stats-row" style="grid-template-columns:repeat(2,1fr);margin-bottom:0;">
+            <div class="stat-card"><div class="stat-label">USD 总余额</div><div class="stat-value">$258,330.00</div><div style="display:flex;gap:16px;margin-top:6px;font-size:12px;"><span style="color:var(--text2);">可用 <strong style="color:var(--text);">$245,830.00</strong></span><span style="color:var(--amber);">冻结 <strong>$12,500.00</strong></span></div></div>
+            <div class="stat-card"><div class="stat-label">USDT 总余额</div><div class="stat-value">88,420.50</div><div style="display:flex;gap:16px;margin-top:6px;font-size:12px;"><span style="color:var(--text2);">可用 <strong style="color:var(--text);">88,420.50</strong></span><span style="color:var(--amber);">冻结 <strong>0.00</strong></span></div></div>
+          </div>
         </div>
+
+        <!-- SP: IPL -->
+        <div class="customer-card" style="margin-bottom:16px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+            <div style="font-size:13px;font-weight:700;">IPL</div>
+            <span class="tag tag-pri">服务商</span>
+          </div>
+
+          <!-- Payment Accounts -->
+          <div style="margin-bottom:16px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+              <span style="font-size:12px;font-weight:600;color:var(--text);">Payment Accounts</span>
+              <span class="tag" style="font-size:10px;">COLLECTION & PAYOUT</span>
+            </div>
+            <div class="table-wrap" style="border-radius:8px;">
+              <table>
+                <thead><tr><th>币种</th><th>总余额</th><th>可用余额</th><th>冻结金额</th></tr></thead>
+                <tbody>
+                  <tr><td><span class="tag tag-pri">USD</span></td><td style="font-weight:700;">$45,230.00</td><td>$45,230.00</td><td style="color:var(--amber);">$0.00</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Convert Accounts — Fiat -->
+          <div style="margin-bottom:16px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+              <span style="font-size:12px;font-weight:600;color:var(--text);">Convert Accounts — Fiat</span>
+              <span class="tag" style="font-size:10px;">ACCEPTANCE & OTC</span>
+            </div>
+            <div class="table-wrap" style="border-radius:8px;">
+              <table>
+                <thead><tr><th>币种</th><th>总余额</th><th>可用余额</th><th>冻结金额</th></tr></thead>
+                <tbody>
+                  <tr><td><span class="tag tag-pri">USD</span></td><td style="font-weight:700;">$200,600.00</td><td>$188,100.00</td><td style="color:var(--amber);">$12,500.00</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Convert Accounts — Crypto -->
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+              <span style="font-size:12px;font-weight:600;color:var(--text);">Convert Accounts — Crypto</span>
+              <span class="tag" style="font-size:10px;">ACCEPTANCE & OTC</span>
+            </div>
+            <div class="table-wrap" style="border-radius:8px;">
+              <table>
+                <thead><tr><th>币种</th><th>总余额</th><th>可用余额</th><th>冻结金额</th></tr></thead>
+                <tbody>
+                  <tr><td><span class="tag tag-green">USDT</span></td><td style="font-weight:700;">50,617.50</td><td>48,617.50</td><td style="color:var(--amber);">2,000.00</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- SP: BB -->
+        <div class="customer-card">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+            <div style="font-size:13px;font-weight:700;">BB</div>
+            <span class="tag tag-pri">服务商</span>
+          </div>
+
+          <!-- Payment Accounts -->
+          <div style="margin-bottom:16px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+              <span style="font-size:12px;font-weight:600;color:var(--text);">Payment Accounts</span>
+              <span class="tag" style="font-size:10px;">COLLECTION & PAYOUT</span>
+            </div>
+            <div class="table-wrap" style="border-radius:8px;">
+              <table>
+                <thead><tr><th>币种</th><th>总余额</th><th>可用余额</th><th>冻结金额</th></tr></thead>
+                <tbody>
+                  <tr><td><span class="tag tag-pri">USD</span></td><td style="font-weight:700;">$12,500.00</td><td>$12,500.00</td><td style="color:var(--amber);">$0.00</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Convert Accounts — Crypto -->
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+              <span style="font-size:12px;font-weight:600;color:var(--text);">Convert Accounts — Crypto</span>
+              <span class="tag" style="font-size:10px;">ACCEPTANCE & OTC</span>
+            </div>
+            <div class="table-wrap" style="border-radius:8px;">
+              <table>
+                <thead><tr><th>币种</th><th>总余额</th><th>可用余额</th><th>冻结金额</th></tr></thead>
+                <tbody>
+                  <tr><td><span class="tag tag-green">USDT</span></td><td style="font-weight:700;">37,803.00</td><td>37,803.00</td><td style="color:var(--amber);">0.00</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
       </div>
 
-      <!-- Tab 5: 工单历史 -->
-      <div id="tabDetailTickets" style="display:none;">
-        <div style="display:flex;justify-content:flex-end;margin-bottom:14px;">
-          <button class="btn btn-sm btn-pri" onclick="openTicketModal('pricing')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            新建工单
-          </button>
-        </div>
-        <div class="ticket-list">
-          <div class="ticket-card" onclick="showPage('pgPricingTickets')">
-            <div class="ticket-top">
-              <div>
-                <div class="ticket-title">费率调整申请 — Payins MDR 调整</div>
-                <div class="ticket-meta">TKT-2026-0041 &nbsp;·&nbsp; 发起人: Li Wei &nbsp;·&nbsp; 2小时前</div>
-              </div>
-              <span class="status s-review">审核中</span>
-            </div>
-            <div class="ticket-body">将 Payins 费率方案从 Standard-B 调整为 Premium-A（MDR 0.9%），客户月交易额已达到门槛。</div>
-            <div class="ticket-footer">
-              <span>📋 费率配置</span>
-              <span>·</span>
-              <span>等待清算中心审核</span>
-            </div>
-          </div>
-          <div class="ticket-card" onclick="showPage('pgPricingTickets')">
-            <div class="ticket-top">
-              <div>
-                <div class="ticket-title">产品开通申请 — OnRamp</div>
-                <div class="ticket-meta">TKT-2026-0038 &nbsp;·&nbsp; 发起人: Li Wei &nbsp;·&nbsp; 3天前</div>
-              </div>
-              <span class="status s-reject">已驳回</span>
-            </div>
-            <div class="ticket-body">客户申请开通 OnRamp 承兑功能，需补充合规材料。</div>
-            <div class="ticket-footer">
-              <span>📦 产品开通</span>
-              <span>·</span>
-              <span style="color:var(--red);">驳回原因: 合规材料不完整，请重新提交</span>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
 
     <!-- ════ PAGE: 费率配置工单列表 ════ -->
@@ -985,7 +1013,7 @@ function switchDetailTab(tabEl, contentId) {
   const parent = tabEl.closest('.tabs');
   parent.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   tabEl.classList.add('active');
-  ['tabInfo','tabDetailProducts','tabDetailOrders','tabDetailBalance','tabDetailTickets'].forEach(id => {
+  ['tabInfo','tabDetailProducts','tabDetailBalance'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = id === contentId ? 'block' : 'none';
   });

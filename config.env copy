@@ -1,0 +1,28 @@
+# -------------------------------------------
+# 邮件通知配置 (SMTP)
+# -------------------------------------------
+
+# SMTP 服务器地址
+SMTP_HOST=smtp.example.com
+
+# SMTP 服务器端口 (默认: 587 for TLS, 465 for SSL)
+SMTP_PORT=587
+
+# SMTP 用户名 (通常是邮箱地址)
+SMTP_USER=your-email@example.com
+
+# SMTP 密码或授权码
+SMTP_PASS=your-password-or-app-token
+
+# 发件人邮箱地址
+SMTP_FROM=your-email@example.com
+
+# -------------------------------------------
+# 飞书通知配置
+# -------------------------------------------
+
+# 飞书应用 ID (从飞书开放平台获取)
+FEISHU_APP_ID=cli_a9d675a0323b5bd6
+
+# 飞书应用密钥 (从飞书开放平台获取)
+FEISHU_APP_SECRET=tXihCQ4Tx9i9JhLGOaowXbyP21ZktThW
