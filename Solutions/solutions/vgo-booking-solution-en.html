@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VGO Booking × EX Solution</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif;background:#f4f5f7;color:#1a1a2e;line-height:1.6}
+    .page{max-width:880px;margin:0 auto;padding:32px 20px 64px}
+    h1{font-size:22px;font-weight:700;margin-bottom:4px}
+    h2{font-size:15px;font-weight:700;margin-bottom:12px;color:#1a1a2e;display:flex;align-items:center;gap:8px}
+    h2 .n{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:6px;background:#6366f1;color:#fff;font-size:11px;font-weight:700;flex-shrink:0}
+    h3{font-size:13px;font-weight:600;margin-bottom:6px;color:#374151}
+    .sub{font-size:12px;color:#71717a;margin-bottom:20px}
+    .meta{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+    .mt{font-size:10px;padding:2px 8px;border-radius:20px;background:#eef2ff;color:#4f46e5;font-weight:500}
+    .sec{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:16px 18px;margin-bottom:14px}
+
+    /* boxes */
+    .bx{border:1.5px solid #d1d5db;border-radius:7px;padding:8px 10px;text-align:center;background:#fff;font-size:11px}
+    .bx.ex{border-color:#6366f1;background:#f5f3ff}
+    .bx.ex .bt{color:#6366f1}
+    .bx.th{border-color:#f59e0b;background:#fffbeb}
+    .bx.th .bt{color:#b45309}
+    .bx.vg{border-color:#10b981;background:#ecfdf5}
+    .bx.vg .bt{color:#059669}
+    .bx.sp{border-color:#6b7280;background:#f9fafb}
+    .bx.us{border-color:#3b82f6;background:#eff6ff}
+    .bx.us .bt{color:#2563eb}
+    .bt{font-weight:700;font-size:11px;margin-bottom:2px}
+    .bd{font-size:10px;color:#6b7280;line-height:1.3}
+    .arr{color:#9ca3af;font-size:15px;display:flex;align-items:center;justify-content:center}
+    .arr-v{padding:3px 0;flex-direction:column}
+    .arr-lbl{font-size:9px;color:#9ca3af;margin-top:0px}
+
+    /* flow nodes */
+    .fn{padding:4px 10px;border-radius:5px;font-size:10px;font-weight:500;white-space:nowrap;border:1px solid #e5e7eb;background:#fff;display:inline-block}
+    .fn.ex{background:#eef2ff;border-color:#c7d2fe;color:#4338ca}
+    .fn.vg{background:#ecfdf5;border-color:#a7f3d0;color:#047857}
+    .fn.th{background:#fffbeb;border-color:#fde68a;color:#92400e}
+    .fn.us{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8}
+    .fn.sp{background:#f9fafb;border-color:#d1d5db;color:#374151}
+    .fa{color:#d1d5db;font-size:14px;padding:0 1px}
+    .flow-row{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin:4px 0;line-height:1}
+
+    /* tables */
+    table{width:100%;border-collapse:collapse;font-size:11px}
+    th{background:#f9fafb;font-weight:600;text-align:left;padding:6px 8px;border-bottom:2px solid #e5e7eb;white-space:nowrap}
+    td{padding:5px 8px;border-bottom:1px solid #f3f4f6;vertical-align:top}
+    .ty{display:inline-block;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:600}
+    .ty.y{background:#dcfce7;color:#166534}
+    .ty.n{background:#fee2e2;color:#991b1b}
+
+    /* fund flow */
+    .ff{border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin-bottom:8px;background:#fafbfc}
+    .ff:last-child{margin-bottom:0}
+    .ff-title{font-size:11px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:5px}
+    .ff-num{width:18px;height:18px;border-radius:50%;background:#6366f1;color:#fff;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+
+    /* services */
+    .sg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+    .sc{border:1px solid #e5e7eb;border-radius:6px;padding:8px;text-align:center;background:#fff}
+    .si{font-size:18px;margin-bottom:2px}
+    .sn{font-size:11px;font-weight:600}
+    .sd{font-size:9px;color:#6b7280;margin-top:1px}
+
+    /* legend */
+    .lg{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;font-size:10px;color:#6b7280}
+    .lg-i{display:flex;align-items:center;gap:3px}
+    .lg-d{width:9px;height:9px;border-radius:3px;border:1.5px solid}
+
+    /* coverage */
+    .cv{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .cv-c{border:1px solid #e5e7eb;border-radius:7px;padding:10px;background:#fff}
+    .cv-t{font-size:11px;font-weight:700;margin-bottom:6px}
+    .cv-i{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #f3f4f6;font-size:10px}
+    .cv-i:last-child{border-bottom:none}
+    .cv-p{font-size:9px;font-weight:600;padding:1px 5px;border-radius:3px}
+    .cv-p.ex{background:#eef2ff;color:#4338ca}
+    .cv-p.ot{background:#f3f4f6;color:#6b7280}
+
+    /* timeline */
+    .tl{position:relative;padding-left:24px}
+    .tl::before{content:'';position:absolute;left:8px;top:5px;bottom:5px;width:2px;background:#e5e7eb;border-radius:1px}
+    .ti{position:relative;margin-bottom:10px}
+    .ti:last-child{margin-bottom:0}
+    .td{position:absolute;left:-18px;top:3px;width:8px;height:8px;border-radius:50%;border:2px solid #6366f1;background:#fff}
+    .ti.dn .td{background:#6366f1}
+    .tl-l{font-size:11px;font-weight:600;color:#1a1a2e}
+    .tl-d{font-size:10px;color:#6b7280}
+    .tl-t{font-size:9px;color:#a1a1aa}
+
+    .note{margin-top:8px;padding:6px 10px;border-radius:5px;font-size:10px}
+    .note.warn{background:#fffbeb;border:1px solid #fde68a;color:#92400e}
+    .note.info{background:#eef2ff;border:1px solid #c7d2fe;color:#4338ca}
+
+    /* inner module cards in arch */
+    .mod{border:1px solid #c7d2fe;border-radius:4px;padding:4px 6px;background:#fff;margin-bottom:4px}
+    .mod:last-child{margin-bottom:0}
+    .mod-t{font-size:10px;font-weight:600;color:#4338ca}
+    .mod-d{font-size:9px;color:#6b7280}
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+    <div style="width:32px;height:32px;border-radius:7px;background:linear-gradient(135deg,#6366f1,#9333ea);display:flex;align-items:center;justify-content:center">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div>
+      <h1>VGO Booking × EX Solution</h1>
+      <div class="sub">OTA Travel Platform — Crypto Checkout + On/OffRamp + VCC Issuing + Fiat Payout</div>
+    </div>
+  </div>
+  <div class="meta">
+    <span class="mt">v2.0</span><span class="mt">2026-04-14</span><span class="mt">Client Solution</span>
+  </div>
+
+  <!-- 1. VGO -->
+  <div class="sec">
+    <h2><span class="n">1</span>Client Overview — VGO Booking</h2>
+    <div class="sg">
+      <div class="sc"><div class="si">✈️</div><div class="sn">Flight Booking</div><div class="sd">One-way / Round-trip / Multi-city</div></div>
+      <div class="sc"><div class="si">🏨</div><div class="sn">Hotel Booking</div><div class="sd">Flexible cancellation, 24/7</div></div>
+      <div class="sc"><div class="si">📦</div><div class="sn">Package Booking</div><div class="sd">Vacation / Medical / Events</div></div>
+      <div class="sc"><div class="si">📱</div><div class="sn">Traveller SIM</div><div class="sd">eSIM / Physical SIM</div></div>
+      <div class="sc"><div class="si">🚗</div><div class="sn">Transport</div><div class="sd">Airport transfer, ride-hailing</div></div>
+      <div class="sc"><div class="si">🚙</div><div class="sn">Rental Services</div><div class="sd">Car / Bicycle rental</div></div>
+    </div>
+  </div>
+
+  <!-- 2. Architecture -->
+  <div class="sec">
+    <h2><span class="n">2</span>System Architecture</h2>
+
+    <div style="display:flex;flex-direction:column;align-items:center;gap:0;font-size:11px">
+
+      <!-- Layer 1: End users -->
+      <div style="width:100%">
+        <div class="bx us" style="width:100%">
+          <div class="bt">End Users (Travellers)</div>
+          <div class="bd">Book flights / Hotels / Packages / SIM / Transport / Rentals</div>
+        </div>
+      </div>
+
+      <!-- Payment arrows -->
+      <div style="display:flex;justify-content:center;gap:56px;padding:3px 0">
+        <div style="text-align:center"><div class="arr">↓</div><div style="font-size:9px;color:#b45309;font-weight:500">Card / Local Wallet</div></div>
+        <div style="text-align:center"><div class="arr">↓</div><div style="font-size:9px;color:#4338ca;font-weight:500">Crypto Payment</div></div>
+      </div>
+
+      <!-- Layer 2: Acquirers -->
+      <div style="display:flex;gap:6px;width:100%">
+        <div class="bx th" style="flex:1">
+          <div class="bt">Payment Acquirers</div>
+          <div class="bd">Stripe / Adyen / Local PSP<br>Card · Local Wallet · Bank Transfer</div>
+        </div>
+        <div class="bx ex" style="flex:1">
+          <div class="bt">EX Crypto Checkout</div>
+          <div class="bd">Aggregated Checkout<br>USDT / BTC / ETH</div>
+        </div>
+      </div>
+
+      <!-- Settlement arrows -->
+      <div style="display:flex;width:100%;gap:6px">
+        <div style="flex:1;text-align:center"><div class="arr arr-v">↓<div class="arr-lbl">Local currency settlement</div></div></div>
+        <div style="flex:1;text-align:center"><div class="arr arr-v">↓<div class="arr-lbl">Crypto credited</div></div></div>
+      </div>
+
+      <!-- Layer 3: VGO + EX -->
+      <div style="display:flex;gap:6px;width:100%">
+        <!-- VGO -->
+        <div class="bx vg" style="flex:1;padding:10px">
+          <div class="bt" style="font-size:12px">VGO Booking</div>
+          <div class="bd" style="text-align:left;margin-top:4px">
+            • Receive <b>local currency settlement</b> from acquirers<br>
+            • Convert local currency to USD (self / via SP)<br>
+            • Deposit USD into EX for OnRamp / card funding<br>
+            • Use crypto income directly for VCC or OffRamp
+          </div>
+        </div>
+        <!-- EX -->
+        <div class="bx ex" style="flex:1;padding:10px;display:flex;flex-direction:column;gap:4px">
+          <div class="bt" style="font-size:12px;margin-bottom:2px">EX Platform</div>
+          <div class="mod"><div class="mod-t">OnRamp Fiat → Crypto</div><div class="mod-d">VGO's USD → USDT</div></div>
+          <div class="mod"><div class="mod-t">OffRamp Crypto → Fiat</div><div class="mod-d">USDT → USD, pay suppliers</div></div>
+          <div class="mod"><div class="mod-t">VCC Issuing</div><div class="mod-d">Virtual card for supplier payments</div></div>
+          <div class="mod"><div class="mod-t">Fiat Payout</div><div class="mod-d">Bank transfer to suppliers</div></div>
+        </div>
+      </div>
+
+      <!-- Arrows to supplier -->
+      <div style="display:flex;width:100%;gap:6px">
+        <div style="flex:1"></div>
+        <div style="flex:1;display:flex;justify-content:center;gap:32px">
+          <div style="text-align:center"><div class="arr arr-v">↓<div class="arr-lbl">VCC Payment</div></div></div>
+          <div style="text-align:center"><div class="arr arr-v">↓<div class="arr-lbl">OffRamp → Fiat Payout</div></div></div>
+        </div>
+      </div>
+
+      <!-- Layer 4: Supplier -->
+      <div style="width:100%">
+        <div class="bx sp" style="width:100%">
+          <div class="bt">Suppliers</div>
+          <div class="bd">Airlines / GDS / Hotel Chains / Car Rental / SIM Providers</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lg">
+      <div class="lg-i"><div class="lg-d" style="background:#f5f3ff;border-color:#6366f1"></div>Powered by EX</div>
+      <div class="lg-i"><div class="lg-d" style="background:#fffbeb;border-color:#f59e0b"></div>3rd-party Acquirers</div>
+      <div class="lg-i"><div class="lg-d" style="background:#ecfdf5;border-color:#10b981"></div>VGO Booking</div>
+      <div class="lg-i"><div class="lg-d" style="background:#eff6ff;border-color:#3b82f6"></div>End Users</div>
+      <div class="lg-i"><div class="lg-d" style="background:#f9fafb;border-color:#6b7280"></div>Suppliers</div>
+    </div>
+    <div class="note info" style="margin-top:10px">ℹ️ EX provides the technical integration layer (API + Webhook) only. Actual fund processing is handled by licensed Service Providers behind EX. For specific SP capabilities and pricing, please contact your account manager.</div>
+  </div>
+
+  <!-- 3. Fund Flow -->
+  <div class="sec">
+    <h2><span class="n">3</span>Fund Flow Breakdown</h2>
+
+    <div class="ff">
+      <div class="ff-title"><span class="ff-num">A</span>Inbound: Collecting from End Users</div>
+      <h3 style="margin-top:4px">Path A1: Fiat Collection (Card / Local Wallet / Bank Transfer)</h3>
+      <div class="flow-row">
+        <span class="fn us">End User</span><span class="fa">→</span>
+        <span class="fn th">Acquirer Payment</span><span class="fa">→</span>
+        <span class="fn th">Acquirer Settlement</span><span class="fa">→</span>
+        <span class="fn vg">VGO receives local currency</span>
+      </div>
+      <div class="note info" style="margin-top:6px">Acquirers settle in local currency to VGO. EX is not involved in this step.</div>
+
+      <h3 style="margin-top:10px">Path A2: Crypto Collection</h3>
+      <div class="flow-row">
+        <span class="fn us">End User</span><span class="fa">→</span>
+        <span class="fn ex">EX Crypto Checkout</span><span class="fa">→</span>
+        <span class="fn ex">On-chain confirmation</span><span class="fa">→</span>
+        <span class="fn vg">VGO crypto wallet credited</span>
+      </div>
+    </div>
+
+    <div class="ff">
+      <div class="ff-title"><span class="ff-num">B</span>Conversion: Internal Fund Management</div>
+      <h3 style="margin-top:4px">Path B1: Fiat → Crypto (OnRamp)</h3>
+      <div class="flow-row">
+        <span class="fn vg">VGO local currency</span><span class="fa">→</span>
+        <span class="fn vg">Convert to USD</span><span class="fa">→</span>
+        <span class="fn ex">EX OnRamp</span><span class="fa">→</span>
+        <span class="fn ex">USD → USDT</span><span class="fa">→</span>
+        <span class="fn vg">VGO crypto wallet</span>
+      </div>
+      <div class="note info" style="margin-top:6px">VGO converts acquirer settlement (local currency) to USD independently, then uses EX OnRamp to convert to crypto.</div>
+
+      <h3 style="margin-top:10px">Path B2: Crypto → Fiat (OffRamp)</h3>
+      <div class="flow-row">
+        <span class="fn vg">VGO crypto wallet</span><span class="fa">→</span>
+        <span class="fn ex">EX OffRamp</span><span class="fa">→</span>
+        <span class="fn ex">USDT → USD</span><span class="fa">→</span>
+        <span class="fn vg">VGO fiat account</span>
+      </div>
+    </div>
+
+    <div class="ff">
+      <div class="ff-title"><span class="ff-num">C</span>Outbound: Paying Suppliers</div>
+      <h3 style="margin-top:4px">Path C1: VCC Card Payment</h3>
+      <div class="flow-row">
+        <span class="fn vg">VGO</span><span class="fa">→</span>
+        <span class="fn ex">EX Fund + Issue Card</span><span class="fa">→</span>
+        <span class="fn ex">VCC</span><span class="fa">→</span>
+        <span class="fn sp">GDS / Airline charge</span><span class="fa">→</span>
+        <span class="fn sp">Supplier receives</span>
+      </div>
+      <div class="note info" style="margin-top:6px">
+        Funding source: crypto income directly / OnRamp crypto / fiat deposit<br>
+        Applicable: airlines, GDS, hotels and other card-accepting suppliers
+      </div>
+
+      <h3 style="margin-top:10px">Path C2: OffRamp + Fiat Payout</h3>
+      <div class="flow-row">
+        <span class="fn vg">VGO crypto</span><span class="fa">→</span>
+        <span class="fn ex">EX OffRamp</span><span class="fa">→</span>
+        <span class="fn ex">USDT → USD</span><span class="fa">→</span>
+        <span class="fn ex">EX Payout</span><span class="fa">→</span>
+        <span class="fn sp">Supplier bank account</span>
+      </div>
+      <div class="note info" style="margin-top:6px">Applicable: suppliers accepting bank transfers</div>
+    </div>
+
+    <!-- Summary flow chart -->
+    <h3 style="margin-top:14px">Full Fund Flow Overview</h3>
+    <div style="border:1.5px solid #e5e7eb;border-radius:8px;padding:14px;background:#fafbfc;margin-top:4px">
+      <div style="display:flex;flex-direction:column;gap:4px;font-size:10px;line-height:1.8">
+        <div style="display:flex;align-items:center;gap:0">
+          <span class="fn us" style="min-width:60px;text-align:center">End User</span>
+          <span class="fa">→</span>
+          <span class="fn th">Acquirer</span>
+          <span class="fa">→</span>
+          <span style="font-size:9px;color:#6b7280;padding:0 2px">Local ccy settlement</span>
+          <span class="fa">→</span>
+          <span class="fn vg" style="font-weight:700;min-width:76px;text-align:center">VGO Booking</span>
+          <span class="fa">→</span>
+          <span style="font-size:9px;color:#6b7280;padding:0 2px">→ USD</span>
+          <span class="fa">→</span>
+          <span class="fn ex">EX OnRamp</span>
+          <span class="fa">→</span>
+          <span class="fn ex">Fund / Issue VCC</span>
+          <span class="fa">→</span>
+          <span class="fn sp">Supplier</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:0;margin-left:0">
+          <span class="fn us" style="min-width:60px;text-align:center">End User</span>
+          <span class="fa">→</span>
+          <span class="fn ex">EX Crypto Checkout</span>
+          <span class="fa">→</span>
+          <span style="font-size:9px;color:#6b7280;padding:0 2px">Crypto credited</span>
+          <span class="fa">→</span>
+          <span class="fn vg" style="font-weight:700;min-width:76px;text-align:center">VGO Booking</span>
+          <span class="fa">→</span>
+          <span class="fn ex">Issue VCC</span>
+          <span style="font-size:9px;color:#6b7280;padding:0 3px">or</span>
+          <span class="fn ex">OffRamp → Payout</span>
+          <span class="fa">→</span>
+          <span class="fn sp">Supplier</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Capability -->
+  <div class="sec">
+    <h2><span class="n">4</span>EX Capability Matrix</h2>
+    <table>
+      <thead><tr><th>Requirement</th><th>Status</th><th>Provider</th><th>Details</th></tr></thead>
+      <tbody>
+        <tr><td>Crypto Checkout (End Users)</td><td><span class="ty y">✅ EX</span></td><td>EX</td><td>Aggregated Crypto Checkout</td></tr>
+        <tr><td>OnRamp Fiat → Crypto</td><td><span class="ty y">✅ EX</span></td><td>EX</td><td>VGO only (not end-user facing)</td></tr>
+        <tr><td>OffRamp Crypto → Fiat</td><td><span class="ty y">✅ EX</span></td><td>EX</td><td>VGO only (not end-user facing)</td></tr>
+        <tr><td>VCC Issuing</td><td><span class="ty y">✅ EX</span></td><td>EX</td><td>Virtual card for supplier settlement</td></tr>
+        <tr><td>Fiat Payout</td><td><span class="ty y">✅ EX</span></td><td>EX</td><td>Bank transfer to suppliers</td></tr>
+        <tr><td>Card Acquiring (Credit / Debit)</td><td><span class="ty n">❌</span></td><td>Acquirers</td><td>Stripe / Adyen / dLocal</td></tr>
+        <tr><td>Local Wallet / Bank Transfer</td><td><span class="ty n">❌</span></td><td>Acquirers</td><td>Local PSP</td></tr>
+      </tbody>
+    </table>
+
+    <div class="cv" style="margin-top:12px">
+      <div class="cv-c">
+        <div class="cv-t">💰 Inbound (End-User Collection)</div>
+        <div class="cv-i"><span>Credit / Debit Card</span><span class="cv-p ot">Acquirers</span></div>
+        <div class="cv-i"><span>Local Wallet</span><span class="cv-p ot">Acquirers</span></div>
+        <div class="cv-i"><span>Bank Transfer</span><span class="cv-p ot">Acquirers</span></div>
+        <div class="cv-i"><span>Crypto Payment</span><span class="cv-p ex">✅ EX</span></div>
+      </div>
+      <div class="cv-c">
+        <div class="cv-t">💳 Fund Management + Supplier Payments</div>
+        <div class="cv-i"><span>OnRamp Fiat → Crypto</span><span class="cv-p ex">✅ EX</span></div>
+        <div class="cv-i"><span>OffRamp Crypto → Fiat</span><span class="cv-p ex">✅ EX</span></div>
+        <div class="cv-i"><span>VCC Card Payment</span><span class="cv-p ex">✅ EX</span></div>
+        <div class="cv-i"><span>Fiat Payout</span><span class="cv-p ex">✅ EX</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Scenarios -->
+  <div class="sec">
+    <h2><span class="n">5</span>Typical Business Scenarios</h2>
+
+    <div class="ff">
+      <div class="ff-title"><span class="ff-num">1</span>Crypto payment → Direct VCC to supplier</div>
+      <div class="flow-row">
+        <span class="fn us">User pays crypto</span><span class="fa">→</span>
+        <span class="fn ex">EX Checkout</span><span class="fa">→</span>
+        <span class="fn vg">VGO crypto wallet</span><span class="fa">→</span>
+        <span class="fn ex">Fund + Issue VCC</span><span class="fa">→</span>
+        <span class="fn ex">VCC</span><span class="fa">→</span>
+        <span class="fn sp">Airline receives</span>
+      </div>
+    </div>
+
+    <div class="ff">
+      <div class="ff-title"><span class="ff-num">2</span>Fiat collection → USD → OnRamp → VCC</div>
+      <div class="flow-row">
+        <span class="fn us">User card payment</span><span class="fa">→</span>
+        <span class="fn th">Acquirer settles</span><span class="fa">→</span>
+        <span class="fn vg">VGO local ccy</span><span class="fa">→</span>
+        <span class="fn vg">Convert to USD</span><span class="fa">→</span>
+        <span class="fn ex">OnRamp</span><span class="fa">→</span>
+        <span class="fn ex">Fund + Issue VCC</span><span class="fa">→</span>
+        <span class="fn sp">Supplier</span>
+      </div>
+    </div>
+
+    <div class="ff">
+      <div class="ff-title"><span class="ff-num">3</span>Crypto income → OffRamp → Fiat payout to supplier</div>
+      <div class="flow-row">
+        <span class="fn vg">VGO USDT</span><span class="fa">→</span>
+        <span class="fn ex">OffRamp</span><span class="fa">→</span>
+        <span class="fn ex">USDT → USD</span><span class="fa">→</span>
+        <span class="fn ex">EX Payout</span><span class="fa">→</span>
+        <span class="fn sp">Supplier bank</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Timeline -->
+  <div class="sec">
+    <h2><span class="n">6</span>Integration Roadmap</h2>
+    <div style="display:flex;gap:16px">
+      <div style="flex:1">
+        <div class="tl">
+          <div class="ti dn"><div class="td"></div><div class="tl-l">Phase 0 · Setup</div><div class="tl-d">Sandbox, API keys, Webhook config</div><div class="tl-t">1–2 days</div></div>
+          <div class="ti dn"><div class="td"></div><div class="tl-l">Phase 1 · Prerequisites</div><div class="tl-d">Merchant registration → KYB → Product activation</div><div class="tl-t">3–5 days</div></div>
+          <div class="ti"><div class="td"></div><div class="tl-l">Phase 2a · VCC Issuing</div><div class="tl-d">Card funding + issuance + management</div><div class="tl-t">7–10 days</div></div>
+          <div class="ti"><div class="td"></div><div class="tl-l">Phase 2b · Crypto Checkout</div><div class="tl-d">Create order + payment callback</div><div class="tl-t">3–5 days (parallel)</div></div>
+          <div class="ti"><div class="td"></div><div class="tl-l">Phase 2c · On/OffRamp + Payout</div><div class="tl-d">OnRamp + OffRamp + Fiat Payout</div><div class="tl-t">3–5 days (parallel)</div></div>
+          <div class="ti"><div class="td"></div><div class="tl-l">Phase 3 · Integration Testing</div><div class="tl-d">End-to-end validation</div><div class="tl-t">5–7 days</div></div>
+          <div class="ti"><div class="td"></div><div class="tl-l">Phase 4 · Go Live</div><div class="tl-d">Production switch + monitoring</div><div class="tl-t">2–3 days</div></div>
+        </div>
+      </div>
+      <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 16px;background:#f5f3ff;border-radius:8px;border:1.5px solid #c7d2fe">
+        <div style="font-size:10px;color:#6b7280">Estimated Total</div>
+        <div style="font-size:26px;font-weight:800;color:#4338ca;line-height:1.2">25–35</div>
+        <div style="font-size:10px;color:#6b7280">business days</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. Out of scope -->
+  <div class="sec">
+    <h2><span class="n">7</span>Out of EX Scope</h2>
+    <table>
+      <thead><tr><th>Capability</th><th>Description</th><th>Suggested Providers</th></tr></thead>
+      <tbody>
+        <tr><td>Fiat Card Acquiring</td><td>End-user credit / debit card payments</td><td>Stripe / Adyen / dLocal</td></tr>
+        <tr><td>Local Wallet Acquiring</td><td>GCash / GrabPay / OVO</td><td>Local PSP / PayMongo</td></tr>
+        <tr><td>Bank Transfer Acquiring</td><td>Local bank transfers</td><td>Local PSP / Direct banking</td></tr>
+        <tr><td>Local Currency → USD FX</td><td>Converting acquirer settlement to USD</td><td>VGO self / via SP</td></tr>
+      </tbody>
+    </table>
+    <div class="note warn">⚠️ EX does not provide fiat acquiring capabilities. End-user fiat payment channels (card, local wallet) must be handled through third-party acquirers. After settlement, VGO converts local currency to USD independently before depositing into EX.</div>
+  </div>
+
+</div>
+</body>
+</html>

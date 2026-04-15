@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>发卡管理平台 — 解决方案</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;background:#f4f5f7;color:#1a1a2e;line-height:1.6}
+    .page{max-width:900px;margin:0 auto;padding:32px 20px 64px}
+    h1{font-size:22px;font-weight:700;margin-bottom:4px}
+    h2{font-size:15px;font-weight:700;margin-bottom:12px;color:#1a1a2e;display:flex;align-items:center;gap:8px}
+    h2 .n{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:6px;background:#6366f1;color:#fff;font-size:11px;font-weight:700;flex-shrink:0}
+    h3{font-size:13px;font-weight:600;margin-bottom:6px;color:#374151}
+    .sub{font-size:12px;color:#71717a;margin-bottom:20px}
+    .meta{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+    .mt{font-size:10px;padding:2px 8px;border-radius:20px;background:#eef2ff;color:#4f46e5;font-weight:500}
+    .sec{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:16px 18px;margin-bottom:14px}
+
+    /* boxes */
+    .bx{border:1.5px solid #d1d5db;border-radius:7px;padding:8px 10px;text-align:center;background:#fff;font-size:11px}
+    .bx.pf{border-color:#10b981;background:#ecfdf5}
+    .bx.pf .bt{color:#059669}
+    .bx.us{border-color:#3b82f6;background:#eff6ff}
+    .bx.us .bt{color:#2563eb}
+    .bx.ch{border-color:#8b5cf6;background:#f5f3ff}
+    .bx.ch .bt{color:#7c3aed}
+    .bt{font-weight:700;font-size:11px;margin-bottom:2px}
+    .bd{font-size:10px;color:#6b7280;line-height:1.3}
+    .arr{color:#9ca3af;font-size:15px;display:flex;align-items:center;justify-content:center}
+    .arr-v{padding:3px 0;flex-direction:column}
+    .arr-lbl{font-size:9px;color:#9ca3af;margin-top:0}
+
+    /* flow nodes */
+    .fn{padding:4px 10px;border-radius:5px;font-size:10px;font-weight:500;white-space:nowrap;border:1px solid #e5e7eb;background:#fff;display:inline-block}
+    .fn.pf{background:#ecfdf5;border-color:#a7f3d0;color:#047857}
+    .fn.us{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8}
+    .fn.ch{background:#f5f3ff;border-color:#c4b5fd;color:#7c3aed}
+    .fa{color:#d1d5db;font-size:14px;padding:0 1px}
+    .flow-row{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin:4px 0;line-height:1}
+
+    /* tables */
+    table{width:100%;border-collapse:collapse;font-size:11px}
+    th{background:#f9fafb;font-weight:600;text-align:left;padding:6px 8px;border-bottom:2px solid #e5e7eb;white-space:nowrap}
+    td{padding:5px 8px;border-bottom:1px solid #f3f4f6;vertical-align:top}
+    .ty{display:inline-block;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:600}
+    .ty.y{background:#dcfce7;color:#166534}
+    .ty.n{background:#fee2e2;color:#991b1b}
+    .ty.p{background:#fef3c7;color:#92400e}
+
+    /* fund flow */
+    .ff{border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin-bottom:8px;background:#fafbfc}
+    .ff:last-child{margin-bottom:0}
+    .ff-title{font-size:11px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:5px}
+    .ff-num{width:18px;height:18px;border-radius:50%;background:#6366f1;color:#fff;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+
+    /* legend */
+    .lg{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;font-size:10px;color:#6b7280}
+    .lg-i{display:flex;align-items:center;gap:3px}
+    .lg-d{width:9px;height:9px;border-radius:3px;border:1.5px solid}
+
+    /* timeline */
+    .tl{position:relative;padding-left:24px}
+    .tl::before{content:'';position:absolute;left:8px;top:5px;bottom:5px;width:2px;background:#e5e7eb;border-radius:1px}
+    .ti{position:relative;margin-bottom:10px}
+    .ti:last-child{margin-bottom:0}
+    .td{position:absolute;left:-18px;top:3px;width:8px;height:8px;border-radius:50%;border:2px solid #6366f1;background:#fff}
+    .ti.dn .td{background:#6366f1}
+    .tl-l{font-size:11px;font-weight:600;color:#1a1a2e}
+    .tl-d{font-size:10px;color:#6b7280}
+    .tl-t{font-size:9px;color:#a1a1aa}
+
+    .note{margin-top:8px;padding:6px 10px;border-radius:5px;font-size:10px}
+    .note.warn{background:#fffbeb;border:1px solid #fde68a;color:#92400e}
+    .note.info{background:#eef2ff;border:1px solid #c7d2fe;color:#4338ca}
+
+    /* inner module cards */
+    .mod{border:1px solid #c7d2fe;border-radius:4px;padding:4px 6px;background:#fff;margin-bottom:4px}
+    .mod:last-child{margin-bottom:0}
+    .mod-t{font-size:10px;font-weight:600;color:#4338ca}
+    .mod-d{font-size:9px;color:#6b7280}
+
+    /* feature list */
+    .fl{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .fc{border:1px solid #e5e7eb;border-radius:7px;padding:10px 12px;background:#fff}
+    .fc-t{font-size:12px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:5px}
+    .fc-t .ico{font-size:14px}
+    .fc-list{list-style:none;padding:0;margin:0}
+    .fc-list li{font-size:10px;color:#374151;padding:3px 0;border-bottom:1px solid #f3f4f6;display:flex;align-items:flex-start;gap:4px}
+    .fc-list li:last-child{border-bottom:none}
+    .fc-list li::before{content:'•';color:#6366f1;font-weight:700;flex-shrink:0;margin-top:-1px}
+
+    /* phase cards */
+    .ph{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px}
+    .pc{border:1px solid #e5e7eb;border-radius:7px;padding:10px 12px;background:#fff}
+    .pc-h{font-size:11px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:4px}
+    .pc-h .tag{font-size:9px;padding:1px 6px;border-radius:10px;font-weight:600}
+    .pc-h .tag.p0{background:#fee2e2;color:#991b1b}
+    .pc-h .tag.p1{background:#fef3c7;color:#92400e}
+    .pc-h .tag.p2{background:#dbeafe;color:#1e40af}
+    .pc-list{list-style:none;padding:0;margin:0}
+    .pc-list li{font-size:10px;color:#374151;padding:2px 0;display:flex;align-items:flex-start;gap:4px}
+    .pc-list li::before{content:'☐';color:#9ca3af;flex-shrink:0;font-size:9px}
+    .pc-est{font-size:9px;color:#6b7280;margin-top:6px;text-align:right;font-style:italic}
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+    <div style="width:32px;height:32px;border-radius:7px;background:linear-gradient(135deg,#6366f1,#9333ea);display:flex;align-items:center;justify-content:center">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div>
+      <h1>发卡管理平台 — 解决方案</h1>
+      <div class="sub">一站式发卡业务管理 — 客户管理 · 渠道管理 · 计费收费 · 操作后台</div>
+    </div>
+  </div>
+  <div class="meta">
+    <span class="mt">v1.0</span><span class="mt">2026-04-15</span><span class="mt">解决方案</span><span class="mt">发卡管理平台</span>
+  </div>
+
+  <!-- 1. 业务概况 -->
+  <div class="sec">
+    <h2><span class="n">1</span>业务概况</h2>
+    <table>
+      <thead><tr><th>维度</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">行业</td><td>广告代理 — Google 一代 / Facebook 国内二代</td></tr>
+        <tr><td style="font-weight:600">现有能力</td><td>自有发卡系统，前端有客户（广告主），后端对接发卡渠道</td></tr>
+        <tr><td style="font-weight:600">平台定位</td><td>一站式发卡管理平台 — 向上管理广告主客户，向下对接发卡渠道</td></tr>
+        <tr><td style="font-weight:600">核心诉求</td><td>需要一套管理平台，包含<b>客户端</b>（广告主自助使用）和<b>操作后台</b>（内部运营管理）</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 2. 系统架构 -->
+  <div class="sec">
+    <h2><span class="n">2</span>系统架构</h2>
+
+    <div style="display:flex;flex-direction:column;align-items:center;gap:0;font-size:11px">
+
+      <!-- Layer 1: 广告主客户 -->
+      <div style="width:100%">
+        <div class="bx us" style="width:100%">
+          <div class="bt">广告主（客户）</div>
+          <div class="bd">Google Ads / Facebook Ads 投放 → 需要 VCC 进行广告消费</div>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:center;padding:3px 0">
+        <div style="text-align:center"><div class="arr">↓</div><div style="font-size:9px;color:#6b7280;font-weight:500">充值 · 开卡 · 消费 · 查询</div></div>
+      </div>
+
+      <!-- Layer 2: 发卡管理平台 -->
+      <div style="width:100%">
+        <div class="bx pf" style="width:100%;padding:12px;display:flex;flex-direction:column;gap:4px">
+          <div class="bt" style="font-size:13px;margin-bottom:6px">发卡管理平台</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+            <div style="border:1px solid #a7f3d0;border-radius:5px;padding:8px 10px;background:#f0fdf4">
+              <div style="font-size:11px;font-weight:700;color:#059669;margin-bottom:3px">📱 客户端</div>
+              <div style="font-size:9px;color:#6b7280;line-height:1.4">广告主自助使用：充值 · 开卡 · 卡管理 · 交易查询 · 账单查看</div>
+            </div>
+            <div style="border:1px solid #a7f3d0;border-radius:5px;padding:8px 10px;background:#f0fdf4">
+              <div style="font-size:11px;font-weight:700;color:#059669;margin-bottom:3px">🖥️ 操作后台</div>
+              <div style="font-size:9px;color:#6b7280;line-height:1.4">内部运营管理：客户管理 · 渠道管理 · 计费收费 · 用户权限</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;width:100%;gap:6px">
+        <div style="flex:1;text-align:center"><div class="arr arr-v">⇕<div class="arr-lbl">渠道对接</div></div></div>
+      </div>
+
+      <!-- Layer 3: 发卡渠道 -->
+      <div style="width:100%">
+        <div class="bx ch" style="width:100%">
+          <div class="bt">发卡渠道</div>
+          <div class="bd">发卡机构 A / 发卡机构 B — 卡BIN · 卡产品 · 资金清算</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lg">
+      <div class="lg-i"><div class="lg-d" style="background:#eff6ff;border-color:#3b82f6"></div>广告主（客户）</div>
+      <div class="lg-i"><div class="lg-d" style="background:#ecfdf5;border-color:#10b981"></div>发卡管理平台</div>
+      <div class="lg-i"><div class="lg-d" style="background:#f5f3ff;border-color:#8b5cf6"></div>发卡渠道</div>
+    </div>
+    <div class="note info" style="margin-top:10px">ℹ️ 平台分为两部分：<b>客户端</b>面向广告主，提供自助充值、开卡、查询等能力；<b>操作后台</b>面向内部团队，负责客户管理、渠道管理、计费收费、权限控制等。</div>
+  </div>
+
+  <!-- 3. 功能清单 -->
+  <div class="sec">
+    <h2><span class="n">3</span>管理后台功能清单</h2>
+
+    <div class="fl">
+      <!-- 客户管理 -->
+      <div class="fc">
+        <div class="fc-t"><span class="ico">👥</span>客户管理</div>
+        <ul class="fc-list">
+          <li>客户基本信息（KYC/KYB 资料、营业信息、联系方式）</li>
+          <li>客户产品配置（开通/关闭产品线、产品参数设置）</li>
+          <li>客户账户管理（查余额、止入、止出、冻结/解冻）</li>
+          <li>客户交易管理（交易列表、交易详情、交易状态查询）</li>
+        </ul>
+      </div>
+
+      <!-- 计费收费 -->
+      <div class="fc">
+        <div class="fc-t"><span class="ico">💰</span>计费收费</div>
+        <ul class="fc-list">
+          <li>费率方案管理（创建/编辑/上下架费率模板）</li>
+          <li>客户费率配置（按客户绑定费率方案、支持个性化定价）</li>
+          <li>账单生成与查看（按周期自动生成、支持导出）</li>
+          <li>收费记录查询（手续费明细、扣费流水）</li>
+        </ul>
+      </div>
+
+      <!-- 渠道管理 -->
+      <div class="fc">
+        <div class="fc-t"><span class="ico">🔗</span>渠道管理</div>
+        <ul class="fc-list">
+          <li>渠道基本信息（渠道名称、接口配置、状态管理）</li>
+          <li>渠道余额（实时余额查询、余额预警）</li>
+          <li>渠道交易管理（交易列表、交易明细、对账）</li>
+          <li>渠道路由配置（优先级、分流规则）</li>
+        </ul>
+      </div>
+
+      <!-- 管理后台 -->
+      <div class="fc">
+        <div class="fc-t"><span class="ico">⚙️</span>管理后台</div>
+        <ul class="fc-list">
+          <li>用户管理（创建/编辑/停用用户账号）</li>
+          <li>权限管理（角色定义、菜单权限、数据权限、操作权限）</li>
+          <li>操作日志（关键操作审计记录）</li>
+          <li>系统配置（通知配置、安全设置）</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. 功能明细 -->
+  <div class="sec">
+    <h2><span class="n">4</span>功能明细与优先级</h2>
+
+    <table>
+      <thead><tr><th>模块</th><th>功能项</th><th>优先级</th><th>说明</th></tr></thead>
+      <tbody>
+        <!-- 客户管理 -->
+        <tr><td rowspan="4" style="font-weight:600;vertical-align:middle">客户管理</td>
+            <td>客户基本信息</td><td><span class="ty n">P0</span></td><td>客户档案（公司信息、联系人、KYC/KYB 状态）查看与编辑</td></tr>
+        <tr><td>客户产品配置</td><td><span class="ty n">P0</span></td><td>为客户开通/关闭产品，配置产品参数（发卡限额等）</td></tr>
+        <tr><td>客户账户管理</td><td><span class="ty n">P0</span></td><td>查看客户余额、止入/止出控制、账户冻结/解冻</td></tr>
+        <tr><td>客户交易管理</td><td><span class="ty n">P0</span></td><td>查询客户下所有交易（发卡、充值、消费、退款）</td></tr>
+
+        <!-- 计费 -->
+        <tr><td rowspan="3" style="font-weight:600;vertical-align:middle">计费收费</td>
+            <td>费率方案管理</td><td><span class="ty n">P0</span></td><td>创建费率模板（开卡费、充值手续费、消费手续费等）</td></tr>
+        <tr><td>客户费率配置</td><td><span class="ty n">P0</span></td><td>按客户绑定费率方案，支持个性化/阶梯定价</td></tr>
+        <tr><td>账单与收费记录</td><td><span class="ty p">P1</span></td><td>自动生成周期账单，手续费明细查询与导出</td></tr>
+
+        <!-- 渠道管理 -->
+        <tr><td rowspan="4" style="font-weight:600;vertical-align:middle">渠道管理</td>
+            <td>渠道基本信息</td><td><span class="ty n">P0</span></td><td>渠道接入配置、状态管理（启用/停用）</td></tr>
+        <tr><td>渠道余额</td><td><span class="ty n">P0</span></td><td>渠道实时余额查询、余额变动记录</td></tr>
+        <tr><td>渠道交易管理</td><td><span class="ty n">P0</span></td><td>渠道维度交易列表、交易详情</td></tr>
+        <tr><td>渠道路由</td><td><span class="ty p">P1</span></td><td>多渠道路由优先级、分流规则配置</td></tr>
+
+        <!-- 管理后台 -->
+        <tr><td rowspan="3" style="font-weight:600;vertical-align:middle">管理后台</td>
+            <td>用户管理</td><td><span class="ty n">P0</span></td><td>用户创建/编辑/停用、角色分配</td></tr>
+        <tr><td>权限管理</td><td><span class="ty n">P0</span></td><td>角色定义（管理员/财务/运营）、菜单 + 数据 + 操作权限</td></tr>
+        <tr><td>操作日志</td><td><span class="ty p">P1</span></td><td>关键操作审计（账户变更、费率调整、权限变更等）</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 5. 业务流程 -->
+  <div class="sec">
+    <h2><span class="n">5</span>核心业务流程</h2>
+
+    <div class="ff">
+      <div class="ff-title"><span class="ff-num">1</span>客户入网 → 产品开通 → 开卡消费</div>
+      <div class="flow-row">
+        <span class="fn us">广告主申请</span><span class="fa">→</span>
+        <span class="fn pf">平台审核</span><span class="fa">→</span>
+        <span class="fn pf">开通产品</span><span class="fa">→</span>
+        <span class="fn us">客户充值</span><span class="fa">→</span>
+        <span class="fn ch">渠道发卡</span><span class="fa">→</span>
+        <span class="fn us">广告消费</span>
+      </div>
+    </div>
+
+    <div class="ff">
+      <div class="ff-title"><span class="ff-num">2</span>计费流程</div>
+      <div class="flow-row">
+        <span class="fn us">客户交易</span><span class="fa">→</span>
+        <span class="fn pf">计费引擎</span><span class="fa">→</span>
+        <span class="fn pf">手续费计算</span><span class="fa">→</span>
+        <span class="fn pf">自动扣费</span><span class="fa">→</span>
+        <span class="fn pf">账单生成</span>
+      </div>
+      <div class="note info" style="margin-top:6px">基于客户绑定的费率方案，每笔交易自动计算手续费并从客户账户扣除</div>
+    </div>
+
+    <div class="ff">
+      <div class="ff-title"><span class="ff-num">3</span>渠道资金流</div>
+      <div class="flow-row">
+        <span class="fn pf">平台预充值</span><span class="fa">→</span>
+        <span class="fn ch">渠道账户</span><span class="fa">→</span>
+        <span class="fn ch">发卡/充卡</span><span class="fa">→</span>
+        <span class="fn us">客户卡消费</span><span class="fa">→</span>
+        <span class="fn ch">渠道扣款</span>
+      </div>
+      <div class="note info" style="margin-top:6px">平台向渠道预充值备付金，客户开卡/消费从渠道余额扣减，需关注渠道余额预警</div>
+    </div>
+  </div>
+
+  <!-- 6. 排期 -->
+  <div class="sec">
+    <h2><span class="n">6</span>交付排期</h2>
+
+    <div class="ph">
+      <div class="pc" style="grid-column:1/-1">
+        <div class="pc-h"><span class="tag p0">Phase 1</span>核心管理能力（MVP）</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px">
+          <div>
+            <div style="font-size:10px;font-weight:600;color:#374151;margin-bottom:3px">客户管理</div>
+            <ul class="pc-list">
+              <li>客户基本信息 CRUD</li>
+              <li>客户产品配置</li>
+              <li>客户账户管理（余额查询、止入止出）</li>
+              <li>客户交易列表与详情</li>
+            </ul>
+          </div>
+          <div>
+            <div style="font-size:10px;font-weight:600;color:#374151;margin-bottom:3px">渠道管理</div>
+            <ul class="pc-list">
+              <li>渠道基本信息配置</li>
+              <li>渠道余额查询</li>
+              <li>渠道交易列表与详情</li>
+            </ul>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+          <div>
+            <div style="font-size:10px;font-weight:600;color:#374151;margin-bottom:3px">计费核心</div>
+            <ul class="pc-list">
+              <li>费率方案管理</li>
+              <li>客户费率配置</li>
+            </ul>
+          </div>
+          <div>
+            <div style="font-size:10px;font-weight:600;color:#374151;margin-bottom:3px">管理后台</div>
+            <ul class="pc-list">
+              <li>用户管理</li>
+              <li>角色与权限管理</li>
+            </ul>
+          </div>
+        </div>
+        <div class="pc-est">预计 6-8 周</div>
+      </div>
+
+      <div class="pc">
+        <div class="pc-h"><span class="tag p1">Phase 2</span>运营增强</div>
+        <ul class="pc-list">
+          <li>账单自动生成与导出</li>
+          <li>收费记录明细查询</li>
+          <li>渠道路由配置</li>
+          <li>渠道余额预警</li>
+          <li>操作审计日志</li>
+        </ul>
+        <div class="pc-est">预计 3-4 周</div>
+      </div>
+
+      <div class="pc">
+        <div class="pc-h"><span class="tag p2">Phase 3</span>高级能力</div>
+        <ul class="pc-list">
+          <li>多渠道智能路由</li>
+          <li>阶梯/分段费率</li>
+          <li>数据权限精细化</li>
+          <li>Dashboard 数据看板</li>
+          <li>风控规则配置</li>
+        </ul>
+        <div class="pc-est">预计 3-4 周</div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px">
+      <h3>时间线</h3>
+      <div style="display:flex;gap:16px;margin-top:6px">
+        <div style="flex:1">
+          <div class="tl">
+            <div class="ti dn"><div class="td"></div><div class="tl-l">Phase 0 · 需求确认与对接准备</div><div class="tl-d">需求细化、测试环境搭建、渠道对接准备、技术联调</div><div class="tl-t">1-2 周</div></div>
+            <div class="ti"><div class="td"></div><div class="tl-l">Phase 1 · MVP — 核心管理</div><div class="tl-d">客户管理 + 渠道管理 + 计费核心 + 用户权限</div><div class="tl-t">6-8 周</div></div>
+            <div class="ti"><div class="td"></div><div class="tl-l">Phase 2 · 运营增强</div><div class="tl-d">账单 + 收费明细 + 路由 + 预警 + 审计</div><div class="tl-t">3-4 周</div></div>
+            <div class="ti"><div class="td"></div><div class="tl-l">Phase 3 · 高级能力</div><div class="tl-d">智能路由 + 阶梯费率 + 看板 + 风控</div><div class="tl-t">3-4 周</div></div>
+            <div class="ti"><div class="td"></div><div class="tl-l">UAT + 上线</div><div class="tl-d">联调测试 + 生产切换 + 监控</div><div class="tl-t">2-3 周</div></div>
+          </div>
+        </div>
+        <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 18px;background:#f5f3ff;border-radius:8px;border:1.5px solid #c7d2fe">
+          <div style="font-size:10px;color:#6b7280">MVP 上线</div>
+          <div style="font-size:26px;font-weight:800;color:#4338ca;line-height:1.2">8-10</div>
+          <div style="font-size:10px;color:#6b7280">周</div>
+          <div style="margin-top:8px;border-top:1px solid #e5e7eb;padding-top:8px">
+            <div style="font-size:10px;color:#6b7280">全部完成</div>
+            <div style="font-size:20px;font-weight:800;color:#6366f1;line-height:1.2">16-20</div>
+            <div style="font-size:10px;color:#6b7280">周</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. 平台模块总览 -->
+  <div class="sec">
+    <h2><span class="n">7</span>平台模块总览</h2>
+    <table>
+      <thead><tr><th>模块</th><th>覆盖功能</th><th>适用场景</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">客户管理</td><td>客户信息、产品配置、账户管理</td><td>广告主入网、产品开通、账户管控</td></tr>
+        <tr><td style="font-weight:600">计费收费</td><td>费率配置、账单结算、对账</td><td>各类手续费计算、收费明细</td></tr>
+        <tr><td style="font-weight:600">渠道管理</td><td>渠道配置、余额、交易、路由</td><td>发卡渠道接入、资金监控</td></tr>
+        <tr><td style="font-weight:600">产品配置</td><td>卡产品上架、费率方案引用</td><td>新卡产品上线、费率模板管理</td></tr>
+        <tr><td style="font-weight:600">资金管理</td><td>资金总览、渠道余额、头寸管理</td><td>渠道备付金监控、资金调度</td></tr>
+        <tr><td style="font-weight:600">系统设置</td><td>用户、角色、权限、安全</td><td>团队协作、权限管控</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 8. 备注 -->
+  <div class="sec">
+    <h2><span class="n">8</span>补充说明</h2>
+    <table>
+      <thead><tr><th>项目</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">合规风控</td><td>可选附加模块。如需 KYC/KYB 审核、AML 监控等合规能力，可额外开通</td></tr>
+        <tr><td style="font-weight:600">API 对接</td><td>平台提供标准 RESTful API + Webhook，现有发卡系统可通过 API 与管理平台集成</td></tr>
+        <tr><td style="font-weight:600">部署模式</td><td>SaaS 模式，通过 Web 管理后台操作，无需自建基础设施</td></tr>
+        <tr><td style="font-weight:600">数据迁移</td><td>如有存量客户和渠道数据，需评估迁移方案（范围待确认）</td></tr>
+        <tr><td style="font-weight:600">客户端形式</td><td>支持 Web 端、后续可扩展移动端（H5 / App）</td></tr>
+      </tbody>
+    </table>
+    <div class="note warn" style="margin-top:8px">⚠️ 排期为预估，实际交付时间取决于需求细化程度、渠道联调复杂度和双方资源投入。建议先完成 Phase 0 需求确认后，细化各阶段排期。</div>
+  </div>
+
+</div>
+</body>
+</html>

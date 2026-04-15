@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VGO Booking × EX Solution</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;background:#f4f5f7;color:#1a1a2e;line-height:1.6}
+    .page{max-width:880px;margin:0 auto;padding:32px 20px 64px}
+    h1{font-size:22px;font-weight:700;margin-bottom:4px}
+    h2{font-size:15px;font-weight:700;margin-bottom:12px;color:#1a1a2e;display:flex;align-items:center;gap:8px}
+    h2 .n{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:6px;background:#6366f1;color:#fff;font-size:11px;font-weight:700;flex-shrink:0}
+    h3{font-size:13px;font-weight:600;margin-bottom:6px;color:#374151}
+    .sub{font-size:12px;color:#71717a;margin-bottom:20px}
+    .meta{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+    .mt{font-size:10px;padding:2px 8px;border-radius:20px;background:#eef2ff;color:#4f46e5;font-weight:500}
+    .sec{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:16px 18px;margin-bottom:14px}
+
+    /* boxes */
+    .bx{border:1.5px solid #d1d5db;border-radius:7px;padding:8px 10px;text-align:center;background:#fff;font-size:11px}
+    .bx.ex{border-color:#6366f1;background:#f5f3ff}
+    .bx.ex .bt{color:#6366f1}
+    .bx.th{border-color:#f59e0b;background:#fffbeb}
+    .bx.th .bt{color:#b45309}
+    .bx.vg{border-color:#10b981;background:#ecfdf5}
+    .bx.vg .bt{color:#059669}
+    .bx.sp{border-color:#6b7280;background:#f9fafb}
+    .bx.us{border-color:#3b82f6;background:#eff6ff}
+    .bx.us .bt{color:#2563eb}
+    .bt{font-weight:700;font-size:11px;margin-bottom:2px}
+    .bd{font-size:10px;color:#6b7280;line-height:1.3}
+    .arr{color:#9ca3af;font-size:15px;display:flex;align-items:center;justify-content:center}
+    .arr-v{padding:3px 0;flex-direction:column}
+    .arr-lbl{font-size:9px;color:#9ca3af;margin-top:0px}
+
+    /* flow nodes */
+    .fn{padding:4px 10px;border-radius:5px;font-size:10px;font-weight:500;white-space:nowrap;border:1px solid #e5e7eb;background:#fff;display:inline-block}
+    .fn.ex{background:#eef2ff;border-color:#c7d2fe;color:#4338ca}
+    .fn.vg{background:#ecfdf5;border-color:#a7f3d0;color:#047857}
+    .fn.th{background:#fffbeb;border-color:#fde68a;color:#92400e}
+    .fn.us{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8}
+    .fn.sp{background:#f9fafb;border-color:#d1d5db;color:#374151}
+    .fa{color:#d1d5db;font-size:14px;padding:0 1px}
+    .flow-row{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin:4px 0;line-height:1}
+
+    /* tables */
+    table{width:100%;border-collapse:collapse;font-size:11px}
+    th{background:#f9fafb;font-weight:600;text-align:left;padding:6px 8px;border-bottom:2px solid #e5e7eb;white-space:nowrap}
+    td{padding:5px 8px;border-bottom:1px solid #f3f4f6;vertical-align:top}
+    .ty{display:inline-block;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:600}
+    .ty.y{background:#dcfce7;color:#166534}
+    .ty.n{background:#fee2e2;color:#991b1b}
+
+    /* fund flow */
+    .ff{border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin-bottom:8px;background:#fafbfc}
+    .ff:last-child{margin-bottom:0}
+    .ff-title{font-size:11px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:5px}
+    .ff-num{width:18px;height:18px;border-radius:50%;background:#6366f1;color:#fff;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+
+    /* services */
+    .sg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+    .sc{border:1px solid #e5e7eb;border-radius:6px;padding:8px;text-align:center;background:#fff}
+    .si{font-size:18px;margin-bottom:2px}
+    .sn{font-size:11px;font-weight:600}
+    .sd{font-size:9px;color:#6b7280;margin-top:1px}
+
+    /* legend */
+    .lg{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;font-size:10px;color:#6b7280}
+    .lg-i{display:flex;align-items:center;gap:3px}
+    .lg-d{width:9px;height:9px;border-radius:3px;border:1.5px solid}
+
+    /* coverage */
+    .cv{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .cv-c{border:1px solid #e5e7eb;border-radius:7px;padding:10px;background:#fff}
+    .cv-t{font-size:11px;font-weight:700;margin-bottom:6px}
+    .cv-i{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #f3f4f6;font-size:10px}
+    .cv-i:last-child{border-bottom:none}
+    .cv-p{font-size:9px;font-weight:600;padding:1px 5px;border-radius:3px}
+    .cv-p.ex{background:#eef2ff;color:#4338ca}
+    .cv-p.ot{background:#f3f4f6;color:#6b7280}
+
+    /* timeline */
+    .tl{position:relative;padding-left:24px}
+    .tl::before{content:'';position:absolute;left:8px;top:5px;bottom:5px;width:2px;background:#e5e7eb;border-radius:1px}
+    .ti{position:relative;margin-bottom:10px}
+    .ti:last-child{margin-bottom:0}
+    .td{position:absolute;left:-18px;top:3px;width:8px;height:8px;border-radius:50%;border:2px solid #6366f1;background:#fff}
+    .ti.dn .td{background:#6366f1}
+    .tl-l{font-size:11px;font-weight:600;color:#1a1a2e}
+    .tl-d{font-size:10px;color:#6b7280}
+    .tl-t{font-size:9px;color:#a1a1aa}
+
+    .note{margin-top:8px;padding:6px 10px;border-radius:5px;font-size:10px}
+    .note.warn{background:#fffbeb;border:1px solid #fde68a;color:#92400e}
+    .note.info{background:#eef2ff;border:1px solid #c7d2fe;color:#4338ca}
+
+    /* inner module cards in arch */
+    .mod{border:1px solid #c7d2fe;border-radius:4px;padding:4px 6px;background:#fff;margin-bottom:4px}
+    .mod:last-child{margin-bottom:0}
+    .mod-t{font-size:10px;font-weight:600;color:#4338ca}
+    .mod-d{font-size:9px;color:#6b7280}
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+    <div style="width:32px;height:32px;border-radius:7px;background:linear-gradient(135deg,#6366f1,#9333ea);display:flex;align-items:center;justify-content:center">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div>
+      <h1>VGO Booking × EX 解决方案</h1>
+      <div class="sub">OTA 旅游预订平台 — 数币收单 + 承兑 + VCC 发卡 + 法币付款</div>
+    </div>
+  </div>
+  <div class="meta">
+    <span class="mt">v2.0</span><span class="mt">2026-04-14</span><span class="mt">客户解决方案</span>
+  </div>
+
+  <!-- 1. VGO -->
+  <div class="sec">
+    <h2><span class="n">1</span>客户概况 — VGO Booking</h2>
+    <div class="sg">
+      <div class="sc"><div class="si">✈️</div><div class="sn">Flight Booking</div><div class="sd">单程/往返/多程机票</div></div>
+      <div class="sc"><div class="si">🏨</div><div class="sn">Hotel Booking</div><div class="sd">酒店预订，灵活取消</div></div>
+      <div class="sc"><div class="si">📦</div><div class="sn">Package Booking</div><div class="sd">度假/医疗/活动套餐</div></div>
+      <div class="sc"><div class="si">📱</div><div class="sn">Traveller SIM</div><div class="sd">eSIM / 实体 SIM</div></div>
+      <div class="sc"><div class="si">🚗</div><div class="sn">Transport</div><div class="sd">机场接送、网约车</div></div>
+      <div class="sc"><div class="si">🚙</div><div class="sn">Rental Services</div><div class="sd">租车/自行车</div></div>
+    </div>
+  </div>
+
+  <!-- 2. Architecture -->
+  <div class="sec">
+    <h2><span class="n">2</span>系统交互架构</h2>
+
+    <div style="display:flex;flex-direction:column;align-items:center;gap:0;font-size:11px">
+
+      <!-- Layer 1: C端 -->
+      <div style="width:100%">
+        <div class="bx us" style="width:100%">
+          <div class="bt">C 端旅客</div>
+          <div class="bd">预订机票 / 酒店 / 套餐 / SIM / 接送 / 租车</div>
+        </div>
+      </div>
+
+      <!-- 3 payment arrows -->
+      <div style="display:flex;justify-content:center;gap:56px;padding:3px 0">
+        <div style="text-align:center"><div class="arr">↓</div><div style="font-size:9px;color:#b45309;font-weight:500">卡/本地钱包</div></div>
+        <div style="text-align:center"><div class="arr">↓</div><div style="font-size:9px;color:#4338ca;font-weight:500">数币支付</div></div>
+      </div>
+
+      <!-- Layer 2: 收单层 -->
+      <div style="display:flex;gap:6px;width:100%">
+        <div class="bx th" style="flex:1">
+          <div class="bt">收单机构</div>
+          <div class="bd">Stripe / Adyen / 本地 PSP<br>卡 · 本地钱包 · 银行转账</div>
+        </div>
+        <div class="bx ex" style="flex:1">
+          <div class="bt">EX 聚合收银</div>
+          <div class="bd">Crypto Checkout<br>USDT / BTC / ETH</div>
+        </div>
+      </div>
+
+      <!-- Arrow: 结算 -->
+      <div style="display:flex;width:100%;gap:6px">
+        <div style="flex:1;text-align:center"><div class="arr arr-v">↓<div class="arr-lbl">本地币结算</div></div></div>
+        <div style="flex:1;text-align:center"><div class="arr arr-v">↓<div class="arr-lbl">数币入账</div></div></div>
+      </div>
+
+      <!-- Layer 3: VGO + EX -->
+      <div style="display:flex;gap:6px;width:100%">
+        <!-- VGO -->
+        <div class="bx vg" style="flex:1;padding:10px">
+          <div class="bt" style="font-size:12px">VGO Booking</div>
+          <div class="bd" style="text-align:left;margin-top:4px">
+            • 收到收单行<b>本地币结算款</b><br>
+            • 本地币换 USD（自行/通过SP）<br>
+            • USD 注入 EX 做 OnRamp / 充值发卡<br>
+            • 数币收入直接用于发卡或 OffRamp
+          </div>
+        </div>
+        <!-- EX -->
+        <div class="bx ex" style="flex:1;padding:10px;display:flex;flex-direction:column;gap:4px">
+          <div class="bt" style="font-size:12px;margin-bottom:2px">EX 平台</div>
+          <div class="mod"><div class="mod-t">OnRamp 法币→数币</div><div class="mod-d">VGO 的 USD → USDT</div></div>
+          <div class="mod"><div class="mod-t">OffRamp 数币→法币</div><div class="mod-d">USDT → USD，付款给供应商</div></div>
+          <div class="mod"><div class="mod-t">VCC 发卡</div><div class="mod-d">虚拟卡，向供应商付款</div></div>
+          <div class="mod"><div class="mod-t">法币付款 Payout</div><div class="mod-d">银行转账付供应商</div></div>
+        </div>
+      </div>
+
+      <!-- Arrows to supplier -->
+      <div style="display:flex;width:100%;gap:6px">
+        <div style="flex:1"></div>
+        <div style="flex:1;display:flex;justify-content:center;gap:32px">
+          <div style="text-align:center"><div class="arr arr-v">↓<div class="arr-lbl">VCC 付款</div></div></div>
+          <div style="text-align:center"><div class="arr arr-v">↓<div class="arr-lbl">OffRamp→法币付款</div></div></div>
+        </div>
+      </div>
+
+      <!-- Layer 4: Supplier -->
+      <div style="width:100%">
+        <div class="bx sp" style="width:100%">
+          <div class="bt">供应商</div>
+          <div class="bd">航司 / GDS / 酒店集团 / 租车公司 / SIM 供应商</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lg">
+      <div class="lg-i"><div class="lg-d" style="background:#f5f3ff;border-color:#6366f1"></div>EX 提供</div>
+      <div class="lg-i"><div class="lg-d" style="background:#fffbeb;border-color:#f59e0b"></div>第三方收单</div>
+      <div class="lg-i"><div class="lg-d" style="background:#ecfdf5;border-color:#10b981"></div>VGO Booking</div>
+      <div class="lg-i"><div class="lg-d" style="background:#eff6ff;border-color:#3b82f6"></div>C 端旅客</div>
+      <div class="lg-i"><div class="lg-d" style="background:#f9fafb;border-color:#6b7280"></div>供应商</div>
+    </div>
+    <div class="note info" style="margin-top:10px">ℹ️ EX 仅提供技术对接层（API + Webhook），实际资金处理由 EX 背后的持牌 Service Provider 完成。具体 SP 能力范围及费率，请联系您的客户经理获取详情。</div>
+  </div>
+
+  <!-- 3. Fund Flow -->
+  <div class="sec">
+    <h2><span class="n">3</span>资金流详解</h2>
+
+    <div class="ff">
+      <div class="ff-title"><span class="ff-num">A</span>资金流入：C 端收款</div>
+      <h3 style="margin-top:4px">路径 A1：法币收款（卡/本地钱包/银行转账）</h3>
+      <div class="flow-row">
+        <span class="fn us">C 端旅客</span><span class="fa">→</span>
+        <span class="fn th">收单机构付款</span><span class="fa">→</span>
+        <span class="fn th">收单机构结算</span><span class="fa">→</span>
+        <span class="fn vg">VGO 收到本地币</span>
+      </div>
+      <div class="note info" style="margin-top:6px">收单机构将本地币结算给 VGO，EX 不参与此环节</div>
+
+      <h3 style="margin-top:10px">路径 A2：数币收款</h3>
+      <div class="flow-row">
+        <span class="fn us">C 端旅客</span><span class="fa">→</span>
+        <span class="fn ex">EX 聚合收银</span><span class="fa">→</span>
+        <span class="fn ex">链上确认</span><span class="fa">→</span>
+        <span class="fn vg">VGO 数币钱包入账</span>
+      </div>
+    </div>
+
+    <div class="ff">
+      <div class="ff-title"><span class="ff-num">B</span>资金转换：VGO 内部管理</div>
+      <h3 style="margin-top:4px">路径 B1：法币→数币（OnRamp）</h3>
+      <div class="flow-row">
+        <span class="fn vg">VGO 本地币</span><span class="fa">→</span>
+        <span class="fn vg">换 USD</span><span class="fa">→</span>
+        <span class="fn ex">EX OnRamp</span><span class="fa">→</span>
+        <span class="fn ex">USD→USDT</span><span class="fa">→</span>
+        <span class="fn vg">VGO 数币钱包</span>
+      </div>
+      <div class="note info" style="margin-top:6px">VGO 自行将收单结算的本地币换成 USD，再通过 EX OnRamp 转为数币</div>
+
+      <h3 style="margin-top:10px">路径 B2：数币→法币（OffRamp）</h3>
+      <div class="flow-row">
+        <span class="fn vg">VGO 数币钱包</span><span class="fa">→</span>
+        <span class="fn ex">EX OffRamp</span><span class="fa">→</span>
+        <span class="fn ex">USDT→USD</span><span class="fa">→</span>
+        <span class="fn vg">VGO 法币账户</span>
+      </div>
+    </div>
+
+    <div class="ff">
+      <div class="ff-title"><span class="ff-num">C</span>资金流出：向供应商付款</div>
+      <h3 style="margin-top:4px">路径 C1：VCC 发卡付款</h3>
+      <div class="flow-row">
+        <span class="fn vg">VGO</span><span class="fa">→</span>
+        <span class="fn ex">EX 充值+发卡</span><span class="fa">→</span>
+        <span class="fn ex">VCC 虚拟卡</span><span class="fa">→</span>
+        <span class="fn sp">GDS/航司扣款</span><span class="fa">→</span>
+        <span class="fn sp">供应商收款</span>
+      </div>
+      <div class="note info" style="margin-top:6px">
+        资金来源：数币收入可直接充值到卡 / OnRamp 后的数币充值 / 法币充值<br>
+        适用：航司/GDS/酒店等接受卡支付的供应商
+      </div>
+
+      <h3 style="margin-top:10px">路径 C2：OffRamp + 法币付款</h3>
+      <div class="flow-row">
+        <span class="fn vg">VGO 数币</span><span class="fa">→</span>
+        <span class="fn ex">EX OffRamp</span><span class="fa">→</span>
+        <span class="fn ex">USDT→USD</span><span class="fa">→</span>
+        <span class="fn ex">EX Payout</span><span class="fa">→</span>
+        <span class="fn sp">供应商银行账户</span>
+      </div>
+      <div class="note info" style="margin-top:6px">适用：接受银行转账的供应商</div>
+    </div>
+
+    <!-- Summary flow chart -->
+    <h3 style="margin-top:14px">资金流全景</h3>
+    <div style="border:1.5px solid #e5e7eb;border-radius:8px;padding:14px;background:#fafbfc;margin-top:4px">
+      <div style="display:flex;flex-direction:column;gap:4px;font-size:10px;line-height:1.8">
+        <div style="display:flex;align-items:center;gap:0">
+          <span class="fn us" style="min-width:64px;text-align:center">C端旅客</span>
+          <span class="fa">→</span>
+          <span class="fn th">收单机构</span>
+          <span class="fa">→</span>
+          <span style="font-size:9px;color:#6b7280;padding:0 2px">本地币结算</span>
+          <span class="fa">→</span>
+          <span class="fn vg" style="font-weight:700;min-width:80px;text-align:center">VGO Booking</span>
+          <span class="fa">→</span>
+          <span style="font-size:9px;color:#6b7280;padding:0 2px">换USD</span>
+          <span class="fa">→</span>
+          <span class="fn ex">EX OnRamp</span>
+          <span class="fa">→</span>
+          <span class="fn ex">充值/发卡</span>
+          <span class="fa">→</span>
+          <span class="fn sp">供应商</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:0;margin-left:0">
+          <span class="fn us" style="min-width:64px;text-align:center">C端旅客</span>
+          <span class="fa">→</span>
+          <span class="fn ex">EX 数币收单</span>
+          <span class="fa">→</span>
+          <span style="font-size:9px;color:#6b7280;padding:0 2px">数币入账</span>
+          <span class="fa">→</span>
+          <span class="fn vg" style="font-weight:700;min-width:80px;text-align:center">VGO Booking</span>
+          <span class="fa">→</span>
+          <span class="fn ex">直接发卡</span>
+          <span style="font-size:9px;color:#6b7280;padding:0 3px">或</span>
+          <span class="fn ex">OffRamp→Payout</span>
+          <span class="fa">→</span>
+          <span class="fn sp">供应商</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Capability -->
+  <div class="sec">
+    <h2><span class="n">4</span>EX 能力匹配</h2>
+    <table>
+      <thead><tr><th>需求</th><th>状态</th><th>提供方</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>数币收单（C端）</td><td><span class="ty y">✅ EX</span></td><td>EX</td><td>聚合收银 Crypto Checkout</td></tr>
+        <tr><td>OnRamp 法币→数币</td><td><span class="ty y">✅ EX</span></td><td>EX</td><td>仅限 VGO 自身</td></tr>
+        <tr><td>OffRamp 数币→法币</td><td><span class="ty y">✅ EX</span></td><td>EX</td><td>仅限 VGO 自身</td></tr>
+        <tr><td>VCC 发卡</td><td><span class="ty y">✅ EX</span></td><td>EX</td><td>虚拟卡，向供应商结算</td></tr>
+        <tr><td>法币付款 Payout</td><td><span class="ty y">✅ EX</span></td><td>EX</td><td>银行转账付供应商</td></tr>
+        <tr><td>卡收单（信用卡/借记卡）</td><td><span class="ty n">❌</span></td><td>收单机构</td><td>Stripe / Adyen / dLocal</td></tr>
+        <tr><td>本地钱包 / 银行转账收单</td><td><span class="ty n">❌</span></td><td>收单机构</td><td>本地 PSP</td></tr>
+      </tbody>
+    </table>
+
+    <div class="cv" style="margin-top:12px">
+      <div class="cv-c">
+        <div class="cv-t">💰 C 端收款（资金流入）</div>
+        <div class="cv-i"><span>信用卡 / 借记卡</span><span class="cv-p ot">收单机构</span></div>
+        <div class="cv-i"><span>本地钱包</span><span class="cv-p ot">收单机构</span></div>
+        <div class="cv-i"><span>银行转账</span><span class="cv-p ot">收单机构</span></div>
+        <div class="cv-i"><span>数币支付</span><span class="cv-p ex">✅ EX</span></div>
+      </div>
+      <div class="cv-c">
+        <div class="cv-t">💳 资金管理 + 供应商付款</div>
+        <div class="cv-i"><span>OnRamp 法币→数币</span><span class="cv-p ex">✅ EX</span></div>
+        <div class="cv-i"><span>OffRamp 数币→法币</span><span class="cv-p ex">✅ EX</span></div>
+        <div class="cv-i"><span>VCC 虚拟卡付款</span><span class="cv-p ex">✅ EX</span></div>
+        <div class="cv-i"><span>法币付款 Payout</span><span class="cv-p ex">✅ EX</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Scenarios -->
+  <div class="sec">
+    <h2><span class="n">5</span>典型业务场景</h2>
+
+    <div class="ff">
+      <div class="ff-title"><span class="ff-num">1</span>旅客数币支付 → 数币直接发卡付供应商</div>
+      <div class="flow-row">
+        <span class="fn us">旅客付数币</span><span class="fa">→</span>
+        <span class="fn ex">EX 收银到账</span><span class="fa">→</span>
+        <span class="fn vg">VGO 数币钱包</span><span class="fa">→</span>
+        <span class="fn ex">充值+发卡</span><span class="fa">→</span>
+        <span class="fn ex">VCC</span><span class="fa">→</span>
+        <span class="fn sp">航司收款</span>
+      </div>
+    </div>
+
+    <div class="ff">
+      <div class="ff-title"><span class="ff-num">2</span>法币收款 → 换USD → OnRamp → 发卡</div>
+      <div class="flow-row">
+        <span class="fn us">旅客卡支付</span><span class="fa">→</span>
+        <span class="fn th">收单结算</span><span class="fa">→</span>
+        <span class="fn vg">VGO 本地币</span><span class="fa">→</span>
+        <span class="fn vg">换USD</span><span class="fa">→</span>
+        <span class="fn ex">OnRamp</span><span class="fa">→</span>
+        <span class="fn ex">充值+发卡</span><span class="fa">→</span>
+        <span class="fn sp">供应商</span>
+      </div>
+    </div>
+
+    <div class="ff">
+      <div class="ff-title"><span class="ff-num">3</span>数币收入 → OffRamp → 法币付供应商</div>
+      <div class="flow-row">
+        <span class="fn vg">VGO USDT</span><span class="fa">→</span>
+        <span class="fn ex">OffRamp</span><span class="fa">→</span>
+        <span class="fn ex">USDT→USD</span><span class="fa">→</span>
+        <span class="fn ex">EX Payout</span><span class="fa">→</span>
+        <span class="fn sp">供应商银行</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Timeline -->
+  <div class="sec">
+    <h2><span class="n">6</span>集成路线图</h2>
+    <div style="display:flex;gap:16px">
+      <div style="flex:1">
+        <div class="tl">
+          <div class="ti dn"><div class="td"></div><div class="tl-l">Phase 0 · 环境准备</div><div class="tl-d">Sandbox、密钥、Webhook</div><div class="tl-t">1-2 天</div></div>
+          <div class="ti dn"><div class="td"></div><div class="tl-l">Phase 1 · 前置流程</div><div class="tl-d">商户注册 → 客户信息 → 产品开通</div><div class="tl-t">3-5 天</div></div>
+          <div class="ti"><div class="td"></div><div class="tl-l">Phase 2a · VCC 发卡</div><div class="tl-d">充值 + 发卡 + 卡管理</div><div class="tl-t">7-10 天</div></div>
+          <div class="ti"><div class="td"></div><div class="tl-l">Phase 2b · 聚合收银</div><div class="tl-d">创建订单 + 支付回调</div><div class="tl-t">3-5 天（可并行）</div></div>
+          <div class="ti"><div class="td"></div><div class="tl-l">Phase 2c · 承兑+付款</div><div class="tl-d">OnRamp + OffRamp + Payout</div><div class="tl-t">3-5 天（可并行）</div></div>
+          <div class="ti"><div class="td"></div><div class="tl-l">Phase 3 · 联调测试</div><div class="tl-d">端到端验证</div><div class="tl-t">5-7 天</div></div>
+          <div class="ti"><div class="td"></div><div class="tl-l">Phase 4 · 上线</div><div class="tl-d">生产切换 + 监控</div><div class="tl-t">2-3 天</div></div>
+        </div>
+      </div>
+      <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 16px;background:#f5f3ff;border-radius:8px;border:1.5px solid #c7d2fe">
+        <div style="font-size:10px;color:#6b7280">预计总时长</div>
+        <div style="font-size:26px;font-weight:800;color:#4338ca;line-height:1.2">25-35</div>
+        <div style="font-size:10px;color:#6b7280">工作日</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. Out of scope -->
+  <div class="sec">
+    <h2><span class="n">7</span>不在 EX 范围内</h2>
+    <table>
+      <thead><tr><th>能力</th><th>说明</th><th>建议对接方</th></tr></thead>
+      <tbody>
+        <tr><td>法币卡收单</td><td>C 端信用卡/借记卡</td><td>Stripe / Adyen / dLocal</td></tr>
+        <tr><td>本地钱包收单</td><td>GCash / GrabPay / OVO</td><td>本地 PSP / PayMongo</td></tr>
+        <tr><td>银行转账收单</td><td>本地银行转账</td><td>本地 PSP / 银行直连</td></tr>
+        <tr><td>本地币→USD 换汇</td><td>收单结算后换美金</td><td>VGO 自行/通过 SP</td></tr>
+      </tbody>
+    </table>
+    <div class="note warn">⚠️ EX 不提供法币收单能力。C 端法币支付渠道需通过第三方收单机构，收单结算后 VGO 自行将本地币换为 USD 再注入 EX。</div>
+  </div>
+
+</div>
+</body>
+</html>

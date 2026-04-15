@@ -75,6 +75,28 @@ SP 上架时需声明支持的账户类型（多选）：
 
 #### 1.2.1 账户开户规则配置
 
+> 根据产品/属性/属性值条件定义账户开户规则。
+
+| 字段             | 类型   | 必填 | 说明                                       |
+| ---------------- | ------ | ---- | ------------------------------------------ |
+| 是否允许客户自主开户 | 开关 | 是   | 是否允许客户自主开户，默认否                 |
+| 开户规则列表     | 列表   | 是   | 规则定义在何种条件下开启何种账户类型   |
+
+**开户规则项：**
+
+| 字段             | 类型   | 必填 | 说明                                       | 示例                                       |
+| ---------------- | ------ | ---- | ------------------------------------------ | ------------------------------------------ |
+| 产品             | 单选   | 是   | 触发账户开户的产品                         | 收款 / 付款 / OnRamp / OffRamp 等                 |
+| 属性             | 单选   | 否   | 条件匹配的属性名称                         | 场景 / 渠道 / 地区等                         |
+| 属性值           | 单选   | 否   | 条件匹配的属性值                           | 外贸收款 / 网络支付等                         |
+| 开启账户类型     | 单选   | 是   | 规则匹配时开启的账户类型                   | 专用户 / 待结算账户等                       |
+**Matching Logic:**
+
+1. When merchant uses a product (e.g., creates Collection order), system matches rules in order
+2. Match priority: Product + Attribute + Attribute Value > Product + Attribute > Product only
+3. If no rule matches, open default account type (usually General Account)
+4. If `Allow Customer Self-Opening = Yes`, merchant can manually select account type when opening
+
 ---
 
 ### 1.3 充值币种配置（List 结构）
@@ -420,23 +442,7 @@ TP 配置：
 
 | Field             | Type   | Required | Description                                       | Example                                       |
 | ---------------- | ------ | ---- | ------------------------------------------ | ------------------------------------------ |
-| Product         | Single   | Yes   | Product triggering account opening                 | Collection / Payout / OnRamp / OffRamp etc                 |
-| Attribute   | Single   | No   | Attribute name for condition matching   | Scenario / Channel / Region etc   |
-| Attribute Value     | Single   | No   | Attribute value for condition matching                         | Foreign Trade Collection / Online Payment etc                         |
-| Account Type to Open   | Single   | Yes   | Which account type to open when rule matches                       | Special Account / Settlement Account etc                       |
-
-**Configuration Rules:**
-
-```
-SP Layer (Fixed at listing):
-  Account Currency = USD
-  Allow Customer Self-Opening = No      <-- Default, customer cannot self-open
-  Opening Rules List = [
-    {Product: Collection, Attribute: -, Attribute Value: -, Account Type: Special Account},
-    {Product: Payout, Attribute: -, Attribute Value: -, Account Type: Special Account},
-    {Product: Collection, Attribute: Scenario, Attribute Value: Foreign Trade, Account Type: Special Account}
   ]
-
 TP Layer (Can configure):
   Account Currency = USD
   Allow Customer Self-Opening = Yes     <-- TP can enable self-opening
