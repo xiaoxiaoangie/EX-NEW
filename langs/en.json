@@ -480,18 +480,18 @@
       "withdrawCrypto": "Crypto Withdrawal",
       "withdrawFiat": "Withdraw Fiat",
       "addressBook": "Withdraw Address Book",
-      "tradeDetail": "Trade Detail"
+      "tradeDetail": "Order Details"
     },
     "checkout": {
       "title": "Checkout",
-      "paymentTransactions": "Payment Transactions",
+      "paymentTransactions": "Payment Orders",
       "paymentSettlement": "Payment Settlement",
       "productSettings": "Product Settings"
     },
     "cards": {
       "title": "Cards",
       "management": "Cards Management",
-      "transactions": "Card Transactions"
+      "transactions": "Card Orders"
     },
     "exceptionPending": {
       "title": "Features Being Activated"
@@ -836,8 +836,8 @@
   },
   "crypto": {
     "trade": {
-      "tradeDashboard": "Transaction Overview",
-      "transactionID": "Transaction ID",
+      "tradeDashboard": "Order Overview",
+      "transactionID": "Order ID",
       "canWithdrawAmount": "You Will Receive",
       "createTime": "Created Time",
       "amountDetail": "Deposit Details",
@@ -845,12 +845,12 @@
       "tradeHash": "Transaction Hash",
       "sourceAddress": "From Address",
       "toAddress": "To Address",
-      "timeline": "Transaction Timeline",
+      "timeline": "Order Timeline",
       "sellDetail": "Sell Details",
       "paymethod": "Payment Method",
-      "transactionAmount": "Transaction Amount",
+      "transactionAmount": "Order Amount",
       "expectedCreditAmount": "Expected Credit Amount",
-      "convertTransaction": "Convert Transaction",
+      "convertTransaction": "Order Lookup",
       "completedTime": "Completed Time",
       "exchangeRate": "Rate",
       "bankAccountNo": "Bank Account Number",
@@ -922,12 +922,12 @@
       "selectAddressError": "Please select a withdrawal address",
       "submitFailed": "Submit failed, please try again",
       "feeCalculationFailed": "Fee calculation failed, please try again",
-      "history": "Withdrawal History",
+      "history": "Withdrawal Records",
       "selectCurrency": "Currency",
       "purposeCode": "Purpose Code",
       "purposeCodePlaceholder": "Please select purpose code",
       "purposeCodeRequired": "Please select purpose code",
-      "transactionOverview": "Transaction Overview",
+      "transactionOverview": "Order Overview",
       "notice": {
         "title": "Important Notice",
         "processing": {
@@ -1056,11 +1056,11 @@
       "fee": "Fee",
       "free": "Free",
       "showAddress": "Show Address",
-      "history": "Deposit History"
+      "history": "Deposit Records"
     },
     "transactions": {
-      "title": "Transactions",
-      "transactionId": "Transaction ID",
+      "title": "Records",
+      "transactionId": "Order ID",
       "searchById": "Search by ID",
       "type": "Type",
       "status": "Status",
@@ -1069,11 +1069,11 @@
       "all": "All",
       "search": "Search",
       "reset": "Reset",
-      "noData": "No transactions",
-      "noDataDesc": "No transactions found for the selected filters.",
+      "noData": "No records",
+      "noDataDesc": "No records found for the selected filters.",
       "view": "View",
       "columns": {
-        "id": "Transaction ID",
+        "id": "Order ID",
         "time": "Time",
         "type": "Type",
         "currency": "Currency",

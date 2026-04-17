@@ -469,18 +469,18 @@
       "withdrawCrypto": "提幣",
       "withdrawFiat": "法幣提現",
       "addressBook": "提現地址",
-      "tradeDetail": "交易詳情"
+      "tradeDetail": "訂單詳情"
     },
     "checkout": {
       "title": "收單",
-      "paymentTransactions": "支付交易",
+      "paymentTransactions": "收款訂單",
       "paymentSettlement": "支付結算",
       "productSettings": "產品設定"
     },
     "cards": {
       "title": "卡片",
       "management": "卡片列表",
-      "transactions": "卡交易"
+      "transactions": "卡訂單"
     },
     "exceptionPending": {
       "title": "功能開通中"
@@ -825,8 +825,8 @@
   },
   "crypto": {
     "trade": {
-      "tradeDashboard": "交易概覽",
-      "transactionID": "交易編號",
+      "tradeDashboard": "訂單概覽",
+      "transactionID": "訂單編號",
       "canWithdrawAmount": "可得金額",
       "createTime": "創建時間",
       "amountDetail": "存款詳情",
@@ -834,12 +834,12 @@
       "tradeHash": "交易哈希",
       "sourceAddress": "來源地址",
       "toAddress": "收款地址",
-      "timeline": "交易時間軸",
+      "timeline": "訂單時間軸",
       "sellDetail": "賣出詳情",
       "paymethod": "付款方式",
-      "transactionAmount": "扣款金額",
+      "transactionAmount": "訂單金額",
       "expectedCreditAmount": "預計入帳金額",
-      "convertTransaction": "交易查詢",
+      "convertTransaction": "訂單查詢",
       "completedTime": "完成時間",
       "exchangeRate": "匯率",
       "bankAccountNo": "銀行帳號",
@@ -916,7 +916,7 @@
       "purposeCode": "提款用途",
       "purposeCodePlaceholder": "請選擇提款用途",
       "purposeCodeRequired": "請選擇提款用途",
-      "transactionOverview": "交易概覽",
+      "transactionOverview": "訂單概覽",
       "notice": {
         "title": "重要提示",
         "processing": {
@@ -1048,21 +1048,21 @@
       "history": "充值記錄"
     },
     "transactions": {
-      "title": "交易記錄",
-      "transactionId": "交易編號",
+      "title": "訂單記錄",
+      "transactionId": "訂單編號",
       "searchById": "按編號搜尋",
-      "type": "交易類型",
-      "status": "交易狀態",
+      "type": "訂單類型",
+      "status": "訂單狀態",
       "startDate": "開始日期",
       "endDate": "結束日期",
       "all": "全部",
       "search": "查詢",
       "reset": "重置",
-      "noData": "暫無交易記錄",
-      "noDataDesc": "沒有找到符合當前篩選條件的交易記錄。",
+      "noData": "暫無訂單記錄",
+      "noDataDesc": "沒有找到符合當前篩選條件的訂單記錄。",
       "view": "查看",
       "columns": {
-        "id": "交易編號",
+        "id": "訂單編號",
         "time": "時間",
         "type": "類型",
         "currency": "幣種",

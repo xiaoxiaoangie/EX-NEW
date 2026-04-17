@@ -469,18 +469,18 @@
       "withdrawCrypto": "提币",
       "withdrawFiat": "法币提现",
       "addressBook": "提现地址",
-      "tradeDetail": "交易详情"
+      "tradeDetail": "订单详情"
     },
     "checkout": {
       "title": "收单",
-      "paymentTransactions": "支付交易",
+      "paymentTransactions": "收款订单",
       "paymentSettlement": "支付结算",
       "productSettings": "产品设置"
     },
     "cards": {
       "title": "卡片",
       "management": "卡片列表",
-      "transactions": "卡交易"
+      "transactions": "卡订单"
     },
     "exceptionPending": {
       "title": "功能开通中"
@@ -825,8 +825,8 @@
   },
   "crypto": {
     "trade": {
-      "tradeDashboard": "交易概览",
-      "transactionID": "交易编号",
+      "tradeDashboard": "订单概览",
+      "transactionID": "订单编号",
       "canWithdrawAmount": "可得金额",
       "createTime": "创建时间",
       "amountDetail": "存款详情",
@@ -834,12 +834,12 @@
       "tradeHash": "交易哈希",
       "sourceAddress": "来源地址",
       "toAddress": "收款地址",
-      "timeline": "交易时间轴",
+      "timeline": "订单时间轴",
       "sellDetail": "卖出详情",
       "paymethod": "付款方式",
-      "transactionAmount": "扣款金额",
+      "transactionAmount": "付款金额",
       "expectedCreditAmount": "预计入账金额",
-      "convertTransaction": "交易查询",
+      "convertTransaction": "订单查询",
       "completedTime": "完成时间",
       "exchangeRate": "汇率",
       "bankAccountNo": "银行账号",
@@ -916,7 +916,7 @@
       "purposeCode": "提款用途",
       "purposeCodePlaceholder": "请选择提款用途",
       "purposeCodeRequired": "请选择提款用途",
-      "transactionOverview": "交易概览",
+      "transactionOverview": "订单概览",
       "notice": {
         "title": "重要提示",
         "processing": {
@@ -1048,21 +1048,21 @@
       "history": "充值记录"
     },
     "transactions": {
-      "title": "交易记录",
-      "transactionId": "交易编号",
+      "title": "订单记录",
+      "transactionId": "订单编号",
       "searchById": "按编号搜索",
-      "type": "交易类型",
-      "status": "交易状态",
+      "type": "订单类型",
+      "status": "订单状态",
       "startDate": "开始日期",
       "endDate": "结束日期",
       "all": "全部",
       "search": "查询",
       "reset": "重置",
-      "noData": "暂无交易记录",
-      "noDataDesc": "没有找到符合当前筛选条件的交易记录。",
+      "noData": "暂无订单记录",
+      "noDataDesc": "没有找到符合当前筛选条件的订单记录。",
       "view": "查看",
       "columns": {
-        "id": "交易编号",
+        "id": "订单编号",
         "time": "时间",
         "type": "类型",
         "currency": "币种",
