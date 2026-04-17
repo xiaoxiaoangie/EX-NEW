@@ -1,0 +1,1101 @@
+{
+  "systemInfo": {
+    "name": "EurewaX"
+  },
+  "exceptionPending": {
+    "title": "功能开通中",
+    "desc": "您尚未开通对应产品，此功能暂无法使用，请联系管理员。"
+  },
+  "httpMsg": {
+    "unauthorized": "未授权访问，请重新登录",
+    "forbidden": "禁止访问该资源",
+    "notFound": "请求的资源不存在",
+    "methodNotAllowed": "请求方法不允许",
+    "requestTimeout": "请求超时，请稍后重试",
+    "internalServerError": "服务器内部错误，请稍后重试",
+    "badGateway": "网关错误，请稍后重试",
+    "serviceUnavailable": "服务暂时不可用，请稍后重试",
+    "gatewayTimeout": "网关超时，请稍后重试",
+    "requestCancelled": "请求已取消",
+    "networkError": "网络连接异常，请检查网络连接",
+    "requestFailed": "请求失败",
+    "requestConfigError": "请求配置错误"
+  },
+  "topBar": {
+    "search": {
+      "title": "搜索"
+    },
+    "user": {
+      "userCenter": "个人中心",
+      "docs": "使用文档",
+      "github": "Github",
+      "lockScreen": "锁定屏幕",
+      "logout": "退出登录"
+    },
+    "guide": {
+      "title": "点击这里查看",
+      "theme": "主题风格",
+      "menu": "开启顶栏菜单",
+      "description": "等更多配置"
+    }
+  },
+  "common": {
+    "tips": "提示",
+    "cancel": "取消",
+    "save": "保存",
+    "edit": "编辑",
+    "confirm": "确定",
+    "logOutTips": "您是否要退出登录?",
+    "sendCode": "发送验证码",
+    "resend": "重新发送",
+    "set": "已设置",
+    "notSet": "未设置",
+    "setUp": "设置",
+    "change": "修改",
+    "enabled": "已启用",
+    "manage": "管理",
+    "default": "默认",
+    "Pleasecomplete": "请完成安全验证",
+    "Swipeverification": "向右滑动完成验证",
+    "verifySuccessful": "验证成功",
+    "verifyFailed": "验证失败",
+    "prevStep": "上一步",
+    "pleaseInput": "请输入",
+    "pleaseSelect": "请选择",
+    "loading": "加载中...",
+    "loadFailed": "加载失败",
+    "retry": "重试",
+    "saveSuccess": "保存成功",
+    "saveFailed": "保存失败",
+    "back": "返回",
+    "copySuccess": "复制成功",
+    "copyFailed": "复制失败"
+  },
+  "userCenter": {
+    "basicSettings": "基本设置",
+    "realName": "姓名",
+    "gender": "性别",
+    "loginName": "登录名",
+    "address": "地址",
+    "admin": "管理员",
+    "normalUser": "普通用户"
+  },
+  "search": {
+    "placeholder": "搜索页面",
+    "historyTitle": "搜索历史",
+    "switchKeydown": "切换",
+    "selectKeydown": "选择"
+  },
+  "setting": {
+    "menuType": {
+      "title": "菜单布局",
+      "list": ["垂直", "水平", "混合", "双列"]
+    },
+    "theme": {
+      "title": "主题风格",
+      "list": ["浅色", "深色", "系统"]
+    },
+    "menu": {
+      "title": "菜单风格"
+    },
+    "color": {
+      "title": "系统主题色"
+    },
+    "box": {
+      "title": "盒子样式",
+      "list": ["边框", "阴影"]
+    },
+    "container": {
+      "title": "容器宽度",
+      "list": ["铺满", "定宽"]
+    },
+    "basics": {
+      "title": "基础配置",
+      "list": {
+        "multiTab": "开启多标签栏",
+        "accordion": "侧边栏开启手风琴模式",
+        "collapseSidebar": "显示折叠侧边栏按钮",
+        "fastEnter": "显示快速入口",
+        "reloadPage": "显示重载页面按钮",
+        "breadcrumb": "显示全局面包屑导航",
+        "language": "显示多语言选择",
+        "progressBar": "显示顶部进度条",
+        "weakMode": "色弱模式",
+        "watermark": "全局水印",
+        "menuWidth": "菜单宽度",
+        "tabStyle": "标签页风格",
+        "pageTransition": "页面切换动画",
+        "borderRadius": "自定义圆角"
+      }
+    },
+    "tabStyle": {
+      "default": "默认",
+      "card": "卡片",
+      "google": "谷歌"
+    },
+    "transition": {
+      "list": {
+        "none": "无动画",
+        "fade": "淡入淡出",
+        "slideLeft": "左侧滑入",
+        "slideBottom": "下方滑入",
+        "slideTop": "上方滑入"
+      }
+    }
+  },
+  "notice": {
+    "title": "通知",
+    "btnRead": "标为已读",
+    "bar": ["通知", "消息", "待办"],
+    "text": ["暂无"],
+    "viewAll": "查看全部"
+  },
+  "worktab": {
+    "btn": {
+      "refresh": "刷新",
+      "fixed": "固定",
+      "unfixed": "取消固定",
+      "closeLeft": "关闭左侧",
+      "closeRight": "关闭右侧",
+      "closeOther": "关闭其他",
+      "closeAll": "关闭全部"
+    }
+  },
+  "login": {
+    "leftView": {
+      "title": "跨境支付智能SaaS解决方案",
+      "subTitle": "提供一站式跨境支付解决方案，帮助企业实现跨境支付的便捷、安全、可靠。",
+      "features": ["金融级安全保障", "跨境支付基础设施", "智能风控解决方案"]
+    },
+    "title": "欢迎回来",
+    "subTitle": "输入手机号 / 邮箱和密码登录",
+    "roles": {
+      "super": "超级管理员",
+      "admin": "管理员",
+      "user": "普通用户"
+    },
+    "placeholder": ["请输入账号", "请输入密码", "请拖动滑块完成验证"],
+    "sliderText": "按住滑块拖动",
+    "sliderSuccessText": "验证成功",
+    "rememberPwd": "记住密码",
+    "forgetPwd": "忘记密码",
+    "btnText": "登录",
+    "noAccount": "还没有账号？",
+    "register": "注册",
+    "success": {
+      "title": "登录成功",
+      "message": "欢迎回来"
+    },
+    "email": "邮箱",
+    "emailAddress": "邮箱地址",
+    "phone": "手机号",
+    "pleaseEnterEmail": "请输入邮箱地址",
+    "pleaseEnterPhone": "请输入手机号",
+    "password": "密码",
+    "pleaseEnterPassword": "请输入登录密码",
+    "verifyCode": "验证码",
+    "pleaseEnterVerifyCode": "请输入验证码",
+    "loginWithVerifyCode": "用验证码登录",
+    "loginWithPassword": "用密码登录",
+    "verifyAndLogin": "验证并登录",
+    "verificationFailed": "验证失败，请重试",
+    "switchToApp": "改用 Authenticator 验证",
+    "switchToSms": "改用短信验证",
+    "errorContent": "密码错误（第 {tryCount} 次），请完成图形验证后重试",
+    "frozen": {
+      "title": "账户已冻结",
+      "message": "为保护您的账户安全，登录功能已暂时冻结。",
+      "alertContent": "我们已向您的注册邮箱/手机发送了安全通知。",
+      "remainingTime": "剩余冻结时间",
+      "backToLogin": "返回登录",
+      "contactSupport": "联系客服"
+    }
+  },
+  "profile": {
+    "baseInfo": "基本信息",
+    "description": "您的个人信息。",
+    "nickname": "昵称",
+    "language": "语言",
+    "contactInfo": "联系信息",
+    "contactInfoDescription": "管理您的邮箱和手机号。",
+    "editNickname": "编辑昵称",
+    "languagePreference": "语言偏好",
+    "languagePreferenceDesc": "修改后立即生效",
+    "editEmail": "编辑邮箱",
+    "editMobile": "编辑手机号",
+    "verifyCurrentIdentity": "验证当前身份",
+    "newEmail": "新邮箱",
+    "newMobile": "新手机号",
+    "verifyNewEmail": "验证新邮箱",
+    "verifyNewMobile": "验证新手机号",
+    "inputNewMobile": "输入新手机号",
+    "inputNewEmail": "输入新邮箱",
+    "verifyAndSave": "验证并保存",
+    "Verified": "已验证",
+    "noSet": "未设置",
+    "nicknameRule": "2-30 个字符，支持中文/英文/数字/下划线"
+  },
+  "security": {
+    "title": "安全验证",
+    "subTitle": "为了您的账户安全，请输入验证码",
+    "verifyCodeSentTo": "验证码已发送至",
+    "verifyCodeWillSentTo": "验证码将发送至",
+    "authenticatorCode": "Authenticator 动态码",
+    "pleaseEnterSixCode": "输入 6 位动态码",
+    "loginAndAuth": "登录与身份认证",
+    "loginAndAuthDesc": "全局身份认证设置，适用于所有商户",
+    "setAsDefault": "设为默认",
+    "setAsDefaultDesc": "登录时默认使用 {type} 验证",
+    "disable": "禁用",
+    "disableDesc": "关闭 {type} 双重验证",
+    "currentPassword": "当前密码",
+    "newPassword": "新密码",
+    "pleaseEnterCurrentPassword": "请输入当前密码",
+    "pleaseEnterNewPassword": "请输入新密码",
+    "newPasswordRule": "至少 8 位，含字母、数字和特殊字符",
+    "confirmNewPassword": "确认新密码",
+    "inputConfirmNewPassword": "请再次输入新密码",
+    "changePassword": "修改密码",
+    "setPassword": "设置密码",
+    "changeLoginPassword": "修改登录密码",
+    "setLoginPassword": "设置登录密码",
+    "setPasswordSuccess": "密码设置成功",
+    "changeLoginPasswordSuccess": "登录密码修改成功",
+    "nextStep": "下一步",
+    "authPhone": "安全验证手机号",
+    "setAuthPhone": "设置安全验证手机号",
+    "changeAuthPhone": "修改安全验证手机号",
+    "verifyAndEnable": "验证并启用",
+    "verifyAndSet": "验证并设置",
+    "loginPassword": "登录密码",
+    "loginPasswordDesc": "登录密码，用于密码方式登录",
+    "authenticatorApp": "Authenticator App (2FA)",
+    "authenticatorAppDesc": "Google Authenticator / Authy 动态令牌",
+    "smsCodeSentTo": "短信验证码发送到",
+    "emailCodeSentTo": "邮件验证码发送到",
+    "transactionVerification": "交易验证",
+    "transactionVerificationDesc": "资金操作验证方式",
+    "paymentPIN": "Payment PIN（交易密码）",
+    "paymentPINDesc": "6 位数字 PIN，执行资金操作时快速验证，无需等待验证码",
+    "paymentPINNote": "设置后，Self 模式下的资金操作（兑换、付款、卡充值等）输入 PIN 即可完成验证。",
+    "paymentPINNote2": "未设置时回退到手机号/邮箱验证码。Designated 模式下不适用。",
+    "designatedPhone": "Designated Phone（安全验证手机号）",
+    "designatedPhoneDesc": "MID 级 — 仅 Account Holder 可编辑 · 当前: ABC Trading / MID-001",
+    "designatedPhoneNote": "角色验证方式为 Designated 时，资金操作的验证码将发送到此手机号。",
+    "designatedPhoneNote2": "可以是您自己的手机号，也可以是指定的安全负责人手机号。",
+    "googleStep1": "Step 1: 使用 Authenticator App 扫描二维码",
+    "googleStep2": "输入 Authenticator App 上显示的 6 位动态码",
+    "googleNote": "无法扫码？手动输入密钥",
+    "setUpGoogleAuth": "设置 Authenticator App",
+    "currentStatus": "当前状态",
+    "regenerateKey": "重新生成密钥",
+    "regenerateKeyNote": "重新生成密钥，需要重新扫码绑定",
+    "close": "关闭",
+    "sendVerifyCode": "向已绑定手机号发送验证码",
+    "sendVerifyCodeToEmail": "向已绑定邮箱发送验证码",
+    "setPaymentPIN": "设置交易密码",
+    "changePaymentPIN": "修改交易密码",
+    "setPaymentPINDesc": "设置6位数字密码，用于快速验证资金操作",
+    "inputOldPaymentPIN": "输入原始6位数字密码",
+    "inputPaymentPIN": "输入6位数字密码",
+    "confirmPaymentPIN": "再次输入确认",
+    "confirmPaymentPINNote": "两次输入不一致，请重新设置",
+    "paymentPINError": "不能是连续或相同的数字",
+    "confirmSet": "确认设置",
+    "noSetSecurityPhone": "未设置安全验证手机号",
+    "current": "当前",
+    "pleaseEnterSixCodeVerify": "请输入 6 位验证码",
+    "designatedPhoneNote3": "Designated 模式下，资金操作验证码将发送到此号码。",
+    "newPaymentPINSame": "新密码不能与原密码相同"
+  },
+  "forgetPassword": {
+    "title": "忘记密码？",
+    "subTitle": "输入您的邮箱来重置您的密码",
+    "placeholder": "请输入您的邮箱地址",
+    "submitBtnText": "提交",
+    "backBtnText": "返回",
+    "resetPassword": "重置密码",
+    "step1SubTitle": "输入您的注册邮箱或手机号，我们将发送验证码",
+    "accountLabel": "邮箱 / 手机号",
+    "accountPlaceholder": "请输入您的邮箱或手机号",
+    "continueBtn": "继续",
+    "backToLogin": "返回登录",
+    "verifyIdentity": "验证身份",
+    "step": "步骤",
+    "codeHint": "验证码已发送至",
+    "codeHintSuffix": "，请查收",
+    "sixDigitCode": "6位验证码",
+    "validFor10Min": "验证码10分钟内有效",
+    "verifyBtn": "验证",
+    "setNewPassword": "设置新密码",
+    "newPassword": "新密码",
+    "newPasswordPlaceholder": "请输入新密码",
+    "confirmPassword": "确认密码",
+    "confirmPasswordPlaceholder": "请再次输入新密码",
+    "resetPasswordBtn": "重置密码",
+    "resetSuccess": "密码已重置",
+    "resetSuccessDesc": "新密码已生效，请重新登录",
+    "resendAfter": "秒后重新发送",
+    "resendCode": "重新发送验证码",
+    "accountRequired": "请输入账号",
+    "invalidAccountFormat": "请输入有效的邮箱或手机号",
+    "codeRequired": "请输入验证码",
+    "invalidCode": "验证码格式不正确",
+    "passwordRequired": "请输入新密码",
+    "passwordTooShort": "密码长度至少8位",
+    "passwordMismatch": "两次输入的密码不一致",
+    "passwordWeak": "弱",
+    "passwordMedium": "中等",
+    "passwordStrong": "强"
+  },
+  "register": {
+    "title": "创建账号",
+    "subTitle": "欢迎加入我们，请填写以下信息完成注册",
+    "placeholder": ["请输入账号", "请输入密码", "请再次输入密码"],
+    "rule": [
+      "请再次输入密码",
+      "两次输入密码不一致!",
+      "长度在 3 到 20 个字符",
+      "密码长度不能小于6位",
+      "请同意隐私协议"
+    ],
+    "setRule": [
+      "至少 8 位字符",
+      "包含数字",
+      "包含字母（不限大小写）",
+      "包含特殊字符（仅支持! # {'@'} ?.+ ; = ~ ）"
+    ],
+    "confirmPassword": "确认密码",
+    "confirmPasswordPlaceholder": "再次输入密码",
+    "registerWithVerifyCode": "使用验证码注册，无需设置密码",
+    "registerWithPassword": "改用密码注册",
+    "readAndAgreeText": "我已阅读并同意",
+    "agreeText": "我同意",
+    "privacyPolicy": "《隐私政策》",
+    "submitBtnText": "注册",
+    "hasAccount": "已有账户？",
+    "toLogin": "去登录",
+    "createAccount": "创建账户",
+    "passwordRule": "至少 8 位，含大小写字母和数字",
+    "pleaseSetPassword": "请设置密码",
+    "invalidEmailFormat": "请输入正确的邮箱地址",
+    "invalidPhoneNumberFormat": "请输入正确的手机号",
+    "pleaseAgreePrivacyPolicy": "请同意相关协议",
+    "passwordStrengthInsufficient": "密码强度不足，请满足所有规则",
+    "registerSuccess": "注册成功",
+    "registerSuccessDesc": "账户已创建，登录后即可开通产品",
+    "countdownText": "秒后自动跳转",
+    "goToLogin": "前往登录"
+  },
+  "lockScreen": {
+    "pwdError": "密码错误",
+    "lock": {
+      "inputPlaceholder": "请输入锁屏密码",
+      "btnText": "锁定"
+    },
+    "unlock": {
+      "inputPlaceholder": "请输入解锁密码",
+      "btnText": "解锁",
+      "backBtnText": "返回登录"
+    }
+  },
+  "greeting": {
+    "dawn": "凌晨了！",
+    "morning": "上午好！",
+    "afternoon": "下午好！",
+    "evening": "晚上好！"
+  },
+  "exceptionPage": {
+    "403": "抱歉，您无权访问该页面",
+    "404": "抱歉，您访问的页面不存在",
+    "500": "抱歉，服务器出错了",
+    "gohome": "返回首页"
+  },
+  "menus": {
+    "login": {
+      "title": "登录"
+    },
+    "register": {
+      "title": "注册"
+    },
+    "forgetPassword": {
+      "title": "忘记密码"
+    },
+    "activate": {
+      "title": "账户激活"
+    },
+    "outside": {
+      "title": "内嵌页面"
+    },
+    "dashboard": {
+      "title": "仪表盘",
+      "console": "工作台"
+    },
+    "template": {
+      "title": "模板中心",
+      "pricing": "定价",
+      "micro": "微应用",
+      "unocss": "UnoCSS 示例"
+    },
+    "result": {
+      "title": "结果页面",
+      "success": "成功页",
+      "fail": "失败页"
+    },
+    "exception": {
+      "title": "异常页面",
+      "forbidden": "403",
+      "notFound": "404",
+      "serverError": "500"
+    },
+    "system": {
+      "title": "系统管理",
+      "user": "用户管理",
+      "role": "角色管理",
+      "rolesPermissions": "角色与权限",
+      "userCenter": "个人中心",
+      "menu": "菜单管理"
+    },
+    "setting": {
+      "title": "设置中心",
+      "profile": "个人信息",
+      "security": "安全设置"
+    },
+    "assets": {
+      "title": "资产",
+      "wallets": "资产列表",
+      "depositCrypto": "充币",
+      "depositFiat": "法币充值",
+      "withdrawCrypto": "提币",
+      "withdrawFiat": "法币提现",
+      "addressBook": "提现地址",
+      "tradeDetail": "交易详情"
+    },
+    "checkout": {
+      "title": "收单",
+      "paymentTransactions": "支付交易",
+      "paymentSettlement": "支付结算",
+      "productSettings": "产品设置"
+    },
+    "cards": {
+      "title": "卡片",
+      "management": "卡片列表",
+      "transactions": "卡交易"
+    },
+    "exceptionPending": {
+      "title": "功能开通中"
+    }
+  },
+  "dashboard": {
+    "header": {
+      "title": "仪表盘",
+      "versionBadge": "MP 1.0"
+    },
+    "entityProfile": {
+      "title": "完善主体信息",
+      "subtitle": "请完善您的主体信息，以便我们为您展示可用的产品与服务。",
+      "countryLabel": "注册国家 / 地区",
+      "entityTypeLabel": "主体类型",
+      "entityTypeEnterprise": "企业",
+      "entityTypePersonal": "个人"
+    },
+    "productSelection": {
+      "title": "选择要开通的产品",
+      "subtitle": "请选择需要开通的产品。系统将跳转至合作方完成 KYC 信息提交与认证。",
+      "countText": "已选择 {count} 个产品",
+      "emptyHint": "请先选择上方的注册国家/地区和主体类型，以查看可开通的产品。",
+      "submitBtn": "提交至 SumSub 验证",
+      "productsAvailable": "{count} 个可用产品"
+    },
+    "productApplication": {
+      "pageTitle": "产品开通申请",
+      "pageDesc": "请先选择主体信息，再选择需要开通的产品。",
+      "steps": {
+        "selectProduct": "选择产品",
+        "submitInfo": "提交信息",
+        "review": "审核中",
+        "result": "审核结果"
+      },
+      "common": {
+        "statusTitle": "申请状态",
+        "badgeReviewing": "审核中",
+        "badgeNeedInfo": "待补件",
+        "badgeRejected": "已拒绝",
+        "badgeActive": "已生效",
+        "cardAppliedProducts": "已提交申请的产品",
+        "cardActivatedProducts": "已开通的产品",
+        "cardReviewTimeline": "审核时间线",
+        "cardSubmissionTimeline": "提交时间线",
+        "noApplyUrl": "KYC 链接暂不可用，请联系支持人员。",
+        "backToApplication": "返回申请"
+      },
+      "submitted": {
+        "title": "申请提交成功！",
+        "desc": "您的资料已提交至合作方进行审核，审核将很快开始。",
+        "submittedOnPrefix": "提交时间",
+        "badgePendingReview": "待审核",
+        "infoTitle": "接下来会发生什么？",
+        "infoLine1": "您的资料会在 1-3 个工作日内完成审核。",
+        "infoLine2": "审核完成后，您将收到邮件通知结果。",
+        "infoLine3": "审核通过后，相关产品将自动为您开通。",
+        "timelineSubmittedTitle": "已提交申请",
+        "timelineSubmittedMeta": "2026-03-02 14:30 UTC",
+        "timelineSubmittedDesc": "通过 SumSub 验证入口完成资料采集。",
+        "timelineReviewTitle": "合规审核",
+        "timelineReviewMeta": "预计：1-3 个工作日。"
+      },
+      "underReview": {
+        "title": "申请审核中",
+        "desc": "您的申请正在审核中，通常需要 1-3 个工作日完成。",
+        "progressTitle": "审核进行中",
+        "progressMetaPrefix": "预计完成时间：",
+        "progressHint": "资料核验正在进行中...",
+        "submittedPrefix": "提交时间",
+        "timelineTitle": "审核时间线",
+        "timelineSubmittedTitle": "已提交申请",
+        "timelineSubmittedMeta": "2026-03-02 14:30 UTC",
+        "timelineDocReceivedTitle": "已接收资料",
+        "timelineDocReceivedMeta": "2026-03-02 14:32 UTC",
+        "timelineComplianceTitle": "合规审核",
+        "timelineComplianceMeta": "审核进行中...",
+        "timelineResultTitle": "审核结果",
+        "timelineResultMeta": "待出结果",
+        "viewInfo": "查看信息"
+      },
+      "approved": {
+        "title": "申请已通过！",
+        "desc": "恭喜，您的申请已审核通过，相关产品已为您开通，可以开始使用。",
+        "approvedOnPrefix": "通过时间",
+        "activatedProductsTitle": "已开通的产品",
+        "infoTitle": "您现在可以进行的操作",
+        "infoLine1": "进入仪表盘，使用完整的产品功能。",
+        "infoLine2": "配置产品参数和偏好设置。",
+        "infoLine3": "立即开始处理交易。",
+        "infoLine4": "使用开发者凭证进行 API 集成。",
+        "goToDashboard": "进入仪表盘"
+      },
+      "rejected": {
+        "title": "申请未通过",
+        "desc": "抱歉，您的申请暂未通过审核，请参考下方原因并根据提示进行调整。",
+        "reasonsTitle": "未通过原因",
+        "rejectedOnPrefix": "拒绝时间",
+        "viewInfo": "查看信息"
+      },
+      "needInfo": {
+        "title": "需要补充资料",
+        "desc": "继续处理申请前，需要您补充部分资料。",
+        "alertTitle": "请尽快处理",
+        "alertDesc": "请在14 个工作日内补充以下资料，如未及时处理，申请可能会被拒绝。",
+        "materialsTitle": "需要补充的资料",
+        "badgeRequired": "必填",
+        "badgeOptional": "选填",
+        "returnedOnPrefix": "退回时间",
+        "supplementBtn": "通过 SumSub 补充资料",
+        "supplementHint": "系统会跳转至合作方页面上传补充文件。",
+        "backToApplication": "返回申请",
+        "noApplyUrl": "KYC 链接暂不可用，请联系支持人员。"
+      }
+    },
+    "main": {
+      "myAssets": {
+        "title": "我的资产",
+        "viewAll": "查看全部 →",
+        "totalBalance": "总资产",
+        "fiat": "法币",
+        "crypto": "加密资产",
+        "cards": "卡片"
+      },
+      "tasks": {
+        "title": "待办任务",
+        "viewAll": "查看全部 →",
+        "item1Title": "完成 KYC 实名认证",
+        "item1Due": "今天",
+        "item2Title": "审核待处理出款",
+        "item2Due": "今天",
+        "item3Title": "审批 API Key 续期",
+        "item3Due": "明天",
+        "item4Title": "本月对账单已生成",
+        "item4Due": "本周内"
+      },
+      "quickAccess": {
+        "title": "快捷入口",
+        "deposit": "充值",
+        "withdraw": "提现",
+        "cryptoReceive": "收款（数币）",
+        "cards": "卡片"
+      },
+      "incomeExpense": {
+        "title": "收支概览",
+        "hint": "不包含卡账户",
+        "income": "收入",
+        "expense": "支出",
+        "range7d": "近 7 天",
+        "range30d": "近 30 天"
+      }
+    }
+  },
+  "rolesPermissions": {
+    "pageTitle": "角色与权限",
+    "subtitle": "管理角色、配置权限，以及邀请和管理用户",
+    "tabRoles": "角色",
+    "tabUsers": "用户",
+    "searchRolesPlaceholder": "搜索角色…",
+    "searchUsersPlaceholder": "按姓名或邮箱搜索…",
+    "createRole": "新建角色",
+    "inviteUser": "邀请用户",
+    "back": "← 返回",
+    "viewArrow": "查看 →",
+    "reinvite": "重新邀请",
+    "reinviteWithEmail": "重新邀请",
+    "colRole": "角色",
+    "colType": "类型",
+    "colModules": "模块",
+    "colMembers": "成员",
+    "colStatus": "状态",
+    "colUser": "用户",
+    "colRoleType": "角色类型",
+    "colRoles": "角色",
+    "accountHolder": "账户持有人",
+    "custom": "自定义",
+    "member": "成员",
+    "modulesAll": "全部（{n}）",
+    "modulesPartial": "{current} / {total}",
+    "modelLayer": "两层权限模型：第一层为页面权限（控制能看到哪些模块），第二层为操作权限（仅查阅 / 可操作）。账户持有人默认拥有全部权限，无需配置；用户拥有多角色时权限取并集。",
+    "createNewRole": "新建角色",
+    "editRoleTitle": "编辑：{name}",
+    "roleDetails": "角色信息",
+    "roleName": "角色名称",
+    "roleNamePlaceholder": "例如：财务主管、运营专员、卡业务管理员…",
+    "description": "描述",
+    "descriptionPlaceholder": "例如：负责资金管理与出入金操作",
+    "modulePermissionsHint": "选择该角色可访问的模块，并为每个模块勾选操作权限（可多选）。",
+    "permQueryHint": "查阅",
+    "permQueryDesc": "查看列表与详情",
+    "permOperateHint": "操作",
+    "permOperateDesc": "创建 / 编辑 / 删除",
+    "permExportHint": "导出",
+    "permExportDesc": "导出 CSV / Excel / PDF",
+    "permQuery": "查阅",
+    "permOperate": "操作（增删改）",
+    "permExport": "导出",
+    "verificationSection": "安全验证方式",
+    "verificationHintRole": "该角色拥有交易模块的操作权限，请选择执行资金操作时的安全验证方式。",
+    "verificationPlaceholder": "选择验证方式",
+    "verificationSelf": "本人 — 验证码发给操作人自己",
+    "verificationDesignated": "指定人 — 验证码发给指定安全手机号",
+    "cancel": "取消",
+    "saveRole": "保存角色",
+    "edit": "编辑",
+    "delete": "删除",
+    "noMembers": "暂无成员",
+    "userDetail": "用户详情",
+    "identity": "身份（IID）",
+    "userUid": "用户（UID）",
+    "modulePermissions": "模块权限",
+    "editRoles": "编辑角色",
+    "combinedPermissionsHint": "所有角色的权限合并结果（页面取并集，操作取最高级别）",
+    "actions": "操作",
+    "activate": "启用",
+    "suspend": "暂停",
+    "removeFromMid": "从商户移除",
+    "userActionsHint": "暂停会保留数据与角色；移除会清空角色且不可恢复。已移除用户可重新邀请。",
+    "inviteDialogTitle": "邀请用户",
+    "inviteIntro": "被邀请人将收到邀请通知。",
+    "inviteTabEmail": "邮箱",
+    "inviteTabPhone": "手机",
+    "inviteFirstNameLabel": "用户名",
+    "inviteFirstNamePlaceholder": "请输入被邀请人的用户名",
+    "emailAddress": "邮箱地址",
+    "emailPlaceholder": "user{'@'}example.com",
+    "phoneNumber": "手机号",
+    "phonePlaceholder": "138 0000 0000",
+    "countryCodePlaceholder": "区号",
+    "assignRoles": "分配角色",
+    "noAssignableRoles": "暂无可分配角色",
+    "inviteTipEmail1": "链接 7 天内有效，仅可使用一次。",
+    "inviteTipEmail2": "未注册用户：引导注册（创建 Identity + User）。",
+    "inviteTipEmail3": "已注册用户：登录后接受邀请（创建 User）。",
+    "inviteTipEmail4": "邮件链接即视为邮箱所有权验证，无需额外验证码。",
+    "inviteTipPhone1": "短信可在手机端接收，接受邀请需在 MP 端（Web）完成。",
+    "inviteTipPhone2": "未注册用户：前往 MP 端使用该手机号注册并登录。",
+    "inviteTipPhone3": "已注册用户：前往 MP 端登录，在通知中心查看待接受邀请。",
+    "inviteTipPhone4": "接受邀请时需输入短信验证码以确认手机号所有权。",
+    "inviteTipPhone5": "短信为明文传输存在截获风险，需额外验证码保障安全；本期不支持在手机端直接完成操作。",
+    "sendInvitation": "发送邀请",
+    "editRolesDialogTitle": "编辑角色",
+    "editRolesDialogDesc": "为该用户切换角色，保存后权限将立即更新。",
+    "editRolesDialogHint": "多角色时：页面权限取并集，操作权限取最高级别（可操作 > 仅查阅）。",
+    "saveChanges": "保存更改",
+    "confirmTitle": "确认",
+    "permissionTable": {
+      "module": "模块",
+      "subMenus": "子菜单",
+      "operationLevel": "操作级别",
+      "noAccess": "无权限",
+      "query": "查阅",
+      "operate": "操作",
+      "export": "导出",
+      "verification": "安全验证方式"
+    },
+    "roleStatus": {
+      "active": "启用",
+      "inactive": "停用",
+      "disabled": "已禁用",
+      "normal": "正常"
+    },
+    "merchantStatus": {
+      "ACTIVE": "正常",
+      "DISABLED": "已禁用"
+    },
+    "userStatus": {
+      "active": "正常",
+      "disabled": "已禁用",
+      "suspended": "已暂停",
+      "invited": "待接受邀请",
+      "removed": "已移除"
+    },
+    "inviteStatus": {
+      "invited": "邀请中",
+      "accepted": "已接受",
+      "expired": "已过期（7 天）"
+    },
+    "msg": {
+      "enterRoleName": "请输入角色名称",
+      "selectOneModule": "请至少选择一个带权限的模块",
+      "roleUpdated": "角色「{name}」已更新",
+      "roleCreated": "角色「{name}」已创建",
+      "createRoleFailed": "创建角色失败",
+      "cannotDeleteRole": "无法删除：仍有 {count} 名用户拥有该角色，请先移除或调整。",
+      "deleteRoleConfirm": "确定删除角色「{name}」吗？此操作不可恢复。",
+      "roleDeleted": "角色「{name}」已删除",
+      "enterEmail": "请输入有效邮箱",
+      "enterPhone": "请输入手机号",
+      "enterFirstName": "请输入被邀请人的名字",
+      "holderOnlyOperate": "仅账户持有人可执行此操作",
+      "selectOneRole": "请至少选择一个角色",
+      "inviteSent": "已向 {contact} 发送邀请，链接 7 天内有效。",
+      "rolesUpdated": "角色已更新",
+      "userEnabled": "用户已启用",
+      "userDisabled": "用户已禁用",
+      "removeUserConfirm": "确定将 {name} 从 {merchant} 移除吗？将清空其角色且不可恢复。",
+      "userRemoved": "已将 {name} 从商户移除"
+    }
+  },
+  "activate": {
+    "titleSet": "激活您的账户",
+    "titleDone": "账户已激活！",
+    "titleDoneRegister": "注册完成！",
+    "subSet": "欢迎！请设置密码以完成账户激活。",
+    "subDone": "您的密码已设置成功，现在可以登录 EX Merchant Portal。",
+    "subDoneRegister": "您已完成注册，现在可以登录 EX Merchant Portal。",
+    "steps": {
+      "emailVerified": "邮箱已验证",
+      "phoneVerified": "手机已验证",
+      "setPassword": "设置密码",
+      "signIn": "登录"
+    },
+    "passwordLabel": "密码",
+    "confirmPasswordLabel": "确认密码",
+    "subSetHasUserId": "您的账户已就绪，点击下方按钮完成注册。",
+    "completeBtn": "完成注册",
+    "activateBtn": "激活账户并登录",
+    "goToLogin": "前往登录",
+    "activatedMessage": "激活成功",
+    "activatedMessageRegister": "注册完成",
+    "expired": {
+      "title": "激活链接已过期",
+      "sub": "该激活链接已过期。链接在发送后 24 小时内有效。",
+      "alert": "如需获取新的激活链接，请联系您的 EX 客户代表或请求门户管理员重新发送。",
+      "footerSignIn": "已激活？前往登录",
+      "footerSupport": "联系支持",
+      "requestSuccess": "已请求发送新的激活邮件"
+    },
+    "alreadyActivated": {
+      "title": "账户已激活！",
+      "sub": "该账户已激活，您可以直接登录。",
+      "alert": "如果登录遇到问题，请联系支持团队获取帮助。",
+      "signIn": "前往登录"
+    },
+    "error": {
+      "title": "出现问题",
+      "sub": "处理您的请求时出现问题，请稍后重试。",
+      "alert": "如果此问题持续存在，请联系我们的支持团队寻求帮助。",
+      "retry": "重试"
+    }
+  },
+  "crypto": {
+    "trade": {
+      "tradeDashboard": "交易概览",
+      "transactionID": "交易编号",
+      "canWithdrawAmount": "可得金额",
+      "createTime": "创建时间",
+      "amountDetail": "存款详情",
+      "withdrawDetail": "提现详情",
+      "tradeHash": "交易哈希",
+      "sourceAddress": "来源地址",
+      "toAddress": "收款地址",
+      "timeline": "交易时间轴",
+      "sellDetail": "卖出详情",
+      "paymethod": "付款方式",
+      "transactionAmount": "扣款金额",
+      "expectedCreditAmount": "预计入账金额",
+      "convertTransaction": "交易查询",
+      "completedTime": "完成时间",
+      "exchangeRate": "汇率",
+      "bankAccountNo": "银行账号",
+      "purpose": "用途"
+    },
+    "withdraw": {
+      "icon": "💰",
+      "title": "提币",
+      "selectNetwork": "提币网络",
+      "addressLabel": "地址标签",
+      "availableBalance": "可用余额",
+      "networkFee": "手续费",
+      "addAddress": "新增地址",
+      "selectAddress": "选择地址",
+      "addNewAddress": "创建收款地址簿",
+      "cancel": "取消",
+      "confirm": "确认",
+      "amount": "提币金额",
+      "amountPlaceholder": "请输入提币金额",
+      "address": "提币地址",
+      "receiveAddress": "提币地址",
+      "transactionAmount": "提币金额",
+      "youWillReceive": "实际到账",
+      "submit": "提交",
+      "importantNotice": "重要提示",
+      "addressModalNotice": "提款地址在使用前必须进行验证，请确保所有资料准确无误。",
+      "networkSelection": "网络",
+      "networkSelectionHint": "选择您的地址所属网络",
+      "networkWarning": "选择错误的网络进行转账可能导致资产永久丢失。",
+      "universalAddress": "通用地址",
+      "universalAddressDesc": "勾选此项以确保地址支持所选网络上的所有代币",
+      "coinSelection": "代币",
+      "addressInput": "地址",
+      "addressWarning": "提款地址在使用前必须进行验证，请确保所有资料准确无误。",
+      "addressPlaceholder": "请再次仔细核对地址。错误的地址可能导致资金永久丢失。",
+      "pasteButton": "粘贴",
+      "aliasLabel": "别名",
+      "aliasPlaceholder": "为该地址输入一个易于识别的名称",
+      "addressLabelRequired": "请输入地址标签",
+      "addressRequired": "请输入钱包地址",
+      "addressMinLength": "地址长度不能少于26位",
+      "networkRequired": "请选择网络",
+      "coinRequired": "请选择至少一种币种",
+      "pasteSuccess": "地址已粘贴",
+      "pasteWarning": "无法访问剪贴板，请手动粘贴",
+      "pasteNotSupported": "浏览器不支持自动粘贴，请手动粘贴",
+      "selectNetworkWarning": "请选择网络",
+      "selectCoinWarning": "请选择至少一种币种",
+      "addressAddSuccess": "地址添加成功",
+      "completeInfoWarning": "请完善提币信息",
+      "submitSuccess": "提币申请已提交，请等待处理",
+      "processingTimeTitle": "处理时间",
+      "processingTimeDesc": "提币处理需时约4小时。请留意，处理时间或会因为突发情况而延长。",
+      "warningTitle": "警告",
+      "warningDesc": "切勿与受制裁的实体进行交易。",
+      "supportTitle": "需要协助？",
+      "supportDesc": "请电邮至 support@blancblock.com",
+      "telegramDesc": "或通过 Telegram 联络我们：https://t.me/blancblock",
+      "addressLabelPlaceholder": "请输入地址标签",
+      "amountRequired": "请输入提币金额",
+      "amountInvalid": "请输入有效的数字金额",
+      "amountMustPositive": "提币金额必须大于0",
+      "amountExceedsBalance": "提币金额不能超过可用余额",
+      "amountExceedsMax": "单笔提现金额不能超过 {max}",
+      "amountTooSmall": "提币金额不能少于 {min}",
+      "noAvailableAccounts": "暂无可用账户",
+      "noAvailableNetworks": "暂无可用网络",
+      "invalidAmount": "请输入有效的提币金额",
+      "selectAddressError": "请选择提币地址",
+      "submitFailed": "提交失败，请重试",
+      "feeCalculationFailed": "计算手续费失败，请重试",
+      "history": "提现记录",
+      "selectCurrency": "提币币种",
+      "purposeCode": "提款用途",
+      "purposeCodePlaceholder": "请选择提款用途",
+      "purposeCodeRequired": "请选择提款用途",
+      "transactionOverview": "交易概览",
+      "notice": {
+        "title": "重要提示",
+        "processing": {
+          "title": "处理时间：",
+          "desc": "提币处理最长需 4 小时；如遇跨境清算延迟或合规抽查，处理时间可能延长。"
+        },
+        "warning": {
+          "title": "合规警示：",
+          "desc": "请勿与受制裁实体或高风险国家/地区进行任何资金往来，违者将触发合规冻结。"
+        },
+        "support": {
+          "title": "跨境支持",
+          "desc": "请发送邮件至"
+        }
+      }
+    },
+    "addressbook": {
+      "title": "提币地址簿",
+      "alias": "别名",
+      "network": "网络",
+      "universal": "通用地址",
+      "coins": "支持币种",
+      "address": "地址",
+      "created": "创建时间",
+      "status": "状态",
+      "actions": "操作",
+      "edit": "编辑",
+      "add": "新增地址",
+      "universalYes": "是",
+      "universalNo": "否",
+      "filter": {
+        "alias": "别名",
+        "status": "状态",
+        "aliasPlaceholder": "搜索别名"
+      },
+      "modal": {
+        "edit": "编辑地址",
+        "alias": "别名",
+        "cancel": "取消",
+        "confirm": "确认",
+        "aliasPlaceholder": "请输入别名",
+        "aliasRequired": "请输入别名"
+      },
+      "copy": {
+        "success": "地址已复制到剪贴板",
+        "failed": "复制失败"
+      },
+      "addResult": {
+        "success": "地址添加成功",
+        "failed": "添加失败"
+      },
+      "editResult": {
+        "success": "地址编辑成功",
+        "failed": "编辑失败"
+      },
+      "delete": {
+        "action": "删除",
+        "title": "删除地址",
+        "confirm": "确认删除地址吗？",
+        "success": "地址删除成功",
+        "failed": "删除失败"
+      }
+    },
+    "wallets": {
+      "title": "资产列表",
+      "tag": "收单 & OTC",
+      "desc": "用于收单、OTC 和结算的法币账户与数币钱包。",
+      "fiatAccounts": "法币账户",
+      "cryptoAccounts": "数币钱包",
+      "available": "可用余额：",
+      "totalAvailable": "总可用余额：",
+      "deposit": "充值",
+      "withdraw": "提现",
+      "loadFailed": "加载账户失败"
+    },
+    "deposit": {
+      "icon": "💰",
+      "title": "充币",
+      "selectNetwork": "网络",
+      "selectCurrency": "币种",
+      "continue": "确定",
+      "back": "返回",
+      "warningTitle": "重要提示",
+      "warning": "转账严格按照选择的币种和网络转账到指定地址。首次充值请使用小额测试转账。转账到错误的网络可能会导致资产永久损失。如有疑问，请联系我们。",
+      "warning1": "请确保您选择的网络与发送方钱包支持的网络一致，选择错误的网络可能导致资产永久丢失。",
+      "warning2": "最小充值金额为 {amount} {currency}，低于最小金额的充值将不会到账。",
+      "warning3": "充值到账时间通常为 1-3 个网络确认，具体时间取决于网络拥堵情况。",
+      "depositDetails": "充币详情",
+      "addressShown": "地址已提示",
+      "depositAddress": "充币地址",
+      "copy": "复制",
+      "copyAddress": "复制地址",
+      "copySuccess": "地址已复制到剪贴板",
+      "copyFailed": "复制失败，请手动复制",
+      "warningShare": "请勿与他人共享您的地址信息。",
+      "minAmountTip": "最小充值金额：{amount} {currency}",
+      "importantNotice": "重要提示",
+      "notice1": "请确保您选择的网络与发送方钱包支持的网络一致，选择错误的网络可能导致资产永久丢失。",
+      "notice2": "充值地址仅支持对应网络的数字资产，请勿向该地址充值其他币种或网络的资产。",
+      "notice3": "充值到账需要网络确认，请耐心等待。到账时间取决于网络拥堵情况。",
+      "notice4": "请保存好充值地址，您可以重复使用该地址进行充值。",
+      "notice": {
+        "title": "重要提示",
+        "network": {
+          "title": "网络要求：",
+          "desc": "请务必通过对应网络发送所选加密资产（Ethereum 请用 ERC-20，TRON 请用 TRC-20）。跨网络转账将导致资产永久丢失。"
+        },
+        "address": {
+          "title": "地址确认：",
+          "desc": "发送前请再次核对充值地址。地址错误或智能合约转账均不受理，并将造成资产永久损失。"
+        },
+        "confirmation": {
+          "title": "确认时间：",
+          "desc": "ERC-20 需 64 个确认（约 20-30 分钟），TRC-20 需 19 个确认（约 1-2 分钟）。"
+        },
+        "support": {
+          "title": "联系支持：",
+          "desc": "邮箱联系我们：",
+          "email": "company{'@'}eurewax.com"
+        }
+      },
+      "confirm": "确认时间",
+      "confirmTime": "约20-30分钟",
+      "minimum": "最小金额",
+      "minAmount": "10 USDT",
+      "fee": "手续费",
+      "free": "免费",
+      "showAddress": "显示地址",
+      "history": "充值记录"
+    },
+    "transactions": {
+      "title": "交易记录",
+      "transactionId": "交易编号",
+      "searchById": "按编号搜索",
+      "type": "交易类型",
+      "status": "交易状态",
+      "startDate": "开始日期",
+      "endDate": "结束日期",
+      "all": "全部",
+      "search": "查询",
+      "reset": "重置",
+      "noData": "暂无交易记录",
+      "noDataDesc": "没有找到符合当前筛选条件的交易记录。",
+      "view": "查看",
+      "columns": {
+        "id": "交易编号",
+        "time": "时间",
+        "type": "类型",
+        "currency": "币种",
+        "amount": "金额",
+        "network": "网络",
+        "fee": "手续费",
+        "status": "状态",
+        "actions": "操作"
+      }
+    }
+  },
+  "table": {
+    "searchBar": {
+      "reset": "重置",
+      "search": "查询",
+      "expand": "展开",
+      "collapse": "收起",
+      "searchInputPlaceholder": "请输入",
+      "searchSelectPlaceholder": "请选择"
+    },
+    "selection": "选择",
+    "sizeOptions": {
+      "small": "紧凑",
+      "default": "默认",
+      "large": "宽松"
+    },
+    "column": {
+      "selection": "勾选",
+      "expand": "展开",
+      "index": "序号"
+    },
+    "zebra": "斑马纹",
+    "border": "边框",
+    "headerBackground": "表头背景"
+  }
+}

@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wingbee OnRamp / OffRamp — 解决方案 v1.3（过渡方案）</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  :root {
+    --bg: #ffffff;
+    --text: #1a1a2e;
+    --heading: #16213e;
+    --accent: #0f3460;
+    --border: #e0e0e0;
+    --card-bg: #f8f9fa;
+    --highlight: #e94560;
+    --tag-bg: #eef2ff;
+    --tag-text: #3730a3;
+    --success: #059669;
+    --warn: #d97706;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 0;
+  }
+
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  .doc-header {
+    border-bottom: 3px solid var(--accent);
+    padding-bottom: 24px;
+    margin-bottom: 40px;
+  }
+  .doc-header h1 {
+    font-size: 28px;
+    color: var(--heading);
+    margin-bottom: 12px;
+  }
+  .doc-meta {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: #666;
+  }
+  .doc-meta span { display: inline-flex; align-items: center; gap: 4px; }
+
+  .section { margin-bottom: 48px; }
+  .section h2 {
+    font-size: 22px;
+    color: var(--heading);
+    border-left: 4px solid var(--highlight);
+    padding-left: 12px;
+    margin-bottom: 20px;
+  }
+  .section h3 {
+    font-size: 17px;
+    color: var(--accent);
+    margin: 24px 0 12px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 20px;
+    font-size: 14px;
+  }
+  th {
+    background: var(--accent);
+    color: #fff;
+    text-align: left;
+    padding: 10px 14px;
+    font-weight: 600;
+  }
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tr:hover td { background: #f5f7ff; }
+
+  .flow-box {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 12px 0 20px;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+    font-size: 13.5px;
+    line-height: 2;
+    white-space: pre-wrap;
+    overflow-x: auto;
+  }
+
+  .arch-diagram {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px;
+    margin: 16px 0 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .arch-row {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .arch-node {
+    background: #fff;
+    border: 2px solid var(--accent);
+    border-radius: 10px;
+    padding: 14px 22px;
+    text-align: center;
+    min-width: 130px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .arch-node.primary {
+    background: var(--accent);
+    color: #fff;
+  }
+  .arch-node.highlight {
+    border-color: var(--highlight);
+    color: var(--highlight);
+  }
+  .arch-node.shell {
+    border-color: var(--warn);
+    color: #92400e;
+    background: #fffbeb;
+  }
+  .arch-node small {
+    display: block;
+    font-weight: 400;
+    font-size: 12px;
+    margin-top: 4px;
+    opacity: 0.8;
+  }
+  .arch-arrow {
+    font-size: 22px;
+    color: #999;
+  }
+  .arch-arrow-down {
+    font-size: 22px;
+    color: #999;
+    text-align: center;
+  }
+
+  .fund-flow {
+    background: linear-gradient(135deg, #f0f4ff 0%, #fef3f2 100%);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 12px 0 20px;
+  }
+  .fund-flow h4 {
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: var(--accent);
+  }
+  .fund-flow .flow-line {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 8px 0;
+    font-size: 13px;
+  }
+  .fund-flow .flow-step {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 12.5px;
+    white-space: nowrap;
+  }
+  .fund-flow .flow-step.sys {
+    border-color: var(--warn);
+    background: #fffbeb;
+  }
+  .fund-flow .flow-arrow { color: var(--highlight); font-weight: bold; }
+
+  .principle-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin: 12px 0 20px;
+  }
+  .principle-card {
+    background: var(--card-bg);
+    border-left: 4px solid var(--highlight);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+  }
+  .principle-card strong {
+    display: block;
+    font-size: 14px;
+    color: var(--heading);
+    margin-bottom: 4px;
+  }
+  .principle-card p {
+    font-size: 13.5px;
+    color: #555;
+    margin: 0;
+  }
+
+  .bullet-list {
+    margin: 8px 0 16px 20px;
+    font-size: 14px;
+  }
+  .bullet-list li { margin-bottom: 6px; }
+
+  .mermaid-container {
+    margin: 16px 0 24px;
+    padding: 20px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow-x: auto;
+  }
+
+  .tag {
+    display: inline-block;
+    background: var(--tag-bg);
+    color: var(--tag-text);
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  .callout {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 12px 0 20px;
+    font-size: 14px;
+    color: #92400e;
+  }
+  .callout.info {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    color: #1e40af;
+  }
+  .callout strong { color: inherit; }
+
+  .strategy-table td:first-child { font-weight: 600; white-space: nowrap; }
+
+  .panorama {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px;
+    margin: 16px 0;
+  }
+  .panorama-header {
+    text-align: center;
+    background: var(--accent);
+    color: #fff;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .panorama-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .panorama-col {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    background: #fff;
+  }
+  .panorama-col h4 {
+    text-align: center;
+    font-size: 15px;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .panorama-col .subtitle {
+    text-align: center;
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 12px;
+  }
+  .panorama-col ol {
+    padding-left: 20px;
+    font-size: 13px;
+  }
+  .panorama-col ol li { margin-bottom: 4px; }
+
+  .notes-list {
+    counter-reset: note;
+    list-style: none;
+    padding: 0;
+  }
+  .notes-list li {
+    counter-increment: note;
+    padding: 10px 14px 10px 40px;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .notes-list li::before {
+    content: counter(note);
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    background: var(--highlight);
+    color: #fff;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .transfer-table {
+    margin: 12px 0 20px;
+  }
+  .transfer-table td:nth-child(1) { font-weight: 600; white-space: nowrap; }
+
+  hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+  @media (max-width: 640px) {
+    .container { padding: 20px 16px 60px; }
+    .panorama-cols { grid-template-columns: 1fr; }
+    .doc-meta { flex-direction: column; gap: 6px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="doc-header">
+    <h1>Wingbee OnRamp / OffRamp — 解决方案 v1.3</h1>
+    <div class="doc-meta">
+      <span>📄 Wingbee 承兑业务解决方案（过渡方案）</span>
+      <span>📌 版本 v1.3</span>
+      <span>🕐 最后更新: 2026-04-16</span>
+      <span>👤 适用对象: Wingbee 平台</span>
+    </div>
+  </div>
+
+  <!-- 过渡方案说明 -->
+  <div class="callout" style="background:#fef2f2;border-color:#fca5a5;color:#991b1b;margin-bottom:20px;">
+    <strong>⚠️ 过渡方案说明</strong><br>
+    本方案为 SRO 之前的过渡方案。贸易公司智朗银行账户直接作为 BB 的法币收付账户（渠道名：贸易公司智朗账户）。<strong>不符合 SRO 合规要求</strong>，BB SRO 主体需尽快开户，届时切换至合规方案，当前数据隔离。
+  </div>
+
+  <!-- 角色说明 -->
+  <div class="section">
+    <h2>一、角色与关系</h2>
+    <table>
+      <thead><tr><th>角色</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td><strong>客户</strong></td><td>Wingbee 的终端用户</td></tr>
+        <tr><td><strong>Wingbee</strong></td><td>面向终端客户的平台，BB 的商户。拥有自己的智朗银行账户和 EX 系统 MID</td></tr>
+        <tr><td><strong>贸易公司智朗账户</strong></td><td>贸易公司智朗银行账户，直接作为 BB 的法币收付账户</td></tr>
+        <tr><td><strong>EX</strong></td><td>技术服务商，所有系统操作（OnRamp/OffRamp 执行、余额变动、Webhook）由 EX 完成</td></tr>
+        <tr><td><strong>BB / 资金</strong></td><td>持牌承兑通道。人工操作：OnRamp 时给 Wingbee 上账（deposit）；OffRamp 时操作贸易公司智朗银行转账。系统操作都是 EX</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr>
+
+  <!-- 二、OnRamp-A：买入数币（需银行转账） -->
+  <div class="section">
+    <h2>二、OnRamp-A：买入数币（需银行转账充值）</h2>
+    <p style="font-size:14px;color:#555;margin-bottom:12px;">客户在 Wingbee 买入数币，Wingbee 在 EX 系统余额不足。<strong>必须先发起 OnRamp 获取订单（确定转账金额），再按订单金额银行转账</strong>，资金上账后执行 OnRamp。</p>
+
+    <div class="mermaid-container">
+      <pre class="mermaid">
+sequenceDiagram
+    participant C as 客户
+    participant W as Wingbee
+    participant WB as Wingbee智朗银行
+    participant VASP as 贸易公司智朗银行
+    participant EX as EX系统
+    participant OP as 资金(人工)
+
+    C->>W: 发起买入数币请求
+    W->>C: 展示 Wingbee 智朗银行收款账户
+
+    C->>WB: 银行转账（法币）→ Wingbee 智朗
+    WB-->>W: 到账通知
+    Note over W: ⚠️ 确认到账后才继续
+
+    W->>EX: 发起 OnRamp（获取订单：应付金额、汇率、订单号）
+    EX-->>W: 返回订单
+    Note over W: 拿到订单，知道需转多少法币
+
+    W->>WB: 按订单金额发起行内转账
+    WB->>VASP: 行内转账（Wingbee智朗 → 贸易公司智朗）
+    Note over VASP: 贸易公司智朗收到法币
+
+    rect rgb(255,251,235)
+    Note over OP: 资金人工操作
+    OP->>EX: 给 Wingbee 上账（法币 deposit）
+    Note over W,EX: Wingbee EX 系统法币余额 +
+    end
+
+    EX->>EX: 执行 OnRamp（扣法币余额 → 数币入钱包）
+
+    EX-->>W: Webhook: OnRamp 完成
+    W-->>C: 通知买入完成（数币已入钱包）
+      </pre>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- 三、OnRamp-B：买入数币（余额充足，直接执行） -->
+  <div class="section">
+    <h2>三、OnRamp-B：买入数币（余额充足，直接执行）</h2>
+    <p style="font-size:14px;color:#555;margin-bottom:12px;">Wingbee 在 EX 系统已有足够法币余额（提前垫资或历史失败订单退回的余额），客户买入时无需银行转账，直接在 EX 发起 OnRamp 即可。</p>
+
+    <div class="mermaid-container">
+      <pre class="mermaid">
+sequenceDiagram
+    participant C as 客户
+    participant W as Wingbee
+    participant EX as EX系统
+
+    C->>W: 发起买入数币请求
+
+    Note over W: Wingbee EX 系统法币余额充足
+    Note over W: （提前垫资 / 历史失败订单退回余额）
+
+    W->>EX: 发起 OnRamp（买入数币）
+    EX->>EX: 执行 OnRamp（扣法币余额 → 数币入钱包）
+
+    EX-->>W: Webhook: OnRamp 完成
+    W-->>C: 通知买入完成（数币已入钱包）
+      </pre>
+    </div>
+
+    <div class="callout info"><strong>余额来源：</strong>① Wingbee 提前垫资（银行转账 → 资金上账）；② 历史 OnRamp 失败退回的法币余额。只要 EX 系统余额足够，无需再走银行转账+上账流程。</div>
+  </div>
+
+  <hr>
+
+  <!-- 四、OffRamp-A：卖出数币到钱包 + 法币提现 -->
+  <div class="section">
+    <h2>四、OffRamp-A：卖出数币到法币钱包 + 法币提现</h2>
+    <p style="font-size:14px;color:#555;margin-bottom:12px;">客户在 Wingbee 发起 OffRamp 卖出数币，Wingbee 在 EX 发起卖出，<strong>系统直接给 Wingbee 法币入账</strong>。Wingbee 发起提现，资金手动在智朗行内转账（贸易公司→Wingbee），Wingbee 收到后给客户转账。</p>
+
+    <div class="mermaid-container">
+      <pre class="mermaid">
+sequenceDiagram
+    participant C as 客户
+    participant W as Wingbee
+    participant WB as Wingbee智朗银行
+    participant EX as EX系统
+    participant OP as 资金(人工)
+    participant VASP as 贸易公司智朗银行
+
+    C->>W: 发起卖出数币请求（数币 → 法币提现）
+
+    W->>EX: 发起 OffRamp（卖出数币）
+    EX->>EX: 执行 OffRamp（数币→法币）
+    Note over W,EX: 系统直接给 Wingbee 法币入账
+    Note over W,EX: Wingbee EX 系统法币余额 +
+
+    W->>EX: Wingbee 发起法币提现
+    Note over W,EX: Wingbee 系统余额 -
+
+    rect rgb(255,251,235)
+    Note over OP: 资金人工操作
+    OP->>VASP: 操作行内转账
+    VASP->>WB: 行内转账（贸易公司智朗 → Wingbee智朗）
+    end
+    WB-->>W: 法币到账
+
+    W->>WB: 从 Wingbee 智朗付款给客户
+    WB-->>C: 法币到账
+
+    W-->>C: 通知卖出完成
+      </pre>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- 五、OffRamp-B：卖出数币直接到 Wingbee 银行账户 -->
+  <div class="section">
+    <h2>五、OffRamp-B：卖出数币直接到 Wingbee 银行账户</h2>
+    <p style="font-size:14px;color:#555;margin-bottom:12px;">客户在 Wingbee 发起卖出，Wingbee 在 EX 发起 OffRamp，EX 执行承兑后，<strong>资金直接操作贸易公司智朗行内转账到 Wingbee 智朗</strong>。Wingbee 收到法币后自行给客户转账。</p>
+
+    <div class="mermaid-container">
+      <pre class="mermaid">
+sequenceDiagram
+    participant C as 客户
+    participant W as Wingbee
+    participant WB as Wingbee智朗银行
+    participant EX as EX系统
+    participant OP as 资金(人工)
+    participant VASP as 贸易公司智朗银行
+
+    C->>W: 发起卖出数币请求
+
+    W->>EX: 发起 OffRamp（卖出数币）
+    EX->>EX: 执行 OffRamp（数币→法币）
+
+    rect rgb(255,251,235)
+    Note over OP:资金直接操作银行转账（不走系统入账/提现）
+    OP->>VASP: 操作行内转账
+    VASP->>WB: 行内转账（贸易公司智朗 → Wingbee智朗）
+    end
+    WB-->>W: 账户到账
+
+    W->>WB: 从 Wingbee 智朗付款给客户
+
+
+    W-->>C: 通知卖出完成
+      </pre>
+    </div>
+  </div>
+
+  <hr>
+
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      primaryColor: '#eef2ff',
+      primaryTextColor: '#1a1a2e',
+      primaryBorderColor: '#0f3460',
+      lineColor: '#0f3460',
+      secondaryColor: '#fef3f2',
+      tertiaryColor: '#f8f9fa',
+      noteBkgColor: '#fffbeb',
+      noteTextColor: '#92400e',
+      noteBorderColor: '#fde68a',
+      actorBkg: '#0f3460',
+      actorTextColor: '#fff',
+      actorBorder: '#0f3460',
+      signalColor: '#1a1a2e',
+      signalTextColor: '#1a1a2e'
+    },
+    sequence: {
+      mirrorActors: true,
+      actorMargin: 60,
+      messageMargin: 40
+    }
+  });
+</script>
+</body>
+</html>

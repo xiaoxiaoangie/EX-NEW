@@ -1,0 +1,1112 @@
+{
+  "systemInfo": {
+    "name": "EurewaX"
+  },
+  "exceptionPending": {
+    "title": "Features Being Activated",
+    "desc": "You have not activated the corresponding product. This feature is currently unavailable. Please contact your administrator."
+  },
+  "httpMsg": {
+    "unauthorized": "Unauthorized access, please login again",
+    "forbidden": "Access to this resource is forbidden",
+    "notFound": "The requested resource does not exist",
+    "methodNotAllowed": "Request method not allowed",
+    "requestTimeout": "Request timeout, please try again later",
+    "internalServerError": "Internal server error, please try again later",
+    "badGateway": "Bad gateway error, please try again later",
+    "serviceUnavailable": "Service temporarily unavailable, please try again later",
+    "gatewayTimeout": "Gateway timeout, please try again later",
+    "requestCancelled": "Request cancelled",
+    "networkError": "Network connection error, please check your connection",
+    "requestFailed": "Request failed",
+    "requestConfigError": "Request configuration error"
+  },
+  "topBar": {
+    "search": {
+      "title": "Search"
+    },
+    "user": {
+      "userCenter": "User center",
+      "docs": "Document",
+      "github": "Github",
+      "lockScreen": "Lock screen",
+      "logout": "Log out"
+    },
+    "guide": {
+      "title": "Click here to view",
+      "theme": "Theme style",
+      "menu": "Open top menu",
+      "description": "More configurations"
+    }
+  },
+  "common": {
+    "tips": "Prompt",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "confirm": "Confirm",
+    "logOutTips": "Do you want to log out?",
+    "sendCode": "Send verification code",
+    "resend": "Resend",
+    "enabled": "Enabled",
+    "manage": "Manage",
+    "set": "Set",
+    "notSet": "Not set",
+    "setUp": "Set up",
+    "change": "Change",
+    "default": "Default",
+    "Pleasecomplete": "Please complete security verification",
+    "Swipeverification": "Swipe right to complete verification",
+    "verifySuccessful": "Verification successful",
+    "verifyFailed": "Verification failed",
+    "prevStep": "Previous step",
+    "pleaseInput": "Please input",
+    "pleaseSelect": "Please select",
+    "loading": "Loading...",
+    "loadFailed": "Failed to load",
+    "retry": "Retry",
+    "saveSuccess": "Saved successfully",
+    "saveFailed": "Save failed",
+    "back": "Back",
+    "copySuccess": "Copy successful",
+    "copyFailed": "Copy failed"
+  },
+  "userCenter": {
+    "basicSettings": "Basic Settings",
+    "realName": "Full Name",
+    "gender": "Gender",
+    "loginName": "Login Name",
+    "address": "Address",
+    "admin": "Administrator",
+    "normalUser": "Regular User"
+  },
+  "search": {
+    "placeholder": "Search page",
+    "historyTitle": "Search history",
+    "switchKeydown": "Navigate",
+    "selectKeydown": "Select"
+  },
+  "setting": {
+    "menuType": {
+      "title": "Menu Layout",
+      "list": ["Vertical", "Horizontal", "Mixed", "Dual"]
+    },
+    "theme": {
+      "title": "Theme Style",
+      "list": ["Light", "Dark", "System"]
+    },
+    "menu": {
+      "title": "Menu Style"
+    },
+    "color": {
+      "title": "Theme Color"
+    },
+    "box": {
+      "title": "Box Style",
+      "list": ["Border", "Shadow"]
+    },
+    "container": {
+      "title": "Container Width",
+      "list": ["Full", "Boxed"]
+    },
+    "basics": {
+      "title": "Basic Config",
+      "list": {
+        "multiTab": "Show work tab",
+        "accordion": "Sidebar opens accordion",
+        "collapseSidebar": "Show sidebar button",
+        "reloadPage": "Show reload page button",
+        "fastEnter": "Show fast enter",
+        "breadcrumb": "Show crumb navigation",
+        "language": "Show multilingual selection",
+        "progressBar": "Show top progress bar",
+        "weakMode": "Color Weakness Mode",
+        "watermark": "Global watermark",
+        "menuWidth": "Menu width",
+        "tabStyle": "Tab style",
+        "pageTransition": "Page animation",
+        "borderRadius": "Custom radius"
+      }
+    },
+    "tabStyle": {
+      "default": "Default",
+      "card": "Card",
+      "google": "Chrome"
+    },
+    "transition": {
+      "list": {
+        "none": "None",
+        "fade": "Fade",
+        "slideLeft": "Slide Left",
+        "slideBottom": "Slide Bottom",
+        "slideTop": "Slide Top"
+      }
+    }
+  },
+  "notice": {
+    "title": "Notice",
+    "btnRead": "Mark as read",
+    "bar": ["Notice", "Message", "To-Do"],
+    "text": ["No"],
+    "viewAll": "View all"
+  },
+  "worktab": {
+    "btn": {
+      "refresh": "Refresh",
+      "fixed": "Fixed",
+      "unfixed": "Unfixed",
+      "closeLeft": "Close left",
+      "closeRight": "Close right",
+      "closeOther": "Close other",
+      "closeAll": "Close all"
+    }
+  },
+  "login": {
+    "leftView": {
+      "title": "Cross-border payment intelligent SaaS solution",
+      "subTitle": "Provides a one-stop cross-border payment solution to help businesses achieve convenient, secure, and reliable cross-border payments.",
+      "features": [
+        "Financial-grade Security",
+        "Cross-border Payment Infrastructure",
+        "Intelligent Risk Control Solution"
+      ]
+    },
+    "title": "Welcome back",
+    "subTitle": "Enter your mobile / email and password to login",
+    "roles": {
+      "super": "Super Admin",
+      "admin": "Admin",
+      "user": "User"
+    },
+    "placeholder": [
+      "Please enter your account",
+      "Please enter your password",
+      "Please slide to verify"
+    ],
+    "sliderText": "Please slide to verify",
+    "sliderSuccessText": "Verification successful",
+    "rememberPwd": "Remember password",
+    "forgetPwd": "Forgot password",
+    "btnText": "Login",
+    "noAccount": "No account yet?",
+    "register": "Register",
+    "success": {
+      "title": "Login successful",
+      "message": "Welcome back"
+    },
+    "email": "Email",
+    "emailAddress": "Email address",
+    "phone": "Mobile",
+    "pleaseEnterEmail": "Please enter your email address",
+    "pleaseEnterPhone": "Please enter your mobile",
+    "password": "Password",
+    "pleaseEnterPassword": "Please enter your login password",
+    "verifyCode": "Verification code",
+    "pleaseEnterVerifyCode": "Please enter the verification code",
+    "loginWithVerifyCode": "Login with verification code",
+    "loginWithPassword": "Login with password",
+    "verifyAndLogin": "Verify and login",
+    "verificationFailed": "Verification failed, please try again",
+    "switchToApp": "Switch to Authenticator",
+    "switchToSms": "Switch to SMS",
+    "errorContent": "Incorrect password (attempt {tryCount}). Please complete the verification and try again.",
+    "frozen": {
+      "title": "Account Frozen",
+      "message": "To protect your account security, the login function has been temporarily frozen.",
+      "alertContent": "We have sent a security notification to your registered email/phone.",
+      "remainingTime": "Time remaining",
+      "backToLogin": "Back to Login",
+      "contactSupport": "Contact Support"
+    }
+  },
+  "profile": {
+    "baseInfo": "Basic info",
+    "description": "Your personal information.",
+    "nickname": "Nickname",
+    "language": "Language",
+    "contactInfo": "Contact info",
+    "contactInfoDescription": "Manage your email and mobile.",
+    "editNickname": "Edit Nickname",
+    "languagePreference": "Language Preference",
+    "languagePreferenceDesc": "Changes take effect immediately",
+    "editEmail": "Edit Email",
+    "editMobile": "Edit Mobile",
+    "verifyCurrentIdentity": "Verify Current Identity",
+    "newEmail": "New Email",
+    "newMobile": "New Mobile",
+    "verifyNewEmail": "Verify New Email",
+    "verifyNewMobile": "Verify New Mobile",
+    "inputNewMobile": "Input New Mobile",
+    "inputNewEmail": "Input New Email",
+    "verifyAndSave": "Verify and Save",
+    "Verified": "Verified",
+    "noSet": "Not Set",
+    "nicknameRule": "2-30 characters, support Chinese/English/Numbers/Underscore"
+  },
+  "security": {
+    "title": "Security Verification",
+    "subTitle": "To ensure the security of your account, please enter the verification code",
+    "verifyCodeSentTo": "Verification code sent to",
+    "verifyCodeWillSentTo": "Verification code will be sent to",
+    "authenticatorCode": "Authenticator dynamic code",
+    "pleaseEnterSixCode": "Please enter 6-digit dynamic code",
+    "loginAndAuth": "Login & Authentication",
+    "loginAndAuthDesc": "Global authentication settings, applies to all merchants",
+    "setAsDefault": "Set as Default",
+    "setAsDefaultDesc": "Use {type} as default verification when logging in",
+    "disable": "Disable",
+    "disableDesc": "Disable {type} two-factor verification",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "pleaseEnterCurrentPassword": "Please enter current password",
+    "pleaseEnterNewPassword": "Please enter new password",
+    "newPasswordRule": "At least 8 characters, including letters, numbers, and special characters",
+    "confirmNewPassword": "Confirm New Password",
+    "inputConfirmNewPassword": "Please enter new password again",
+    "changePassword": "Change Password",
+    "setPassword": "Set Password",
+    "changeLoginPassword": "Change Login Password",
+    "setLoginPassword": "Set Login Password",
+    "setPasswordSuccess": "Password set successfully",
+    "changeLoginPasswordSuccess": "Login password changed successfully",
+    "nextStep": "Next Step",
+    "authPhone": "Designated Phone",
+    "setAuthPhone": "Set Designated Phone",
+    "changeAuthPhone": "Change Designated Phone",
+    "verifyAndEnable": "Verify and Enable",
+    "verifyAndSet": "Verify and Set",
+    "loginPassword": "Login Password",
+    "loginPasswordDesc": "Login password, used for password login",
+    "authenticatorApp": "Authenticator App (2FA)",
+    "authenticatorAppDesc": "Google Authenticator / Authy dynamic token",
+    "smsCodeSentTo": "SMS verification code sent to",
+    "emailCodeSentTo": "Email verification code sent to",
+    "transactionVerification": "Transaction Verification",
+    "transactionVerificationDesc": "Transaction verification method",
+    "paymentPIN": "Payment PIN（Transaction PIN）",
+    "paymentPINDesc": "6-digit PIN, used for quick verification of fund operations, without waiting for a verification code",
+    "paymentPINNote": "After setting, you can use the PIN to verify fund operations (exchange, payment, card recharge, etc.) in Self mode.",
+    "paymentPINNote2": "When not set, it will fallback to SMS/email verification code. Not applicable in Designated mode.",
+    "designatedPhone": "Designated Phone",
+    "designatedPhoneDesc": "MID Level – Editable by Account Holder only · Current: ABC Trading / MID-001",
+    "designatedPhoneNote": "When the role verification method is set to Designated, the verification code for fund operations will be sent to this phone number.",
+    "designatedPhoneNote2": "It can be your own phone number or the phone number of the designated security officer.",
+    "googleStep1": "Step 1: Scan the QR code with your Authenticator App",
+    "googleStep2": "Enter the 6-digit code displayed on your Authenticator App",
+    "googleNote": "Can't scan? Enter the secret key manually",
+    "setUpGoogleAuth": "Set up Authenticator App",
+    "currentStatus": "Current Status",
+    "regenerateKey": "Regenerate Secret Key",
+    "regenerateKeyNote": "Regenerating the key will require re-scanning the QR code for binding",
+    "close": "Close",
+    "sendVerifyCode": "Send verification code to the bound phone number",
+    "sendVerifyCodeToEmail": "Send verification code to the bound email",
+    "setPaymentPIN": "Set Payment PIN",
+    "changePaymentPIN": "Change Payment PIN",
+    "setPaymentPINDesc": "Set a 6-digit PIN for quick verification of fund operations",
+    "inputOldPaymentPIN": "Enter original 6-digit PIN",
+    "inputPaymentPIN": "Enter 6-digit PIN",
+    "confirmPaymentPIN": "Re-enter to confirm",
+    "confirmPaymentPINNote": "Passwords do not match, please re-enter",
+    "paymentPINError": "Cannot be sequential or repeated numbers",
+    "confirmSet": "Confirm Setup",
+    "pleaseEnterSixCodeVerify": "Please enter the 6-digit verification code",
+    "designatedPhoneNote3": "Designated mode - transaction verification code will be sent to this phone number.",
+    "noSetSecurityPhone": "Designated phone not set",
+    "newPaymentPINSame": "New password cannot be the same as the original password"
+  },
+  "forgetPassword": {
+    "title": "Forgot password?",
+    "subTitle": "Enter your email to reset your password",
+    "placeholder": "Please enter your email",
+    "submitBtnText": "Submit",
+    "backBtnText": "Back",
+    "resetPassword": "Reset Password",
+    "step1SubTitle": "Input your registered email or phone number, we will send a verification code",
+    "accountLabel": "Email / Phone",
+    "accountPlaceholder": "Please enter your email or phone number",
+    "continueBtn": "Continue",
+    "backToLogin": "Back to Login",
+    "verifyIdentity": "Verify Identity",
+    "step": "Step",
+    "codeHint": "Verification code has been sent to",
+    "codeHintSuffix": ", please check",
+    "sixDigitCode": "6-digit verification code",
+    "validFor10Min": "Verification code is valid for 10 minutes",
+    "verifyBtn": "Verify",
+    "setNewPassword": "Set New Password",
+    "newPassword": "New Password",
+    "newPasswordPlaceholder": "Please enter new password",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "Please enter new password again",
+    "resetPasswordBtn": "Reset Password",
+    "resetSuccess": "Password reset successfully",
+    "resetSuccessDesc": "Your password has been successfully reset, please login with your new password",
+    "resendAfter": "seconds to resend",
+    "resendCode": "Resend verification code",
+    "accountRequired": "Please enter account",
+    "invalidAccountFormat": "Please enter a valid email or phone number",
+    "codeRequired": "Please enter verification code",
+    "invalidCode": "Invalid verification code format",
+    "passwordRequired": "Please enter new password",
+    "passwordTooShort": "Password must be at least 8 characters",
+    "passwordMismatch": "Passwords do not match",
+    "passwordWeak": "Weak",
+    "passwordMedium": "Medium",
+    "passwordStrong": "Strong"
+  },
+  "register": {
+    "title": "Create account",
+    "subTitle": "Welcome to join us, please fill in the following information to complete the registration",
+    "placeholder": [
+      "Please enter your account",
+      "Please enter your password",
+      "Please enter your password again"
+    ],
+    "rule": [
+      "Please enter your password again",
+      "The two passwords are inconsistent!",
+      "The length is 3 to 20 characters",
+      "The password length cannot be less than 6 digits",
+      "Please agree to the privacy policy"
+    ],
+    "setRule": [
+      "At least 8 characters",
+      "Include numbers",
+      "Include letters (case insensitive)",
+      "Include special characters (only ! # {'@'} ? . + ; = ~ are supported)"
+    ],
+    "confirmPassword": "Confirm password",
+    "confirmPasswordPlaceholder": "Enter password again",
+    "registerWithVerifyCode": "Register with verification code, no need to set password",
+    "registerWithPassword": "Register with password",
+    "readAndAgreeText": "I have read and agree to",
+    "agreeText": "I agree",
+    "privacyPolicy": "Privacy policy",
+    "submitBtnText": "Register",
+    "hasAccount": "Already have an account?",
+    "toLogin": "To login",
+    "createAccount": "Create account",
+    "passwordRule": "At least 8 characters, including letters, numbers, and special characters",
+    "pleaseSetPassword": "Please set password",
+    "invalidEmailFormat": "Please enter a valid email address",
+    "invalidPhoneNumberFormat": "Please enter a valid phone number",
+    "pleaseAgreePrivacyPolicy": "Please agree to the privacy policy",
+    "passwordStrengthInsufficient": "Password strength is insufficient, please meet all rules",
+    "registerSuccess": "Registration successful",
+    "registerSuccessDesc": "Account created, you can log in and activate products",
+    "countdownText": "seconds to redirect",
+    "goToLogin": "Go to login"
+  },
+  "lockScreen": {
+    "pwdError": "Password error",
+    "lock": {
+      "inputPlaceholder": "Please input lock screen password",
+      "btnText": "Lock"
+    },
+    "unlock": {
+      "inputPlaceholder": "Please input unlock password",
+      "btnText": "Unlock",
+      "backBtnText": "Back to login"
+    }
+  },
+  "greeting": {
+    "dawn": "Good morning!",
+    "morning": "Good morning!",
+    "afternoon": "Good afternoon!",
+    "evening": "Good evening!"
+  },
+  "exceptionPage": {
+    "403": "Sorry, you do not have permission to access this page",
+    "404": "Sorry, the page you are trying to access does not exist",
+    "500": "Sorry, there was an error on the server",
+    "gohome": "Go Home"
+  },
+  "menus": {
+    "login": {
+      "title": "Login"
+    },
+    "register": {
+      "title": "Register"
+    },
+    "forgetPassword": {
+      "title": "Forget Password"
+    },
+    "activate": {
+      "title": "Activate Account"
+    },
+    "outside": {
+      "title": "Outside"
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "console": "Console"
+    },
+    "template": {
+      "title": "Template Center",
+      "pricing": "Pricing",
+      "micro": "Micro Application",
+      "unocss": "UnoCSS Example"
+    },
+    "result": {
+      "title": "Result Page",
+      "success": "Success",
+      "fail": "Fail"
+    },
+    "exception": {
+      "title": "Exception",
+      "forbidden": "403",
+      "notFound": "404",
+      "serverError": "500"
+    },
+    "system": {
+      "title": "System Settings",
+      "user": "User Manage",
+      "role": "Role Manage",
+      "rolesPermissions": "Roles & Permissions",
+      "userCenter": "User Center",
+      "menu": "Menu Manage"
+    },
+    "setting": {
+      "title": "Setting",
+      "profile": "Profile",
+      "security": "Security"
+    },
+    "assets": {
+      "title": "Assets",
+      "wallets": "Assets Overview",
+      "depositCrypto": "Crypto Deposit",
+      "depositFiat": "Deposit Fiat",
+      "withdrawCrypto": "Crypto Withdrawal",
+      "withdrawFiat": "Withdraw Fiat",
+      "addressBook": "Withdraw Address Book",
+      "tradeDetail": "Trade Detail"
+    },
+    "checkout": {
+      "title": "Checkout",
+      "paymentTransactions": "Payment Transactions",
+      "paymentSettlement": "Payment Settlement",
+      "productSettings": "Product Settings"
+    },
+    "cards": {
+      "title": "Cards",
+      "management": "Cards Management",
+      "transactions": "Card Transactions"
+    },
+    "exceptionPending": {
+      "title": "Features Being Activated"
+    }
+  },
+  "dashboard": {
+    "header": {
+      "title": "Dashboard",
+      "versionBadge": "MP 1.0"
+    },
+    "entityProfile": {
+      "title": "Set up your entity profile",
+      "subtitle": "Tell us about your business entity so we can show you the products available in your jurisdiction.",
+      "countryLabel": "Country / Region of Incorporation",
+      "entityTypeLabel": "Entity Type",
+      "entityTypeEnterprise": "Corporate",
+      "entityTypePersonal": "Individual"
+    },
+    "productSelection": {
+      "title": "Choose products to activate",
+      "subtitle": "Select a product to activate. You will be redirected to our verification partner to submit required information.",
+      "countText": "{count} product selected",
+      "emptyHint": "Please select your country/region and entity type above to view the products available for your business.",
+      "submitBtn": "Submit via SumSub",
+      "productsAvailable": "{count} products available"
+    },
+    "productApplication": {
+      "pageTitle": "Product Application",
+      "pageDesc": "Select your entity details and choose products to activate.",
+      "steps": {
+        "selectProduct": "Select Product",
+        "submitInfo": "Submit Info",
+        "review": "Review",
+        "result": "Result"
+      },
+      "common": {
+        "statusTitle": "Application Status",
+        "badgeReviewing": "Reviewing",
+        "badgeNeedInfo": "Need Info",
+        "badgeRejected": "Rejected",
+        "badgeActive": "Active",
+        "cardAppliedProducts": "Applied Products",
+        "cardActivatedProducts": "Activated Products",
+        "cardReviewTimeline": "Review Timeline",
+        "cardSubmissionTimeline": "Submission Timeline",
+        "noApplyUrl": "KYC link is not available, please contact support.",
+        "backToApplication": "Back to application"
+      },
+      "submitted": {
+        "title": "Application Submitted Successfully!",
+        "desc": "Your information has been submitted to our verification partner. Review will begin shortly.",
+        "submittedOnPrefix": "Submitted on",
+        "badgePendingReview": "Pending Review",
+        "infoTitle": "What happens next?",
+        "infoLine1": "Your submitted documents will be reviewed (1-3 business days).",
+        "infoLine2": "You will receive an email notification when the review is complete.",
+        "infoLine3": "Once approved, products are activated automatically.",
+        "timelineSubmittedTitle": "Application Submitted",
+        "timelineSubmittedMeta": "2026-03-02 14:30 UTC",
+        "timelineSubmittedDesc": "Information collected via SumSub verification portal.",
+        "timelineReviewTitle": "Compliance Review",
+        "timelineReviewMeta": "Estimated: 1-3 business days."
+      },
+      "underReview": {
+        "title": "Application Under Review",
+        "desc": "Your application is being reviewed. This typically takes 1-3 business days.",
+        "progressTitle": "Review In Progress",
+        "progressMetaPrefix": "Estimated completion:",
+        "progressHint": "Document verification in progress...",
+        "submittedPrefix": "Submitted",
+        "timelineTitle": "Review Timeline",
+        "timelineSubmittedTitle": "Application Submitted",
+        "timelineSubmittedMeta": "2026-03-02 14:30 UTC",
+        "timelineDocReceivedTitle": "Document Received",
+        "timelineDocReceivedMeta": "2026-03-02 14:32 UTC",
+        "timelineComplianceTitle": "Compliance Review",
+        "timelineComplianceMeta": "In progress...",
+        "timelineResultTitle": "Review Result",
+        "timelineResultMeta": "Pending",
+        "viewInfo": "View Info"
+      },
+      "approved": {
+        "title": "Application Approved!",
+        "desc": "Congratulations! Your application has been approved. Your products are now activated and ready to use.",
+        "approvedOnPrefix": "Approved on",
+        "activatedProductsTitle": "Activated Products",
+        "infoTitle": "What you can do now",
+        "infoLine1": "Access your dashboard with full product features.",
+        "infoLine2": "Configure product settings and preferences.",
+        "infoLine3": "Start processing transactions immediately.",
+        "infoLine4": "Integrate via API using your developer credentials.",
+        "goToDashboard": "Go to Dashboard"
+      },
+      "rejected": {
+        "title": "Application Rejected",
+        "desc": "Unfortunately, your application could not be approved at this time. Please review the reasons below.",
+        "reasonsTitle": "Rejection Reasons",
+        "rejectedOnPrefix": "Rejected on",
+        "viewInfo": "View Info"
+      },
+      "needInfo": {
+        "title": "Additional Information Required",
+        "desc": "Additional documents are needed to proceed. Please provide the requested materials.",
+        "alertTitle": "Action Required",
+        "alertDesc": "Please supplement the following materials within 14 business days. Failure to respond may result in application rejection.",
+        "materialsTitle": "Required Materials",
+        "badgeRequired": "required",
+        "badgeOptional": "optional",
+        "returnedOnPrefix": "Returned on",
+        "supplementBtn": "Supplement Materials via SumSub",
+        "supplementHint": "You will be redirected to our verification partner to upload supplementary documents.",
+        "backToApplication": "Back to application",
+        "noApplyUrl": "KYC link is not available, please contact support."
+      }
+    },
+    "main": {
+      "myAssets": {
+        "title": "My Assets",
+        "viewAll": "View All →",
+        "totalBalance": "Total Balance",
+        "fiat": "Fiat",
+        "crypto": "Crypto",
+        "cards": "Cards"
+      },
+      "tasks": {
+        "title": "Tasks",
+        "viewAll": "View All →",
+        "item1Title": "Complete KYC verification",
+        "item1Due": "Today",
+        "item2Title": "Review pending payouts",
+        "item2Due": "Today",
+        "item3Title": "Approve API key renewal",
+        "item3Due": "Tomorrow",
+        "item4Title": "Monthly reconciliation available",
+        "item4Due": "This week"
+      },
+      "quickAccess": {
+        "title": "Quick Access",
+        "deposit": "Deposit",
+        "withdraw": "Withdraw",
+        "cryptoReceive": "Crypto Receive",
+        "cards": "Cards"
+      },
+      "incomeExpense": {
+        "title": "Income & Expense",
+        "hint": "Excludes card accounts",
+        "income": "Income",
+        "expense": "Expense",
+        "range7d": "7 Days",
+        "range30d": "30 Days"
+      }
+    }
+  },
+  "rolesPermissions": {
+    "pageTitle": "Roles & Permissions",
+    "subtitle": "Manage roles, configure permissions, and invite and manage users",
+    "tabRoles": "Roles",
+    "tabUsers": "Users",
+    "searchRolesPlaceholder": "Search roles…",
+    "searchUsersPlaceholder": "Search by name or email…",
+    "createRole": "Create Role",
+    "inviteUser": "Invite User",
+    "back": "← Back",
+    "viewArrow": "View →",
+    "reinvite": "Re-invite",
+    "reinviteWithEmail": "Re-invite",
+    "colRole": "Role",
+    "colType": "Type",
+    "colModules": "Modules",
+    "colMembers": "Members",
+    "colStatus": "Status",
+    "colUser": "User",
+    "colRoleType": "Role Type",
+    "colRoles": "Roles",
+    "accountHolder": "Account Holder",
+    "custom": "Custom",
+    "member": "Member",
+    "modulesAll": "All ({n})",
+    "modulesPartial": "{current} / {total}",
+    "modelLayer": "Two-layer permissions: Layer 1 — page access (which modules are visible); Layer 2 — operation level (view-only / can operate). Account Holders have full access by default. When a user has multiple roles, permissions are merged.",
+    "createNewRole": "Create New Role",
+    "editRoleTitle": "Edit: {name}",
+    "roleDetails": "Role Details",
+    "roleName": "Role name",
+    "roleNamePlaceholder": "e.g. Finance lead, Ops specialist, Card admin…",
+    "description": "Description",
+    "descriptionPlaceholder": "e.g. Manages funds and deposit/withdraw operations",
+    "modulePermissionsHint": "Choose modules this role can access and select operations per module (multi-select).",
+    "permQueryHint": "View",
+    "permQueryDesc": "lists and details",
+    "permOperateHint": "Operate",
+    "permOperateDesc": "create / edit / delete",
+    "permExportHint": "Export",
+    "permExportDesc": "CSV / Excel / PDF",
+    "permQuery": "View",
+    "permOperate": "Operate (create/edit/delete)",
+    "permExport": "Export",
+    "verificationSection": "Security verification",
+    "verificationHintRole": "This role can operate transaction modules. Choose how verification codes are sent for fund operations.",
+    "verificationPlaceholder": "Select verification method",
+    "verificationSelf": "Self — code sent to the operator",
+    "verificationDesignated": "Designated — code sent to a designated secure phone",
+    "cancel": "Cancel",
+    "saveRole": "Save Role",
+    "edit": "Edit",
+    "delete": "Delete",
+    "noMembers": "No members",
+    "userDetail": "User Detail",
+    "identity": "Identity",
+    "userUid": "User (UID)",
+    "modulePermissions": "Module Permissions",
+    "editRoles": "Edit Roles",
+    "combinedPermissionsHint": "Merged result of all roles (pages union; operations use the highest level).",
+    "actions": "Actions",
+    "activate": "Activate",
+    "suspend": "Suspend",
+    "removeFromMid": "Remove from merchant",
+    "userActionsHint": "Suspend keeps data and roles. Remove clears roles and cannot be undone. Re-invite removed users.",
+    "inviteDialogTitle": "Invite User",
+    "inviteIntro": "The invitee will receive an invitation notification.",
+    "inviteTabEmail": "Email",
+    "inviteTabPhone": "Phone",
+    "inviteFirstNameLabel": "User name",
+    "inviteFirstNamePlaceholder": "Please enter the invitee's user name",
+    "emailAddress": "Email address",
+    "emailPlaceholder": "user{'@'}example.com",
+    "phoneNumber": "Phone number",
+    "phonePlaceholder": "138 0000 0000",
+    "countryCodePlaceholder": "Code",
+    "assignRoles": "Assign roles",
+    "noAssignableRoles": "No assignable roles",
+    "inviteTipEmail1": "The link is valid for 7 days and can be used once.",
+    "inviteTipEmail2": "Not registered → guided signup (Identity + User).",
+    "inviteTipEmail3": "Registered → log in and accept the invite (User).",
+    "inviteTipEmail4": "The email link verifies ownership; no extra code is required.",
+    "inviteTipPhone1": "SMS can be received on the phone; accepting the invite must be done on MP (Web).",
+    "inviteTipPhone2": "Not registered → sign up on MP with this phone and log in.",
+    "inviteTipPhone3": "Registered → log in on MP; pending invites appear in the notification center.",
+    "inviteTipPhone4": "Accepting requires an SMS code to confirm phone ownership.",
+    "inviteTipPhone5": "SMS may be intercepted; an extra code improves security. Mobile-only acceptance is not supported in this release.",
+    "sendInvitation": "Send Invitation",
+    "editRolesDialogTitle": "Edit Roles",
+    "editRolesDialogDesc": "Toggle roles for this user. Permissions update after save.",
+    "editRolesDialogHint": "Multiple roles: page permissions union; operations use the highest level (operate > view-only).",
+    "saveChanges": "Save Changes",
+    "confirmTitle": "Confirm",
+    "permissionTable": {
+      "module": "Module",
+      "subMenus": "Sub-menus",
+      "operationLevel": "Operation level",
+      "noAccess": "No access",
+      "query": "View",
+      "operate": "Operate",
+      "export": "Export",
+      "verification": "Security verification"
+    },
+    "roleStatus": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "disabled": "Disabled",
+      "normal": "Normal"
+    },
+    "merchantStatus": {
+      "ACTIVE": "Active",
+      "DISABLED": "Disabled"
+    },
+    "userStatus": {
+      "active": "Active",
+      "disabled": "Disabled",
+      "suspended": "Suspended",
+      "invited": "Invited",
+      "removed": "Removed"
+    },
+    "inviteStatus": {
+      "invited": "Invited",
+      "accepted": "Accepted",
+      "expired": "Expired (7 days)"
+    },
+    "msg": {
+      "enterRoleName": "Please enter a role name",
+      "selectOneModule": "Select at least one module with permissions",
+      "roleUpdated": "Role \"{name}\" updated",
+      "roleCreated": "Role \"{name}\" created",
+      "createRoleFailed": "Failed to create role",
+      "cannotDeleteRole": "Cannot delete: {count} user(s) still have this role. Remove or reassign them first.",
+      "deleteRoleConfirm": "Delete role \"{name}\"? This cannot be undone.",
+      "roleDeleted": "Role \"{name}\" deleted",
+      "enterEmail": "Please enter a valid email",
+      "enterPhone": "Please enter a phone number",
+      "enterFirstName": "Please enter the invitee's first name",
+      "holderOnlyOperate": "Only the account holder can perform this action",
+      "selectOneRole": "Please select at least one role",
+      "inviteSent": "Invitation sent to {contact}. Link valid for 7 days.",
+      "rolesUpdated": "Roles updated",
+      "userEnabled": "User enabled",
+      "userDisabled": "User disabled",
+      "removeUserConfirm": "Remove {name} from {merchant}? Roles will be cleared. This cannot be undone.",
+      "userRemoved": "{name} removed from merchant"
+    }
+  },
+  "activate": {
+    "titleSet": "Activate Your Account",
+    "titleDone": "Account Activated!",
+    "titleDoneRegister": "Registration complete!",
+    "subSet": "Welcome! Set your password to complete account activation.",
+    "subDone": "Your password has been set successfully. You can now sign in to EX Merchant Portal.",
+    "subDoneRegister": "You have completed registration. You can now sign in to EX Merchant Portal.",
+    "steps": {
+      "emailVerified": "Email Verified",
+      "phoneVerified": "Phone Verified",
+      "setPassword": "Set Password",
+      "signIn": "Sign In"
+    },
+    "passwordLabel": "Password",
+    "confirmPasswordLabel": "Confirm Password",
+    "subSetHasUserId": "Your account is ready. Tap the button below to complete registration.",
+    "completeBtn": "Complete registration",
+    "activateBtn": "Activate Account & Sign In",
+    "goToLogin": "Go to Sign In",
+    "activatedMessage": "Activated successfully",
+    "activatedMessageRegister": "Registration complete",
+    "expired": {
+      "title": "Activation Link Expired",
+      "sub": "This activation link has expired. Links are valid for 24 hours after being sent.",
+      "alert": "To receive a new activation link, please contact your EX account representative or request a resend from your portal administrator.",
+      "footerSignIn": "Already activated? Sign In",
+      "footerSupport": "Contact Support",
+      "requestSuccess": "New activation email has been requested"
+    },
+    "alreadyActivated": {
+      "title": "Account Activated!",
+      "sub": "This account has already been activated. You can sign in directly.",
+      "alert": "If you're having trouble signing in, please contact support for assistance.",
+      "signIn": "Go to Sign In"
+    },
+    "error": {
+      "title": "Something Went Wrong",
+      "sub": "We encountered an issue while processing your request. Please try again later.",
+      "alert": "If this problem persists, please contact our support team for assistance.",
+      "retry": "Retry"
+    }
+  },
+  "crypto": {
+    "trade": {
+      "tradeDashboard": "Transaction Overview",
+      "transactionID": "Transaction ID",
+      "canWithdrawAmount": "You Will Receive",
+      "createTime": "Created Time",
+      "amountDetail": "Deposit Details",
+      "withdrawDetail": "Withdrawal Details",
+      "tradeHash": "Transaction Hash",
+      "sourceAddress": "From Address",
+      "toAddress": "To Address",
+      "timeline": "Transaction Timeline",
+      "sellDetail": "Sell Details",
+      "paymethod": "Payment Method",
+      "transactionAmount": "Transaction Amount",
+      "expectedCreditAmount": "Expected Credit Amount",
+      "convertTransaction": "Convert Transaction",
+      "completedTime": "Completed Time",
+      "exchangeRate": "Rate",
+      "bankAccountNo": "Bank Account Number",
+      "purpose": "Purpose"
+    },
+    "withdraw": {
+      "icon": "💰",
+      "title": "Withdraw",
+      "selectNetwork": "Network",
+      "addressLabel": "Address Label",
+      "availableBalance": "Available Balance",
+      "networkFee": "Network Fee",
+      "addAddress": "Add Address",
+      "selectAddress": "Select Address",
+      "addNewAddress": "Add Withdrawal Address",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "amount": "Withdraw Amount",
+      "amountPlaceholder": "Please enter withdraw amount",
+      "address": "Withdraw Address",
+      "receiveAddress": "Withdraw Address",
+      "transactionAmount": "Withdraw Amount",
+      "youWillReceive": "You Will Receive",
+      "submit": "Submit",
+      "importantNotice": "Important Notice",
+      "addressModalNotice": "The withdrawal address must be verified before use. Please make sure all information is correct.",
+      "networkSelection": "Network",
+      "networkSelectionHint": "Select the network your address belongs to",
+      "networkWarning": "Selecting the wrong network for transfers will result in permanent loss of assets.",
+      "universalAddress": "Universal Address",
+      "universalAddressDesc": "Check this to ensure the address supports all tokens on the selected network",
+      "coinSelection": "Token",
+      "addressInput": "Address",
+      "addressWarning": "The withdrawal address must be verified before use. Please make sure all information is correct.",
+      "addressPlaceholder": "Please double-check the address. An incorrect address may result in permanent loss of funds.",
+      "pasteButton": "Paste",
+      "aliasLabel": "Alias",
+      "aliasPlaceholder": "A friendly name to identify this address",
+      "addressLabelRequired": "Please enter address label",
+      "addressRequired": "Please enter wallet address",
+      "addressMinLength": "Address length cannot be less than 26 characters",
+      "networkRequired": "Please select network",
+      "coinRequired": "Please select at least one coin",
+      "pasteSuccess": "Address pasted",
+      "pasteWarning": "Cannot access clipboard, please paste manually",
+      "pasteNotSupported": "Browser does not support auto paste, please paste manually",
+      "selectNetworkWarning": "Please select network",
+      "selectCoinWarning": "Please select at least one coin",
+      "addressAddSuccess": "Address added successfully",
+      "completeInfoWarning": "Please complete withdrawal information",
+      "submitSuccess": "Withdrawal request submitted, please wait for processing",
+      "processingTimeTitle": "Processing Time",
+      "processingTimeDesc": "Withdrawal processing takes approximately 4 hours. Please note that processing time may be extended due to unexpected circumstances.",
+      "warningTitle": "Warning",
+      "warningDesc": "Do not transact with sanctioned entities.",
+      "supportTitle": "Need Assistance?",
+      "supportDesc": "Please email support@blancblock.com",
+      "telegramDesc": "Or contact us via Telegram: https://t.me/blancblock",
+      "addressLabelPlaceholder": "Please enter address label",
+      "amountRequired": "Please enter withdraw amount",
+      "amountInvalid": "Please enter a valid numeric amount",
+      "amountMustPositive": "Withdraw amount must be greater than 0",
+      "amountExceedsBalance": "Withdraw amount cannot exceed available balance",
+      "amountExceedsMax": "Withdraw amount cannot exceed {max}",
+      "amountTooSmall": "Withdrawal amount cannot be less than {min}",
+      "noAvailableAccounts": "No available accounts",
+      "noAvailableNetworks": "No available networks",
+      "invalidAmount": "Please enter a valid withdrawal amount",
+      "selectAddressError": "Please select a withdrawal address",
+      "submitFailed": "Submit failed, please try again",
+      "feeCalculationFailed": "Fee calculation failed, please try again",
+      "history": "Withdrawal History",
+      "selectCurrency": "Currency",
+      "purposeCode": "Purpose Code",
+      "purposeCodePlaceholder": "Please select purpose code",
+      "purposeCodeRequired": "Please select purpose code",
+      "transactionOverview": "Transaction Overview",
+      "notice": {
+        "title": "Important Notice",
+        "processing": {
+          "title": "Processing Time:",
+          "desc": "Withdrawal processing takes up to 4 hours. Please be aware that processing times may be extended due to unforeseen circumstances."
+        },
+        "warning": {
+          "title": "Warning:",
+          "desc": "Do not engage in any fund transfers with sanctioned entities or high-risk countries/regions. Violations will trigger a compliance freeze."
+        },
+        "support": {
+          "title": "Need assistance?",
+          "desc": "Please email"
+        }
+      }
+    },
+    "addressbook": {
+      "title": "Withdrawal Address Book",
+      "alias": "Alias",
+      "network": "Network",
+      "universal": "Universal Address",
+      "coins": "Currencies",
+      "address": "Address",
+      "created": "Created Time",
+      "status": "Status",
+      "actions": "Actions",
+      "edit": "Edit",
+      "add": "Add Address",
+      "universalYes": "Yes",
+      "universalNo": "No",
+      "filter": {
+        "alias": "Alias",
+        "status": "Status",
+        "aliasPlaceholder": "Search alias"
+      },
+      "modal": {
+        "edit": "Edit Address",
+        "alias": "Alias",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "aliasPlaceholder": "Please enter alias",
+        "aliasRequired": "Please enter alias"
+      },
+      "copy": {
+        "success": "Address copied to clipboard",
+        "failed": "Failed to copy"
+      },
+      "addResult": {
+        "success": "Address added successfully",
+        "failed": "Failed to add address"
+      },
+      "editResult": {
+        "success": "Address edited successfully",
+        "failed": "Failed to edit address"
+      },
+      "delete": {
+        "action": "Delete",
+        "title": "Delete Address",
+        "confirm": "Are you sure you want to delete this address?",
+        "success": "Address deleted successfully",
+        "failed": "Failed to delete address"
+      }
+    },
+    "wallets": {
+      "title": "Assets",
+      "tag": "ACCEPTANCE & OTC",
+      "desc": "Fiat accounts and crypto wallets used for acceptance, OTC trading and settlement.",
+      "fiatAccounts": "Fiat Accounts",
+      "cryptoAccounts": "Crypto Wallets",
+      "available": "Available:",
+      "totalAvailable": "Total available:",
+      "deposit": "Deposit",
+      "withdraw": "Withdraw",
+      "loadFailed": "Failed to load accounts"
+    },
+    "deposit": {
+      "icon": "💰",
+      "title": "Deposit",
+      "selectNetwork": "Network",
+      "selectCurrency": "Currency",
+      "continue": "Confirm",
+      "back": "Back",
+      "warningTitle": "Important Notice",
+      "warning": "Transfer strictly according to the selected currency and network to the specified address. Please use a small test transfer for the first deposit. Transferring to the wrong network may result in permanent loss of assets. If you have any questions, please contact us.",
+      "warning1": "Please ensure the network you select matches the network supported by the sending wallet. Selecting the wrong network may result in permanent loss of assets.",
+      "warning2": "Minimum deposit amount is {amount} {currency}. Deposits below the minimum amount will not be credited.",
+      "warning3": "Deposit confirmation time is usually 1-3 network confirmations, depending on network congestion.",
+      "depositDetails": "Deposit Details",
+      "addressShown": "Address Shown",
+      "depositAddress": "Deposit Address",
+      "copy": "Copy",
+      "copyAddress": "Copy Address",
+      "copySuccess": "Address copied to clipboard",
+      "copyFailed": "Copy failed, please copy manually",
+      "warningShare": "Do not share your address information with others.",
+      "minAmountTip": "Minimum deposit amount: {amount} {currency}",
+      "importantNotice": "Important Notice",
+      "notice1": "Please ensure the network you select matches the network supported by the sending wallet. Selecting the wrong network may result in permanent loss of assets.",
+      "notice2": "The deposit address only supports digital assets of the corresponding network. Do not deposit other currencies or network assets to this address.",
+      "notice3": "Deposit confirmation requires network confirmation, please be patient. The arrival time depends on network congestion.",
+      "notice4": "Please save the deposit address, you can reuse this address for deposits.",
+      "notice": {
+        "title": "Important Notice",
+        "network": {
+          "title": "Network Requirements:",
+          "desc": "Only send the selected crypto asset via the correct network (ERC-20 for Ethereum, TRC-20 for TRON). Cross-network transfers will result in permanent fund loss."
+        },
+        "address": {
+          "title": "Address Verification:",
+          "desc": "Double-check the deposit address before sending. Incorrect addresses or smart contract transfers are not supported and will cause permanent loss."
+        },
+        "confirmation": {
+          "title": "Confirmation Time:",
+          "desc": "ERC-20 requires 64 confirmations (~20-30 min) and 19 confirmations (~1-2 min) for TRC-20."
+        },
+        "support": {
+          "title": "Support:",
+          "desc": "For assistance, email",
+          "email": "company{'@'}eurewax.com"
+        }
+      },
+      "confirm": "Confirm",
+      "confirmTime": "~20-30 min",
+      "minimum": "Minimum",
+      "minAmount": "10 USDT",
+      "fee": "Fee",
+      "free": "Free",
+      "showAddress": "Show Address",
+      "history": "Deposit History"
+    },
+    "transactions": {
+      "title": "Transactions",
+      "transactionId": "Transaction ID",
+      "searchById": "Search by ID",
+      "type": "Type",
+      "status": "Status",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "all": "All",
+      "search": "Search",
+      "reset": "Reset",
+      "noData": "No transactions",
+      "noDataDesc": "No transactions found for the selected filters.",
+      "view": "View",
+      "columns": {
+        "id": "Transaction ID",
+        "time": "Time",
+        "type": "Type",
+        "currency": "Currency",
+        "amount": "Amount",
+        "network": "Network",
+        "fee": "Fee",
+        "status": "Status",
+        "actions": "Actions"
+      }
+    }
+  },
+  "table": {
+    "searchBar": {
+      "reset": "Reset",
+      "search": "Search",
+      "expand": "Expand",
+      "collapse": "Collapse",
+      "searchInputPlaceholder": "Please enter",
+      "searchSelectPlaceholder": "Please select"
+    },
+    "selection": "Select",
+    "sizeOptions": {
+      "small": "Compact",
+      "default": "Default",
+      "large": "Loose"
+    },
+    "column": {
+      "selection": "Select",
+      "expand": "Expand",
+      "index": "Index"
+    },
+    "zebra": "Zebra",
+    "border": "Border",
+    "headerBackground": "Header BG"
+  }
+}

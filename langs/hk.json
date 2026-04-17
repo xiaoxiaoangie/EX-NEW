@@ -1,0 +1,1101 @@
+{
+  "systemInfo": {
+    "name": "EurewaX"
+  },
+  "exceptionPending": {
+    "title": "功能開通中",
+    "desc": "您尚未開通對應產品，此功能暫無法使用，請聯絡管理員。"
+  },
+  "httpMsg": {
+    "unauthorized": "未授權訪問，請重新登錄",
+    "forbidden": "禁止訪問該資源",
+    "notFound": "請求的資源不存在",
+    "methodNotAllowed": "請求方法不允許",
+    "requestTimeout": "請求超時，請稍後重試",
+    "internalServerError": "伺服器內部錯誤，請稍後重試",
+    "badGateway": "網關錯誤，請稍後重試",
+    "serviceUnavailable": "服務暫時不可用，請稍後重試",
+    "gatewayTimeout": "網關超時，請稍後重試",
+    "requestCancelled": "請求已取消",
+    "networkError": "網絡連接異常，請檢查網絡連接",
+    "requestFailed": "請求失敗",
+    "requestConfigError": "請求配置錯誤"
+  },
+  "topBar": {
+    "search": {
+      "title": "搜尋"
+    },
+    "user": {
+      "userCenter": "個人中心",
+      "docs": "使用文件",
+      "github": "Github",
+      "lockScreen": "鎖定螢幕",
+      "logout": "退出登錄"
+    },
+    "guide": {
+      "title": "點擊這裡查看",
+      "theme": "主題風格",
+      "menu": "開啟頂欄選單",
+      "description": "等更多配置"
+    }
+  },
+  "common": {
+    "tips": "提示",
+    "cancel": "取消",
+    "save": "儲存",
+    "edit": "編輯",
+    "confirm": "確定",
+    "logOutTips": "您是否要退出登錄?",
+    "sendCode": "發送驗證碼",
+    "resend": "重新發送",
+    "set": "已設定",
+    "notSet": "未設定",
+    "setUp": "設定",
+    "change": "修改",
+    "enabled": "已啟用",
+    "manage": "管理",
+    "default": "預設",
+    "Pleasecomplete": "請完成安全驗證",
+    "Swipeverification": "向右滑動完成驗證",
+    "verifySuccessful": "驗證成功",
+    "verifyFailed": "驗證失敗",
+    "prevStep": "上一步",
+    "pleaseInput": "請輸入",
+    "pleaseSelect": "請選擇",
+    "loading": "載入中...",
+    "loadFailed": "載入失敗",
+    "retry": "重試",
+    "saveSuccess": "儲存成功",
+    "saveFailed": "儲存失敗",
+    "back": "返回",
+    "copySuccess": "複製成功",
+    "copyFailed": "複製失敗"
+  },
+  "userCenter": {
+    "basicSettings": "基本設定",
+    "realName": "姓名",
+    "gender": "性別",
+    "loginName": "登錄名稱",
+    "address": "地址",
+    "admin": "管理員",
+    "normalUser": "普通用戶"
+  },
+  "search": {
+    "placeholder": "搜尋頁面",
+    "historyTitle": "搜尋歷史",
+    "switchKeydown": "切換",
+    "selectKeydown": "選擇"
+  },
+  "setting": {
+    "menuType": {
+      "title": "選單佈局",
+      "list": ["垂直", "水平", "混合", "雙列"]
+    },
+    "theme": {
+      "title": "主題風格",
+      "list": ["淺色", "深色", "系統"]
+    },
+    "menu": {
+      "title": "選單風格"
+    },
+    "color": {
+      "title": "系統主題色"
+    },
+    "box": {
+      "title": "盒子樣式",
+      "list": ["邊框", "陰影"]
+    },
+    "container": {
+      "title": "容器寬度",
+      "list": ["鋪滿", "定寬"]
+    },
+    "basics": {
+      "title": "基礎配置",
+      "list": {
+        "multiTab": "開啟多標籤欄",
+        "accordion": "側邊欄開啟手風琴模式",
+        "collapseSidebar": "顯示折疊側邊欄按鈕",
+        "fastEnter": "顯示快速入口",
+        "reloadPage": "顯示重載頁面按鈕",
+        "breadcrumb": "顯示全局麵包屑導航",
+        "language": "顯示多語言選擇",
+        "progressBar": "顯示頂部進度條",
+        "weakMode": "色弱模式",
+        "watermark": "全局浮水印",
+        "menuWidth": "選單寬度",
+        "tabStyle": "標籤頁風格",
+        "pageTransition": "頁面切換動畫",
+        "borderRadius": "自定義圓角"
+      }
+    },
+    "tabStyle": {
+      "default": "預設",
+      "card": "卡片",
+      "google": "谷歌"
+    },
+    "transition": {
+      "list": {
+        "none": "無動畫",
+        "fade": "淡入淡出",
+        "slideLeft": "左側滑入",
+        "slideBottom": "下方滑入",
+        "slideTop": "上方滑入"
+      }
+    }
+  },
+  "notice": {
+    "title": "通知",
+    "btnRead": "標為已讀",
+    "bar": ["通知", "訊息", "待辦"],
+    "text": ["暫無"],
+    "viewAll": "查看全部"
+  },
+  "worktab": {
+    "btn": {
+      "refresh": "重新整理",
+      "fixed": "固定",
+      "unfixed": "取消固定",
+      "closeLeft": "關閉左側",
+      "closeRight": "關閉右側",
+      "closeOther": "關閉其他",
+      "closeAll": "關閉全部"
+    }
+  },
+  "login": {
+    "leftView": {
+      "title": "跨境支付智能SaaS解決方案",
+      "subTitle": "提供一站式跨境支付解決方案，幫助企業實現跨境支付的便捷、安全、可靠。",
+      "features": ["金融級安全保障", "跨境支付基礎設施", "智能風控解決方案"]
+    },
+    "title": "歡迎回來",
+    "subTitle": "輸入手機號碼 / 電郵和密碼登錄",
+    "roles": {
+      "super": "超級管理員",
+      "admin": "管理員",
+      "user": "普通用戶"
+    },
+    "placeholder": ["請輸入帳號", "請輸入密碼", "請拖動滑塊完成驗證"],
+    "sliderText": "按住滑塊拖動",
+    "sliderSuccessText": "驗證成功",
+    "rememberPwd": "記住密碼",
+    "forgetPwd": "忘記密碼",
+    "btnText": "登錄",
+    "noAccount": "還沒有帳號？",
+    "register": "註冊",
+    "success": {
+      "title": "登錄成功",
+      "message": "歡迎回來"
+    },
+    "email": "電郵",
+    "emailAddress": "電郵地址",
+    "phone": "手機號碼",
+    "pleaseEnterEmail": "請輸入電郵地址",
+    "pleaseEnterPhone": "請輸入手機號碼",
+    "password": "密碼",
+    "pleaseEnterPassword": "請輸入登錄密碼",
+    "verifyCode": "驗證碼",
+    "pleaseEnterVerifyCode": "請輸入驗證碼",
+    "loginWithVerifyCode": "用驗證碼登錄",
+    "loginWithPassword": "用密碼登錄",
+    "verifyAndLogin": "驗證並登錄",
+    "verificationFailed": "驗證失敗，請重試",
+    "switchToApp": "改用 Authenticator 驗證",
+    "switchToSms": "改用短訊驗證",
+    "errorContent": "密碼錯誤（第 {tryCount} 次），請完成圖形驗證後重試",
+    "frozen": {
+      "title": "帳戶已凍結",
+      "message": "為保護您的帳戶安全，登錄功能已暫時凍結。",
+      "alertContent": "我們已向您的註冊電郵/手機發送了安全通知。",
+      "remainingTime": "剩餘凍結時間",
+      "backToLogin": "返回登錄",
+      "contactSupport": "聯絡客服"
+    }
+  },
+  "profile": {
+    "baseInfo": "基本資訊",
+    "description": "您的個人資訊。",
+    "nickname": "暱稱",
+    "language": "語言",
+    "contactInfo": "聯絡資訊",
+    "contactInfoDescription": "管理您的電郵和手機號碼。",
+    "editNickname": "編輯暱稱",
+    "languagePreference": "語言偏好",
+    "languagePreferenceDesc": "修改後立即生效",
+    "editEmail": "編輯電郵",
+    "editMobile": "編輯手機號碼",
+    "verifyCurrentIdentity": "驗證當前身份",
+    "newEmail": "新電郵",
+    "newMobile": "新手機號碼",
+    "verifyNewEmail": "驗證新電郵",
+    "verifyNewMobile": "驗證新手機號碼",
+    "inputNewMobile": "輸入新手機號碼",
+    "inputNewEmail": "輸入新電郵",
+    "verifyAndSave": "驗證並儲存",
+    "Verified": "已驗證",
+    "noSet": "未設定",
+    "nicknameRule": "2-30 個字元，支援中文/英文/數字/底線"
+  },
+  "security": {
+    "title": "安全驗證",
+    "subTitle": "為了您的帳戶安全，請輸入驗證碼",
+    "verifyCodeSentTo": "驗證碼已發送至",
+    "verifyCodeWillSentTo": "驗證碼將發送至",
+    "authenticatorCode": "Authenticator 動態碼",
+    "pleaseEnterSixCode": "輸入 6 位動態碼",
+    "loginAndAuth": "登錄與身份認證",
+    "loginAndAuthDesc": "全局身份認證設定，適用於所有商戶",
+    "setAsDefault": "設為預設",
+    "setAsDefaultDesc": "登錄時預設使用 {type} 驗證",
+    "disable": "禁用",
+    "disableDesc": "關閉 {type} 雙重驗證",
+    "currentPassword": "當前密碼",
+    "newPassword": "新密碼",
+    "pleaseEnterCurrentPassword": "請輸入當前密碼",
+    "pleaseEnterNewPassword": "請輸入新密碼",
+    "newPasswordRule": "至少 8 位，含字母、數字和特殊字元",
+    "confirmNewPassword": "確認新密碼",
+    "inputConfirmNewPassword": "請再次輸入新密碼",
+    "changePassword": "修改密碼",
+    "setPassword": "設定密碼",
+    "changeLoginPassword": "修改登錄密碼",
+    "setLoginPassword": "設定登錄密碼",
+    "setPasswordSuccess": "密碼設定成功",
+    "changeLoginPasswordSuccess": "登錄密碼修改成功",
+    "nextStep": "下一步",
+    "authPhone": "安全驗證手機號碼",
+    "setAuthPhone": "設定安全驗證手機號碼",
+    "changeAuthPhone": "修改安全驗證手機號碼",
+    "verifyAndEnable": "驗證並啟用",
+    "verifyAndSet": "驗證並設定",
+    "loginPassword": "登錄密碼",
+    "loginPasswordDesc": "登錄密碼，用於密碼方式登錄",
+    "authenticatorApp": "Authenticator App (2FA)",
+    "authenticatorAppDesc": "Google Authenticator / Authy 動態令牌",
+    "smsCodeSentTo": "短訊驗證碼發送到",
+    "emailCodeSentTo": "郵件驗證碼發送到",
+    "transactionVerification": "交易驗證",
+    "transactionVerificationDesc": "資金操作驗證方式",
+    "paymentPIN": "Payment PIN（交易密碼）",
+    "paymentPINDesc": "6 位數字 PIN，執行資金操作時快速驗證，無需等待驗證碼",
+    "paymentPINNote": "設定後，Self 模式下的資金操作（兌換、付款、卡充值等）輸入 PIN 即可完成驗證。",
+    "paymentPINNote2": "未設定時回退到手機號碼/電郵驗證碼。Designated 模式下不適用。",
+    "designatedPhone": "Designated Phone（安全驗證手機號碼）",
+    "designatedPhoneDesc": "MID 級 — 僅 Account Holder 可編輯 · 當前: ABC Trading / MID-001",
+    "designatedPhoneNote": "角色驗證方式為 Designated 時，資金操作的驗證碼將發送到此手機號碼。",
+    "designatedPhoneNote2": "可以是您自己的手機號碼，也可以是指定的安全負責人手機號碼。",
+    "googleStep1": "Step 1: 使用 Authenticator App 掃描二維碼",
+    "googleStep2": "輸入 Authenticator App 上顯示的 6 位動態碼",
+    "googleNote": "無法掃碼？手動輸入金鑰",
+    "setUpGoogleAuth": "設定 Authenticator App",
+    "currentStatus": "當前狀態",
+    "regenerateKey": "重新生成金鑰",
+    "regenerateKeyNote": "重新生成金鑰，需要重新掃碼綁定",
+    "close": "關閉",
+    "sendVerifyCode": "向已綁定手機號碼發送驗證碼",
+    "sendVerifyCodeToEmail": "向已綁定電郵發送驗證碼",
+    "setPaymentPIN": "設定交易密碼",
+    "changePaymentPIN": "修改交易密碼",
+    "setPaymentPINDesc": "設定6位數字密碼，用於快速驗證資金操作",
+    "inputOldPaymentPIN": "輸入原始6位數字密碼",
+    "inputPaymentPIN": "輸入6位數字密碼",
+    "confirmPaymentPIN": "再次輸入確認",
+    "confirmPaymentPINNote": "兩次輸入不一致，請重新設定",
+    "paymentPINError": "不能是連續或相同的數字",
+    "confirmSet": "確認設定",
+    "noSetSecurityPhone": "未設定安全驗證手機號碼",
+    "current": "當前",
+    "pleaseEnterSixCodeVerify": "請輸入 6 位驗證碼",
+    "designatedPhoneNote3": "Designated 模式下，資金操作驗證碼將發送到此號碼。",
+    "newPaymentPINSame": "新密碼不能與原密碼相同"
+  },
+  "forgetPassword": {
+    "title": "忘記密碼？",
+    "subTitle": "輸入您的電郵來重置您的密碼",
+    "placeholder": "請輸入您的電郵地址",
+    "submitBtnText": "提交",
+    "backBtnText": "返回",
+    "resetPassword": "重置密碼",
+    "step1SubTitle": "輸入您的註冊電郵或手機號碼，我們將發送驗證碼",
+    "accountLabel": "電郵 / 手機號碼",
+    "accountPlaceholder": "請輸入您的電郵或手機號碼",
+    "continueBtn": "繼續",
+    "backToLogin": "返回登錄",
+    "verifyIdentity": "驗證身份",
+    "step": "步驟",
+    "codeHint": "驗證碼已發送至",
+    "codeHintSuffix": "，請查收",
+    "sixDigitCode": "6位驗證碼",
+    "validFor10Min": "驗證碼10分鐘內有效",
+    "verifyBtn": "驗證",
+    "setNewPassword": "設定新密碼",
+    "newPassword": "新密碼",
+    "newPasswordPlaceholder": "請輸入新密碼",
+    "confirmPassword": "確認密碼",
+    "confirmPasswordPlaceholder": "請再次輸入新密碼",
+    "resetPasswordBtn": "重置密碼",
+    "resetSuccess": "密碼已重置",
+    "resetSuccessDesc": "新密碼已生效，請重新登錄",
+    "resendAfter": "秒後重新發送",
+    "resendCode": "重新發送驗證碼",
+    "accountRequired": "請輸入帳號",
+    "invalidAccountFormat": "請輸入有效的電郵或手機號碼",
+    "codeRequired": "請輸入驗證碼",
+    "invalidCode": "驗證碼格式不正確",
+    "passwordRequired": "請輸入新密碼",
+    "passwordTooShort": "密碼長度至少8位",
+    "passwordMismatch": "兩次輸入的密碼不一致",
+    "passwordWeak": "弱",
+    "passwordMedium": "中等",
+    "passwordStrong": "強"
+  },
+  "register": {
+    "title": "創建帳號",
+    "subTitle": "歡迎加入我們，請填寫以下資訊完成註冊",
+    "placeholder": ["請輸入帳號", "請輸入密碼", "請再次輸入密碼"],
+    "rule": [
+      "請再次輸入密碼",
+      "兩次輸入密碼不一致!",
+      "長度在 3 到 20 個字元",
+      "密碼長度不能小於6位",
+      "請同意隱私協議"
+    ],
+    "setRule": [
+      "至少 8 位字元",
+      "包含數字",
+      "包含字母（不限大小寫）",
+      "包含特殊字元（僅支援! # {'@'} ?.+ ; = ~ ）"
+    ],
+    "confirmPassword": "確認密碼",
+    "confirmPasswordPlaceholder": "再次輸入密碼",
+    "registerWithVerifyCode": "使用驗證碼註冊，無需設定密碼",
+    "registerWithPassword": "改用密碼註冊",
+    "readAndAgreeText": "我已閱讀並同意",
+    "agreeText": "我同意",
+    "privacyPolicy": "《隱私政策》",
+    "submitBtnText": "註冊",
+    "hasAccount": "已有帳戶？",
+    "toLogin": "去登錄",
+    "createAccount": "創建帳戶",
+    "passwordRule": "至少 8 位，含大小寫字母和數字",
+    "pleaseSetPassword": "請設定密碼",
+    "invalidEmailFormat": "請輸入正確的電郵地址",
+    "invalidPhoneNumberFormat": "請輸入正確的手機號碼",
+    "pleaseAgreePrivacyPolicy": "請同意相關協議",
+    "passwordStrengthInsufficient": "密碼強度不足，請滿足所有規則",
+    "registerSuccess": "註冊成功",
+    "registerSuccessDesc": "帳戶已創建，登錄後即可開通產品",
+    "countdownText": "秒後自動跳轉",
+    "goToLogin": "前往登錄"
+  },
+  "lockScreen": {
+    "pwdError": "密碼錯誤",
+    "lock": {
+      "inputPlaceholder": "請輸入鎖屏密碼",
+      "btnText": "鎖定"
+    },
+    "unlock": {
+      "inputPlaceholder": "請輸入解鎖密碼",
+      "btnText": "解鎖",
+      "backBtnText": "返回登錄"
+    }
+  },
+  "greeting": {
+    "dawn": "凌晨了！",
+    "morning": "上午好！",
+    "afternoon": "下午好！",
+    "evening": "晚上好！"
+  },
+  "exceptionPage": {
+    "403": "抱歉，您無權訪問該頁面",
+    "404": "抱歉，您訪問的頁面不存在",
+    "500": "抱歉，伺服器出錯了",
+    "gohome": "返回首頁"
+  },
+  "menus": {
+    "login": {
+      "title": "登錄"
+    },
+    "register": {
+      "title": "註冊"
+    },
+    "forgetPassword": {
+      "title": "忘記密碼"
+    },
+    "activate": {
+      "title": "帳戶激活"
+    },
+    "outside": {
+      "title": "內嵌頁面"
+    },
+    "dashboard": {
+      "title": "儀表板",
+      "console": "工作台"
+    },
+    "template": {
+      "title": "模板中心",
+      "pricing": "定價",
+      "micro": "微應用",
+      "unocss": "UnoCSS 示例"
+    },
+    "result": {
+      "title": "結果頁面",
+      "success": "成功頁",
+      "fail": "失敗頁"
+    },
+    "exception": {
+      "title": "異常頁面",
+      "forbidden": "403",
+      "notFound": "404",
+      "serverError": "500"
+    },
+    "system": {
+      "title": "系統管理",
+      "user": "用戶管理",
+      "role": "角色管理",
+      "rolesPermissions": "角色與權限",
+      "userCenter": "個人中心",
+      "menu": "選單管理"
+    },
+    "setting": {
+      "title": "設定中心",
+      "profile": "個人資訊",
+      "security": "安全設定"
+    },
+    "assets": {
+      "title": "資產",
+      "wallets": "資產列表",
+      "depositCrypto": "充幣",
+      "depositFiat": "法幣充值",
+      "withdrawCrypto": "提幣",
+      "withdrawFiat": "法幣提現",
+      "addressBook": "提現地址",
+      "tradeDetail": "交易詳情"
+    },
+    "checkout": {
+      "title": "收單",
+      "paymentTransactions": "支付交易",
+      "paymentSettlement": "支付結算",
+      "productSettings": "產品設定"
+    },
+    "cards": {
+      "title": "卡片",
+      "management": "卡片列表",
+      "transactions": "卡交易"
+    },
+    "exceptionPending": {
+      "title": "功能開通中"
+    }
+  },
+  "dashboard": {
+    "header": {
+      "title": "儀表板",
+      "versionBadge": "MP 1.0"
+    },
+    "entityProfile": {
+      "title": "完善主體資訊",
+      "subtitle": "請完善您的主體資訊，以便我們為您展示可用的產品與服務。",
+      "countryLabel": "註冊國家 / 地區",
+      "entityTypeLabel": "主體類型",
+      "entityTypeEnterprise": "企業",
+      "entityTypePersonal": "個人"
+    },
+    "productSelection": {
+      "title": "選擇要開通的產品",
+      "subtitle": "請選擇需要開通的產品。系統將跳轉至合作方完成 KYC 資訊提交與認證。",
+      "countText": "已選擇 {count} 個產品",
+      "emptyHint": "請先選擇上方的註冊國家/地區和主體類型，以查看可開通的產品。",
+      "submitBtn": "提交至 SumSub 驗證",
+      "productsAvailable": "{count} 個可用產品"
+    },
+    "productApplication": {
+      "pageTitle": "產品開通申請",
+      "pageDesc": "請先選擇主體資訊，再選擇需要開通的產品。",
+      "steps": {
+        "selectProduct": "選擇產品",
+        "submitInfo": "提交資訊",
+        "review": "審核中",
+        "result": "審核結果"
+      },
+      "common": {
+        "statusTitle": "申請狀態",
+        "badgeReviewing": "審核中",
+        "badgeNeedInfo": "待補件",
+        "badgeRejected": "已拒絕",
+        "badgeActive": "已生效",
+        "cardAppliedProducts": "已提交申請的產品",
+        "cardActivatedProducts": "已開通的產品",
+        "cardReviewTimeline": "審核時間線",
+        "cardSubmissionTimeline": "提交時間線",
+        "noApplyUrl": "KYC 連結暫不可用，請聯絡支援人員。",
+        "backToApplication": "返回申請"
+      },
+      "submitted": {
+        "title": "申請提交成功！",
+        "desc": "您的資料已提交至合作方進行審核，審核將很快開始。",
+        "submittedOnPrefix": "提交時間",
+        "badgePendingReview": "待審核",
+        "infoTitle": "接下來會發生什麼？",
+        "infoLine1": "您的資料會在 1-3 個工作日內完成審核。",
+        "infoLine2": "審核完成後，您將收到郵件通知結果。",
+        "infoLine3": "審核通過後，相關產品將自動為您開通。",
+        "timelineSubmittedTitle": "已提交申請",
+        "timelineSubmittedMeta": "2026-03-02 14:30 UTC",
+        "timelineSubmittedDesc": "通過 SumSub 驗證入口完成資料採集。",
+        "timelineReviewTitle": "合規審核",
+        "timelineReviewMeta": "預計：1-3 個工作日。"
+      },
+      "underReview": {
+        "title": "申請審核中",
+        "desc": "您的申請正在審核中，通常需要 1-3 個工作日完成。",
+        "progressTitle": "審核進行中",
+        "progressMetaPrefix": "預計完成時間：",
+        "progressHint": "資料核驗正在進行中...",
+        "submittedPrefix": "提交時間",
+        "timelineTitle": "審核時間線",
+        "timelineSubmittedTitle": "已提交申請",
+        "timelineSubmittedMeta": "2026-03-02 14:30 UTC",
+        "timelineDocReceivedTitle": "已接收資料",
+        "timelineDocReceivedMeta": "2026-03-02 14:32 UTC",
+        "timelineComplianceTitle": "合規審核",
+        "timelineComplianceMeta": "審核進行中...",
+        "timelineResultTitle": "審核結果",
+        "timelineResultMeta": "待出結果",
+        "viewInfo": "查看資訊"
+      },
+      "approved": {
+        "title": "申請已通過！",
+        "desc": "恭喜，您的申請已審核通過，相關產品已為您開通，可以開始使用。",
+        "approvedOnPrefix": "通過時間",
+        "activatedProductsTitle": "已開通的產品",
+        "infoTitle": "您現在可以進行的操作",
+        "infoLine1": "進入儀表板，使用完整的產品功能。",
+        "infoLine2": "配置產品參數和偏好設定。",
+        "infoLine3": "立即開始處理交易。",
+        "infoLine4": "使用開發者憑證進行 API 集成。",
+        "goToDashboard": "進入儀表板"
+      },
+      "rejected": {
+        "title": "申請未通過",
+        "desc": "抱歉，您的申請暫未通過審核，請參考下方原因並根據提示進行調整。",
+        "reasonsTitle": "未通過原因",
+        "rejectedOnPrefix": "拒絕時間",
+        "viewInfo": "查看資訊"
+      },
+      "needInfo": {
+        "title": "需要補充資料",
+        "desc": "繼續處理申請前，需要您補充部分資料。",
+        "alertTitle": "請盡快處理",
+        "alertDesc": "請在14 個工作日內補充以下資料，如未及時處理，申請可能會被拒絕。",
+        "materialsTitle": "需要補充的資料",
+        "badgeRequired": "必填",
+        "badgeOptional": "選填",
+        "returnedOnPrefix": "退回時間",
+        "supplementBtn": "通過 SumSub 補充資料",
+        "supplementHint": "系統會跳轉至合作方頁面上傳補充文件。",
+        "backToApplication": "返回申請",
+        "noApplyUrl": "KYC 連結暫不可用，請聯絡支援人員。"
+      }
+    },
+    "main": {
+      "myAssets": {
+        "title": "我的資產",
+        "viewAll": "查看全部 →",
+        "totalBalance": "總資產",
+        "fiat": "法幣",
+        "crypto": "加密資產",
+        "cards": "卡片"
+      },
+      "tasks": {
+        "title": "待辦任務",
+        "viewAll": "查看全部 →",
+        "item1Title": "完成 KYC 實名認證",
+        "item1Due": "今天",
+        "item2Title": "審核待處理出款",
+        "item2Due": "今天",
+        "item3Title": "審批 API Key 續期",
+        "item3Due": "明天",
+        "item4Title": "本月對帳單已生成",
+        "item4Due": "本週內"
+      },
+      "quickAccess": {
+        "title": "快捷入口",
+        "deposit": "充值",
+        "withdraw": "提現",
+        "cryptoReceive": "收款（數幣）",
+        "cards": "卡片"
+      },
+      "incomeExpense": {
+        "title": "收支概覽",
+        "hint": "不包含卡帳戶",
+        "income": "收入",
+        "expense": "支出",
+        "range7d": "近 7 天",
+        "range30d": "近 30 天"
+      }
+    }
+  },
+  "rolesPermissions": {
+    "pageTitle": "角色與權限",
+    "subtitle": "管理角色、配置權限，以及邀請和管理用戶",
+    "tabRoles": "角色",
+    "tabUsers": "用戶",
+    "searchRolesPlaceholder": "搜尋角色…",
+    "searchUsersPlaceholder": "按姓名或電郵搜尋…",
+    "createRole": "新建角色",
+    "inviteUser": "邀請用戶",
+    "back": "← 返回",
+    "viewArrow": "查看 →",
+    "reinvite": "重新邀請",
+    "reinviteWithEmail": "重新邀請",
+    "colRole": "角色",
+    "colType": "類型",
+    "colModules": "模組",
+    "colMembers": "成員",
+    "colStatus": "狀態",
+    "colUser": "用戶",
+    "colRoleType": "角色類型",
+    "colRoles": "角色",
+    "accountHolder": "帳戶持有人",
+    "custom": "自定義",
+    "member": "成員",
+    "modulesAll": "全部（{n}）",
+    "modulesPartial": "{current} / {total}",
+    "modelLayer": "兩層權限模型：第一層為頁面權限（控制能看到哪些模組），第二層為操作權限（僅查閱 / 可操作）。帳戶持有人預設擁有全部權限，無需配置；用戶擁有多角色時權限取聯集。",
+    "createNewRole": "新建角色",
+    "editRoleTitle": "編輯：{name}",
+    "roleDetails": "角色資訊",
+    "roleName": "角色名稱",
+    "roleNamePlaceholder": "例如：財務主管、營運專員、卡業務管理員…",
+    "description": "描述",
+    "descriptionPlaceholder": "例如：負責資金管理與出入金操作",
+    "modulePermissionsHint": "選擇該角色可訪問的模組，並為每個模組勾選操作權限（可多選）。",
+    "permQueryHint": "查閱",
+    "permQueryDesc": "查看列表與詳情",
+    "permOperateHint": "操作",
+    "permOperateDesc": "創建 / 編輯 / 刪除",
+    "permExportHint": "導出",
+    "permExportDesc": "導出 CSV / Excel / PDF",
+    "permQuery": "查閱",
+    "permOperate": "操作（增刪改）",
+    "permExport": "導出",
+    "verificationSection": "安全驗證方式",
+    "verificationHintRole": "該角色擁有交易模組的操作權限，請選擇執行資金操作時的安全驗證方式。",
+    "verificationPlaceholder": "選擇驗證方式",
+    "verificationSelf": "本人 — 驗證碼發給操作人自己",
+    "verificationDesignated": "指定人 — 驗證碼發給指定安全手機號碼",
+    "cancel": "取消",
+    "saveRole": "儲存角色",
+    "edit": "編輯",
+    "delete": "刪除",
+    "noMembers": "暫無成員",
+    "userDetail": "用戶詳情",
+    "identity": "身份（IID）",
+    "userUid": "用戶（UID）",
+    "modulePermissions": "模組權限",
+    "editRoles": "編輯角色",
+    "combinedPermissionsHint": "所有角色的權限合併結果（頁面取聯集，操作取最高級別）",
+    "actions": "操作",
+    "activate": "啟用",
+    "suspend": "暫停",
+    "removeFromMid": "從商戶移除",
+    "userActionsHint": "暫停會保留數據與角色；移除會清空角色且不可恢復。已移除用戶可重新邀請。",
+    "inviteDialogTitle": "邀請用戶",
+    "inviteIntro": "被邀請人將收到邀請通知。",
+    "inviteTabEmail": "電郵",
+    "inviteTabPhone": "手機",
+    "inviteFirstNameLabel": "用戶名",
+    "inviteFirstNamePlaceholder": "請輸入被邀請人的用戶名",
+    "emailAddress": "電郵地址",
+    "emailPlaceholder": "user{'@'}example.com",
+    "phoneNumber": "手機號碼",
+    "phonePlaceholder": "138 0000 0000",
+    "countryCodePlaceholder": "區號",
+    "assignRoles": "分配角色",
+    "noAssignableRoles": "暫無可分配角色",
+    "inviteTipEmail1": "連結 7 天內有效，僅可使用一次。",
+    "inviteTipEmail2": "未註冊用戶：引導註冊（創建 Identity + User）。",
+    "inviteTipEmail3": "已註冊用戶：登錄後接受邀請（創建 User）。",
+    "inviteTipEmail4": "郵件連結即視為電郵所有權驗證，無需額外驗證碼。",
+    "inviteTipPhone1": "短訊可在手機端接收，接受邀請需在 MP 端（Web）完成。",
+    "inviteTipPhone2": "未註冊用戶：前往 MP 端使用該手機號碼註冊並登錄。",
+    "inviteTipPhone3": "已註冊用戶：前往 MP 端登錄，在通知中心查看待接受邀請。",
+    "inviteTipPhone4": "接受邀請時需輸入短訊驗證碼以確認手機號碼所有權。",
+    "inviteTipPhone5": "短訊為明文傳輸存在截獲風險，需額外驗證碼保障安全；本期不支援在手機端直接完成操作。",
+    "sendInvitation": "發送邀請",
+    "editRolesDialogTitle": "編輯角色",
+    "editRolesDialogDesc": "為該用戶切換角色，儲存後權限將立即更新。",
+    "editRolesDialogHint": "多角色時：頁面權限取聯集，操作權限取最高級別（可操作 > 僅查閱）。",
+    "saveChanges": "儲存更改",
+    "confirmTitle": "確認",
+    "permissionTable": {
+      "module": "模組",
+      "subMenus": "子選單",
+      "operationLevel": "操作級別",
+      "noAccess": "無權限",
+      "query": "查閱",
+      "operate": "操作",
+      "export": "導出",
+      "verification": "安全驗證方式"
+    },
+    "roleStatus": {
+      "active": "啟用",
+      "inactive": "停用",
+      "disabled": "已禁用",
+      "normal": "正常"
+    },
+    "merchantStatus": {
+      "ACTIVE": "正常",
+      "DISABLED": "已禁用"
+    },
+    "userStatus": {
+      "active": "正常",
+      "disabled": "已禁用",
+      "suspended": "已暫停",
+      "invited": "待接受邀請",
+      "removed": "已移除"
+    },
+    "inviteStatus": {
+      "invited": "邀請中",
+      "accepted": "已接受",
+      "expired": "已過期（7 天）"
+    },
+    "msg": {
+      "enterRoleName": "請輸入角色名稱",
+      "selectOneModule": "請至少選擇一個帶權限的模組",
+      "roleUpdated": "角色「{name}」已更新",
+      "roleCreated": "角色「{name}」已創建",
+      "createRoleFailed": "創建角色失敗",
+      "cannotDeleteRole": "無法刪除：仍有 {count} 名用戶擁有該角色，請先移除或調整。",
+      "deleteRoleConfirm": "確定刪除角色「{name}」嗎？此操作不可恢復。",
+      "roleDeleted": "角色「{name}」已刪除",
+      "enterEmail": "請輸入有效電郵",
+      "enterPhone": "請輸入手機號碼",
+      "enterFirstName": "請輸入被邀請人的名字",
+      "holderOnlyOperate": "僅帳戶持有人可執行此操作",
+      "selectOneRole": "請至少選擇一個角色",
+      "inviteSent": "已向 {contact} 發送邀請，連結 7 天內有效。",
+      "rolesUpdated": "角色已更新",
+      "userEnabled": "用戶已啟用",
+      "userDisabled": "用戶已禁用",
+      "removeUserConfirm": "確定將 {name} 從 {merchant} 移除嗎？將清空其角色且不可恢復。",
+      "userRemoved": "已將 {name} 從商戶移除"
+    }
+  },
+  "activate": {
+    "titleSet": "激活您的帳戶",
+    "titleDone": "帳戶已激活！",
+    "titleDoneRegister": "註冊完成！",
+    "subSet": "歡迎！請設定密碼以完成帳戶激活。",
+    "subDone": "您的密碼已設定成功，現在可以登錄 EX Merchant Portal。",
+    "subDoneRegister": "您已完成註冊，現在可以登錄 EX Merchant Portal。",
+    "steps": {
+      "emailVerified": "電郵已驗證",
+      "phoneVerified": "手機已驗證",
+      "setPassword": "設定密碼",
+      "signIn": "登錄"
+    },
+    "passwordLabel": "密碼",
+    "confirmPasswordLabel": "確認密碼",
+    "subSetHasUserId": "您的帳戶已就緒，點擊下方按鈕完成註冊。",
+    "completeBtn": "完成註冊",
+    "activateBtn": "激活帳戶並登錄",
+    "goToLogin": "前往登錄",
+    "activatedMessage": "激活成功",
+    "activatedMessageRegister": "註冊完成",
+    "expired": {
+      "title": "激活連結已過期",
+      "sub": "該激活連結已過期。連結在發送後 24 小時內有效。",
+      "alert": "如需獲取新的激活連結，請聯絡您的 EX 客戶代表或請求門戶管理員重新發送。",
+      "footerSignIn": "已激活？前往登錄",
+      "footerSupport": "聯絡支援",
+      "requestSuccess": "已請求發送新的激活郵件"
+    },
+    "alreadyActivated": {
+      "title": "帳戶已激活！",
+      "sub": "該帳戶已激活，您可以直接登錄。",
+      "alert": "如果登錄遇到問題，請聯絡支援團隊獲取幫助。",
+      "signIn": "前往登錄"
+    },
+    "error": {
+      "title": "出現問題",
+      "sub": "處理您的請求時出現問題，請稍後重試。",
+      "alert": "如果此問題持續存在，請聯絡我們的支援團隊尋求幫助。",
+      "retry": "重試"
+    }
+  },
+  "crypto": {
+    "trade": {
+      "tradeDashboard": "交易概覽",
+      "transactionID": "交易編號",
+      "canWithdrawAmount": "可得金額",
+      "createTime": "創建時間",
+      "amountDetail": "存款詳情",
+      "withdrawDetail": "提現詳情",
+      "tradeHash": "交易哈希",
+      "sourceAddress": "來源地址",
+      "toAddress": "收款地址",
+      "timeline": "交易時間軸",
+      "sellDetail": "賣出詳情",
+      "paymethod": "付款方式",
+      "transactionAmount": "扣款金額",
+      "expectedCreditAmount": "預計入帳金額",
+      "convertTransaction": "交易查詢",
+      "completedTime": "完成時間",
+      "exchangeRate": "匯率",
+      "bankAccountNo": "銀行帳號",
+      "purpose": "用途"
+    },
+    "withdraw": {
+      "icon": "💰",
+      "title": "提幣",
+      "selectNetwork": "提幣網絡",
+      "addressLabel": "地址標籤",
+      "availableBalance": "可用餘額",
+      "networkFee": "手續費",
+      "addAddress": "新增地址",
+      "selectAddress": "選擇地址",
+      "addNewAddress": "新增提幣地址",
+      "cancel": "取消",
+      "confirm": "確認",
+      "amount": "提幣金額",
+      "amountPlaceholder": "請輸入提幣金額",
+      "address": "提幣地址",
+      "receiveAddress": "提幣地址",
+      "transactionAmount": "提幣金額",
+      "youWillReceive": "實際到帳",
+      "submit": "提交",
+      "importantNotice": "重要提示",
+      "addressModalNotice": "提款地址在使用前必須進行驗證，請確保所有資料準確無誤。",
+      "networkSelection": "網絡",
+      "networkSelectionHint": "選擇您的地址所屬網絡",
+      "networkWarning": "選擇錯誤的網絡進行轉帳可能導致資產永久丟失。",
+      "universalAddress": "通用地址",
+      "universalAddressDesc": "勾選此項以確保地址支援所選網絡上的所有代幣",
+      "coinSelection": "代幣",
+      "addressInput": "地址",
+      "addressWarning": "提款地址在使用前必須進行驗證，請確保所有資料準確無誤。",
+      "addressPlaceholder": "請再次仔細核對地址。錯誤的地址可能導致資金永久丟失。",
+      "pasteButton": "貼上",
+      "aliasLabel": "別名",
+      "aliasPlaceholder": "為該地址輸入一個易於識別的名稱",
+      "addressLabelRequired": "請輸入地址標籤",
+      "addressRequired": "請輸入錢包地址",
+      "addressMinLength": "地址長度不能少於26位",
+      "networkRequired": "請選擇網絡",
+      "coinRequired": "請選擇至少一種幣種",
+      "pasteSuccess": "地址已貼上",
+      "pasteWarning": "無法訪問剪貼簿，請手動貼上",
+      "pasteNotSupported": "瀏覽器不支援自動貼上，請手動貼上",
+      "selectNetworkWarning": "請選擇網絡",
+      "selectCoinWarning": "請選擇至少一種幣種",
+      "addressAddSuccess": "地址添加成功",
+      "completeInfoWarning": "請完善提幣資訊",
+      "submitSuccess": "提幣申請已提交，請等待處理",
+      "processingTimeTitle": "處理時間",
+      "processingTimeDesc": "提幣處理需時約4小時。請留意，處理時間或會因為突發情況而延長。",
+      "warningTitle": "警告",
+      "warningDesc": "切勿與受制裁的實體進行交易。",
+      "supportTitle": "需要協助？",
+      "supportDesc": "請電郵至 support@blancblock.com",
+      "telegramDesc": "或通過 Telegram 聯絡我們：https://t.me/blancblock",
+      "addressLabelPlaceholder": "請輸入地址標籤",
+      "amountRequired": "請輸入提幣金額",
+      "amountInvalid": "請輸入有效的數字金額",
+      "amountMustPositive": "提幣金額必須大於0",
+      "amountExceedsBalance": "提幣金額不能超過可用餘額",
+      "amountExceedsMax": "單筆提現金額不能超過 {max}",
+      "amountTooSmall": "提幣金額不能少於 {min}",
+      "noAvailableAccounts": "暫無可用帳戶",
+      "noAvailableNetworks": "暫無可用網絡",
+      "invalidAmount": "請輸入有效的提幣金額",
+      "selectAddressError": "請選擇提幣地址",
+      "submitFailed": "提交失敗，請重試",
+      "feeCalculationFailed": "計算手續費失敗，請重試",
+      "history": "提現記錄",
+      "selectCurrency": "提幣幣種",
+      "purposeCode": "提款用途",
+      "purposeCodePlaceholder": "請選擇提款用途",
+      "purposeCodeRequired": "請選擇提款用途",
+      "transactionOverview": "交易概覽",
+      "notice": {
+        "title": "重要提示",
+        "processing": {
+          "title": "處理時間：",
+          "desc": "提幣處理最長需 4 小時；如遇跨境清算延遲或合規抽查，處理時間可能延長。"
+        },
+        "warning": {
+          "title": "合規警示：",
+          "desc": "請勿與受制裁實體或高風險國家/地區進行任何資金往來，違者將觸發合規凍結。"
+        },
+        "support": {
+          "title": "跨境支援",
+          "desc": "請發送郵件至"
+        }
+      }
+    },
+    "addressbook": {
+      "title": "提幣地址簿",
+      "alias": "別名",
+      "network": "網絡",
+      "universal": "通用地址",
+      "coins": "支援幣種",
+      "address": "地址",
+      "created": "創建時間",
+      "status": "狀態",
+      "actions": "操作",
+      "edit": "編輯",
+      "add": "新增地址",
+      "universalYes": "是",
+      "universalNo": "否",
+      "filter": {
+        "alias": "別名",
+        "status": "狀態",
+        "aliasPlaceholder": "搜尋別名"
+      },
+      "modal": {
+        "edit": "編輯地址",
+        "alias": "別名",
+        "cancel": "取消",
+        "confirm": "確認",
+        "aliasPlaceholder": "請輸入別名",
+        "aliasRequired": "請輸入別名"
+      },
+      "copy": {
+        "success": "地址已複製到剪貼簿",
+        "failed": "複製失敗"
+      },
+      "addResult": {
+        "success": "地址添加成功",
+        "failed": "添加失敗"
+      },
+      "editResult": {
+        "success": "地址編輯成功",
+        "failed": "編輯失敗"
+      },
+      "delete": {
+        "action": "刪除",
+        "title": "刪除地址",
+        "confirm": "確認刪除地址嗎？",
+        "success": "地址刪除成功",
+        "failed": "刪除失敗"
+      }
+    },
+    "wallets": {
+      "title": "資產列表",
+      "tag": "收單 & OTC",
+      "desc": "用於收單、OTC 和結算的法幣帳戶與數幣錢包。",
+      "fiatAccounts": "法幣帳戶",
+      "cryptoAccounts": "數幣錢包",
+      "available": "可用餘額：",
+      "totalAvailable": "總可用餘額：",
+      "deposit": "充值",
+      "withdraw": "提現",
+      "loadFailed": "載入帳戶失敗"
+    },
+    "deposit": {
+      "icon": "💰",
+      "title": "充幣",
+      "selectNetwork": "網絡",
+      "selectCurrency": "幣種",
+      "continue": "確定",
+      "back": "返回",
+      "warningTitle": "重要提示",
+      "warning": "轉帳嚴格按照選擇的幣種和網絡轉帳到指定地址。首次充值請使用小額測試轉帳。轉帳到錯誤的網絡可能會導致資產永久損失。如有疑問，請聯絡我們。",
+      "warning1": "請確保您選擇的網絡與發送方錢包支援的網絡一致，選擇錯誤的網絡可能導致資產永久丟失。",
+      "warning2": "最小充值金額為 {amount} {currency}，低於最小金額的充值將不會到帳。",
+      "warning3": "充值到帳時間通常為 1-3 個網絡確認，具體時間取決於網絡擁堵情況。",
+      "depositDetails": "充幣詳情",
+      "addressShown": "地址已提示",
+      "depositAddress": "充幣地址",
+      "copy": "複製",
+      "copyAddress": "複製地址",
+      "copySuccess": "地址已複製到剪貼簿",
+      "copyFailed": "複製失敗，請手動複製",
+      "warningShare": "請勿與他人共享您的地址資訊。",
+      "minAmountTip": "最小充值金額：{amount} {currency}",
+      "importantNotice": "重要提示",
+      "notice1": "請確保您選擇的網絡與發送方錢包支援的網絡一致，選擇錯誤的網絡可能導致資產永久丟失。",
+      "notice2": "充值地址僅支援對應網絡的數字資產，請勿向該地址充值其他幣種或網絡的資產。",
+      "notice3": "充值到帳需要網絡確認，請耐心等待。到帳時間取決於網絡擁堵情況。",
+      "notice4": "請保存好充值地址，您可以重複使用該地址進行充值。",
+      "notice": {
+        "title": "重要提示",
+        "network": {
+          "title": "網絡要求：",
+          "desc": "請務必通過對應網絡發送所選加密資產（Ethereum 請用 ERC-20，TRON 請用 TRC-20）。跨網絡轉帳將導致資產永久丟失。"
+        },
+        "address": {
+          "title": "地址確認：",
+          "desc": "發送前請再次核對充值地址。地址錯誤或智能合約轉帳均不受理，並將造成資產永久損失。"
+        },
+        "confirmation": {
+          "title": "確認時間：",
+          "desc": "ERC-20 需 64 個確認（約 20-30 分鐘），TRC-20 需 19 個確認（約 1-2 分鐘）。"
+        },
+        "support": {
+          "title": "聯絡支援：",
+          "desc": "電郵聯絡我們：",
+          "email": "company{'@'}eurewax.com"
+        }
+      },
+      "confirm": "確認時間",
+      "confirmTime": "約20-30分鐘",
+      "minimum": "最小金額",
+      "minAmount": "10 USDT",
+      "fee": "手續費",
+      "free": "免費",
+      "showAddress": "顯示地址",
+      "history": "充值記錄"
+    },
+    "transactions": {
+      "title": "交易記錄",
+      "transactionId": "交易編號",
+      "searchById": "按編號搜尋",
+      "type": "交易類型",
+      "status": "交易狀態",
+      "startDate": "開始日期",
+      "endDate": "結束日期",
+      "all": "全部",
+      "search": "查詢",
+      "reset": "重置",
+      "noData": "暫無交易記錄",
+      "noDataDesc": "沒有找到符合當前篩選條件的交易記錄。",
+      "view": "查看",
+      "columns": {
+        "id": "交易編號",
+        "time": "時間",
+        "type": "類型",
+        "currency": "幣種",
+        "amount": "金額",
+        "network": "網絡",
+        "fee": "手續費",
+        "status": "狀態",
+        "actions": "操作"
+      }
+    }
+  },
+  "table": {
+    "searchBar": {
+      "reset": "重置",
+      "search": "查詢",
+      "expand": "展開",
+      "collapse": "收起",
+      "searchInputPlaceholder": "請輸入",
+      "searchSelectPlaceholder": "請選擇"
+    },
+    "selection": "選擇",
+    "sizeOptions": {
+      "small": "緊湊",
+      "default": "預設",
+      "large": "寬鬆"
+    },
+    "column": {
+      "selection": "勾選",
+      "expand": "展開",
+      "index": "序號"
+    },
+    "zebra": "斑馬紋",
+    "border": "邊框",
+    "headerBackground": "表頭背景"
+  }
+}

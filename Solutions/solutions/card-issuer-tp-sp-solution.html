@@ -240,6 +240,62 @@
         </ul>
       </div>
     </div>
+
+    <!-- 合规风控系统（独立模块） -->
+    <div style="margin-top:10px;border:1.5px solid #ef4444;border-radius:8px;padding:12px 14px;background:#fef2f2">
+      <div style="font-size:12px;font-weight:700;color:#dc2626;margin-bottom:8px;display:flex;align-items:center;gap:6px">
+        <span style="font-size:14px">🛡️</span>合规风控系统<span style="font-size:9px;font-weight:500;background:#fee2e2;color:#991b1b;padding:1px 8px;border-radius:10px;margin-left:4px">独立模块 · 可选开通</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
+        <div style="border:1px solid #fecaca;border-radius:6px;padding:8px;background:#fff">
+          <div style="font-size:10px;font-weight:700;color:#dc2626;margin-bottom:3px">KYC 个人身份验证</div>
+          <ul class="fc-list">
+            <li>身份证件采集与 OCR 识别</li>
+            <li>人脸识别 / 活体检测</li>
+            <li>制裁名单筛查（Sanctions）</li>
+            <li>PEP（政治敏感人物）筛查</li>
+          </ul>
+        </div>
+        <div style="border:1px solid #fecaca;border-radius:6px;padding:8px;background:#fff">
+          <div style="font-size:10px;font-weight:700;color:#dc2626;margin-bottom:3px">KYB 企业尽调</div>
+          <ul class="fc-list">
+            <li>企业注册信息核验</li>
+            <li>UBO（最终受益人）识别</li>
+            <li>营业执照 / 公司章程采集</li>
+            <li>企业制裁与负面信息筛查</li>
+          </ul>
+        </div>
+        <div style="border:1px solid #fecaca;border-radius:6px;padding:8px;background:#fff">
+          <div style="font-size:10px;font-weight:700;color:#dc2626;margin-bottom:3px">KYT 交易监控</div>
+          <ul class="fc-list">
+            <li>实时交易风控规则引擎</li>
+            <li>异常交易模式识别</li>
+            <li>AML 反洗钱监控</li>
+            <li>可疑交易自动预警与上报</li>
+          </ul>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:6px">
+        <div style="border:1px solid #fecaca;border-radius:6px;padding:8px;background:#fff">
+          <div style="font-size:10px;font-weight:700;color:#dc2626;margin-bottom:3px">交易策略配置</div>
+          <ul class="fc-list">
+            <li>风控规则自定义（限额、频次、地域、时段等）</li>
+            <li>多级审批流程（自动通过 / 人工复核 / 自动拒绝）</li>
+            <li>黑白名单管理（客户、卡号、IP、设备）</li>
+            <li>风控策略灰度发布与 A/B 测试</li>
+          </ul>
+        </div>
+        <div style="border:1px solid #fecaca;border-radius:6px;padding:8px;background:#fff">
+          <div style="font-size:10px;font-weight:700;color:#dc2626;margin-bottom:3px">合规运营</div>
+          <ul class="fc-list">
+            <li>RFI（补充材料请求）工作流</li>
+            <li>合规案件管理与处置</li>
+            <li>定期客户风险等级复评</li>
+            <li>监管报告生成与导出</li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- 4. 功能明细 -->
@@ -274,6 +330,15 @@
             <td>用户管理</td><td><span class="ty n">P0</span></td><td>用户创建/编辑/停用、角色分配</td></tr>
         <tr><td>权限管理</td><td><span class="ty n">P0</span></td><td>角色定义（管理员/财务/运营）、菜单 + 数据 + 操作权限</td></tr>
         <tr><td>操作日志</td><td><span class="ty p">P1</span></td><td>关键操作审计（账户变更、费率调整、权限变更等）</td></tr>
+
+        <!-- 合规风控（独立模块） -->
+        <tr style="border-top:2px solid #fecaca"><td rowspan="6" style="font-weight:600;vertical-align:middle;color:#dc2626">🛡️ 合规风控<br><span style="font-size:8px;font-weight:400;color:#991b1b">独立模块</span></td>
+            <td>KYC 个人身份验证</td><td><span class="ty p">P1</span></td><td>证件 OCR、人脸活体、制裁名单/PEP 筛查</td></tr>
+        <tr><td>KYB 企业尽调</td><td><span class="ty p">P1</span></td><td>企业注册核验、UBO 识别、营业执照采集、负面信息筛查</td></tr>
+        <tr><td>KYT 交易监控</td><td><span class="ty p">P1</span></td><td>实时风控规则引擎、异常交易识别、AML 监控、可疑交易上报</td></tr>
+        <tr><td>交易策略配置</td><td><span class="ty p">P1</span></td><td>风控规则自定义（限额/频次/地域）、多级审批、黑白名单</td></tr>
+        <tr><td>合规运营</td><td><span class="ty p">P1</span></td><td>RFI 工作流、合规案件管理、风险等级复评</td></tr>
+        <tr><td>监管报告</td><td><span class="ty p">P1</span></td><td>监管报告自动生成与导出</td></tr>
       </tbody>
     </table>
   </div>
@@ -361,7 +426,7 @@
             </ul>
           </div>
         </div>
-        <div class="pc-est">预计 6-8 周</div>
+        <div class="pc-est">预计 4-5 周</div>
       </div>
 
       <div class="pc">
@@ -373,7 +438,7 @@
           <li>渠道余额预警</li>
           <li>操作审计日志</li>
         </ul>
-        <div class="pc-est">预计 3-4 周</div>
+        <div class="pc-est">预计 2-3 周</div>
       </div>
 
       <div class="pc">
@@ -383,9 +448,8 @@
           <li>阶梯/分段费率</li>
           <li>数据权限精细化</li>
           <li>Dashboard 数据看板</li>
-          <li>风控规则配置</li>
         </ul>
-        <div class="pc-est">预计 3-4 周</div>
+        <div class="pc-est">预计 2-3 周</div>
       </div>
     </div>
 
@@ -394,20 +458,20 @@
       <div style="display:flex;gap:16px;margin-top:6px">
         <div style="flex:1">
           <div class="tl">
-            <div class="ti dn"><div class="td"></div><div class="tl-l">Phase 0 · 需求确认与对接准备</div><div class="tl-d">需求细化、测试环境搭建、渠道对接准备、技术联调</div><div class="tl-t">1-2 周</div></div>
-            <div class="ti"><div class="td"></div><div class="tl-l">Phase 1 · MVP — 核心管理</div><div class="tl-d">客户管理 + 渠道管理 + 计费核心 + 用户权限</div><div class="tl-t">6-8 周</div></div>
-            <div class="ti"><div class="td"></div><div class="tl-l">Phase 2 · 运营增强</div><div class="tl-d">账单 + 收费明细 + 路由 + 预警 + 审计</div><div class="tl-t">3-4 周</div></div>
-            <div class="ti"><div class="td"></div><div class="tl-l">Phase 3 · 高级能力</div><div class="tl-d">智能路由 + 阶梯费率 + 看板 + 风控</div><div class="tl-t">3-4 周</div></div>
-            <div class="ti"><div class="td"></div><div class="tl-l">UAT + 上线</div><div class="tl-d">联调测试 + 生产切换 + 监控</div><div class="tl-t">2-3 周</div></div>
+            <div class="ti dn"><div class="td"></div><div class="tl-l">Phase 0 · 需求确认与对接准备</div><div class="tl-d">需求细化、测试环境搭建、渠道对接准备、技术联调</div><div class="tl-t">1 周</div></div>
+            <div class="ti"><div class="td"></div><div class="tl-l">Phase 1 · MVP — 核心管理</div><div class="tl-d">客户管理 + 渠道管理 + 计费核心 + 用户权限</div><div class="tl-t">4-5 周</div></div>
+            <div class="ti"><div class="td"></div><div class="tl-l">Phase 2 · 运营增强</div><div class="tl-d">账单 + 收费明细 + 路由 + 预警 + 审计</div><div class="tl-t">2-3 周</div></div>
+            <div class="ti"><div class="td"></div><div class="tl-l">Phase 3 · 高级能力</div><div class="tl-d">智能路由 + 阶梯费率 + 看板</div><div class="tl-t">2-3 周</div></div>
+            <div class="ti"><div class="td"></div><div class="tl-l">UAT + 上线</div><div class="tl-d">联调测试 + 生产切换 + 监控</div><div class="tl-t">1-2 周</div></div>
           </div>
         </div>
         <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 18px;background:#f5f3ff;border-radius:8px;border:1.5px solid #c7d2fe">
           <div style="font-size:10px;color:#6b7280">MVP 上线</div>
-          <div style="font-size:26px;font-weight:800;color:#4338ca;line-height:1.2">8-10</div>
+          <div style="font-size:26px;font-weight:800;color:#4338ca;line-height:1.2">5-6</div>
           <div style="font-size:10px;color:#6b7280">周</div>
           <div style="margin-top:8px;border-top:1px solid #e5e7eb;padding-top:8px">
             <div style="font-size:10px;color:#6b7280">全部完成</div>
-            <div style="font-size:20px;font-weight:800;color:#6366f1;line-height:1.2">16-20</div>
+            <div style="font-size:20px;font-weight:800;color:#6366f1;line-height:1.2">10-14</div>
             <div style="font-size:10px;color:#6b7280">周</div>
           </div>
         </div>
@@ -415,25 +479,60 @@
     </div>
   </div>
 
-  <!-- 7. 平台模块总览 -->
-  <div class="sec">
-    <h2><span class="n">7</span>平台模块总览</h2>
-    <table>
-      <thead><tr><th>模块</th><th>覆盖功能</th><th>适用场景</th></tr></thead>
-      <tbody>
-        <tr><td style="font-weight:600">客户管理</td><td>客户信息、产品配置、账户管理</td><td>广告主入网、产品开通、账户管控</td></tr>
-        <tr><td style="font-weight:600">计费收费</td><td>费率配置、账单结算、对账</td><td>各类手续费计算、收费明细</td></tr>
-        <tr><td style="font-weight:600">渠道管理</td><td>渠道配置、余额、交易、路由</td><td>发卡渠道接入、资金监控</td></tr>
-        <tr><td style="font-weight:600">产品配置</td><td>卡产品上架、费率方案引用</td><td>新卡产品上线、费率模板管理</td></tr>
-        <tr><td style="font-weight:600">资金管理</td><td>资金总览、渠道余额、头寸管理</td><td>渠道备付金监控、资金调度</td></tr>
-        <tr><td style="font-weight:600">系统设置</td><td>用户、角色、权限、安全</td><td>团队协作、权限管控</td></tr>
-      </tbody>
-    </table>
+  <!-- 6b. 合规风控排期（独立） -->
+  <div class="sec" style="border-color:#fecaca">
+    <h2><span class="n" style="background:#dc2626">🛡️</span>合规风控系统 — 独立排期</h2>
+    <div style="font-size:10px;color:#991b1b;margin-bottom:10px;font-weight:500">合规风控为独立可选模块，与主交付流程并行，不影响核心管理平台交付</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div style="border:1px solid #fecaca;border-radius:7px;padding:10px 12px;background:#fff">
+        <div style="font-size:11px;font-weight:700;color:#dc2626;margin-bottom:6px;display:flex;align-items:center;gap:4px"><span class="tag" style="background:#fee2e2;color:#991b1b;font-size:9px;padding:1px 6px;border-radius:10px;font-weight:600">RC-1</span>KYC + KYB 合规审核</div>
+        <ul class="pc-list">
+          <li>个人身份验证（证件 OCR、人脸活体、制裁/PEP 筛查）</li>
+          <li>企业尽调（注册核验、UBO 识别、负面信息筛查）</li>
+          <li>审核工作流（自动通过 / 人工复核 / RFI）</li>
+          <li>客户风险等级评定</li>
+        </ul>
+        <div class="pc-est">预计 3-4 周</div>
+      </div>
+
+      <div style="border:1px solid #fecaca;border-radius:7px;padding:10px 12px;background:#fff">
+        <div style="font-size:11px;font-weight:700;color:#dc2626;margin-bottom:6px;display:flex;align-items:center;gap:4px"><span class="tag" style="background:#fee2e2;color:#991b1b;font-size:9px;padding:1px 6px;border-radius:10px;font-weight:600">RC-2</span>KYT 交易监控 + 策略</div>
+        <ul class="pc-list">
+          <li>实时交易风控规则引擎</li>
+          <li>异常交易模式识别与预警</li>
+          <li>AML 反洗钱监控与可疑交易上报</li>
+          <li>交易策略配置（限额/频次/地域/黑白名单）</li>
+        </ul>
+        <div class="pc-est">预计 3-4 周</div>
+      </div>
+    </div>
+
+    <div style="margin-top:10px">
+      <h3 style="color:#dc2626">风控时间线</h3>
+      <div style="display:flex;gap:16px;margin-top:6px">
+        <div style="flex:1">
+          <div class="tl">
+            <div class="ti dn"><div class="td" style="border-color:#dc2626"></div><div class="tl-l">RC-0 · 风控需求与规则定义</div><div class="tl-d">确定风控规则、阈值、审批流程、合规标准</div><div class="tl-t">1 周</div></div>
+            <div class="ti"><div class="td" style="border-color:#dc2626"></div><div class="tl-l">RC-1 · KYC + KYB 上线</div><div class="tl-d">身份验证 + 企业尽调 + 审核工作流</div><div class="tl-t">3-4 周</div></div>
+            <div class="ti"><div class="td" style="border-color:#dc2626"></div><div class="tl-l">RC-2 · KYT + 交易策略上线</div><div class="tl-d">交易监控 + AML + 策略配置</div><div class="tl-t">3-4 周</div></div>
+            <div class="ti"><div class="td" style="border-color:#dc2626"></div><div class="tl-l">RC-UAT · 风控联调测试</div><div class="tl-d">规则验证 + 异常场景测试 + 合规报告</div><div class="tl-t">1-2 周</div></div>
+          </div>
+        </div>
+        <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 18px;background:#fef2f2;border-radius:8px;border:1.5px solid #fecaca">
+          <div style="font-size:10px;color:#991b1b">风控全部完成</div>
+          <div style="font-size:22px;font-weight:800;color:#dc2626;line-height:1.2">8-11</div>
+          <div style="font-size:10px;color:#991b1b">周</div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- 8. 备注 -->
+
+
+  <!-- 7. 备注 -->
   <div class="sec">
-    <h2><span class="n">8</span>补充说明</h2>
+    <h2><span class="n">7</span>补充说明</h2>
     <table>
       <thead><tr><th>项目</th><th>说明</th></tr></thead>
       <tbody>

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EX White Label — web2Portal Solution</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;background:#f4f5f7;color:#1a1a2e;line-height:1.6;font-size:12px}
+  .page{max-width:900px;margin:0 auto;padding:32px 20px 64px}
+  h1{font-size:22px;font-weight:700;margin-bottom:4px;color:#1a1a2e}
+  h2{font-size:15px;font-weight:700;margin-bottom:12px;color:#1a1a2e;display:flex;align-items:center;gap:8px}
+  h2 .n{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:6px;background:#6366f1;color:#fff;font-size:11px;font-weight:700;flex-shrink:0}
+  h3{font-size:13px;font-weight:600;margin-bottom:6px;color:#374151}
+  .meta{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+  .mt{font-size:10px;padding:2px 8px;border-radius:20px;background:#eef2ff;color:#4f46e5;font-weight:500}
+  .sec{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:16px 18px;margin-bottom:14px}
+
+  table{width:100%;border-collapse:collapse;font-size:11px}
+  th{background:#f9fafb;font-weight:600;text-align:left;padding:6px 8px;border-bottom:2px solid #e5e7eb;white-space:nowrap;color:#374151}
+  td{padding:5px 8px;border-bottom:1px solid #f3f4f6;vertical-align:top}
+  tr:hover td{background:#fafafa}
+
+  pre{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:14px;overflow-x:auto;font-size:11px;line-height:1.5;color:#374151}
+  code{font-family:'SF Mono',Monaco,Consolas,monospace;font-size:10px;background:#f3f4f6;padding:1px 5px;border-radius:3px;color:#6366f1}
+
+  blockquote{border-left:3px solid #6366f1;margin:12px 0;padding:10px 14px;background:#f5f3ff;border-radius:0 6px 6px 0;color:#4b5563;font-size:11px}
+  blockquote strong{color:#4338ca}
+
+  a{color:#4f46e5;text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  .sub{font-size:12px;color:#6b7280;margin-bottom:4px}
+</style>
+</head>
+<body>
+
+<div class="page">
+  <h1>EX White Label — web2 Portal Solution</h1>
+  <div class="sub">Out of the box, no development required</div>
+
+  <div class="meta">
+    <span class="mt">Document Type: White Label Solution Guide</span>
+    <span class="mt">Version: v1.0</span>
+    <span class="mt">Last Updated: 2026-04-12</span>
+    <span class="mt">Companion: <a href="./ex-api-solution-en.html">EX Open API Solution</a></span>
+  </div>
+
+  <div class="sec">
+    <h2><span class="n">1</span>Solution Overview</h2>
+    <p style="margin-bottom:10px">Based on the product lines activated by the customer, the EX operations team completes the configuration and delivers two portals:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Portal</th>
+          <th>Abbreviation</th>
+          <th>User</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Tenant Portal</strong></td>
+          <td>TP</td>
+          <td>Customer (Institution)</td>
+          <td>The operations management console used by the customer to manage merchants, view transactions, configure products, etc.</td>
+        </tr>
+        <tr>
+          <td><strong>Merchant Portal</strong></td>
+          <td>MP</td>
+          <td>Customer's end users (Merchants)</td>
+          <td>The operations portal that the customer delivers to its end merchants — merchants self-serve collection, payout, card issuing, etc.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <pre>
+┌─────────────────────────────────────────────────────────────┐
+│                       EX Platform                            │
+│                                                              │
+│  ┌──────────────────┐    ┌──────────────────┐               │
+│  │  Operations done  │ →  │  Deliver TP + MP │               │
+│  │ (Product+Branding)│    │  (Out of box)    │               │
+│  └──────────────────┘    └──────────────────┘               │
+│                                                              │
+└──────────────────────┬──────────────────────────────────────┘
+                       │
+          ┌────────────┼────────────┐
+          ▼                         ▼
+┌──────────────────┐     ┌──────────────────┐
+│  TP (Tenant)     │     │  MP (Merchant)   │
+│                  │     │                  │
+│ Customer uses    │     │ Merchant uses    │
+│ Manage merchants │     │ Collect/Pay/Card │
+└──────────────────┘     └──────────────────┘
+    </pre>
+
+    <blockquote>
+      <strong>Core Value</strong>: Customers can launch their business quickly with zero development investment — once products are activated, they immediately get a complete operations console (TP) and a merchant-facing portal (MP).
+    </blockquote>
+  </div>
+
+  <div class="sec">
+    <h2><span class="n">2</span>Who Is White Label For</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Customer Type</th>
+          <th>Scenario</th>
+          <th>Why Recommend</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Agency / Reseller</strong></td>
+          <td>Reselling EX products to end merchants</td>
+          <td>No development; manage merchants via TP, deliver MP to merchants</td>
+        </tr>
+        <tr>
+          <td><strong>Cross-border E-commerce SaaS</strong></td>
+          <td>Provide collection & payout services to sellers</td>
+          <td>Quick go-live; sellers operate directly in MP</td>
+        </tr>
+        <tr>
+          <td><strong>Early-stage Fintech</strong></td>
+          <td>Just starting, prioritize validating the business model</td>
+          <td>Zero dev cost; validate business first, then consider API integration</td>
+        </tr>
+        <tr>
+          <td><strong>Traditional Trading Company</strong></td>
+          <td>Need digital collection/payout tools but no tech team</td>
+          <td>Out-of-the-box portals lower the digitalization barrier</td>
+        </tr>
+        <tr>
+          <td><strong>Licensed Financial Institution</strong></td>
+          <td>Expand new business lines (e.g., card issuing, crypto)</td>
+          <td>TP-managed; rapidly expand product lines</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sec">
+    <h2><span class="n">3</span>White Label Capability Matrix</h2>
+    <p style="margin-bottom:10px">Based on the product lines activated by the customer, TP and MP automatically display the corresponding modules:</p>
+
+    <h3>TP (Tenant Portal) — For the Customer</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Module</th>
+          <th>Description</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Merchant Management</strong></td>
+          <td>Register merchants, submit & track basic information, manage merchant status</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Merchant Product Inquiry</td>
+          <td>View products activated by merchants. Adding additional products is planned for June; currently only one product per merchant is supported.</td>
+          <td>Per SP requirements, business is currently split into B2B and B2C (Shopee, TikTok, Amazon, etc.). If a customer activates a B2B business and then wants to add a B2C business, the operations team's support is required.</td>
+        </tr>
+        <tr>
+          <td>Merchant Fee Management</td>
+          <td>Manage merchant product fees</td>
+          <td>Standard pricing for customers must be emailed to operations. If a merchant requires custom pricing, individual fee configuration is supported. Requires one configurator and one approver.</td>
+        </tr>
+        <tr>
+          <td>Merchant FX Pricing</td>
+          <td>Manage merchant FX markup</td>
+          <td>Same as above — default unified markup is configured via operations; merchant-specific configurations are set here.</td>
+        </tr>
+        <tr>
+          <td>Merchant Transactions</td>
+          <td>View all merchants' collections, payouts, FX</td>
+          <td>Displayed by product line</td>
+        </tr>
+        <tr>
+          <td>Trade Background Materials</td>
+          <td>Merchant trade orders, store management</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Ticket Approval</td>
+          <td>Approvers for fees and FX rates approve tickets — only effective after approval</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>My Commission</td>
+          <td>Your transaction commission bills and settlement statements</td>
+          <td>All products</td>
+        </tr>
+        <tr>
+          <td>Add-on: Sales Management</td>
+          <td>Generate a customer-acquisition link for each salesperson</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Add-on: Sub-Agency Management</td>
+          <td>Develop sub-agencies at the next tier</td>
+          <td>Currently only transactions support rebates; FX rebates are not yet supported. Operations manual available from the operations team.</td>
+        </tr>
+        <tr>
+          <td>Account Permissions</td>
+          <td>Assign accounts to other users</td>
+          <td>Permissions currently only control page access, not actions.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top:14px">MP (Merchant Portal) — For End Merchants</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Module</th>
+          <th>Description</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Merchant Registration & Onboarding</td>
+          <td>Activate products (e.g., trade collection); submit required materials including KYC and business information</td>
+          <td>Subject to what the SP supports</td>
+        </tr>
+        <tr>
+          <td><strong>Fiat Collection</strong></td>
+          <td>Apply for VA, view collection records, download receipts</td>
+          <td>Distinguishes B2B trade collection from B2C e-commerce collection</td>
+        </tr>
+        <tr>
+          <td><strong>Fiat Payout</strong></td>
+          <td>Add payees, initiate payouts, settle to RMB, view payout records</td>
+          <td>Add payee first, then initiate payout</td>
+        </tr>
+        <tr>
+          <td><strong>FX Conversion</strong></td>
+          <td>Query rates, initiate FX conversion</td>
+          <td>Currently real-time FX product</td>
+        </tr>
+        <tr>
+          <td><strong>Trade Documents</strong></td>
+          <td>Upload / manage trade background documents</td>
+          <td>Fiat product</td>
+        </tr>
+        <tr>
+          <td>Store Management</td>
+          <td>Manage your e-commerce platform stores, etc.</td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sec">
+    <h2><span class="n">4</span>Delivery Process</h2>
+
+    <pre>
+├── 1. Offline Contract Signing
+│     └── Sign contract with the account manager
+│
+├── 2. EX Operations Configuration (1-2 business days)
+│     ├── Create tenant
+│     ├── Configure branding (logo, domain, email templates)
+│     └── Configure standard merchant pricing / FX rates
+│
+├── 3. Deliver TP (Tenant Portal)
+│     └── Customer gets access to the TP console
+│     └── Customer can start registering and managing merchants in TP
+│
+├── 4. Deliver MP (Merchant Portal)
+│     └── Merchants register via the tenant link
+│     └── Complete KYC/KYB → Activate products → Start using
+│
+└── 5. Go Live
+      └── Customer manages daily operations via TP
+      └── End merchants self-serve via MP
+    </pre>
+
+    <h3 style="margin-top:14px">Delivery Timeline</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Stage</th>
+          <th>Content</th>
+          <th>Estimated Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Offline Signing</td>
+          <td>Sign contract</td>
+          <td>1-2 days</td>
+        </tr>
+        <tr>
+          <td>Operations Configuration</td>
+          <td>Tenant creation, fee configuration, domain configuration, etc.</td>
+          <td>1-2 business days</td>
+        </tr>
+        <tr>
+          <td>Delivery</td>
+          <td>Deliver MP and TP</td>
+          <td>1 day (included in above; delivered upon configuration completion)</td>
+        </tr>
+        <tr>
+          <td>Production Validation</td>
+          <td>Merchant registration → KYC → Product activation</td>
+          <td>3-5 business days (including review)</td>
+        </tr>
+        <tr>
+          <td><strong>Total</strong></td>
+          <td><strong>From signing to first batch of merchants operational</strong></td>
+          <td><strong>2-10 business days (depending on production validation)</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+</body>
+</html>

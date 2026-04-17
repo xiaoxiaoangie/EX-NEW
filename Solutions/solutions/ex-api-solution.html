@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>EX Open API — 一站式金融基础设施解决方案</title>
+  <title>EX API 解决方案 — 一站式金融基础设施解决方案</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
     body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;background:#f4f5f7;color:#1a1a2e;line-height:1.6;font-size:12px}
@@ -220,7 +220,7 @@
 
     <div class="pg">
       <div class="pi" style="border-color:#10b981"><div class="pi-ico">🏦</div><div class="pi-t">法币收款</div><div class="pi-c">FIAT_COLLECTION</div><div class="pi-d">VA 虚拟账户<br>店铺管理 · 收款入账</div></div>
-      <div class="pi" style="border-color:#10b981"><div class="pi-ico">💸</div><div class="pi-t">法币付款</div><div class="pi-c">FIAT_PAYOUT</div><div class="pi-d">收款人管理<br>单笔付款 · 结汇</div></div>
+      <div class="pi" style="border-color:#10b981"><div class="pi-ico">💸</div><div class="pi-t">法币付款</div><div class="pi-c">FIAT_PAYOUT</div><div class="pi-d">收款人管理<br>普通付款 · 结汇（特殊场景）</div></div>
       <div class="pi" style="border-color:#3b82f6"><div class="pi-ico">💱</div><div class="pi-t">外汇服务</div><div class="pi-c">随法币开通</div><div class="pi-d">查询汇率<br>询价锁汇 · 换汇</div></div>
       <div class="pi" style="border-color:#8b5cf6"><div class="pi-ico">🔐</div><div class="pi-t">加密钱包</div><div class="pi-c">CRYPTO_WALLET</div><div class="pi-d">加密充提<br>余额查询</div></div>
       <div class="pi" style="border-color:#8b5cf6"><div class="pi-ico">⬆️</div><div class="pi-t">法币入金</div><div class="pi-c">FIAT_ONRAMP</div><div class="pi-d">法币 → 数币</div></div>
@@ -254,7 +254,7 @@
           </div>
         </div>
       </div>
-      <div class="arr arr-v" style="padding:4px 0">↕<div class="arr-lbl">多服务商路由</div></div>
+      <div class="arr arr-v" style="padding:4px 0">↕<div class="arr-lbl">多服务商</div></div>
       <div style="width:100%">
         <div class="bx sp" style="width:100%">
           <div class="bt">持牌服务商（SP）</div>
@@ -263,13 +263,7 @@
       </div>
     </div>
 
-    <div class="sp-grid">
-      <div class="sp-card"><div class="sp-card-t">🔗 统一 API</div><div class="sp-card-d">您只对接 EX 一套 API，无需感知底层 SP 的差异</div></div>
-      <div class="sp-card"><div class="sp-card-t">🧭 智能路由</div><div class="sp-card-d">EX 根据业务类型、币种、地区自动选择最优 SP</div></div>
-      <div class="sp-card"><div class="sp-card-t">💰 多币种账户</div><div class="sp-card-d">商户端只看按币种合计的总余额，SP 透明</div></div>
-      <div class="sp-card"><div class="sp-card-t">🛡️ 合规由 SP 承担</div><div class="sp-card-d">KYC/KYB、AML 由持牌 SP 执行，EX 编排同步结果</div></div>
-    </div>
-  </div>
+   
 
   <!-- 4. 技术规范 -->
   <div class="sec">
@@ -357,8 +351,9 @@
 
     <!-- 6.2 法币付款 -->
     <details>
-      <summary><span class="sf-num" style="width:16px;height:16px;font-size:8px">2</span> 法币付款（Payout）<span style="font-size:9px;color:#6b7280;font-weight:400;margin-left:auto">付供应商、结汇到中国大陆</span></summary>
+      <summary><span class="sf-num" style="width:16px;height:16px;font-size:8px">2</span> 法币付款（Payout）<span style="font-size:9px;color:#6b7280;font-weight:400;margin-left:auto">付供应商、普通跨境付款</span></summary>
       <div class="det-body">
+        <h4 style="margin-top:0">普通法币付款</h4>
         <div class="flow-row" style="margin-bottom:6px">
           <span class="fn you">添加收款人</span><span class="fa">→</span>
           <span class="fn wh">Webhook: 审核</span><span class="fa">→</span>
@@ -366,15 +361,33 @@
           <span class="fn wh">Webhook: 结果</span><span class="fa">→</span>
           <span class="fn you">查询状态</span>
         </div>
-        <h4 style="margin-top:8px">结汇到中国大陆</h4>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:10px">
-          <div style="background:#f9fafb;border-radius:5px;padding:6px 8px">
-            <div style="font-weight:600;color:#374151;margin-bottom:2px">方式一：手动上传</div>
-            <div style="color:#6b7280;line-height:1.4">上传结汇材料 → 审核通过 → 生成结汇额度（CNY）→ 发起结汇付款</div>
+        <h4 style="margin-top:8px">特殊场景：结汇到中国大陆</h4>
+        <div class="note warn" style="margin-bottom:8px">⚠️ 因外汇管制要求，资金入境中国大陆需提供<strong>贸易背景材料</strong>（订单、物流单、合同等），审核通过后方可生成人民币结汇额度。</div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:10px;margin-bottom:6px">
+          <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:8px">
+            <div style="font-weight:600;color:#374151;margin-bottom:6px;display:flex;align-items:center;gap:4px"><span style="background:#6366f1;color:#fff;width:16px;height:16px;border-radius:50%;font-size:9px;display:flex;align-items:center;justify-content:center">1</span>方式一：手动上传</div>
+            <div style="display:flex;flex-direction:column;gap:3px">
+              <div style="background:#fff;border:1px solid #d1d5db;border-radius:4px;padding:4px 6px;text-align:center"><strong>商户</strong> 上传贸易材料</div>
+              <div style="color:#9ca3af;text-align:center">↓</div>
+              <div style="background:#eef2ff;border:1px solid #c7d2fe;border-radius:4px;padding:4px 6px;text-align:center"><strong>EX/SP</strong> 合规审核</div>
+              <div style="color:#9ca3af;text-align:center">↓</div>
+              <div style="background:#dcfce7;border:1px solid #86efac;border-radius:4px;padding:4px 6px;text-align:center">生成结汇额度(CNY)</div>
+              <div style="color:#9ca3af;text-align:center">↓</div>
+              <div style="background:#fff;border:1px solid #10b981;border-radius:4px;padding:4px 6px;text-align:center"><strong>商户</strong> 发起结汇付款</div>
+            </div>
           </div>
-          <div style="background:#f9fafb;border-radius:5px;padding:6px 8px">
-            <div style="font-weight:600;color:#374151;margin-bottom:2px">方式二：授权店铺</div>
-            <div style="color:#6b7280;line-height:1.4">授权店铺给 SP → SP 自动抓取订单 → 自动生成额度 → 发起结汇付款</div>
+          <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:8px">
+            <div style="font-weight:600;color:#374151;margin-bottom:6px;display:flex;align-items:center;gap:4px"><span style="background:#6366f1;color:#fff;width:16px;height:16px;border-radius:50%;font-size:9px;display:flex;align-items:center;justify-content:center">2</span>方式二：授权店铺</div>
+            <div style="display:flex;flex-direction:column;gap:3px">
+              <div style="background:#fff;border:1px solid #d1d5db;border-radius:4px;padding:4px 6px;text-align:center"><strong>商户</strong> 授权店铺给SP</div>
+              <div style="color:#9ca3af;text-align:center">↓</div>
+              <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:4px;padding:4px 6px;text-align:center"><strong>SP系统</strong> 自动抓取订单</div>
+              <div style="color:#9ca3af;text-align:center">↓</div>
+              <div style="background:#dcfce7;border:1px solid #86efac;border-radius:4px;padding:4px 6px;text-align:center">自动生成结汇额度</div>
+              <div style="color:#9ca3af;text-align:center">↓</div>
+              <div style="background:#fff;border:1px solid #10b981;border-radius:4px;padding:4px 6px;text-align:center"><strong>商户</strong> 发起结汇付款</div>
+            </div>
           </div>
         </div>
         <div class="note info" style="margin-top:6px">ℹ️ 两种方式由 EX 根据商户接入的 SP 自动匹配，商户无需关心底层差异</div>
@@ -472,51 +485,11 @@
     </details>
   </div>
 
-  <!-- 7. Webhook -->
-  <div class="sec">
-    <h2><span class="n">7</span>Webhook 事件全景</h2>
-    <table>
-      <thead><tr><th>产品线</th><th>事件</th><th>触发时机</th></tr></thead>
-      <tbody>
-        <tr><td style="font-weight:600">入网</td><td>KYC/KYB 审核结果</td><td>审核完成</td></tr>
-        <tr><td style="font-weight:600">产品开通</td><td>产品审核通过 / 拒绝 / RFI</td><td>审核状态变更</td></tr>
-        <tr><td rowspan="2" style="font-weight:600">法币收款</td><td>VA 账号变更</td><td>VA 状态变更</td></tr>
-        <tr><td>收款入账通知</td><td>VA 收到入账</td></tr>
-        <tr><td rowspan="3" style="font-weight:600">法币付款</td><td>收款人审核结果</td><td>审核完成</td></tr>
-        <tr><td>付款结果通知</td><td>付款处理完成</td></tr>
-        <tr><td>结汇材料审核结果</td><td>审核完成</td></tr>
-        <tr><td rowspan="2" style="font-weight:600">加密服务</td><td>收款人审核结果</td><td>审核完成</td></tr>
-        <tr><td>交易结果通知</td><td>交易处理完成</td></tr>
-        <tr><td style="font-weight:600">聚合收银</td><td>支付结果通知</td><td>支付完成/失败/过期</td></tr>
-        <tr><td rowspan="6" style="font-weight:600">VCC 发卡</td><td>充值状态变更</td><td>充值处理状态变更</td></tr>
-        <tr><td>合规调单通知</td><td>充值触发合规审查</td></tr>
-        <tr><td>余额变动通知</td><td>账户余额变动</td></tr>
-        <tr><td>卡申请结果通知</td><td>发卡审核完成</td></tr>
-        <tr><td>卡状态变更通知</td><td>冻结/解冻/注销</td></tr>
-        <tr><td>卡交易结果 / 3DS 验证</td><td>授权/扣款/退款/验证</td></tr>
-      </tbody>
-    </table>
-  </div>
+ 
 
-  <!-- 8. 最佳实践 -->
+  <!-- 7. 集成时间 -->
   <div class="sec">
-    <h2><span class="n">8</span>集成最佳实践</h2>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
-      <div style="border:1px solid #e5e7eb;border-radius:6px;padding:8px;background:#fff"><div style="font-size:10px;font-weight:700;color:#4338ca;margin-bottom:2px">⚡ Webhook 优先</div><div style="font-size:9px;color:#6b7280">以事件驱动为主，API 轮询为辅</div></div>
-      <div style="border:1px solid #e5e7eb;border-radius:6px;padding:8px;background:#fff"><div style="font-size:10px;font-weight:700;color:#4338ca;margin-bottom:2px">🔄 幂等处理</div><div style="font-size:9px;color:#6b7280">基于 bizOrderNo 做幂等校验</div></div>
-      <div style="border:1px solid #e5e7eb;border-radius:6px;padding:8px;background:#fff"><div style="font-size:10px;font-weight:700;color:#4338ca;margin-bottom:2px">🔐 签名验证</div><div style="font-size:9px;color:#6b7280">所有 Webhook 需验签确保来源合法</div></div>
-      <div style="border:1px solid #e5e7eb;border-radius:6px;padding:8px;background:#fff"><div style="font-size:10px;font-weight:700;color:#4338ca;margin-bottom:2px">⏳ 异步设计</div><div style="font-size:9px;color:#6b7280">审核/付款/发卡均异步处理</div></div>
-      <div style="border:1px solid #e5e7eb;border-radius:6px;padding:8px;background:#fff"><div style="font-size:10px;font-weight:700;color:#4338ca;margin-bottom:2px">📋 及时响应 RFI</div><div style="font-size:9px;color:#6b7280">超时未响应可能审核失败或冻结</div></div>
-      <div style="border:1px solid #e5e7eb;border-radius:6px;padding:8px;background:#fff"><div style="font-size:10px;font-weight:700;color:#4338ca;margin-bottom:2px">⏰ 报价有限期</div><div style="font-size:9px;color:#6b7280">换汇/买卖币报价过期需重新获取</div></div>
-      <div style="border:1px solid #e5e7eb;border-radius:6px;padding:8px;background:#fff"><div style="font-size:10px;font-weight:700;color:#4338ca;margin-bottom:2px">📎 文件先上传</div><div style="font-size:9px;color:#6b7280">附件先上传获取 URL 再放入请求</div></div>
-      <div style="border:1px solid #e5e7eb;border-radius:6px;padding:8px;background:#fff"><div style="font-size:10px;font-weight:700;color:#4338ca;margin-bottom:2px">🧩 灵活编排</div><div style="font-size:9px;color:#6b7280">各步骤可按平台设计自由组合</div></div>
-      <div style="border:1px solid #e5e7eb;border-radius:6px;padding:8px;background:#fff"><div style="font-size:10px;font-weight:700;color:#4338ca;margin-bottom:2px">🔒 敏感数据加密</div><div style="font-size:9px;color:#6b7280">卡号/CVV/银行账号需 AES-GCM</div></div>
-    </div>
-  </div>
-
-  <!-- 9. 集成时间 -->
-  <div class="sec">
-    <h2><span class="n">9</span>集成时间规划</h2>
+    <h2><span class="n">7</span>集成时间规划</h2>
 
     <div style="display:flex;gap:16px">
       <div style="flex:1">
@@ -543,7 +516,7 @@
         <tr><td>法币付款（收款人 + 付款 + 结汇）</td><td>5-7 天</td><td><span class="ty y">✅</span></td></tr>
         <tr><td>外汇兑换</td><td>2-3 天</td><td><span class="ty y">✅</span></td></tr>
         <tr><td>加密充提</td><td>5-7 天</td><td><span class="ty y">✅</span></td></tr>
-        <tr><td>承兑 / 买入 / 卖出数币</td><td>3-5 天</td><td><span class="ty p">依赖加密充提</span></td></tr>
+        <tr><td>承兑 / 买入 / 卖出数币</td><td>3-5 天</td><td><span class="ty y">✅</span></td></tr>
         <tr><td>聚合收银</td><td>3-5 天</td><td><span class="ty y">✅</span></td></tr>
         <tr><td>VCC 发卡</td><td>7-10 天</td><td><span class="ty y">✅</span></td></tr>
       </tbody>
@@ -575,9 +548,9 @@
     <div class="note info" style="margin-top:8px">ℹ️ 多产品线可并行开发。实际时间取决于团队规模和接入产品数量。只接 1-2 条产品线通常 20-25 天即可完成。</div>
   </div>
 
-  <!-- 10. 开始 -->
+  <!-- 8. 开始 -->
   <div class="sec">
-    <h2><span class="n">10</span>开始接入</h2>
+    <h2><span class="n">8</span>开始接入</h2>
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
       <div style="border:1px solid #dcfce7;border-radius:7px;padding:10px;text-align:center;background:#f0fdf4"><div style="font-size:16px">🧪</div><div style="font-size:10px;font-weight:700;margin-top:2px">Sandbox 环境</div><div style="font-size:9px;color:#6b7280;margin-top:2px">测试账号 · APP ID<br>平台公钥 · AES Key</div></div>
       <div style="border:1px solid #dbeafe;border-radius:7px;padding:10px;text-align:center;background:#eff6ff"><div style="font-size:16px">📄</div><div style="font-size:10px;font-weight:700;margin-top:2px">API 文档</div><div style="font-size:9px;color:#6b7280;margin-top:2px">完整接口参考<br><a href="https://open.eurewax.com/" target="_blank" style="color:#4338ca">open.eurewax.com</a></div></div>
@@ -586,50 +559,7 @@
     </div>
   </div>
 
-  <!-- 附录 A -->
-  <div class="sec">
-    <h2><span class="n">A</span>产品开通代码速查</h2>
-    <table>
-      <thead><tr><th>产品线</th><th>产品代码</th></tr></thead>
-      <tbody>
-        <tr><td>法币收款</td><td><code>FIAT_COLLECTION</code></td></tr>
-        <tr><td>法币付款</td><td><code>FIAT_PAYOUT</code></td></tr>
-        <tr><td>加密钱包</td><td><code>CRYPTO_WALLET</code></td></tr>
-        <tr><td>法币入金</td><td><code>FIAT_ONRAMP</code></td></tr>
-        <tr><td>法币出金</td><td><code>FIAT_OFFRAMP</code></td></tr>
-        <tr><td>VCC 发卡</td><td><code>CARD_ISSUING</code></td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- 附录 B -->
-  <div class="sec">
-    <h2><span class="n">B</span>API 接口导航</h2>
-    <div style="font-size:9px;color:#6b7280;margin-bottom:8px">具体参数和请求/响应详见 <a href="https://open.eurewax.com/" target="_blank" style="color:#4338ca">EurewaX 开放平台 API 文档</a></div>
-    <table>
-      <thead><tr><th>模块</th><th>子模块</th><th>类型</th></tr></thead>
-      <tbody>
-        <tr><td style="font-weight:600">公共服务</td><td>配置通知URL / 上传文件 / 补充材料 / 获取商户Token</td><td><span class="ty b">API</span></td></tr>
-        <tr><td style="font-weight:600">入网服务</td><td>注册商户 / KYC申请 / KYB申请 / 查询审核结果</td><td><span class="ty b">API</span> <span class="ty p">Webhook</span></td></tr>
-        <tr><td style="font-weight:600">产品开通</td><td>申请产品 / 查询审核结果</td><td><span class="ty b">API</span> <span class="ty p">Webhook</span></td></tr>
-        <tr><td style="font-weight:600">法币-收款</td><td>店铺管理 / VA账号 / 收款入账</td><td><span class="ty b">API</span> <span class="ty p">Webhook</span></td></tr>
-        <tr><td style="font-weight:600">法币-付款</td><td>收款人管理 / 单笔付款 / 结汇额度</td><td><span class="ty b">API</span> <span class="ty p">Webhook</span></td></tr>
-        <tr><td style="font-weight:600">法币-外汇</td><td>查询汇率 / 询价锁汇 / 实时换汇</td><td><span class="ty b">API</span></td></tr>
-        <tr><td style="font-weight:600">法币-查询</td><td>收款/付款/换汇交易详情 / 下载凭证</td><td><span class="ty b">API</span></td></tr>
-        <tr><td style="font-weight:600">加密-基础</td><td>查询汇率 / 查询支持资产</td><td><span class="ty b">API</span></td></tr>
-        <tr><td style="font-weight:600">加密-账户</td><td>查询账户列表</td><td><span class="ty b">API</span></td></tr>
-        <tr><td style="font-weight:600">加密-收款</td><td>查询收款工具</td><td><span class="ty b">API</span></td></tr>
-        <tr><td style="font-weight:600">加密-收款人</td><td>添加/删除/查询收款人</td><td><span class="ty b">API</span> <span class="ty p">Webhook</span></td></tr>
-        <tr><td style="font-weight:600">加密-交易</td><td>充值/提现/买币/卖币/法转数/数转法/费用估算/交易查询</td><td><span class="ty b">API</span> <span class="ty p">Webhook</span></td></tr>
-        <tr><td style="font-weight:600">聚合收银</td><td>创建订单 / 查询订单详情</td><td><span class="ty b">API</span> <span class="ty p">Webhook</span></td></tr>
-        <tr><td style="font-weight:600">VCC-卡申请</td><td>查询产品列表 / 虚拟卡申请 / 查询申请详情</td><td><span class="ty b">API</span> <span class="ty p">Webhook</span></td></tr>
-        <tr><td style="font-weight:600">VCC-卡信息</td><td>查询卡号/CVV/余额</td><td><span class="ty b">API</span></td></tr>
-        <tr><td style="font-weight:600">VCC-卡管理</td><td>冻结/解冻/注销/修改限额/修改持卡人</td><td><span class="ty b">API</span> <span class="ty p">Webhook</span></td></tr>
-        <tr><td style="font-weight:600">VCC-卡交易</td><td>卡账户充值/转出 / 交易查询</td><td><span class="ty b">API</span> <span class="ty p">Webhook</span></td></tr>
-      </tbody>
-    </table>
-  </div>
-
+  
 </div>
 
 <script>
