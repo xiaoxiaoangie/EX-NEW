@@ -1,6 +1,6 @@
 # EX 平台专业术语表（Glossary）
 
-> **文档版本**：v3.0
+> **文档版本**：v3.5
 > **创建日期**：2026-02-22
 > **适用范围**：EX 平台全产品线（On/Off-Ramp · VCC · Crypto Checkout · 法币收付）
 > **语言版本**：简体中文 · 繁體中文（粵語）· English
@@ -48,20 +48,23 @@
 | ---------- | ---------------- | ----------------------- | ----------------------------------------------------------------------------------------------- |
 | 商户业务单 | 商戶業務單       | Merchant Biz Order      | 商户自有系统的订单，通过 API 传入 EX 平台，携带商户侧的业务订单号（bizOrderNo）。代表商户的业务意图 |
 | 业务订单   | 業務訂單         | Biz Order               | 调单（RFI）场景下客户需要录入的自身业务订单，如外贸订单、物流订单等                                |
-| 订单       | 訂單             | Order                   | EX 平台系统生成的订单，对应商户的一次业务请求。商户端可见的核心单据，标识为 Order ID               |
-| 交易单     | 交易單           | Transaction             | EX 系统内部的账务记录，每笔有唯一 Transaction ID。按 SP 拆分，包含计费、汇率、风控、记账        |
+| 订单       | 訂單             | Order                   | EX 平台系统生成的订单，对应商户的一次业务请求。商户端可见的核心单据，标识为 transactionId           |
+| 交易单     | 交易單           | Transaction             | EX 系统内部的账务记录，按 SP 拆分，包含计费、汇率、风控、记账；对外统一使用 transactionId 作为唯一标识 |
 | 渠道单     | 渠道單           | Channel Request         | SP 向底层渠道发起的执行请求记录，仅 SP 后台可见                                                 |
 | 三单模型   | 三單模型         | Three-Layer Model       | Order → Transaction → Channel Request 的三层单据架构                                          |
 | 交易单链   | 交易單鏈         | Transaction Chain       | 一个 Order 下按顺序执行的多笔 Transaction 序列                                                  |
 
 ### 2.2 订单标识
 
-| 简体中文   | 繁體中文（粵語） | English        | 说明                                                               |
-| ---------- | ---------------- | -------------- | ------------------------------------------------------------------ |
-| 业务订单号 | 業務訂單號       | bizOrderNo     | 商户系统的业务订单号，由商户通过 API 传入，在同一商户下唯一        |
-| 订单号     | 訂單號           | Order ID       | EX 系统为订单生成的唯一标识，格式由平台定义                        |
-| 交易 ID    | 交易 ID          | Transaction ID | EX 系统为每笔内部 Transaction 生成的唯一标识，用于计费、风控、记账 |
-| 渠道单号   | 渠道單號         | Channel Ref ID | SP 或渠道侧返回的交易参考标识，用于对账                            |
+> **核心三要素**：`merchantNo`（商户维度） + `bizOrderNo`（商户系统订单维度） + `transactionId`（EX 平台交易维度）。
+> 以上字段名为 API / 回调 / 对账中的**统一规范**，禁止使用 MID、Order ID、orderNo 等旧命名。
+
+| 简体中文       | 繁體中文（粵語） | English        | 字段名           | 说明                                                                                  |
+| -------------- | ---------------- | -------------- | ---------------- | ------------------------------------------------------------------------------------- |
+| 商户号         | 商戶號           | Merchant No    | `merchantNo`     | EX 平台为商户分配的唯一标识，替代旧的 `MID` / 客户 ID                                 |
+| 商户业务订单号 | 商戶業務訂單號   | Biz Order No   | `bizOrderNo`     | 商户自有系统的业务订单号，由商户通过 API 传入，同一商户下唯一，用于幂等和对账          |
+| 交易 ID        | 交易 ID          | Transaction ID | `transactionId`  | EX 平台生成的交易唯一标识，商户端可见，用于查询、对账、回调；替代旧的 `Order ID`       |
+| 渠道单号       | 渠道單號         | Channel Ref ID | —                | SP 或渠道侧返回的交易参考标识，仅内部对账使用（字段名暂不统一）                         |
 
 ### 2.3 订单类型
 
@@ -151,6 +154,8 @@
 
 ## 5. 支付与收付款术语
 
+### 5.1 基础支付术语
+
 | 简体中文   | 繁體中文（粵語） | English                                                             | 说明                                   |
 | ---------- | ---------------- | ------------------------------------------------------------------- | -------------------------------------- |
 | 银行转账   | 銀行轉賬         | Bank Transfer                                                       | 通过银行系统进行的资金转移             |
@@ -167,6 +172,61 @@
 | SWIFT      | SWIFT            | SWIFT (Society for Worldwide Interbank Financial Telecommunication) | 国际银行间通信协议，用于跨境汇款       |
 | SWIFT Code | SWIFT Code       | BIC (SWIFT Code)                                                    | 银行在 SWIFT 网络中的唯一标识码        |
 | 本地转账   | 本地轉賬         | Local Transfer                                                      | 同一国家或地区内的银行转账             |
+
+### 5.2 支付通知字段（Payment Notification Payload）
+
+> 支付回调 `notifyData` 的标准字段定义，适用于所有支付/退款/代付通知场景。
+
+#### 5.2.1 主体与订单标识
+
+| 字段名          | 类型   | 简体中文       | 说明                                                       |
+| --------------- | ------ | -------------- | ---------------------------------------------------------- |
+| `productCode`   | string | 产品代码       | 产品线代码（如 `CHECKOUT` / `POBO` / `COBO` / `VCC`）       |
+| `merchantNo`    | string | 商户号         | EX 为商户分配的唯一标识（§2.2）                             |
+| `bizOrderNo`    | string | 商户业务订单号 | 商户系统订单号，商户侧唯一（§2.2）                          |
+| `transactionId` | string | 交易 ID        | EX 平台生成的交易唯一标识（§2.2）                           |
+| `transactionType` | string | 交易类型     | 见枚举【交易类型】：Payment / Refund / Payout / Deposit 等 |
+| `notifyType`    | string | 通知类型       | 见枚举【交易类型】，与 `transactionType` 对应               |
+
+#### 5.2.2 金额与币种
+
+| 字段名            | 类型   | 简体中文     | 说明                                                       |
+| ----------------- | ------ | ------------ | ---------------------------------------------------------- |
+| `payerCurrency`   | string | 付款币种     | 付款方使用的币种                                            |
+| `payerAmount`     | number | 付款金额     | 付款方实际支付金额                                          |
+| `payeeCurrency`   | string | 收款币种     | 收款方到账的币种                                            |
+| `payeeAmount`     | number | 实际到账金额 | 收款方最终到账金额                                          |
+| `rate`            | number | 汇率         | 付款币种 ⇌ 收款币种的换汇汇率                               |
+| `actualDeductAmount` | number | 实际扣款金额 | 钱包/账户实际被扣除的金额（含费用）                      |
+
+#### 5.2.3 状态与时间
+
+| 字段名         | 类型   | 简体中文 | 说明                                                    |
+| -------------- | ------ | -------- | ------------------------------------------------------- |
+| `status`       | string | 交易状态 | 见枚举【交易状态】                                      |
+| `completeTime` | string | 完成时间 | 交易最终完成的时间戳                                    |
+| `resultMessage`| string | 错误描述 | 失败/异常场景下的错误描述                                |
+| `description`  | string | 补充说明 | 待补充材料等特殊状态下返回的说明信息                     |
+
+#### 5.2.4 费用相关
+
+| 字段名              | 类型         | 简体中文           | 说明                                                              |
+| ------------------- | ------------ | ------------------ | ----------------------------------------------------------------- |
+| `transactionFee`    | number       | 交易手续费         | 本笔交易实际收取的手续费                                           |
+| `feeCurrency`       | string       | 手续费币种         | 手续费结算币种；手续费为 0 时此字段不传                             |
+| `poboFee`           | number       | POBO 费用          | 代付（Payment On Behalf Of）产生的费用，仅 POBO 场景返回            |
+| `poboFeeCurrency`   | string       | POBO 费用币种      | POBO 费用币种，POBO 费用非 0 时返回                                 |
+| `totalFeeAmount`    | number       | 费用总金额         | 所有费用项合计，等于 `fees[].amount` 之和                           |
+| `fees`              | array[object]| 费用明细列表       | 费用逐项明细（费用名称、类型、金额、币种等）                        |
+
+#### 5.2.5 退款相关
+
+| 字段名              | 类型   | 简体中文       | 说明                                    |
+| ------------------- | ------ | -------------- | --------------------------------------- |
+| `refundAmount`      | number | 退款金额       | 本次退款的金额                           |
+| `refundCurrency`    | string | 退款币种       | 退款币种                                 |
+| `refundFee`         | number | 退款手续费     | 退款操作收取的手续费                     |
+| `refundFeeCurrency` | string | 退款手续费币种 | 退款手续费结算币种                       |
 
 ---
 
@@ -707,7 +767,7 @@
 
 | 简体中文   | 繁體中文（粵語） | English           | 说明                                         |
 | ---------- | ---------------- | ----------------- | -------------------------------------------- |
-| 客户 ID    | 客戶 ID          | Merchant ID (MID) | 平台为商户分配的唯一标识                     |
+| 商户号     | 商戶號           | merchantNo        | 平台为商户分配的唯一标识（字段名 `merchantNo`，原 MID / 客户 ID）|
 | 客户名称   | 客戶名稱         | Merchant Name     | 商户注册时提交的企业或个人名称               |
 | 客户地址   | 客戶地址         | Merchant Address  | 商户注册的营业地址                           |
 | 主体国家   | 主體國家         | Country of Entity | 商户注册主体所在的国家或地区                 |
@@ -824,7 +884,7 @@
 | 发送验证码       | 發送驗證碼           | Send Verification Code   | 向绑定手机或邮箱发送验证码                         |
 | 重新发送         | 重新發送             | Resend                   | 验证码过期或未收到时重新发送                       |
 | 图形验证         | 圖形驗證             | Slider Verification      | 滑动滑块完成的人机验证                             |
-| 安全验证手机号   | 安全驗證手機號       | Designated Phone         | MID 级安全验证手机号，资金操作验证码发往此号码     |
+| 安全验证手机号   | 安全驗證手機號       | Designated Phone         | 商户号（merchantNo）级安全验证手机号，资金操作验证码发往此号码  |
 | 交易验证         | 交易驗證             | Transaction Verification | 执行资金操作时的安全验证                           |
 | 交易密码         | 交易密碼             | Payment PIN              | 6 位数字 PIN，用于快速验证资金操作                 |
 | Authenticator    | 驗證器               | Authenticator App (2FA)  | Google Authenticator / Authy 等动态令牌应用         |
@@ -911,7 +971,7 @@
 | TRC-20 | TRON Token Standard                                         | TRON 代币标准                |
 | ERC-20 | Ethereum Token Standard                                     | 以太坊代币标准               |
 | BEP-20 | BNB Chain Token Standard                                    | BNB Chain 代币标准           |
-| MID    | Merchant ID                                                 | 商户标识                     |
+| merchantNo | Merchant No                                             | 商户号（替代旧的 MID）       |
 | FIFO   | First In, First Out                                         | 先进先出                     |
 | SLA    | Service Level Agreement                                     | 服务等级协议                 |
 | KYT    | Know Your Transaction                                       | 了解你的交易                 |
@@ -921,6 +981,11 @@
 
 ---
 
-*文档版本：v3.4*
+*文档版本：v3.5*
 *创建日期：2026-02-22*
-*最后更新：2026-04-17*
+*最后更新：2026-04-19*
+
+**v3.5 更新记录**
+- §2.2 重构订单标识三要素：`merchantNo`（替代 MID）+ `bizOrderNo`（商户系统订单号）+ `transactionId`（替代 Order ID）
+- §5 拆分为 5.1 基础支付术语 + 5.2 支付通知字段（notifyData payload 标准定义）
+- §15.1、§16.3、缩写表同步更新 merchantNo 命名
