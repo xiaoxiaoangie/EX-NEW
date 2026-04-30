@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Transsion（传音）数币收单 — 解决方案</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  :root {
+    --bg: #ffffff;
+    --text: #1a1a2e;
+    --heading: #16213e;
+    --accent: #0f3460;
+    --border: #e0e0e0;
+    --card-bg: #f8f9fa;
+    --highlight: #e94560;
+    --tag-bg: #eef2ff;
+    --tag-text: #3730a3;
+    --success: #059669;
+    --warn: #d97706;
+    --warn-bg: #fffbeb;
+    --warn-border: #fde68a;
+    --info-bg: #f5f3ff;
+    --info-border: #c4b5fd;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+  }
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* Header */
+  .doc-header {
+    border-bottom: 3px solid var(--accent);
+    padding-bottom: 24px;
+    margin-bottom: 40px;
+  }
+  .doc-header h1 {
+    font-size: 28px;
+    color: var(--heading);
+    margin-bottom: 12px;
+  }
+  .doc-meta {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: #666;
+  }
+  .doc-meta .tag {
+    background: var(--tag-bg);
+    color: var(--tag-text);
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-weight: 600;
+  }
+
+  /* Sections */
+  .section { margin-bottom: 48px; }
+  .section h2 {
+    font-size: 22px;
+    color: var(--heading);
+    border-left: 4px solid var(--highlight);
+    padding-left: 12px;
+    margin-bottom: 20px;
+  }
+  .section h3 {
+    font-size: 17px;
+    color: var(--accent);
+    margin: 24px 0 12px;
+  }
+  .section h4 {
+    font-size: 15px;
+    color: var(--heading);
+    margin: 16px 0 8px;
+  }
+  .section p { margin-bottom: 12px; }
+  .section ul, .section ol { margin: 8px 0 12px 24px; }
+  .section li { margin-bottom: 4px; }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 20px;
+    font-size: 14px;
+  }
+  th {
+    background: var(--accent);
+    color: #fff;
+    text-align: left;
+    padding: 10px 14px;
+    font-weight: 600;
+  }
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tr:hover td { background: #f5f7ff; }
+  td code, th code {
+    background: rgba(0,0,0,0.05);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+  }
+
+  /* Code blocks */
+  pre.flow {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin: 12px 0 20px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.85;
+    white-space: pre-wrap;
+    overflow-x: auto;
+    color: #1f2937;
+  }
+
+  /* Callouts */
+  .callout {
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 12px 0 20px;
+    font-size: 14px;
+    line-height: 1.7;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .callout.warn {
+    background: var(--warn-bg);
+    border: 1px solid var(--warn-border);
+    color: #78350f;
+  }
+  .callout.info {
+    background: var(--info-bg);
+    border: 1px solid var(--info-border);
+    color: #1e1b4b;
+  }
+  .callout.contact {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border: 1px solid #f59e0b;
+    color: #78350f;
+    font-size: 15px;
+  }
+  .callout .ico {
+    font-size: 18px;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .callout strong { color: inherit; }
+  .callout code {
+    background: rgba(255,255,255,0.5);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 13px;
+  }
+
+  /* Mermaid container */
+  .mermaid {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    margin: 16px 0 24px;
+    text-align: center;
+  }
+
+  /* Role cards */
+  .role-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 12px 0 20px;
+  }
+  .role-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 6px;
+    padding: 14px 18px;
+  }
+  .role-card .role-name {
+    font-weight: 700;
+    color: var(--heading);
+    font-size: 15px;
+    margin-bottom: 6px;
+  }
+  .role-card .role-desc {
+    font-size: 13px;
+    color: #4b5563;
+    line-height: 1.6;
+  }
+
+  /* Phase badges */
+  .phase {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--tag-bg);
+    color: var(--tag-text);
+  }
+
+  /* Step numbers in fund flow */
+  .scenario-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .scenario-tab {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 13px;
+    color: #4b5563;
+  }
+  .scenario-tab.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+
+  /* TOC */
+  .toc {
+    background: var(--card-bg);
+    border-left: 3px solid var(--accent);
+    padding: 14px 18px;
+    margin-bottom: 32px;
+    border-radius: 4px;
+  }
+  .toc-title {
+    font-weight: 700;
+    color: var(--heading);
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+  .toc ol { margin-left: 20px; }
+  .toc a {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 13.5px;
+  }
+  .toc a:hover { text-decoration: underline; color: var(--highlight); }
+
+  hr.sep {
+    border: none;
+    border-top: 1px dashed var(--border);
+    margin: 32px 0;
+  }
+
+  /* Highlight badge */
+  .badge {
+    display: inline-block;
+    background: #fef3c7;
+    color: #92400e;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    margin: 0 2px;
+  }
+
+  @media (max-width: 700px) {
+    .role-grid { grid-template-columns: 1fr; }
+    .container { padding: 24px 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="doc-header">
+    <h1>Transsion（传音）数币收单 — 解决方案</h1>
+    <div class="doc-meta">
+      <span class="tag">客户解决方案</span>
+      <span>版本 v2.1（精简版）</span>
+      <span>最后更新：2026-04-29</span>
+      <span>API 参考：<a href="https://open.eurewax.com/" target="_blank" style="color:var(--accent)">EurewaX 开放平台</a></span>
+    </div>
+  </div>
+
+  <!-- TOC -->
+  <div class="toc">
+    <div class="toc-title">目录</div>
+    <ol>
+      <li><a href="#sec-1">一、方案概述</a></li>
+      <li><a href="#sec-2">二、前置流程</a></li>
+      <li><a href="#sec-3">三、业务流程</a></li>
+      <li><a href="#sec-4">四、API 对接清单</a></li>
+      <li><a href="#sec-5">五、报价</a></li>
+      <li><a href="#sec-6">六、集成时间规划</a></li>
+    </ol>
+  </div>
+
+  <!-- §1 方案概述 -->
+  <div class="section" id="sec-1">
+    <h2>一、方案概述</h2>
+
+    <h3>1.1 各方角色</h3>
+    <div class="role-grid">
+      <div class="role-card">
+        <div class="role-name">传音（Transsion）</div>
+        <div class="role-desc">终端 App / 钱包 / 市场的运营方。在 EX 系统上以<strong>商户</strong>身份入网开通产品。</div>
+      </div>
+      <div class="role-card">
+        <div class="role-name">C 端会员</div>
+        <div class="role-desc">传音 App / 市场上的终端用户。<strong>EX 不感知 C 端</strong>，C 端账户与余额由传音自行记账。</div>
+      </div>
+      <div class="role-card">
+        <div class="role-name">SP（实际持牌机构）</div>
+        <div class="role-desc">实际的<strong>数币收单 / 承兑 / 付款</strong>持牌机构。传音的法币 / 数币账户真实开在 SP 处，EX 仅做技术对接与 SP 编排，传音不直接感知 SP。</div>
+      </div>
+      <div class="role-card">
+        <div class="role-name">EX</div>
+        <div class="role-desc">技术 + 合规运营平台，提供 API、Webhook 接入，并做 SP 路由、风控、对账与合规管控。</div>
+      </div>
+    </div>
+
+    <h3>1.2 能力与币种范围</h3>
+    <table>
+      <tr><th width="35%">能力</th><th>支持范围</th></tr>
+      <tr><td><strong>数币收单（收 U）</strong></td><td>USDT / USDC（链上收款）</td></tr>
+      <tr><td><strong>承兑 OnRamp（法 → U）</strong></td><td>仅 <strong>USD</strong>（其他币种建设中）</td></tr>
+      <tr><td><strong>承兑 OffRamp（U → 法）</strong></td><td>仅 <strong>USD</strong>（其他币种建设中）</td></tr>
+      <tr><td><strong>数币提现（提 U）</strong></td><td>USDT / USDC 链上出金</td></tr>
+      <tr><td><strong>法币提现（提法）</strong></td><td>仅 <strong>USD</strong> 出金到传音指定银行账户</td></tr>
+    </table>
+    <div class="callout info">
+      <span class="ico">💡</span>
+      <div>如后续需要其他法币（EUR / GBP / 东南亚本地币种等），需单独评估 SP 通道。</div>
+    </div>
+
+    <h3>1.3 资金流向总览</h3>
+    <pre class="flow">场景一（钱包充值 · OffRamp 式）：
+  C 端 USDT → 链上 → SP 数币收单地址
+  → OffRamp 数转法（USDT → USD，由 SP 执行，按实时汇率）
+  → USD 到传音在 SP 的 USD 账户
+  → 传音给 C 端法币钱包（内部账本）上账
+
+场景二（市场消费 · 数币收单）：
+  C 端 USDT → 链上 → SP 数币收单地址
+  → USDT 到传音在 SP 的 USDT 账户
+  → 传音标记订单已付 → 触发发货
+
+场景三（提现 / 提币）：
+  传音 USD 账户  → 提现 → 传音指定银行账户
+  传音 USDT 账户 → 提币 → 传音指定链上地址</pre>
+  </div>
+
+  <!-- §2 前置流程 -->
+  <div class="section" id="sec-2">
+    <h2>二、前置流程</h2>
+    <div class="callout info">
+      <span class="ico">📍</span>
+      <div>整体顺序：<strong>商户入网 → 找技术支持开通 Sandbox → 测试环境配置 → 联调签名验签 → 申请开通产品 → 业务对接</strong>。</div>
+    </div>
+
+    <h3>2.1 商户入网（KYB）</h3>
+    <pre class="flow">├── 1. 传音作为商户与 EX 签约
+│     └── 提交 KYB 资料（法人 / 董事 / 营业执照 / 业务说明）
+│     └── 附件先调【上传文件】接口取 URL，再放入业务请求
+│     └── Webhook 通知 KYB 审核结果（APPROVED / REJECTED / RFI）
+│
+└── 2. 收到 APPROVED → 进入下一步开通测试环境</pre>
+
+    <h3>2.2 开通 Sandbox 测试环境（联系技术支持）</h3>
+    <p>商户阶段结束后，<strong>在专属对接群中联系技术支持完成 Sandbox 环境配置</strong>：</p>
+    <pre class="flow">步骤 1 → 联系技术支持开通 Sandbox 环境
+        → 获取测试账号（Account No）、测试域名
+步骤 2 → 获取 APP ID、平台公钥、AES Key
+步骤 3 → 客户生成 RSA 密钥对（SHA256withRSA，2048 位）
+        → 上传客户公钥到管理平台
+步骤 4 → 配置 Webhook 回调地址（HTTPS，POST，按 notifyType 分类
+        或统一接 ALL）
+步骤 5 → 完成签名验签 + AES 加解密联调验证</pre>
+    <div class="callout info">
+      <span class="ico">📎</span>
+      <div>密钥生成、签名 / 验签、AES 加解密代码示例与商户信息模版均由技术支持提供。Sandbox 环境参数详见
+        <a href="https://open.eurewax.com/%E7%8E%AF%E5%A2%83%E5%8F%82%E6%95%B0-6918053m0" target="_blank">环境参数</a>。
+      </div>
+    </div>
+
+    <h3>2.3 申请开通产品</h3>
+    <pre class="flow">├── 必选：CRYPTO_WALLET（数币聚合收银 + 数币账户）
+└── 必选：FIAT_OFFRAMP（承兑数转法 + 法币账户，仅 USD）</pre>
+    <ul>
+      <li>商户 = 传音自己</li>
+      <li>申请产品时系统会校验 KYB 信息是否充分，不足时返回 <strong>RFI</strong> 要求补充</li>
+      <li>产品审核结果通过 Webhook 推送（approved / rejected / RFI）</li>
+    </ul>
+
+    <h3>2.4 EX 侧准备</h3>
+    <ul>
+      <li>测试环境配置</li>
+    </ul>
+  </div>
+
+  <!-- §3 业务流程 -->
+  <div class="section" id="sec-3">
+    <h2>三、业务流程</h2>
+
+    <!-- 3.1 钱包充值 -->
+    <h3>3.1 场景一：钱包充值（C 端数币 → OffRamp → 法币上账）</h3>
+    <p><strong>业务说明</strong>：C 端在传音 App 点充值（法币金额），传音前端展示"当前汇率下需转 X USDT"给 C 端 → C 端链上转 USDT → SP 按 <strong>实际成交时的实时汇率</strong> 完成数转法 → USD 到传音在 SP 的 USD 账户 → 传音按 <strong>实际到账 USD</strong> 给 C 端钱包上账。</p>
+    <p>传音 <strong>不承担 FX 商角色</strong>，汇率 / 价差 / 换汇风险由 SP 通过实时汇率承担。</p>
+
+    <div class="callout warn">
+      <span class="ico">⚠️</span>
+      <div>
+        <strong>报价不锁定</strong>：EX 返回的是<strong>询价时的实时市场汇率</strong>，不是锁价。C 端链上转账到实际 OffRamp 成交之间若汇率波动，<strong>以 SP 实际成交结果为准</strong>，最终到账 USD 可能与前端展示的估算值略有偏差。
+      </div>
+    </div>
+    <div class="callout info">
+      <span class="ico">💡</span>
+      <div>
+        <strong>建议传音前端</strong>：
+        <ul style="margin:6px 0 0 18px">
+          <li>汇率显示区做<strong>定时刷新</strong>，推荐 <strong>5-10 分钟</strong>一次；</li>
+          <li>或每次 C 端打开充值页时重新询价；</li>
+          <li>前端明确提示"最终到账以实际成交汇率为准，可能有小幅波动"。</li>
+        </ul>
+      </div>
+    </div>
+
+    <h4>流程</h4>
+    <pre class="flow">1. C 端在传音 App 发起 "充值 100 USD"
+2. 传音调 EX 询价（仅用于前端展示，不锁价）
+   POST /offramp/quote {from:USDT, to:USD, toAmount:100}
+   ← {rate, estimatedFromAmount:100.X USDT, timestamp}
+   → 传音前端每 5-10 分钟定时刷新此接口
+3. 传音展示 "当前汇率约需支付 100.X USDT" → C 端确认
+4. 传音调 EX 创建数币收款订单（开启 autoOffRamp，不带 quoteId）
+   POST /cashier/orders {bizOrderNo, cryptoAmount:100.X, currency:USDT,
+                         autoOffRamp:true, notifyUrl}
+   ← {paymentInstructions:[{chain, address, cryptoAmount:100.X}]}
+5. 传音展示地址 + 二维码 → C 端链上转账
+6. 链上确认 → Webhook: CRYPTO_PAYIN_SUCCESS
+7. EX 自动触发 OffRamp（按 SP 实际成交时的实时汇率）
+8. USD 到账传音 SP 端 USD 账户 → Webhook: OFFRAMP_SETTLED
+   {bizOrderNo, actualFiatAmount: 实际到账 USD}
+9. 传音按 actualFiatAmount 给 C 端法币钱包上账 → 通知 C 端</pre>
+
+    <h4>时序图</h4>
+    <div class="mermaid">
+sequenceDiagram
+    autonumber
+    participant C as C 端会员
+    participant TX as 传音
+    participant EX as EX 平台
+    participant SP as SP (数币收单 / OffRamp)
+
+    C->>TX: 发起充值 100 USD
+
+    Note over TX,EX: 前端汇率展示：每 5-10 分钟刷新一次
+    TX->>EX: POST /offramp/quote（仅展示用，不锁价）
+    EX->>SP: 询价（实时汇率）
+    SP-->>EX: rate
+    EX-->>TX: {rate, estimatedFromAmount:100.X USDT, timestamp}
+    TX-->>C: 展示 "当前汇率约需 100.X USDT"
+    C->>TX: 确认支付
+
+    TX->>EX: POST /cashier/orders<br/>{bizOrderNo, cryptoAmount:100.X,<br/>currency:USDT, autoOffRamp:true}
+    EX->>SP: 分配收款地址
+    SP-->>EX: 返回 USDT 地址 + 链
+    EX-->>TX: {paymentInstructions}
+    TX-->>C: 展示地址 + 二维码
+
+    C->>SP: 链上转 100.X USDT
+    SP->>EX: 链上确认
+    EX->>TX: Webhook: CRYPTO_PAYIN_SUCCESS
+
+    Note over EX,SP: autoOffRamp=true<br/>SP 按成交时实时汇率执行数转法
+    EX->>SP: 执行 OffRamp（实时市场价）
+    SP-->>SP: 实际 USD 入账传音 SP 端 USD 账户
+    EX->>TX: Webhook: OFFRAMP_SETTLED<br/>{bizOrderNo, actualFiatAmount}
+
+    TX->>TX: C 端法币钱包 +actualFiatAmount
+    TX-->>C: 充值成功（展示实际到账金额）
+    </div>
+
+    <hr class="sep">
+
+    <!-- 3.2 市场消费 -->
+    <h3>3.2 场景二：市场内直接数币消费</h3>
+    <p><strong>业务说明</strong>：C 端在传音市场下单（按 USDT 结算），C 端链上转账 USDT 到传音 SP 端 USDT 账户，传音收到 Webhook 后发货。</p>
+
+    <h4>流程</h4>
+    <pre class="flow">1. C 端在传音市场下单（金额以 USDT 标价或传音内部换算）
+2. 传音调 EX 创建数币收款订单
+   POST /cashier/orders {bizOrderNo, amount, currency:USDT, notifyUrl}
+   ← {paymentInstructions:[{chain, address, cryptoAmount}]}
+   或返回 paymentUrl（使用 EX 托管收银台时）
+3. C 端链上转账 USDT
+4. 链上确认 → Webhook: CRYPTO_PAYIN_SUCCESS
+5. USDT 到账传音 SP 端 USDT 账户
+6. 传音标记订单已付 → 触发发货</pre>
+
+    <h4>时序图</h4>
+    <div class="mermaid">
+sequenceDiagram
+    autonumber
+    participant C as C 端会员
+    participant TX as 传音
+    participant EX as EX 平台
+    participant SP as SP (数币收单)
+
+    C->>TX: 下单
+    TX->>EX: POST /cashier/orders<br/>{bizOrderNo, currency:USDT}
+    EX->>SP: 分配收款地址
+    SP-->>EX: 返回地址 + 链
+    EX-->>TX: {paymentInstructions} 或 {paymentUrl}
+    TX-->>C: 展示地址 + 二维码
+
+    C->>SP: 链上转 USDT
+    SP->>EX: 链上确认
+    EX->>TX: Webhook: CRYPTO_PAYIN_SUCCESS
+    TX->>TX: 标记订单已付 → 发货
+    TX-->>C: 订单完成
+    </div>
+
+    <div class="callout info">
+      <span class="ico">🔍</span>
+      <div><strong>场景一 vs 场景二</strong>：场景一在创建订单时带 <code>autoOffRamp:true</code>，到账后 SP 按实时汇率自动做数转法，资金以 USD 形态沉淀；场景二不带，资金保留为 USDT 形态沉淀。</div>
+    </div>
+
+    <hr class="sep">
+
+    <!-- 3.3 提现 / 提币 -->
+    <h3>3.3 场景三：传音提现 / 提币</h3>
+    <p><strong>业务说明</strong>：传音把 SP 端的 USD / USDT 余额提到自己的银行账户或链上钱包。</p>
+
+    <h4>提现（法币 USD → 银行账户）</h4>
+    <pre class="flow">1. 传音添加银行收款人 → Webhook: 审核结果
+2. 传音发起 USD 提现
+   POST /payout/orders {payeeId, amount, currency:USD}
+3. Webhook: PAYOUT_PROCESSING → PAYOUT_SUCCESS / FAIL
+4. 传音核账</pre>
+
+    <h4>提币（数币 USDT → 链上地址）</h4>
+    <pre class="flow">1. 传音添加链上收款地址 → Webhook: 审核结果
+2. 传音发起 USDT 提币
+   POST /crypto/withdraw {address, chain, amount, currency:USDT}
+3. Webhook: CRYPTO_WITHDRAW_PROCESSING → SUCCESS / FAIL
+4. 传音核账</pre>
+  </div>
+
+  <!-- §4 API 对接清单 -->
+  <div class="section" id="sec-4">
+    <h2>四、API 对接清单</h2>
+    <table>
+      <tr><th width="14%">模块</th><th width="36%">接口</th><th>用途</th></tr>
+      <tr><td>开产品+入网</td><td>注册商户 / KYB 申请 / 申请产品 / 查询审核结果</td><td>一次性入网 + 开通 CRYPTO_WALLET / FIAT_OFFRAMP</td></tr>
+      <tr><td>OffRamp</td><td><code>POST /offramp/quote</code></td><td>获取<strong>实时汇率</strong>（仅展示用，不锁价）—— 前端 5-10 分钟刷新</td></tr>
+      <tr><td>聚合收银</td><td><code>POST /cashier/orders</code>（带 <code>autoOffRamp:true</code>）</td><td>创建数币收款订单（场景一 / 场景二）</td></tr>
+      <tr><td>聚合收银</td><td><code>GET /cashier/orders/{bizOrderNo}</code></td><td>查询数币订单状态</td></tr>
+      <tr><td>OffRamp</td><td><code>POST /offramp/convert</code></td><td>主动执行数转法（未开 autoOffRamp 时使用）</td></tr>
+      <tr><td>OffRamp</td><td><code>GET /offramp/orders/{bizOrderNo}</code></td><td>查询 OffRamp 状态</td></tr>
+      <tr><td>账户查询</td><td>查询 USD / USDT 账户余额 / 流水</td><td>余额与流水</td></tr>
+      <tr><td>提现</td><td>收款人管理 / <code>POST /payout/orders</code></td><td>USD 提现到银行</td></tr>
+      <tr><td>提币</td><td>链上地址管理 / <code>POST /crypto/withdraw</code></td><td>USDT 提币到链上地址</td></tr>
+      <tr><td>公共服务</td><td>配置通知 URL / 上传文件 / 获取商户 Token</td><td>通用</td></tr>
+    </table>
+  </div>
+
+  <!-- §5 报价 -->
+  <div class="section" id="sec-5">
+    <h2>五、报价</h2>
+    <div class="callout contact">
+      <span class="ico">📞</span>
+      <div>
+        <strong>报价信息不在本文档内展开</strong>。请联系你的 <strong>EX 客户经理</strong>获取针对传音场景的最新报价，包括：
+        <ul style="margin:6px 0 0 18px">
+          <li><strong>EX 技术服务费</strong>（白牌 / API 各档位）</li>
+          <li><strong>承兑 OffRamp 费率</strong>（含机构客户返点）</li>
+          <li><strong>数币收银台费率</strong>（含返点政策）</li>
+          <li><strong>机构返点政策</strong>（按月交易额阶梯）</li>
+        </ul>
+        <div style="margin-top:8px">商务合作价以双方签订的合同为准。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- §6 集成时间规划 -->
+  <div class="section" id="sec-6">
+    <h2>六、集成时间规划</h2>
+    <div class="callout info">
+      <span class="ico">⏱️</span>
+      <div>节奏与通用方案 <code>ex-api-solution.md</code> §9 对齐：<strong>Phase 0 环境 → Phase 1 前置 → Phase 2 核心业务 → Phase 3 联调 → Phase 4 上线</strong>，最小可上线方案约 25-30 天。</div>
+    </div>
+
+    <h3>6.1 总体规划</h3>
+    <table>
+      <tr><th width="22%">阶段</th><th>内容</th><th width="14%">预计耗时</th><th width="10%">累计</th></tr>
+      <tr><td><span class="phase">Phase 0</span> 环境准备</td><td>找技术支持开通 Sandbox、获取 APP ID / 公钥 / AES Key、上传客户公钥、Webhook 配置、签名验签 + AES 联调</td><td>1-2 天</td><td>2</td></tr>
+      <tr><td><span class="phase">Phase 1</span> 前置流程</td><td>商户 KYB 审核 + 产品开通（CRYPTO_WALLET + FIAT_OFFRAMP）</td><td>3 天</td><td>5</td></tr>
+      <tr><td><span class="phase">Phase 2</span> 核心业务</td><td>按场景接入（详见 6.2，可并行）</td><td>10 天</td><td>15</td></tr>
+      <tr><td><span class="phase">Phase 3</span> 联调测试</td><td>端到端流程验证、异常场景覆盖、高 TPS 压测（针对 C 端规模）</td><td>5天</td><td>20</td></tr>
+      <tr><td><span class="phase">Phase 4</span> 上线</td><td>生产环境切换、监控配置</td><td>2天</td><td>22</td></tr>
+    </table>
+
+    <h3>6.2 Phase 2 分场景时间</h3>
+    <table>
+      <tr><th width="32%">场景</th><th>用到的接口</th><th width="14%">预计耗时</th><th width="18%">可并行</th></tr>
+      <tr>
+        <td><strong>场景一</strong><br>钱包充值（实时询价 + 数币收款 + 自动 OffRamp → 法币上账）</td>
+        <td><code>/offramp/quote</code>（前端定时刷新）+ <code>/cashier/orders</code>（<code>autoOffRamp:true</code>）+ <code>OFFRAMP_SETTLED</code> 回调</td>
+        <td>7-10 天</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td><strong>场景二</strong><br>市场消费（数币收单）</td>
+        <td><code>/cashier/orders</code> + <code>CRYPTO_PAYIN_SUCCESS</code> 回调</td>
+        <td>3-5 天</td>
+        <td>✅ 可与场景一并行</td>
+      </tr>
+      <tr>
+        <td><strong>场景三</strong><br>提现 / 提币</td>
+        <td><code>/payout/orders</code>（USD）+ <code>/crypto/withdraw</code>（USDT）</td>
+        <td>3-5 天</td>
+        <td>✅</td>
+      </tr>
+    </table>
+    <p style="font-size:13.5px;color:#6b7280">多场景可并行开发；全量接入约 25-30 天。</p>
+
+    <h3>6.3 客户经理与对接物料</h3>
+    <p>进入对接阶段需联系 EX 客户经理获取：</p>
+    <ol>
+      <li><strong>Sandbox 环境</strong>：测试账号、APP ID、平台公钥、AES Key、测试域名</li>
+      <li><strong>API 文档</strong>：<a href="https://open.eurewax.com/" target="_blank">EurewaX 开放平台</a> 完整接口参考</li>
+      <li><strong>技术对接指南</strong>：签名 / 加密代码示例、接口规范、错误码参考、商户信息模版</li>
+      <li><strong>技术支持</strong>：专属对接群 + 技术支持工程师</li>
+    </ol>
+  </div>
+
+  <p style="text-align:center;color:#9ca3af;font-size:12px;margin-top:48px">
+    起草：Cascade · 最近更新：2026-04-29
+  </p>
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'default',
+    themeVariables: {
+      primaryColor: '#eef2ff',
+      primaryTextColor: '#1a1a2e',
+      primaryBorderColor: '#0f3460',
+      lineColor: '#0f3460',
+      secondaryColor: '#fef3c7',
+      tertiaryColor: '#fce7f3'
+    },
+    sequence: { showSequenceNumbers: false, mirrorActors: true }
+  });
+</script>
+</body>
+</html>
