@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EurewaX × Moolahgo — Payment Institution Treasury Hub Solution</title>
+<style>
+  :root {
+    --ink:      #0a1840;
+    --ink-700:  #1a2a54;
+    --ink-500:  #4a5470;
+    --ink-400:  #6b7590;
+    --ink-300:  #8a95b0;
+    --ink-200:  #c3ccde;
+    --ink-100:  #e1e6f0;
+    --ink-50:   #eef1f8;
+    --ink-20:   #f6f8fd;
+    --sky:      #2563eb;
+    --sky-600:  #1d4ed8;
+    --sky-100:  #dbeafe;
+    --sky-50:   #eff6ff;
+    --surface:  #ffffff;
+    --bg-1: var(--ink-20);
+    --accent:   var(--sky);
+    --accent-2: var(--sky);
+    --accent-3: var(--ink);
+    --text:     var(--ink);
+    --text-dim: var(--ink-500);
+    --card-bg:  var(--surface);
+    --card-border: var(--ink-100);
+    --red:      #dc2626;
+    --green:    #16a34a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    height: 100%;
+    background: var(--ink-20);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+
+  .deck { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
+  .slide {
+    position: absolute; inset: 0; display: none;
+    background:
+      radial-gradient(ellipse at 85% 8%, rgba(37,99,235,0.06) 0%, transparent 55%),
+      radial-gradient(ellipse at 12% 95%, rgba(37,99,235,0.05) 0%, transparent 50%),
+      linear-gradient(180deg, #fff 0%, var(--ink-20) 100%);
+    padding: 36px 64px 52px;
+    animation: fadeIn .5s ease;
+    overflow: hidden;
+  }
+  .slide.active { display: flex; flex-direction: column; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+
+  .slide::before {
+    content: ""; position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(10,24,64,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(10,24,64,0.025) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+  }
+
+  .slide-head {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 16px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--ink-100); z-index: 1;
+  }
+  .slide-head .mark {
+    width: 34px; height: 34px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border: 1.5px solid var(--sky); border-radius: 7px;
+    color: var(--sky); font-weight: 800; font-size: 14px;
+    background: var(--sky-50);
+  }
+  .slide-head h2 { font-size: 26px; font-weight: 800; color: var(--ink); letter-spacing: 0.3px; }
+  .slide-head h2 .dash { color: var(--sky); margin: 0 10px; font-weight: 400; }
+  .slide-head .subtitle { color: var(--ink-400); font-size: 13.5px; margin-left: auto; }
+  .slide-body { flex: 1; z-index: 1; overflow-y: auto; overflow-x: hidden; padding-bottom: 24px; }
+  .slide-body::-webkit-scrollbar { width: 4px; }
+  .slide-body::-webkit-scrollbar-track { background: transparent; }
+  .slide-body::-webkit-scrollbar-thumb { background: var(--ink-100); border-radius: 4px; }
+
+  .brand-bar {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 64px 14px; z-index: 2;
+    background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.85) 30%, #fff 60%);
+  }
+  .brand-logo { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-400); font-weight: 700; font-size: 13px; letter-spacing: 0.4px; }
+  .brand-logo .xicon { display: inline-block; width: 18px; height: 18px; position: relative; }
+  .brand-logo .xicon::before, .brand-logo .xicon::after { content: ""; position: absolute; inset: 0; background: var(--sky); border-radius: 2px; }
+  .brand-logo .xicon::before { transform: rotate(45deg); width: 3px; left: 7.5px; }
+  .brand-logo .xicon::after  { transform: rotate(-45deg); width: 3px; left: 7.5px; }
+  .page-num { color: var(--ink-400); font-size: 12px; font-variant-numeric: tabular-nums; }
+
+  .nav { position: fixed; right: 20px; bottom: 20px; display: flex; gap: 8px; z-index: 10; }
+  .nav button {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1px solid var(--ink-100); background: var(--surface); color: var(--ink);
+    cursor: pointer; font-size: 16px; box-shadow: 0 2px 8px rgba(10,24,64,0.08); transition: all .2s;
+  }
+  .nav button:hover { background: var(--sky); border-color: var(--sky); color: #fff; }
+  .nav button:disabled { opacity: .3; cursor: not-allowed; }
+
+  .progress { position: fixed; top: 0; left: 0; width: 100%; height: 3px; z-index: 20; background: var(--ink-100); }
+  .progress-fill { height: 100%; background: var(--sky); transition: width .4s; }
+
+  /* Cover + Closing */
+  .slide.cover, .slide.closing {
+    background:
+      radial-gradient(ellipse at 75% 20%, rgba(37,99,235,0.22) 0%, transparent 55%),
+      radial-gradient(ellipse at 20% 90%, rgba(37,99,235,0.14) 0%, transparent 50%),
+      linear-gradient(135deg, var(--ink) 0%, #142766 55%, #1e3a8a 100%);
+  }
+  .slide.cover::before, .slide.closing::before {
+    background-image:
+      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  }
+  .slide.cover .brand-logo, .slide.closing .brand-logo { color: rgba(255,255,255,0.70); }
+  .slide.cover .brand-logo .xicon::before, .slide.cover .brand-logo .xicon::after,
+  .slide.closing .brand-logo .xicon::before, .slide.closing .brand-logo .xicon::after { background: #fff; }
+  .slide.cover .page-num, .slide.closing .page-num { color: rgba(255,255,255,0.55); }
+
+  .slide.cover { padding: 0; }
+  .cover-content {
+    flex: 1; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; text-align: center; padding: 0 64px;
+  }
+  .cover-logo { display: flex; align-items: center; gap: 12px; font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 24px; }
+  .cover-logo .x-big { width: 40px; height: 40px; position: relative; }
+  .cover-logo .x-big::before, .cover-logo .x-big::after { content: ""; position: absolute; inset: 0; background: #fff; border-radius: 3px; }
+  .cover-logo .x-big::before { transform: rotate(45deg); width: 5px; left: 17.5px; }
+  .cover-logo .x-big::after  { transform: rotate(-45deg); width: 5px; left: 17.5px; }
+  .cover h1 { font-size: 52px; font-weight: 800; letter-spacing: 2px; color: #fff; margin-bottom: 18px; line-height: 1.15; }
+  .cover .cover-sub { font-size: 20px; color: rgba(255,255,255,0.75); margin-bottom: 44px; letter-spacing: 1px; }
+  .cover .cover-tags { display: flex; gap: 14px; margin-bottom: 44px; }
+  .cover-tag { padding: 7px 18px; border: 1px solid rgba(255,255,255,0.45); border-radius: 28px; font-size: 13px; color: #fff; background: rgba(255,255,255,0.08); }
+  .cover-meta { color: rgba(255,255,255,0.60); font-size: 13px; display: flex; gap: 24px; align-items: center; }
+  .cover-meta strong { color: rgba(255,255,255,0.85); }
+
+  /* Closing slide */
+  .closing-wrap {
+    flex: 1; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; text-align: center; padding: 0 64px;
+  }
+  .closing-wrap h1 { font-size: 52px; font-weight: 800; color: #fff; margin-bottom: 24px; }
+  .closing-wrap p { font-size: 18px; color: rgba(255,255,255,0.65); line-height: 1.8; margin-bottom: 8px; }
+  .closing-wrap .contact { margin-top: 36px; display: flex; gap: 32px; }
+  .closing-wrap .contact span { color: rgba(255,255,255,0.55); font-size: 14px; display: flex; align-items: center; gap: 6px; }
+  .closing-wrap .contact strong { color: rgba(255,255,255,0.90); }
+
+  /* TOC */
+  .toc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 12px; }
+  .toc-item {
+    background: var(--surface); border: 1px solid var(--ink-100); border-left: 3px solid var(--sky);
+    border-radius: 8px; padding: 14px 18px; display: flex; align-items: center; gap: 14px;
+    transition: all .2s; cursor: pointer; box-shadow: 0 1px 4px rgba(10,24,64,0.04);
+  }
+  .toc-item:hover { background: var(--sky-50); transform: translateX(3px); }
+  .toc-item .num { font-size: 24px; font-weight: 800; color: var(--sky); min-width: 40px; }
+  .toc-item .title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+  .toc-item .desc { font-size: 11.5px; color: var(--ink-400); }
+
+  /* About */
+  .about-wrap { max-width: 960px; background: var(--surface); border: 1px solid var(--ink-100); border-radius: 12px; padding: 24px 30px; box-shadow: 0 1px 4px rgba(10,24,64,0.04); }
+  .about-wrap p { color: var(--ink-500); font-size: 13.5px; line-height: 1.85; margin-bottom: 12px; }
+  .about-wrap .headline { color: var(--ink); font-weight: 700; font-size: 14px; margin-bottom: 6px; }
+  .partner-row { display: flex; align-items: center; gap: 16px; background: var(--ink-20); border: 1px solid var(--ink-100); border-radius: 8px; padding: 12px 16px; margin-top: 8px; font-size: 12.5px; }
+  .partner-row .label { color: var(--sky); font-weight: 700; padding-right: 14px; border-right: 1px solid var(--ink-100); white-space: nowrap; }
+  .partner-row .items { color: var(--ink-500); display: flex; gap: 14px; flex-wrap: wrap; }
+
+  /* Two-col */
+  .cols-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  .col h3 { color: var(--ink); font-size: 14px; font-weight: 700; margin-bottom: 12px; padding-left: 10px; border-left: 3px solid var(--sky); }
+  .feature { display: flex; gap: 12px; margin-bottom: 14px; }
+  .feature-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: var(--sky-50); border: 1px solid var(--sky-100); color: var(--sky); font-size: 16px; flex-shrink: 0; }
+  .feature-body .feature-title { color: var(--ink); font-weight: 700; font-size: 13px; margin-bottom: 3px; }
+  .feature-body .feature-desc { color: var(--ink-500); font-size: 12px; line-height: 1.6; }
+
+  /* Pain point cards */
+  .pain-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .pain-card {
+    background: var(--surface); border: 1px solid var(--ink-100); border-left: 4px solid var(--red);
+    border-radius: 0 10px 10px 0; padding: 16px 20px;
+    box-shadow: 0 1px 4px rgba(10,24,64,0.04);
+  }
+  .pain-card h4 { color: var(--ink); font-size: 14px; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+  .pain-card h4 .ico { font-size: 18px; }
+  .pain-card p { color: var(--ink-500); font-size: 12px; line-height: 1.65; }
+
+  /* Architecture diagram */
+  .arch-visual { margin-top: 6px; }
+  .arch-hub {
+    background: var(--ink-20); border: 2px solid var(--sky); border-radius: 14px;
+    padding: 14px 16px 10px; position: relative;
+  }
+  .arch-hub-title {
+    position: absolute; top: -11px; left: 24px;
+    background: var(--sky); color: #fff; font-size: 11px; font-weight: 800;
+    padding: 2px 14px; border-radius: 10px; letter-spacing: 0.5px;
+  }
+  .arch-mso-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 6px; }
+  .arch-mso {
+    background: var(--surface); border: 1px solid var(--ink-100); border-radius: 10px;
+    padding: 0; overflow: hidden; box-shadow: 0 1px 3px rgba(10,24,64,0.04);
+  }
+  .arch-mso-head {
+    background: var(--ink); color: #fff; padding: 5px 10px;
+    font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: space-between;
+  }
+  .arch-mso-head .type { font-size: 9px; font-weight: 600; opacity: 0.7; }
+  .arch-master {
+    padding: 6px 10px; border-bottom: 1px dashed var(--ink-100);
+  }
+  .arch-master-label { font-size: 9px; color: var(--sky); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+  .arch-va-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+  .arch-va-tag {
+    background: var(--sky-50); border: 1px solid var(--sky-100); color: var(--sky-600);
+    font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 4px;
+  }
+  .arch-sub {
+    padding: 6px 10px;
+  }
+  .arch-sub-label { font-size: 9px; color: var(--ink-400); font-weight: 700; margin-bottom: 2px; }
+  .arch-sub-item {
+    background: var(--ink-20); border: 1px solid var(--ink-100); border-radius: 6px;
+    padding: 3px 8px; margin-bottom: 3px; font-size: 9.5px; color: var(--ink-500);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .arch-sub-item .name { font-weight: 700; color: var(--ink); }
+  .arch-sub-item .va-mini { font-size: 8.5px; color: var(--ink-400); }
+
+  .arch-flows {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px;
+  }
+  .arch-flow-item {
+    background: var(--surface); border: 1px solid var(--ink-100); border-radius: 8px;
+    padding: 6px 10px; text-align: center;
+  }
+  .arch-flow-item .arrow { font-size: 14px; color: var(--sky); font-weight: 800; line-height: 1; }
+  .arch-flow-item .fl-title { font-size: 9.5px; font-weight: 800; color: var(--ink); margin: 2px 0 1px; }
+  .arch-flow-item .fl-desc { font-size: 8.5px; color: var(--ink-400); line-height: 1.3; }
+
+  .arch-ex-bar {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin-top: 8px; padding: 6px 0;
+  }
+  .arch-ex-bar .ex-badge {
+    background: var(--ink); color: #fff; font-size: 11px; font-weight: 800;
+    padding: 4px 16px; border-radius: 8px; letter-spacing: 0.5px;
+  }
+  .arch-ex-bar .ex-label { font-size: 10px; color: var(--ink-400); }
+
+  /* Scenario cards */
+  .scenario-card {
+    background: var(--surface); border: 1px solid var(--ink-100);
+    border-radius: 10px; padding: 18px 22px; margin-bottom: 14px;
+    box-shadow: 0 1px 4px rgba(10,24,64,0.04);
+  }
+  .scenario-card h4 { color: var(--ink); font-size: 14px; font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+  .scenario-card h4 .badge { background: var(--sky); color: #fff; font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 700; }
+  .scenario-card p { color: var(--ink-500); font-size: 12px; line-height: 1.7; }
+  .scenario-card .flow-line { display: flex; align-items: center; gap: 6px; margin: 10px 0; font-size: 12.5px; flex-wrap: wrap; }
+  .scenario-card .fstep { background: var(--ink-20); border: 1px solid var(--ink-100); border-radius: 6px; padding: 4px 10px; font-size: 11.5px; white-space: nowrap; }
+  .scenario-card .farrow { color: var(--sky); font-weight: bold; }
+
+  /* Callout */
+  .callout { display: flex; gap: 10px; align-items: flex-start; background: var(--sky-50); border: 1px solid var(--sky-100); border-radius: 8px; padding: 12px 16px; font-size: 12.5px; color: var(--ink-500); line-height: 1.65; }
+  .callout .ico { font-size: 16px; flex-shrink: 0; }
+  .callout strong { color: var(--ink); }
+
+  /* Print mode */
+  .deck.print-mode { width: 100%; height: auto; overflow: visible; }
+  .deck.print-mode .slide {
+    display: flex !important; flex-direction: column; position: relative; inset: auto;
+    width: 100%; max-width: 1280px; margin: 0 auto 20px;
+    padding: 18px 36px 32px; height: auto; min-height: 720px;
+    aspect-ratio: 16 / 9; animation: none; overflow: hidden;
+  }
+  .deck.print-mode .slide-body { overflow: hidden; }
+  .deck.print-mode .slide-head { margin-bottom: 8px; padding-bottom: 6px; }
+  .deck.print-mode .slide-head h2 { font-size: 18px; }
+  .deck.print-mode .slide-head .subtitle { font-size: 10px; }
+  body.print-mode { overflow: auto; }
+
+  @page { size: 297mm 167mm; margin: 0; }
+  @media print {
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    html, body { width: 297mm; height: auto; overflow: visible; background: #000; }
+    .deck, .deck.print-mode { width: 297mm; max-width: none; height: auto; overflow: visible; }
+    .slide {
+      display: flex !important; flex-direction: column; position: relative !important; inset: auto !important;
+      width: 297mm !important; height: 167mm !important; min-height: 167mm !important;
+      max-width: none !important; margin: 0 !important; padding: 18px 36px 32px !important;
+      page-break-after: always; break-after: page; page-break-inside: avoid; break-inside: avoid;
+      overflow: hidden !important; animation: none !important; aspect-ratio: auto !important;
+    }
+    .slide:last-child { page-break-after: auto; break-after: auto; }
+    .slide.cover { padding: 0 !important; }
+    .slide-head { margin-bottom: 8px !important; }
+    .slide-head h2 { font-size: 18px !important; }
+    .slide-body { overflow: hidden !important; padding-bottom: 8px !important; }
+    .brand-bar { padding: 0 36px !important; bottom: 6px !important; background: none !important; }
+    .nav, .progress, .export-btn { display: none !important; }
+    .pain-grid { gap: 8px !important; }
+    .scenario-card { padding: 10px 14px !important; margin-bottom: 8px !important; }
+  }
+
+  /* Export button */
+  .export-btn {
+    position: fixed; right: 20px; top: 20px; z-index: 20;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 8px; border: 1px solid var(--ink-100);
+    background: var(--surface); color: var(--ink); font-size: 12px; font-weight: 600;
+    cursor: pointer; box-shadow: 0 2px 8px rgba(10,24,64,0.08); transition: all .2s;
+  }
+  .export-btn:hover { background: var(--sky); color: #fff; border-color: var(--sky); }
+  .export-btn .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+
+  @media (max-width: 900px) {
+    .slide { padding: 32px 28px 56px; }
+    .cols-2, .pain-grid { grid-template-columns: 1fr; }
+    .cover h1 { font-size: 40px; }
+    .closing-wrap h1 { font-size: 42px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress"><div class="progress-fill" id="progress"></div></div>
+
+<div class="deck" id="deck">
+
+  <!-- Slide 1: Cover -->
+  <section class="slide cover active">
+    <div class="cover-content">
+      <div class="cover-logo">
+        <span class="x-big"></span>
+        <span>EurewaX</span>
+      </div>
+      <h1>Payment Institution<br>Treasury Hub</h1>
+      <div class="cover-sub">EurewaX × Moolahgo Solution Proposal</div>
+      <div class="cover-tags">
+        <span class="cover-tag">MSO/PSP Account Opening</span>
+        <span class="cover-tag">Multi-Currency VA</span>
+        <span class="cover-tag">Internal Transfers</span>
+        <span class="cover-tag">Fund Consolidation & Settlement</span>
+      </div>
+      <div class="cover-meta">
+        <span><strong>Prepared by</strong>: EurewaX Business Team</span>
+        <span><strong>Version</strong>: v2.0</span>
+        <span><strong>Date</strong>: 2026-05-05</span>
+      </div>
+    </div>
+    <div class="brand-bar">
+      <span class="brand-logo"><span class="xicon"></span>EurewaX</span>
+      <span class="page-num"></span>
+    </div>
+  </section>
+
+  <!-- Slide 2: Agenda -->
+  <section class="slide">
+    <div class="slide-head">
+      <span class="mark">01</span>
+      <h2>Agenda</h2>
+      <span class="subtitle">Platform → Pain Points → Solution → Scenarios</span>
+    </div>
+    <div class="slide-body">
+      <div class="toc-grid">
+        <div class="toc-item" data-go="3">
+          <div class="num">02</div>
+          <div><div class="title">About EurewaX</div><div class="desc">Cross-border payment cloud platform overview & global presence</div></div>
+        </div>
+        <div class="toc-item" data-go="4">
+          <div class="num">03</div>
+          <div><div class="title">Industry Pain Points</div><div class="desc">Bank rejection / Nesting barriers / Business deadlock</div></div>
+        </div>
+        <div class="toc-item" data-go="5">
+          <div class="num">04</div>
+          <div><div class="title">Solution — Treasury Hub</div><div class="desc">Moolahgo + EX: the Treasury Hub for payment institutions</div></div>
+        </div>
+        <div class="toc-item" data-go="6">
+          <div class="num">05</div>
+          <div><div class="title">Core Business Scenarios</div><div class="desc">PF settlement / Fund consolidation / Internal clearing</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="brand-bar">
+      <span class="brand-logo"><span class="xicon"></span>EurewaX</span>
+      <span class="page-num"></span>
+    </div>
+  </section>
+
+  <!-- Slide 3: About EurewaX -->
+  <section class="slide">
+    <div class="slide-head">
+      <span class="mark">02</span>
+      <h2>About EurewaX</h2>
+      <span class="subtitle">Cross-Border Payment Innovation · Global Payment Ecosystem</span>
+    </div>
+    <div class="slide-body">
+      <div class="about-wrap">
+        <p><strong style="color:var(--ink)">EurewaX</strong> is dedicated to global cross-border payment product innovation, providing enterprises with a comprehensive global payment ecosystem. Our founding team leverages years of cross-border payment expertise and industry insights to develop a highly adaptive cloud payment platform that integrates global compliance capabilities and end-to-end operational services, helping clients achieve secure and efficient cross-border business expansion.</p>
+        <p>The company has established offices in <strong style="color:var(--accent-2)">Singapore, Malaysia, and Hong Kong</strong>.</p>
+        <p class="headline" style="margin-top:10px">EurewaX drives dual value through technology innovation:</p>
+        <p><strong style="color:var(--ink)">Commercial Value Creator</strong> — Reducing cross-border payment costs and improving transaction efficiency through technology innovation, creating more business opportunities for enterprises.</p>
+        <p><strong style="color:var(--ink)">Financial Ecosystem Builder</strong> — Promoting cross-border capital flow efficiency through open infrastructure, driving borderless extension of business opportunities.</p>
+        <div class="partner-row">
+          <span class="label">Lead Investors</span>
+          <span class="items"><span>KAIROUS</span><span>RUIFENG Wealth Management</span><span>iPayLinks</span></span>
+        </div>
+        <div class="partner-row">
+          <span class="label">Partners</span>
+          <span class="items"><span>Barclays</span><span>DBS</span><span>Standard Chartered</span><span>iPayLinks</span><span>Bank of China</span><span>...</span></span>
+        </div>
+      </div>
+    </div>
+    <div class="brand-bar">
+      <span class="brand-logo"><span class="xicon"></span>EurewaX</span>
+      <span class="page-num"></span>
+    </div>
+  </section>
+
+  <!-- Slide 4: Industry Pain Points -->
+  <section class="slide">
+    <div class="slide-head">
+      <span class="mark">03</span>
+      <h2>Industry Pain Points <span class="dash">—</span> "Can't Open an Account"</h2>
+      <span class="subtitle">The existential challenge for new MSOs / PSPs</span>
+    </div>
+    <div class="slide-body">
+      <div class="pain-grid">
+        <div class="pain-card">
+          <h4><span class="ico">🚫</span> Banks Refuse to Open Accounts</h4>
+          <p>Banks classify MSOs/PSPs as high-risk clients (ML risk). Newly licensed institutions can barely pass bank compliance reviews. The process takes <strong style="color:var(--ink)">3–6 months</strong>, severely delaying business launch.</p>
+        </div>
+        <div class="pain-card">
+          <h4><span class="ico">🔗</span> Nesting Compliance Barrier</h4>
+          <p>Other payment institutions (PSP/EMI) also refuse to open VAs for peers — regulators are concerned about "Nesting" (payment institution layering). Most PSPs' compliance policies <strong style="color:var(--ink)">explicitly prohibit</strong> opening accounts for other payment institutions.</p>
+        </div>
+        <div class="pain-card">
+          <h4><span class="ico">💀</span> Business Cannot Launch</h4>
+          <p>No bank account = cannot receive acquirer settlement funds = cannot operate acquiring/remittance business. <strong style="color:var(--ink)">The account issue is a make-or-break problem for payment institutions.</strong></p>
+        </div>
+        <div class="pain-card">
+          <h4><span class="ico">👥</span> Affected Groups</h4>
+          <p>• Newly licensed MSOs: just obtained license, no banking relationships<br>• Recently acquired MSOs: banks distrust new shareholders<br>• Small PSPs/EMIs: insufficient scale<br>• Cross-border payment companies: involved in high-risk corridors</p>
+        </div>
+      </div>
+      <div class="callout" style="margin-top:14px">
+        <span class="ico">💡</span>
+        <div><strong>Moolahgo's Unique Advantage:</strong> As a MAS-licensed Major Payment Institution, Moolahgo's compliance framework supports providing VA services to payment institutions without constituting Nesting. Already supports <strong>14+ currencies</strong> covering core Southeast Asian markets.</div>
+      </div>
+    </div>
+    <div class="brand-bar">
+      <span class="brand-logo"><span class="xicon"></span>EurewaX</span>
+      <span class="page-num"></span>
+    </div>
+  </section>
+
+  <!-- Slide 5: Solution Positioning -->
+  <section class="slide">
+    <div class="slide-head">
+      <span class="mark">04</span>
+      <h2>Solution <span class="dash">—</span> Treasury Hub</h2>
+      <span class="subtitle">Moolahgo + EX = The Treasury Hub for Payment Institutions</span>
+    </div>
+    <div class="slide-body">
+      <div class="arch-visual">
+        <div class="arch-hub">
+          <div class="arch-hub-title">Moolahgo Treasury Hub</div>
+          <div class="arch-mso-row">
+            <!-- MSO-A -->
+            <div class="arch-mso">
+              <div class="arch-mso-head"><span>MSO-A</span><span class="type">Money Service Operator</span></div>
+              <div class="arch-master">
+                <div class="arch-master-label">Master Account</div>
+                <div class="arch-va-tags">
+                  <span class="arch-va-tag">SGD VA</span>
+                  <span class="arch-va-tag">USD VA</span>
+                  <span class="arch-va-tag">IDR VA</span>
+                </div>
+              </div>
+              <div class="arch-sub">
+                <div class="arch-sub-label">Sub Accounts (End Clients)</div>
+                <div class="arch-sub-item"><span class="name">Merchant A1</span><span class="va-mini">SGD VA · USD VA</span></div>
+                <div class="arch-sub-item"><span class="name">Merchant A2</span><span class="va-mini">USD VA</span></div>
+              </div>
+            </div>
+            <!-- MSO-B -->
+            <div class="arch-mso">
+              <div class="arch-mso-head"><span>MSO-B</span><span class="type">Payment Service Provider</span></div>
+              <div class="arch-master">
+                <div class="arch-master-label">Master Account</div>
+                <div class="arch-va-tags">
+                  <span class="arch-va-tag">USD VA</span>
+                  <span class="arch-va-tag">EUR VA</span>
+                </div>
+              </div>
+              <div class="arch-sub">
+                <div class="arch-sub-label">Sub Accounts (End Clients)</div>
+                <div class="arch-sub-item"><span class="name">Merchant B1</span><span class="va-mini">USD VA · EUR VA</span></div>
+                <div class="arch-sub-item"><span class="name">Merchant B2</span><span class="va-mini">EUR VA</span></div>
+              </div>
+            </div>
+            <!-- PSP-C -->
+            <div class="arch-mso">
+              <div class="arch-mso-head"><span>PSP-C</span><span class="type">Payment Service Provider</span></div>
+              <div class="arch-master">
+                <div class="arch-master-label">Master Account</div>
+                <div class="arch-va-tags">
+                  <span class="arch-va-tag">GBP VA</span>
+                  <span class="arch-va-tag">SGD VA</span>
+                </div>
+              </div>
+              <div class="arch-sub">
+                <div class="arch-sub-label">Sub Accounts (End Clients)</div>
+                <div class="arch-sub-item"><span class="name">Merchant C1</span><span class="va-mini">GBP VA</span></div>
+              </div>
+            </div>
+          </div>
+          <!-- Fund flow annotations -->
+          <div class="arch-flows">
+            <div class="arch-flow-item">
+              <div class="arrow">↓</div>
+              <div class="fl-title">Inbound</div>
+              <div class="fl-desc">Acquirer settlement · Client remittance<br>VA → Sub / Master</div>
+            </div>
+            <div class="arch-flow-item">
+              <div class="arrow">↑↓</div>
+              <div class="fl-title">Fund Consolidation</div>
+              <div class="fl-desc">Sub Account<br>→ Master Account</div>
+            </div>
+            <div class="arch-flow-item">
+              <div class="arrow">⇄</div>
+              <div class="fl-title">FX / Internal Transfer</div>
+              <div class="fl-desc">FX: within Master<br>Transfer: Master ↔ Master</div>
+            </div>
+            <div class="arch-flow-item">
+              <div class="arrow">↑</div>
+              <div class="fl-title">Outbound</div>
+              <div class="fl-desc">Master → External bank<br>Payout / Settlement / Profit repatriation</div>
+            </div>
+          </div>
+        </div>
+        <div class="arch-ex-bar">
+          <span class="ex-label">▲ Unified API</span>
+          <span class="ex-badge">EX Tech Platform</span>
+          <span class="ex-label">Unified API ▲</span>
+        </div>
+      </div>
+      <div class="cols-2" style="margin-top:10px; gap:12px;">
+        <div class="col" style="flex:1.4">
+          <h3 style="color:var(--sky);font-size:13px;margin-bottom:8px">🏦 Value for Moolahgo</h3>
+          <div class="feature" style="margin-bottom:6px">
+            <div class="feature-icon">📈</div>
+            <div class="feature-body">
+              <div class="feature-title">Batch Client Acquisition · Zero Sales Cost</div>
+              <div class="feature-desc">EX platform has <strong style="color:var(--ink)">10–30 MSO/PSP</strong> tenants ready to onboard — instant clients, no individual BD required</div>
+            </div>
+          </div>
+          <div class="feature" style="margin-bottom:6px">
+            <div class="feature-icon">💰</div>
+            <div class="feature-body">
+              <div class="feature-title">Diversified Revenue Streams</div>
+              <div class="feature-desc"><strong style="color:var(--ink)">VA management fees + FX spread + payout fees + internal transfer fees</strong> — revenue stacks with every new MSO</div>
+            </div>
+          </div>
+          <div class="feature" style="margin-bottom:6px">
+            <div class="feature-icon">🏗️</div>
+            <div class="feature-body">
+              <div class="feature-title">Fund Deposits · Network Effects</div>
+              <div class="feature-desc">MSO operating funds remain within the Moolahgo ecosystem long-term; more MSOs = greater internal transfer value — <strong style="color:var(--ink)">flywheel effect</strong></div>
+            </div>
+          </div>
+          <div class="feature" style="margin-bottom:6px">
+            <div class="feature-icon">🔌</div>
+            <div class="feature-body">
+              <div class="feature-title">Zero Tech Investment</div>
+              <div class="feature-desc">EX handles all technical integration, merchant operations, and API development. Moolahgo <strong style="color:var(--ink)">only needs to provide APIs + compliance review</strong></div>
+            </div>
+          </div>
+          <div class="feature" style="margin-bottom:0">
+            <div class="feature-icon">🔒</div>
+            <div class="feature-body">
+              <div class="feature-title">Extremely High Client Stickiness</div>
+              <div class="feature-desc">Once an MSO's settlement account is bound, migration costs are prohibitive — <strong style="color:var(--ink)">acquirers, partners, and regulatory reports all depend on that VA</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="col" style="flex:0.6">
+          <h3 style="color:var(--ink-400);font-size:13px;margin-bottom:8px">🏢 For MSO/PSP</h3>
+          <div class="callout" style="margin-bottom:8px">
+            <span class="ico">🚀</span>
+            <div><strong style="color:var(--sky)">Open accounts others can't</strong><br>Banks refuse → Moolahgo opens in 5–10 business days</div>
+          </div>
+          <div class="callout" style="margin-bottom:8px">
+            <span class="ico">🏦</span>
+            <div><strong>PF Settlement Account</strong><br>VA as acquirer settlement receiving account — business launches immediately</div>
+          </div>
+          <div class="callout" style="margin-bottom:8px">
+            <span class="ico">🔁</span>
+            <div><strong>Fund Consolidation + FX</strong><br>Multi-currency VA + wholesale FX rates — one-stop Treasury management</div>
+          </div>
+          <div class="callout" style="margin-bottom:0">
+            <span class="ico">⚡</span>
+            <div><strong>Internal Clearing</strong><br>Real-time transfers between MSOs, zero/minimal fees</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="brand-bar">
+      <span class="brand-logo"><span class="xicon"></span>EurewaX</span>
+      <span class="page-num"></span>
+    </div>
+  </section>
+
+  <!-- Slide 6: Core Business Scenarios -->
+  <section class="slide">
+    <div class="slide-head">
+      <span class="mark">05</span>
+      <h2>Core Business Scenarios</h2>
+      <span class="subtitle">PF Settlement · Fund Consolidation · Internal Clearing</span>
+    </div>
+    <div class="slide-body">
+      <div class="scenario-card">
+        <h4>Scenario 1: MSO as PF Receiving Acquirer Settlement <span class="badge">Core</span></h4>
+        <div class="flow-line">
+          <span class="fstep">Acquirer Settlement</span>
+          <span class="farrow">→</span>
+          <span class="fstep">MSO's Moolahgo VA</span>
+          <span class="farrow">→</span>
+          <span class="fstep">Fund Consolidation</span>
+          <span class="farrow">→</span>
+          <span class="fstep">FX</span>
+          <span class="farrow">→</span>
+          <span class="fstep">Payout to Merchants/Partners</span>
+        </div>
+        <p>MSOs acting as PFs need a bank/VA to receive acquirer settlement funds. Traditional banks refuse → Moolahgo can. Acquirers only need to verify account compliance.</p>
+      </div>
+      <div class="scenario-card">
+        <h4>Scenario 2: Fund Consolidation + FX + Payout</h4>
+        <div class="flow-line">
+          <span class="fstep">Acquirer Settlement</span><span class="farrow">→</span>
+          <span class="fstep">Partner Payments</span><span class="farrow">→</span>
+          <span class="fstep">USD VA</span>
+          <span class="farrow">→ FX →</span>
+          <span class="fstep">IDR VA</span>
+          <span class="farrow">→</span>
+          <span class="fstep">Payout</span>
+        </div>
+        <p>Consolidate funds from multiple sources into VA → wholesale FX conversion → payout to external banks / internal transfer. Entire flow completes within the Moolahgo ecosystem.</p>
+      </div>
+      <div class="scenario-card">
+        <h4>Scenario 3: Internal Clearing Between MSOs</h4>
+        <div class="flow-line">
+          <span class="fstep">MSO-A (Sender)</span>
+          <span class="farrow">→ Internal Transfer →</span>
+          <span class="fstep">MSO-B (Receiver)</span>
+          <span class="farrow">→</span>
+          <span class="fstep">Payout to Beneficiary</span>
+        </div>
+        <p>Traditional: SWIFT T+1–3, $15–50/txn → Moolahgo internal: <strong style="color:var(--sky)">real-time settlement, zero/minimal fees, 24/7</strong></p>
+      </div>
+    </div>
+    <div class="brand-bar">
+      <span class="brand-logo"><span class="xicon"></span>EurewaX</span>
+      <span class="page-num"></span>
+    </div>
+  </section>
+
+  <!-- Slide 7: Closing -->
+  <section class="slide closing">
+    <div class="closing-wrap">
+      <div class="cover-logo" style="margin-bottom:32px;">
+        <span class="x-big"></span>
+        <span>EurewaX</span>
+      </div>
+      <h1>Thank You</h1>
+      <p>Moolahgo does what others dare not — open accounts for payment institutions</p>
+      <p>EX does what others cannot — scale it</p>
+      <div class="contact">
+        <span>📧 <strong>daniel@eurewax.com</strong></span>
+        <span>🌐 <strong>eurewax.com</strong></span>
+        <span>📍 <strong>Singapore · Malaysia · Hong Kong</strong></span>
+      </div>
+    </div>
+    <div class="brand-bar">
+      <span class="brand-logo"><span class="xicon"></span>EurewaX</span>
+      <span class="page-num"></span>
+    </div>
+  </section>
+
+</div>
+
+<button class="export-btn" id="exportBtn" title="Export PDF">
+  <span class="dot"></span>
+  <span>Export PDF</span>
+</button>
+
+<div class="nav">
+  <button id="prev" title="Previous (←)">‹</button>
+  <button id="next" title="Next (→)">›</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  const pad = (n) => String(n).padStart(2, '0');
+  slides.forEach((s, idx) => {
+    const pageEl = s.querySelector('.page-num');
+    if (pageEl) pageEl.textContent = `${pad(idx + 1)} / ${pad(total)}`;
+  });
+
+  function showSlide(i) {
+    current = Math.max(0, Math.min(total - 1, i));
+    slides.forEach((s, idx) => s.classList.toggle('active', idx === current));
+    document.getElementById('progress').style.width = ((current + 1) / total * 100) + '%';
+    document.getElementById('prev').disabled = current === 0;
+    document.getElementById('next').disabled = current === total - 1;
+  }
+
+  document.getElementById('prev').onclick = () => showSlide(current - 1);
+  document.getElementById('next').onclick = () => showSlide(current + 1);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); showSlide(current + 1); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); showSlide(current - 1); }
+    if (e.key === 'Home') showSlide(0);
+    if (e.key === 'End') showSlide(total - 1);
+  });
+
+  document.querySelectorAll('.toc-item[data-go]').forEach(el => {
+    el.addEventListener('click', () => {
+      const idx = parseInt(el.dataset.go, 10) - 1;
+      if (!isNaN(idx)) showSlide(idx);
+    });
+  });
+
+  const deck = document.getElementById('deck');
+  const exportBtn = document.getElementById('exportBtn');
+
+  function enterPrintMode() {
+    document.body.classList.add('print-mode');
+    deck.classList.add('print-mode');
+    slides.forEach(s => s.classList.add('active'));
+  }
+  function exitPrintMode() {
+    document.body.classList.remove('print-mode');
+    deck.classList.remove('print-mode');
+    slides.forEach((s, idx) => s.classList.toggle('active', idx === current));
+  }
+
+  exportBtn.addEventListener('click', async () => {
+    exportBtn.textContent = 'Rendering...';
+    enterPrintMode();
+    await new Promise(r => setTimeout(r, 300));
+    window.print();
+    setTimeout(() => {
+      exitPrintMode();
+      exportBtn.innerHTML = '<span class="dot"></span><span>Export PDF</span>';
+    }, 400);
+  });
+
+  window.addEventListener('afterprint', () => {
+    exitPrintMode();
+    exportBtn.innerHTML = '<span class="dot"></span><span>Export PDF</span>';
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && (e.key === 'p' || e.key === 'P')) {
+      e.preventDefault();
+      exportBtn.click();
+    }
+  });
+
+  showSlide(0);
+</script>
+
+</body>
+</html>

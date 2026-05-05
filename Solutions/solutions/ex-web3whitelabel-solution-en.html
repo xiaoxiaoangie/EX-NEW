@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EX White Label — Web3 Portal Solution</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;background:#f4f5f7;color:#1a1a2e;line-height:1.6;font-size:12px}
+  .page{max-width:900px;margin:0 auto;padding:32px 20px 64px}
+  h1{font-size:22px;font-weight:700;margin-bottom:4px;color:#1a1a2e}
+  h2{font-size:15px;font-weight:700;margin-bottom:12px;color:#1a1a2e;display:flex;align-items:center;gap:8px}
+  h2 .n{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:6px;background:#6366f1;color:#fff;font-size:11px;font-weight:700;flex-shrink:0}
+  h3{font-size:13px;font-weight:600;margin-bottom:6px;color:#374151}
+  .meta{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+  .mt{font-size:10px;padding:2px 8px;border-radius:20px;background:#eef2ff;color:#4f46e5;font-weight:500}
+  .sec{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:16px 18px;margin-bottom:14px}
+
+  table{width:100%;border-collapse:collapse;font-size:11px}
+  th{background:#f9fafb;font-weight:600;text-align:left;padding:6px 8px;border-bottom:2px solid #e5e7eb;white-space:nowrap;color:#374151}
+  td{padding:5px 8px;border-bottom:1px solid #f3f4f6;vertical-align:top}
+  tr:hover td{background:#fafafa}
+
+  pre{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:14px;overflow-x:auto;font-size:11px;line-height:1.5;color:#374151}
+  code{font-family:'SF Mono',Monaco,Consolas,monospace;font-size:10px;background:#f3f4f6;padding:1px 5px;border-radius:3px;color:#6366f1}
+
+  blockquote{border-left:3px solid #6366f1;margin:12px 0;padding:10px 14px;background:#f5f3ff;border-radius:0 6px 6px 0;color:#4b5563;font-size:11px}
+  blockquote strong{color:#4338ca}
+
+  a{color:#4f46e5;text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  .sub{font-size:12px;color:#6b7280;margin-bottom:4px}
+  .tag{display:inline-block;font-size:9px;padding:1px 6px;border-radius:3px;background:#fef3c7;color:#92400e;font-weight:500;margin-left:4px}
+</style>
+</head>
+<body>
+
+<div class="page">
+  <h1>EX White Label — Web3 Portal Solution</h1>
+  <div class="sub">Out of the box, no development required</div>
+
+  <div class="meta">
+    <span class="mt">Document Type: White Label Solution Guide (Web3)</span>
+    <span class="mt">Version: v1.0</span>
+    <span class="mt">Last Updated: 2026-05-05</span>
+    <span class="mt">Companion: <a href="./ex-api-solution-en.html">EX Open API Solution</a> ｜ <a href="./ex-web2whitelabel-solution-en.html">Web2 White Label</a></span>
+  </div>
+
+  <div class="sec">
+    <h2><span class="n">1</span>Solution Overview</h2>
+    <p style="margin-bottom:10px">EX provides a <strong>White Label Portal</strong> solution — out of the box, no development required.</p>
+    <p style="margin-bottom:10px">The Web3 White Label solution focuses on three product pillars: <strong>Crypto On/Off Ramp, Card Issuing, and Crypto Checkout</strong>, targeting crypto exchanges, digital asset service providers, and Web3 payment platforms.</p>
+    <p style="margin-bottom:10px">Based on the product lines activated by the customer, the EX operations team completes configuration and delivers two portals:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Portal</th>
+          <th>Abbreviation</th>
+          <th>User</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Tenant Portal</strong></td>
+          <td>TP</td>
+          <td>Customer (Institution)</td>
+          <td>The operations management console used by the customer to manage merchants, view transactions, configure products, etc.</td>
+        </tr>
+        <tr>
+          <td><strong>Merchant Portal</strong></td>
+          <td>MP</td>
+          <td>Customer's end users (Merchants)</td>
+          <td>The operations portal delivered to end merchants — merchants self-serve crypto exchange, card issuing, checkout, etc.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <pre>
+┌─────────────────────────────────────────────────────────────┐
+│                       EX Platform                            │
+│                                                              │
+│  ┌──────────────────┐    ┌──────────────────┐               │
+│  │  Operations done  │ →  │  Deliver TP + MP │               │
+│  │ (Product+Branding)│    │  (Out of box)    │               │
+│  └──────────────────┘    └──────────────────┘               │
+│                                                              │
+└──────────────────────┬──────────────────────────────────────┘
+                       │
+          ┌────────────┼────────────┐
+          ▼                         ▼
+┌──────────────────┐     ┌──────────────────┐
+│  TP (Tenant)     │     │  MP (Merchant)   │
+│                  │     │                  │
+│ Customer uses    │     │ Merchant uses    │
+│ Manage merchants │     │ Ramp/Card/Checkout│
+└──────────────────┘     └──────────────────┘
+    </pre>
+
+    <blockquote>
+      <strong>Core Value</strong>: Customers can launch their Web3 business quickly with zero development investment — once products are activated, they immediately get a complete operations console (TP) and a merchant-facing portal (MP).
+    </blockquote>
+  </div>
+
+  <div class="sec">
+    <h2><span class="n">2</span>Who Is Web3 White Label For</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Customer Type</th>
+          <th>Scenario</th>
+          <th>Why Recommend</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Crypto Exchange</strong></td>
+          <td>Provide fiat on/off ramp and crypto deposit/withdrawal for users</td>
+          <td>Quickly launch ramp services without building your own compliance framework</td>
+        </tr>
+        <tr>
+          <td><strong>Digital Asset Service Provider</strong></td>
+          <td>Resell crypto ramp and card issuing services to end merchants</td>
+          <td>No development; manage merchants via TP, deliver MP to merchants</td>
+        </tr>
+        <tr>
+          <td><strong>Web3 Payment Platform</strong></td>
+          <td>Enable merchants to accept crypto payments</td>
+          <td>Checkout out of the box; merchants operate directly in MP</td>
+        </tr>
+        <tr>
+          <td><strong>Early-stage Crypto Fintech</strong></td>
+          <td>Just starting, prioritize validating Web3 business model</td>
+          <td>Zero dev cost; validate business first, then consider API integration</td>
+        </tr>
+        <tr>
+          <td><strong>Virtual Card Issuing Platform</strong></td>
+          <td>Batch card issuance, fund management</td>
+          <td>Full card lifecycle in portal, out of the box</td>
+        </tr>
+        <tr>
+          <td><strong>Licensed Financial Institution</strong></td>
+          <td>Expand new Web3 business lines (ramp, cards, crypto checkout)</td>
+          <td>TP-managed; rapidly expand product lines</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sec">
+    <h2><span class="n">3</span>Product Matrix</h2>
+    <p style="margin-bottom:10px">The Web3 White Label solution covers the following product pillars:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Product Pillar</th>
+          <th>Product</th>
+          <th>Capabilities</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td rowspan="4" style="font-weight:600;color:#6366f1">On/Off Ramp</td>
+          <td>Fiat Account</td>
+          <td>Deposit, Withdrawal, Balance inquiry</td>
+        </tr>
+        <tr>
+          <td>Crypto Wallet</td>
+          <td>Crypto Deposit, Crypto Withdrawal, Crypto Refund</td>
+        </tr>
+        <tr>
+          <td>Buy Crypto</td>
+          <td>Buy Crypto, Fiat to Crypto</td>
+        </tr>
+        <tr>
+          <td>Sell Crypto</td>
+          <td>Sell Crypto, Crypto to Fiat</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:#f59e0b">Checkout</td>
+          <td>Crypto Checkout</td>
+          <td>Acquirer Authorization, Acquirer Refund</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:#ef4444">Card Issuing</td>
+          <td>VCC (Virtual Credit Card)</td>
+          <td>Card application, card management, fund-in, fund-out, cancellation, card transactions, 3DS verification</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sec">
+    <h2><span class="n">4</span>White Label Capability Matrix</h2>
+    <p style="margin-bottom:10px">Based on the product lines activated by the customer, TP and MP automatically display the corresponding modules:</p>
+
+    <h3>4.1 TP (Tenant Portal) — For the Customer</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Module</th>
+          <th>Description</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Merchant Management</strong></td>
+          <td>Register merchants, submit & track basic information, manage merchant status</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Merchant Product Inquiry</td>
+          <td>View products activated by merchants. Adding additional products is planned for June; currently only one product per merchant.</td>
+          <td>If a customer activates one product and then wants another, the operations team's support is required.</td>
+        </tr>
+        <tr>
+          <td>Merchant Fee Management</td>
+          <td>Manage merchant product fees</td>
+          <td>Standard pricing must be emailed to operations. Merchant-specific pricing is configurable here. Requires one configurator and one approver.</td>
+        </tr>
+        <tr>
+          <td>Merchant FX Pricing <span class="tag">Coming Soon</span></td>
+          <td>Manage merchant ramp exchange rate markup</td>
+          <td>Default unified markup via operations; merchant-specific configurations set here.</td>
+        </tr>
+        <tr>
+          <td>Merchant Transactions</td>
+          <td>View all merchants' ramp transactions, card transactions, checkout transactions</td>
+          <td>Displayed by product line</td>
+        </tr>
+        <tr>
+          <td>Ticket Approval</td>
+          <td>Approvers for fees and rates review tickets — only effective after approval</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>My Commission</td>
+          <td>Your transaction commission bills and settlement statements</td>
+          <td>All products</td>
+        </tr>
+        <tr>
+          <td>Add-on: Sales Management</td>
+          <td>Generate a customer-acquisition link for each salesperson</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Add-on: Sub-Agency Management</td>
+          <td>Develop sub-agencies at the next tier</td>
+          <td>Currently only transactions support rebates; FX rebates not yet supported. Operations manual available from the operations team.</td>
+        </tr>
+        <tr>
+          <td>Account Permissions</td>
+          <td>Assign accounts to other users</td>
+          <td>Permissions currently only control page access, not actions.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top:14px">4.2 MP (Merchant Portal) — For End Merchants</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Module</th>
+          <th>Description</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Merchant Registration & Onboarding</td>
+          <td>Submit materials required for ramp/card issuing/checkout activation, including KYC and business information</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><strong>Crypto Wallet</strong></td>
+          <td>View crypto wallet balance, deposit addresses, deposit/withdrawal history</td>
+          <td>Multi-chain, multi-asset support</td>
+        </tr>
+        <tr>
+          <td><strong>Fiat Account</strong></td>
+          <td>View fiat account balance, deposit/withdrawal history</td>
+          <td>Fiat account for ramp services</td>
+        </tr>
+        <tr>
+          <td><strong>Buy / Sell Crypto</strong></td>
+          <td>Buy crypto, sell crypto, fiat-to-crypto, crypto-to-fiat</td>
+          <td>Real-time quotes; confirm within validity period</td>
+        </tr>
+        <tr>
+          <td><strong>Crypto Checkout</strong></td>
+          <td>Create payment orders, view checkout transaction history</td>
+          <td>Supports both API integration and hosted checkout page</td>
+        </tr>
+        <tr>
+          <td><strong>Card Issuing</strong></td>
+          <td>Apply for virtual cards, view card info, fund-in/out, view card transaction history</td>
+          <td>Multi-card management</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sec">
+    <h2><span class="n">5</span>Web2 vs Web3 White Label Comparison</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Dimension</th>
+          <th>Web2 White Label</th>
+          <th>Web3 White Label</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Core Products</strong></td>
+          <td>Fiat Collection & Payout (VA / Payout / FX / Accounts)</td>
+          <td>On/Off Ramp (Crypto Deposit/Withdrawal/Buy/Sell) + Card Issuing + Crypto Checkout</td>
+        </tr>
+        <tr>
+          <td><strong>Target Customers</strong></td>
+          <td>Cross-border e-commerce, B2B trade, agency institutions</td>
+          <td>Crypto exchanges, Web3 payment, digital asset service providers</td>
+        </tr>
+        <tr>
+          <td><strong>MP Core Operations</strong></td>
+          <td>VA collection, fiat payout, FX conversion</td>
+          <td>Crypto deposit/withdrawal, buy/sell crypto, card issuing, crypto checkout</td>
+        </tr>
+        <tr>
+          <td><strong>TP Management Focus</strong></td>
+          <td>Collection/payout transactions, FX settlement, trade documents</td>
+          <td>Ramp transactions, card management, checkout transactions</td>
+        </tr>
+        <tr>
+          <td><strong>Sub-Agency / Commission</strong></td>
+          <td>✅ Same</td>
+          <td>✅ Same</td>
+        </tr>
+        <tr>
+          <td><strong>Delivery Process</strong></td>
+          <td>✅ Same</td>
+          <td>✅ Same</td>
+        </tr>
+        <tr>
+          <td><strong>Brand Configuration</strong></td>
+          <td>✅ Same</td>
+          <td>✅ Same</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <blockquote>
+      If you need to cover both Web2 and Web3 scenarios, you can activate product lines from both solutions — TP/MP will automatically display all activated products.
+    </blockquote>
+  </div>
+
+  <div class="sec">
+    <h2><span class="n">6</span>Delivery Process</h2>
+
+    <pre>
+├── 1. Offline Contract Signing
+│     └── Sign contract with the account manager
+│
+├── 2. EX Operations Configuration (1-2 business days)
+│     ├── Create tenant
+│     ├── Configure branding (logo, domain, email templates)
+│     └── Configure standard merchant pricing / FX rates
+│
+├── 3. Deliver TP (Tenant Portal)
+│     └── Customer gets access to the TP console
+│     └── Customer can start registering and managing merchants in TP
+│
+├── 4. Deliver MP (Merchant Portal)
+│     └── Merchants register via the tenant link
+│     └── Complete KYC/KYB → Activate products → Start using
+│
+└── 5. Go Live
+      └── Customer manages daily operations via TP
+      └── End merchants self-serve via MP
+    </pre>
+
+    <h3 style="margin-top:14px">Delivery Timeline</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Stage</th>
+          <th>Content</th>
+          <th>Estimated Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Offline Signing</td>
+          <td>Sign contract</td>
+          <td>1-2 days</td>
+        </tr>
+        <tr>
+          <td>Operations Configuration</td>
+          <td>Tenant creation, fee configuration, domain configuration, etc.</td>
+          <td>1-2 business days</td>
+        </tr>
+        <tr>
+          <td>Delivery</td>
+          <td>Deliver MP and TP</td>
+          <td>1 day (included in above; delivered upon configuration completion)</td>
+        </tr>
+        <tr>
+          <td>Production Validation</td>
+          <td>Merchant registration → KYC → Product activation</td>
+          <td>3-5 business days (including review)</td>
+        </tr>
+        <tr>
+          <td><strong>Total</strong></td>
+          <td><strong>From signing to first batch of merchants operational</strong></td>
+          <td><strong>2-10 business days (depending on production validation)</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+</body>
+</html>

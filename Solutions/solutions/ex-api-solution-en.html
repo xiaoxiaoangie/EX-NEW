@@ -218,15 +218,26 @@
   <div class="sec">
     <h2><span class="n">3</span>Product Overview</h2>
 
+    <h4 style="margin-top:4px;color:#10b981">Fiat Payment Products</h4>
     <div class="pg">
-      <div class="pi" style="border-color:#10b981"><div class="pi-ico">🏦</div><div class="pi-t">Fiat Collection</div><div class="pi-c">FIAT_COLLECTION</div><div class="pi-d">VA Virtual Accounts<br>Store Management · Collection</div></div>
-      <div class="pi" style="border-color:#10b981"><div class="pi-ico">💸</div><div class="pi-t">Fiat Payout</div><div class="pi-c">FIAT_PAYOUT</div><div class="pi-d">Payee Management<br>Regular Payout · CN Settlement (special)</div></div>
-      <div class="pi" style="border-color:#3b82f6"><div class="pi-ico">💱</div><div class="pi-t">FX Services</div><div class="pi-c">With Fiat Activation</div><div class="pi-d">Rate Inquiry<br>Quote & Lock · FX Conversion</div></div>
-      <div class="pi" style="border-color:#8b5cf6"><div class="pi-ico">🔐</div><div class="pi-t">Crypto Wallet</div><div class="pi-c">CRYPTO_WALLET</div><div class="pi-d">Crypto Deposit/Withdrawal<br>Balance Inquiry</div></div>
-      <div class="pi" style="border-color:#8b5cf6"><div class="pi-ico">⬆️</div><div class="pi-t">Fiat OnRamp</div><div class="pi-c">FIAT_ONRAMP</div><div class="pi-d">Fiat → Crypto</div></div>
-      <div class="pi" style="border-color:#8b5cf6"><div class="pi-ico">⬇️</div><div class="pi-t">Fiat OffRamp</div><div class="pi-c">FIAT_OFFRAMP</div><div class="pi-d">Crypto → Fiat</div></div>
-      <div class="pi" style="border-color:#f59e0b"><div class="pi-ico">🛒</div><div class="pi-t">Checkout</div><div class="pi-c">With Crypto Activation</div><div class="pi-d">API Checkout<br>Hosted Checkout Page</div></div>
-      <div class="pi" style="border-color:#ef4444"><div class="pi-ico">💳</div><div class="pi-t">VCC Issuing</div><div class="pi-c">CARD_ISSUING</div><div class="pi-d">Virtual Card Application<br>Fund Management · Transaction Monitoring</div></div>
+      <div class="pi" style="border-color:#10b981"><div class="pi-ico">🏦</div><div class="pi-t">Fiat Account</div><div class="pi-c">Fiat Account</div><div class="pi-d">Deposit · Withdrawal · Balance<br>Transfer · Fund Consolidation</div></div>
+      <div class="pi" style="border-color:#10b981"><div class="pi-ico">📥</div><div class="pi-t">Collection</div><div class="pi-c">FIAT_COLLECTION</div><div class="pi-d">VA Application · VA Management<br>Collection · Refund</div></div>
+      <div class="pi" style="border-color:#10b981"><div class="pi-ico">💸</div><div class="pi-t">Payout</div><div class="pi-c">FIAT_PAYOUT</div><div class="pi-d">Global Payout · Local Payout<br>VAT Payment · CN Settlement</div></div>
+      <div class="pi" style="border-color:#10b981"><div class="pi-ico">💱</div><div class="pi-t">FX Services</div><div class="pi-c">FX</div><div class="pi-d">Rate Inquiry · Quote & Lock<br>Real-time FX</div></div>
+    </div>
+    <h4 style="margin-top:8px;color:#8b5cf6">Crypto Services</h4>
+    <div class="pg">
+      <div class="pi" style="border-color:#8b5cf6"><div class="pi-ico">🏦</div><div class="pi-t">Fiat Account</div><div class="pi-c">Fiat Account</div><div class="pi-d">Deposit · Withdrawal · Balance</div></div>
+      <div class="pi" style="border-color:#8b5cf6"><div class="pi-ico">🔐</div><div class="pi-t">Crypto Wallet</div><div class="pi-c">CRYPTO_WALLET</div><div class="pi-d">Crypto Deposit · Withdrawal<br>Crypto Refund</div></div>
+      <div class="pi" style="border-color:#8b5cf6"><div class="pi-ico">⬆️</div><div class="pi-t">Buy Crypto</div><div class="pi-c">Buy Crypto</div><div class="pi-d">Buy Crypto<br>Fiat to Crypto</div></div>
+      <div class="pi" style="border-color:#8b5cf6"><div class="pi-ico">⬇️</div><div class="pi-t">Sell Crypto</div><div class="pi-c">Sell Crypto</div><div class="pi-d">Sell Crypto<br>Crypto to Fiat</div></div>
+    </div>
+    <h4 style="margin-top:8px;color:#6b7280">Checkout · Card Issuing · Public Services</h4>
+    <div class="pg">
+      <div class="pi" style="border-color:#f59e0b"><div class="pi-ico">🛒</div><div class="pi-t">Crypto Checkout</div><div class="pi-c">Checkout</div><div class="pi-d">Payment · Refund<br>API / Hosted Page</div></div>
+      <div class="pi" style="border-color:#ef4444"><div class="pi-ico">💳</div><div class="pi-t">VCC Issuing</div><div class="pi-c">CARD_ISSUING</div><div class="pi-d">Card Application · Management<br>Fund In · Transactions · 3DS</div></div>
+      <div class="pi" style="border-color:#6366f1"><div class="pi-ico">⚙️</div><div class="pi-t">Public Services</div><div class="pi-c">Auth / Notification</div><div class="pi-d">Get Token · Webhook<br>File Upload · Supplements</div></div>
+      <div class="pi" style="border-color:#6366f1"><div class="pi-ico">🛡️</div><div class="pi-t">Onboarding</div><div class="pi-c">KYC / KYB</div><div class="pi-d">Registration · Identity Review<br>Product Activation</div></div>
     </div>
 
     <h3 style="margin-top:14px">Architecture Overview</h3>
@@ -262,8 +273,7 @@
         </div>
       </div>
     </div>
-
-   
+  </div>
 
   <!-- 4. Technical Specifications -->
   <div class="sec">
@@ -334,24 +344,56 @@
       </div>
     </details>
 
-    <!-- 6.1 Fiat Collection -->
+    <!-- Fiat Payment Products -->
+    <h3 style="margin-top:12px;color:#10b981;font-size:12px;border-bottom:2px solid #10b981;padding-bottom:4px">Fiat Payment Products</h3>
+
+    <!-- 6.1 Fiat Account -->
     <details>
-      <summary><span class="sf-num" style="width:16px;height:16px;font-size:8px">1</span> Fiat Collection<span style="font-size:9px;color:#6b7280;font-weight:400;margin-left:auto">E-commerce seller collection, B2B trade</span></summary>
+      <summary><span class="sf-num" style="width:16px;height:16px;font-size:8px">1</span> Fiat Account<span style="font-size:9px;color:#6b7280;font-weight:400;margin-left:auto">Deposit / Withdrawal / Balance / Transfer / Consolidation</span></summary>
+      <div class="det-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <div style="background:#f9fafb;border-radius:5px;padding:6px 8px">
+            <div style="font-size:10px;font-weight:600;margin-bottom:4px">Account Management</div>
+            <div class="flow-row"><span class="fn ex">Query Account</span><span class="fa">·</span><span class="fn ex">Authorize</span><span class="fa">·</span><span class="fn ex">Revoke Auth</span></div>
+          </div>
+          <div style="background:#f9fafb;border-radius:5px;padding:6px 8px">
+            <div style="font-size:10px;font-weight:600;margin-bottom:4px">Account Transactions</div>
+            <div class="flow-row"><span class="fn you">Transfer</span><span class="fa">·</span><span class="fn you">Batch Transfer</span><span class="fa">·</span><span class="fn you">Consolidation</span></div>
+            <div style="margin-top:3px"><span class="wb">Fund Consolidation Result</span></div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <!-- 6.2 Collection -->
+    <details>
+      <summary><span class="sf-num" style="width:16px;height:16px;font-size:8px">2</span> Collection<span style="font-size:9px;color:#6b7280;font-weight:400;margin-left:auto">E-commerce seller collection, B2B trade</span></summary>
       <div class="det-body">
         <div class="flow-row" style="margin-bottom:6px">
+          <span class="fn you">Store Management</span><span class="fa">→</span>
           <span class="fn you">Apply for VA</span><span class="fa">→</span>
           <span class="fn ex">Get VA Account</span><span class="fa">→</span>
           <span class="fn sp">Remitter sends funds</span><span class="fa">→</span>
           <span class="fn wh">Webhook: Incoming</span><span class="fa">→</span>
           <span class="fn you">Confirm receipt</span>
         </div>
-        <div class="note info">ℹ️ VA collection is passive credit — no active transaction API needed. System automatically pushes Webhook upon arrival. Based on SP requirements, store binding may be needed when applying for VA.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:10px">
+          <div style="background:#f9fafb;border-radius:5px;padding:6px 8px">
+            <div style="font-weight:600;margin-bottom:2px">Store Management</div>
+            <div style="color:#6b7280;line-height:1.4">Get Platform Sites · Add Store Holder<br>Bind Store · Query Store Info</div>
+          </div>
+          <div style="background:#f9fafb;border-radius:5px;padding:6px 8px">
+            <div style="font-weight:600;margin-bottom:2px">VA Account Services</div>
+            <div style="color:#6b7280;line-height:1.4">Apply for VA · Download Certificate<br>Query VA · <span class="wb">VA Change Notification</span></div>
+          </div>
+        </div>
+        <div class="note info" style="margin-top:6px">ℹ️ VA collection is passive credit — no active transaction API needed. System automatically pushes Webhook upon arrival.</div>
       </div>
     </details>
 
-    <!-- 6.2 Fiat Payout -->
+    <!-- 6.3 Payout -->
     <details>
-      <summary><span class="sf-num" style="width:16px;height:16px;font-size:8px">2</span> Fiat Payout<span style="font-size:9px;color:#6b7280;font-weight:400;margin-left:auto">Supplier payment, cross-border remittance</span></summary>
+      <summary><span class="sf-num" style="width:16px;height:16px;font-size:8px">3</span> Payout<span style="font-size:9px;color:#6b7280;font-weight:400;margin-left:auto">Supplier payment, CN settlement</span></summary>
       <div class="det-body">
         <h4 style="margin-top:0">Regular Fiat Payout</h4>
         <div class="flow-row" style="margin-bottom:6px">
@@ -362,17 +404,16 @@
           <span class="fn you">Query Status</span>
         </div>
         <h4 style="margin-top:8px">Special Case: Settlement to Mainland China</h4>
-        <div class="note warn" style="margin-bottom:8px">⚠️ Due to foreign exchange control requirements, funds entering mainland China must provide <strong>trade background documents</strong> (orders, logistics receipts, contracts, etc.) and pass compliance review before generating RMB settlement quota.</div>
-
+        <div class="note warn" style="margin-bottom:8px">⚠️ Due to FX control requirements, funds entering mainland China require <strong>trade background documents</strong> and compliance review before generating RMB quota.</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:10px;margin-bottom:6px">
           <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:8px">
             <div style="font-weight:600;color:#374151;margin-bottom:6px;display:flex;align-items:center;gap:4px"><span style="background:#6366f1;color:#fff;width:16px;height:16px;border-radius:50%;font-size:9px;display:flex;align-items:center;justify-content:center">1</span>Method 1: Manual Upload</div>
             <div style="display:flex;flex-direction:column;gap:3px">
-              <div style="background:#fff;border:1px solid #d1d5db;border-radius:4px;padding:4px 6px;text-align:center"><strong>Merchant</strong> uploads trade docs</div>
+              <div style="background:#fff;border:1px solid #d1d5db;border-radius:4px;padding:4px 6px;text-align:center"><strong>Merchant</strong> uploads settlement docs</div>
               <div style="color:#9ca3af;text-align:center">↓</div>
-              <div style="background:#eef2ff;border:1px solid #c7d2fe;border-radius:4px;padding:4px 6px;text-align:center"><strong>EX/SP</strong> compliance review</div>
+              <div style="background:#eef2ff;border:1px solid #c7d2fe;border-radius:4px;padding:4px 6px;text-align:center"><span class="wb">Settlement Doc Review Result</span></div>
               <div style="color:#9ca3af;text-align:center">↓</div>
-              <div style="background:#dcfce7;border:1px solid #86efac;border-radius:4px;padding:4px 6px;text-align:center">Generate quota (CNY)</div>
+              <div style="background:#dcfce7;border:1px solid #86efac;border-radius:4px;padding:4px 6px;text-align:center">Query Settlement Quota (CNY)</div>
               <div style="color:#9ca3af;text-align:center">↓</div>
               <div style="background:#fff;border:1px solid #10b981;border-radius:4px;padding:4px 6px;text-align:center"><strong>Merchant</strong> initiates payout</div>
             </div>
@@ -390,17 +431,16 @@
             </div>
           </div>
         </div>
-        <div class="note info" style="margin-top:6px">ℹ️ Both methods are automatically matched by EX based on the merchant's SP. Merchants don't need to understand underlying differences.</div>
+        <div class="note info" style="margin-top:6px">ℹ️ Both methods are automatically matched by EX based on the merchant's SP.</div>
       </div>
     </details>
 
-    <!-- 6.3 FX -->
+    <!-- 6.4 FX -->
     <details>
-      <summary><span class="sf-num" style="width:16px;height:16px;font-size:8px">3</span> FX Conversion<span style="font-size:9px;color:#6b7280;font-weight:400;margin-left:auto">Multi-currency conversion, rate locking</span></summary>
+      <summary><span class="sf-num" style="width:16px;height:16px;font-size:8px">4</span> FX Services<span style="font-size:9px;color:#6b7280;font-weight:400;margin-left:auto">Multi-currency conversion, rate locking</span></summary>
       <div class="det-body">
         <div class="flow-row">
-          <span class="fn you">Determine Currency Pair</span><span class="fa">→</span>
-          <span class="fn ex">Query Rate</span><span class="fa">→</span>
+          <span class="fn you">Query Rate</span><span class="fa">→</span>
           <span class="fn you">Request Quote & Lock</span><span class="fa">→</span>
           <span class="fn ex">quote_id + rate</span><span class="fa">→</span>
           <span class="fn you">Execute FX</span><span class="fa">→</span>
@@ -410,44 +450,87 @@
       </div>
     </details>
 
-    <!-- 6.4 Crypto Deposit/Withdrawal -->
+    <!-- Crypto Services -->
+    <h3 style="margin-top:12px;color:#8b5cf6;font-size:12px;border-bottom:2px solid #8b5cf6;padding-bottom:4px">Crypto Services</h3>
+    <div class="note info" style="margin-top:4px;margin-bottom:6px">ℹ️ Crypto services have independent fiat accounts and crypto wallets, separate from fiat payment product accounts (different SPs).</div>
+
+    <!-- 6.5 Crypto Fiat Account -->
     <details>
-      <summary><span class="sf-num" style="width:16px;height:16px;font-size:8px">4</span> Crypto Deposit & Withdrawal<span style="font-size:9px;color:#6b7280;font-weight:400;margin-left:auto">Exchange deposit/withdrawal, fund consolidation</span></summary>
+      <summary><span class="sf-num" style="width:16px;height:16px;font-size:8px">5</span> Fiat Account (Crypto)<span style="font-size:9px;color:#6b7280;font-weight:400;margin-left:auto">Crypto account fiat deposit/withdrawal</span></summary>
       <div class="det-body">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
           <div style="background:#f9fafb;border-radius:5px;padding:6px 8px">
-            <div style="font-size:10px;font-weight:600;margin-bottom:4px">Deposit</div>
-            <div class="flow-row"><span class="fn ex">Get On-chain Address</span><span class="fa">→</span><span class="fn sp">User sends crypto</span><span class="fa">→</span><span class="fn wh">Webhook: Incoming</span></div>
+            <div style="font-size:10px;font-weight:600;margin-bottom:4px">Fiat Deposit</div>
+            <div class="flow-row"><span class="fn you">Fiat Deposit</span><span class="fa">→</span><span class="fn wh">Webhook: Result</span></div>
           </div>
           <div style="background:#f9fafb;border-radius:5px;padding:6px 8px">
-            <div style="font-size:10px;font-weight:600;margin-bottom:4px">Withdrawal</div>
-            <div class="flow-row"><span class="fn you">Add Payee</span><span class="fa">→</span><span class="fn you">Initiate Withdrawal</span><span class="fa">→</span><span class="fn wh">Webhook: Result</span></div>
+            <div style="font-size:10px;font-weight:600;margin-bottom:4px">Fiat Withdrawal</div>
+            <div class="flow-row"><span class="fn you">Fiat Withdrawal</span><span class="fa">→</span><span class="fn wh">Webhook: Result</span></div>
           </div>
         </div>
+        <div class="note info" style="margin-top:6px">ℹ️ Use fee estimation API to get estimated fees in advance</div>
       </div>
     </details>
 
-    <!-- 6.5 Buy/Sell Crypto -->
+    <!-- 6.6 Crypto Wallet -->
     <details>
-      <summary><span class="sf-num" style="width:16px;height:16px;font-size:8px">5</span> Buy/Sell Crypto / OnRamp / OffRamp<span style="font-size:9px;color:#6b7280;font-weight:400;margin-left:auto">Fiat to crypto, crypto to fiat</span></summary>
+      <summary><span class="sf-num" style="width:16px;height:16px;font-size:8px">6</span> Crypto Wallet<span style="font-size:9px;color:#6b7280;font-weight:400;margin-left:auto">On-chain deposit / withdrawal</span></summary>
       <div class="det-body">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
           <div style="background:#f9fafb;border-radius:5px;padding:6px 8px">
-            <div style="font-size:10px;font-weight:600;margin-bottom:4px">Buy Crypto / OnRamp (Fiat → Crypto)</div>
-            <div class="flow-row"><span class="fn you">Get Quote</span><span class="fa">→</span><span class="fn you">Confirm Buy</span><span class="fa">→</span><span class="fn wh">Webhook</span></div>
+            <div style="font-size:10px;font-weight:600;margin-bottom:4px">Crypto Deposit</div>
+            <div class="flow-row"><span class="fn ex">Query Collection Tool</span><span class="fa">→</span><span class="fn sp">User sends crypto</span><span class="fa">→</span><span class="fn wh">Webhook: Incoming</span></div>
           </div>
           <div style="background:#f9fafb;border-radius:5px;padding:6px 8px">
-            <div style="font-size:10px;font-weight:600;margin-bottom:4px">Sell Crypto / OffRamp (Crypto → Fiat)</div>
-            <div class="flow-row"><span class="fn you">Get Quote</span><span class="fa">→</span><span class="fn you">Confirm Sell</span><span class="fa">→</span><span class="fn wh">Webhook</span></div>
+            <div style="font-size:10px;font-weight:600;margin-bottom:4px">Crypto Withdrawal</div>
+            <div class="flow-row"><span class="fn you">Add Payee</span><span class="fa">→</span><span class="fn you">Withdraw Crypto</span><span class="fa">→</span><span class="fn wh">Webhook: Result</span></div>
+          </div>
+        </div>
+        <div class="note info" style="margin-top:6px">ℹ️ Payee must pass review before withdrawal · Use fee estimation for estimated fees</div>
+      </div>
+    </details>
+
+    <!-- 6.7 Buy Crypto -->
+    <details>
+      <summary><span class="sf-num" style="width:16px;height:16px;font-size:8px">7</span> Buy Crypto<span style="font-size:9px;color:#6b7280;font-weight:400;margin-left:auto">Buy crypto, fiat to crypto</span></summary>
+      <div class="det-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <div style="background:#f9fafb;border-radius:5px;padding:6px 8px">
+            <div style="font-size:10px;font-weight:600;margin-bottom:4px">Buy Crypto</div>
+            <div class="flow-row"><span class="fn you">Get Buy Quote</span><span class="fa">→</span><span class="fn you">Buy Crypto</span><span class="fa">→</span><span class="fn wh">Webhook</span></div>
+          </div>
+          <div style="background:#f9fafb;border-radius:5px;padding:6px 8px">
+            <div style="font-size:10px;font-weight:600;margin-bottom:4px">Fiat to Crypto</div>
+            <div class="flow-row"><span class="fn you">Get F2C Quote</span><span class="fa">→</span><span class="fn you">Fiat to Crypto</span><span class="fa">→</span><span class="fn wh">Webhook</span></div>
           </div>
         </div>
         <div class="note warn" style="margin-top:6px">⚠️ All quotes have expiration times. Execute before expiry or request a new quote.</div>
       </div>
     </details>
 
-    <!-- 6.6 Checkout -->
+    <!-- 6.8 Sell Crypto -->
     <details>
-      <summary><span class="sf-num" style="width:16px;height:16px;font-size:8px">6</span> Checkout<span style="font-size:9px;color:#6b7280;font-weight:400;margin-left:auto">Merchant accepts digital currency payments</span></summary>
+      <summary><span class="sf-num" style="width:16px;height:16px;font-size:8px">8</span> Sell Crypto<span style="font-size:9px;color:#6b7280;font-weight:400;margin-left:auto">Sell crypto, crypto to fiat</span></summary>
+      <div class="det-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <div style="background:#f9fafb;border-radius:5px;padding:6px 8px">
+            <div style="font-size:10px;font-weight:600;margin-bottom:4px">Sell Crypto</div>
+            <div class="flow-row"><span class="fn you">Get Sell Quote</span><span class="fa">→</span><span class="fn you">Sell Crypto</span><span class="fa">→</span><span class="fn wh">Webhook</span></div>
+          </div>
+          <div style="background:#f9fafb;border-radius:5px;padding:6px 8px">
+            <div style="font-size:10px;font-weight:600;margin-bottom:4px">Crypto to Fiat</div>
+            <div class="flow-row"><span class="fn you">Get C2F Quote</span><span class="fa">→</span><span class="fn you">Crypto to Fiat</span><span class="fa">→</span><span class="fn wh">Webhook</span></div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <!-- Checkout -->
+    <h3 style="margin-top:12px;color:#f59e0b;font-size:12px;border-bottom:2px solid #f59e0b;padding-bottom:4px">Checkout</h3>
+
+    <!-- 6.9 Crypto Checkout -->
+    <details>
+      <summary><span class="sf-num" style="width:16px;height:16px;font-size:8px">9</span> Crypto Checkout<span style="font-size:9px;color:#6b7280;font-weight:400;margin-left:auto">Merchant accepts digital currency payments</span></summary>
       <div class="det-body">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
           <div style="background:#f9fafb;border-radius:5px;padding:6px 8px">
@@ -464,23 +547,30 @@
       </div>
     </details>
 
-    <!-- 6.7 VCC -->
+    <!-- Card Issuing -->
+    <h3 style="margin-top:12px;color:#ef4444;font-size:12px;border-bottom:2px solid #ef4444;padding-bottom:4px">Card Issuing</h3>
+
+    <!-- 6.10 VCC -->
     <details>
-      <summary><span class="sf-num" style="width:16px;height:16px;font-size:8px">7</span> VCC Issuing<span style="font-size:9px;color:#6b7280;font-weight:400;margin-left:auto">Standalone card platform, integrated payment expansion</span></summary>
+      <summary><span class="sf-num" style="width:16px;height:16px;font-size:8px">10</span> VCC Issuing<span style="font-size:9px;color:#6b7280;font-weight:400;margin-left:auto">Standalone card platform, integrated payment expansion</span></summary>
       <div class="det-body">
         <div class="flow-row" style="margin-bottom:6px">
-          <span class="fn you">Fund Wallet</span><span class="fa">→</span>
           <span class="fn ex">Query Card Products</span><span class="fa">→</span>
           <span class="fn you">Card Application</span><span class="fa">→</span>
           <span class="fn wh">Webhook: Card Result</span><span class="fa">→</span>
+          <span class="fn you">Fund Card</span><span class="fa">→</span>
           <span class="fn you">Card Management</span>
         </div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;font-size:9px">
           <div style="background:#f9fafb;border-radius:4px;padding:5px 6px;text-align:center"><div style="font-weight:600;color:#374151">Card Info Query</div><div style="color:#6b7280">Card Number · CVV · Expiry · Balance</div></div>
-          <div style="background:#f9fafb;border-radius:4px;padding:5px 6px;text-align:center"><div style="font-weight:600;color:#374151">Fund Operations</div><div style="color:#6b7280">Fund Card · Withdraw from Card</div></div>
-          <div style="background:#f9fafb;border-radius:4px;padding:5px 6px;text-align:center"><div style="font-weight:600;color:#374151">Card Management</div><div style="color:#6b7280">Freeze · Unfreeze · Cancel · Limit</div></div>
+          <div style="background:#f9fafb;border-radius:4px;padding:5px 6px;text-align:center"><div style="font-weight:600;color:#374151">Fund Operations</div><div style="color:#6b7280">Fund In · Fund Out</div></div>
+          <div style="background:#f9fafb;border-radius:4px;padding:5px 6px;text-align:center"><div style="font-weight:600;color:#374151">Card Management</div><div style="color:#6b7280">Activate · Freeze · Unfreeze · Cancel · Limit</div></div>
         </div>
-        <div class="note warn" style="margin-top:6px">⚠️ Funding may trigger compliance document requests, respond promptly · Card transactions trigger 3DS verification notifications</div>
+        <div style="margin-top:4px;font-size:9px;color:#6b7280">
+          <span class="wb">Card Transaction Result</span>
+          <span class="wb" style="margin-left:3px">Card 3DS Verification</span>
+          <span class="wb" style="margin-left:3px">Card Status Change</span>
+        </div>
       </div>
     </details>
   </div>
@@ -510,15 +600,18 @@
 
     <h3 style="margin-top:14px">Phase 2 — Timeline by Product Line</h3>
     <table style="margin-top:4px">
-      <thead><tr><th>Product Line</th><th>Estimated Time</th><th>Parallel</th></tr></thead>
+      <thead><tr><th>Product Category</th><th>Product</th><th>Estimated Time</th><th>Parallel</th></tr></thead>
       <tbody>
-        <tr><td>Fiat Collection (VA + Collection)</td><td>5-7 days</td><td><span class="ty y">✅</span></td></tr>
-        <tr><td>Fiat Payout (Payee + Payout + Settlement)</td><td>5-7 days</td><td><span class="ty y">✅</span></td></tr>
-        <tr><td>FX Conversion</td><td>2-3 days</td><td><span class="ty y">✅</span></td></tr>
-        <tr><td>Crypto Deposit/Withdrawal</td><td>5-7 days</td><td><span class="ty y">✅</span></td></tr>
-        <tr><td>Buy/Sell Digital Currency</td><td>3-5 days</td><td><span class="ty y">✅</span></td></tr>
-        <tr><td>Checkout</td><td>3-5 days</td><td><span class="ty y">✅</span></td></tr>
-        <tr><td>VCC Issuing</td><td>7-10 days</td><td><span class="ty y">✅</span></td></tr>
+        <tr><td rowspan="4" style="font-weight:600;color:#10b981">Fiat Payments</td><td>Fiat Account (Deposit + Transfer + Consolidation)</td><td>3-5 days</td><td><span class="ty y">✅</span></td></tr>
+        <tr><td>Collection (VA + Store + Incoming)</td><td>5-7 days</td><td><span class="ty y">✅</span></td></tr>
+        <tr><td>Payout (Payee + Payout + Settlement)</td><td>5-7 days</td><td><span class="ty y">✅</span></td></tr>
+        <tr><td>FX Services</td><td>2-3 days</td><td><span class="ty y">✅</span></td></tr>
+        <tr><td rowspan="4" style="font-weight:600;color:#8b5cf6">Crypto Services</td><td>Fiat Account (Deposit + Withdrawal)</td><td>3-5 days</td><td><span class="ty y">✅</span></td></tr>
+        <tr><td>Crypto Wallet (Deposit + Withdrawal)</td><td>5-7 days</td><td><span class="ty y">✅</span></td></tr>
+        <tr><td>Buy Crypto (Buy + Fiat to Crypto)</td><td>3-5 days</td><td><span class="ty y">✅</span></td></tr>
+        <tr><td>Sell Crypto (Sell + Crypto to Fiat)</td><td>3-5 days</td><td><span class="ty y">✅</span></td></tr>
+        <tr><td style="font-weight:600;color:#f59e0b">Checkout</td><td>Crypto Checkout</td><td>3-5 days</td><td><span class="ty y">✅</span></td></tr>
+        <tr><td style="font-weight:600;color:#ef4444">Card Issuing</td><td>VCC</td><td>7-10 days</td><td><span class="ty y">✅</span></td></tr>
       </tbody>
     </table>
 

@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EurewaX × Moolahgo — 支付机构 Treasury Hub 解决方案</title>
+<style>
+  :root {
+    --ink:      #0a1840;
+    --ink-700:  #1a2a54;
+    --ink-500:  #4a5470;
+    --ink-400:  #6b7590;
+    --ink-300:  #8a95b0;
+    --ink-200:  #c3ccde;
+    --ink-100:  #e1e6f0;
+    --ink-50:   #eef1f8;
+    --ink-20:   #f6f8fd;
+    --sky:      #2563eb;
+    --sky-600:  #1d4ed8;
+    --sky-100:  #dbeafe;
+    --sky-50:   #eff6ff;
+    --surface:  #ffffff;
+    --bg-1: var(--ink-20);
+    --accent:   var(--sky);
+    --accent-2: var(--sky);
+    --accent-3: var(--ink);
+    --text:     var(--ink);
+    --text-dim: var(--ink-500);
+    --card-bg:  var(--surface);
+    --card-border: var(--ink-100);
+    --red:      #dc2626;
+    --green:    #16a34a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    height: 100%;
+    background: var(--ink-20);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+
+  .deck { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
+  .slide {
+    position: absolute; inset: 0; display: none;
+    background:
+      radial-gradient(ellipse at 85% 8%, rgba(37,99,235,0.06) 0%, transparent 55%),
+      radial-gradient(ellipse at 12% 95%, rgba(37,99,235,0.05) 0%, transparent 50%),
+      linear-gradient(180deg, #fff 0%, var(--ink-20) 100%);
+    padding: 36px 64px 52px;
+    animation: fadeIn .5s ease;
+    overflow: hidden;
+  }
+  .slide.active { display: flex; flex-direction: column; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+
+  .slide::before {
+    content: ""; position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(10,24,64,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(10,24,64,0.025) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+  }
+
+  .slide-head {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 16px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--ink-100); z-index: 1;
+  }
+  .slide-head .mark {
+    width: 34px; height: 34px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border: 1.5px solid var(--sky); border-radius: 7px;
+    color: var(--sky); font-weight: 800; font-size: 14px;
+    background: var(--sky-50);
+  }
+  .slide-head h2 { font-size: 26px; font-weight: 800; color: var(--ink); letter-spacing: 0.3px; }
+  .slide-head h2 .dash { color: var(--sky); margin: 0 10px; font-weight: 400; }
+  .slide-head .subtitle { color: var(--ink-400); font-size: 13.5px; margin-left: auto; }
+  .slide-body { flex: 1; z-index: 1; overflow-y: auto; overflow-x: hidden; padding-bottom: 24px; }
+  .slide-body::-webkit-scrollbar { width: 4px; }
+  .slide-body::-webkit-scrollbar-track { background: transparent; }
+  .slide-body::-webkit-scrollbar-thumb { background: var(--ink-100); border-radius: 4px; }
+
+  .brand-bar {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 64px 14px; z-index: 2;
+    background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.85) 30%, #fff 60%);
+  }
+  .brand-logo { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-400); font-weight: 700; font-size: 13px; letter-spacing: 0.4px; }
+  .brand-logo .xicon { display: inline-block; width: 18px; height: 18px; position: relative; }
+  .brand-logo .xicon::before, .brand-logo .xicon::after { content: ""; position: absolute; inset: 0; background: var(--sky); border-radius: 2px; }
+  .brand-logo .xicon::before { transform: rotate(45deg); width: 3px; left: 7.5px; }
+  .brand-logo .xicon::after  { transform: rotate(-45deg); width: 3px; left: 7.5px; }
+  .page-num { color: var(--ink-400); font-size: 12px; font-variant-numeric: tabular-nums; }
+
+  .nav { position: fixed; right: 20px; bottom: 20px; display: flex; gap: 8px; z-index: 10; }
+  .nav button {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1px solid var(--ink-100); background: var(--surface); color: var(--ink);
+    cursor: pointer; font-size: 16px; box-shadow: 0 2px 8px rgba(10,24,64,0.08); transition: all .2s;
+  }
+  .nav button:hover { background: var(--sky); border-color: var(--sky); color: #fff; }
+  .nav button:disabled { opacity: .3; cursor: not-allowed; }
+
+  .progress { position: fixed; top: 0; left: 0; width: 100%; height: 3px; z-index: 20; background: var(--ink-100); }
+  .progress-fill { height: 100%; background: var(--sky); transition: width .4s; }
+
+  /* Cover + Closing */
+  .slide.cover, .slide.closing {
+    background:
+      radial-gradient(ellipse at 75% 20%, rgba(37,99,235,0.22) 0%, transparent 55%),
+      radial-gradient(ellipse at 20% 90%, rgba(37,99,235,0.14) 0%, transparent 50%),
+      linear-gradient(135deg, var(--ink) 0%, #142766 55%, #1e3a8a 100%);
+  }
+  .slide.cover::before, .slide.closing::before {
+    background-image:
+      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  }
+  .slide.cover .brand-logo, .slide.closing .brand-logo { color: rgba(255,255,255,0.70); }
+  .slide.cover .brand-logo .xicon::before, .slide.cover .brand-logo .xicon::after,
+  .slide.closing .brand-logo .xicon::before, .slide.closing .brand-logo .xicon::after { background: #fff; }
+  .slide.cover .page-num, .slide.closing .page-num { color: rgba(255,255,255,0.55); }
+
+  .slide.cover { padding: 0; }
+  .cover-content {
+    flex: 1; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; text-align: center; padding: 0 64px;
+  }
+  .cover-logo { display: flex; align-items: center; gap: 12px; font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 24px; }
+  .cover-logo .x-big { width: 40px; height: 40px; position: relative; }
+  .cover-logo .x-big::before, .cover-logo .x-big::after { content: ""; position: absolute; inset: 0; background: #fff; border-radius: 3px; }
+  .cover-logo .x-big::before { transform: rotate(45deg); width: 5px; left: 17.5px; }
+  .cover-logo .x-big::after  { transform: rotate(-45deg); width: 5px; left: 17.5px; }
+  .cover h1 { font-size: 52px; font-weight: 800; letter-spacing: 2px; color: #fff; margin-bottom: 18px; line-height: 1.15; }
+  .cover .cover-sub { font-size: 20px; color: rgba(255,255,255,0.75); margin-bottom: 44px; letter-spacing: 1px; }
+  .cover .cover-tags { display: flex; gap: 14px; margin-bottom: 44px; }
+  .cover-tag { padding: 7px 18px; border: 1px solid rgba(255,255,255,0.45); border-radius: 28px; font-size: 13px; color: #fff; background: rgba(255,255,255,0.08); }
+  .cover-meta { color: rgba(255,255,255,0.60); font-size: 13px; display: flex; gap: 24px; align-items: center; }
+  .cover-meta strong { color: rgba(255,255,255,0.85); }
+
+  /* Closing slide */
+  .closing-wrap {
+    flex: 1; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; text-align: center; padding: 0 64px;
+  }
+  .closing-wrap h1 { font-size: 52px; font-weight: 800; color: #fff; margin-bottom: 24px; }
+  .closing-wrap p { font-size: 18px; color: rgba(255,255,255,0.65); line-height: 1.8; margin-bottom: 8px; }
+  .closing-wrap .contact { margin-top: 36px; display: flex; gap: 32px; }
+  .closing-wrap .contact span { color: rgba(255,255,255,0.55); font-size: 14px; display: flex; align-items: center; gap: 6px; }
+  .closing-wrap .contact strong { color: rgba(255,255,255,0.90); }
+
+  /* TOC */
+  .toc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 12px; }
+  .toc-item {
+    background: var(--surface); border: 1px solid var(--ink-100); border-left: 3px solid var(--sky);
+    border-radius: 8px; padding: 14px 18px; display: flex; align-items: center; gap: 14px;
+    transition: all .2s; cursor: pointer; box-shadow: 0 1px 4px rgba(10,24,64,0.04);
+  }
+  .toc-item:hover { background: var(--sky-50); transform: translateX(3px); }
+  .toc-item .num { font-size: 24px; font-weight: 800; color: var(--sky); min-width: 40px; }
+  .toc-item .title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+  .toc-item .desc { font-size: 11.5px; color: var(--ink-400); }
+
+  /* About */
+  .about-wrap { max-width: 960px; background: var(--surface); border: 1px solid var(--ink-100); border-radius: 12px; padding: 24px 30px; box-shadow: 0 1px 4px rgba(10,24,64,0.04); }
+  .about-wrap p { color: var(--ink-500); font-size: 13.5px; line-height: 1.85; margin-bottom: 12px; }
+  .about-wrap .headline { color: var(--ink); font-weight: 700; font-size: 14px; margin-bottom: 6px; }
+  .partner-row { display: flex; align-items: center; gap: 16px; background: var(--ink-20); border: 1px solid var(--ink-100); border-radius: 8px; padding: 12px 16px; margin-top: 8px; font-size: 12.5px; }
+  .partner-row .label { color: var(--sky); font-weight: 700; padding-right: 14px; border-right: 1px solid var(--ink-100); white-space: nowrap; }
+  .partner-row .items { color: var(--ink-500); display: flex; gap: 14px; flex-wrap: wrap; }
+
+  /* Two-col */
+  .cols-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  .col h3 { color: var(--ink); font-size: 14px; font-weight: 700; margin-bottom: 12px; padding-left: 10px; border-left: 3px solid var(--sky); }
+  .feature { display: flex; gap: 12px; margin-bottom: 14px; }
+  .feature-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: var(--sky-50); border: 1px solid var(--sky-100); color: var(--sky); font-size: 16px; flex-shrink: 0; }
+  .feature-body .feature-title { color: var(--ink); font-weight: 700; font-size: 13px; margin-bottom: 3px; }
+  .feature-body .feature-desc { color: var(--ink-500); font-size: 12px; line-height: 1.6; }
+  .mode-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 10px; }
+  .mode-card { background: var(--surface); border: 1px solid var(--ink-100); border-top: 3px solid var(--sky); border-radius: 10px; padding: 16px 20px; box-shadow: 0 1px 4px rgba(10,24,64,0.04); }
+  .mode-card .mode-title { color: var(--ink); font-weight: 800; font-size: 15px; margin-bottom: 5px; }
+  .mode-card .mode-desc { color: var(--ink-500); font-size: 12.5px; line-height: 1.65; }
+
+  /* Capability grid */
+  .cap-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .cap-card { background: var(--surface); border: 1px solid var(--ink-100); border-radius: 8px; padding: 10px 14px; box-shadow: 0 1px 4px rgba(10,24,64,0.04); }
+  .cap-card .cap-head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .cap-card .cap-icon { width: 26px; height: 26px; border-radius: 6px; background: var(--sky); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+  .cap-card .cap-title { color: var(--ink); font-weight: 700; font-size: 13px; }
+  .cap-card .cap-desc { color: var(--ink-500); font-size: 11px; line-height: 1.5; }
+  .cap-card.focus { background: var(--sky-50); border-color: var(--sky); }
+  .cap-card.focus .cap-title { color: var(--sky); }
+
+  /* Pain point cards */
+  .pain-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .pain-card {
+    background: var(--surface); border: 1px solid var(--ink-100); border-left: 4px solid var(--red);
+    border-radius: 0 10px 10px 0; padding: 16px 20px;
+    box-shadow: 0 1px 4px rgba(10,24,64,0.04);
+  }
+  .pain-card h4 { color: var(--ink); font-size: 14px; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+  .pain-card h4 .ico { font-size: 18px; }
+  .pain-card p { color: var(--ink-500); font-size: 12px; line-height: 1.65; }
+
+  /* Solution advantage cards */
+  .adv-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px; }
+  .adv-card {
+    background: var(--surface); border: 1px solid var(--ink-100); border-top: 3px solid var(--sky);
+    border-radius: 10px; padding: 14px 16px;
+    box-shadow: 0 1px 4px rgba(10,24,64,0.04);
+  }
+  .adv-card h4 { color: var(--ink); font-size: 13px; font-weight: 800; margin-bottom: 6px; }
+  .adv-card p { color: var(--ink-500); font-size: 11px; line-height: 1.55; }
+  .adv-card .highlight { color: var(--sky); font-weight: 800; }
+
+  /* Architecture diagram */
+  .arch-box {
+    background: var(--surface); border: 1px solid var(--ink-100);
+    border-radius: 12px; padding: 22px 28px; margin-top: 10px;
+    box-shadow: 0 1px 4px rgba(10,24,64,0.04);
+    font-family: "SF Mono", "Fira Code", monospace; font-size: 12px; line-height: 1.8;
+    white-space: pre; overflow-x: auto; color: var(--ink-500);
+  }
+
+  /* New visual architecture */
+  .arch-visual { margin-top: 6px; }
+  .arch-hub {
+    background: var(--ink-20); border: 2px solid var(--sky); border-radius: 14px;
+    padding: 14px 16px 10px; position: relative;
+  }
+  .arch-hub-title {
+    position: absolute; top: -11px; left: 24px;
+    background: var(--sky); color: #fff; font-size: 11px; font-weight: 800;
+    padding: 2px 14px; border-radius: 10px; letter-spacing: 0.5px;
+  }
+  .arch-mso-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 6px; }
+  .arch-mso {
+    background: var(--surface); border: 1px solid var(--ink-100); border-radius: 10px;
+    padding: 0; overflow: hidden; box-shadow: 0 1px 3px rgba(10,24,64,0.04);
+  }
+  .arch-mso-head {
+    background: var(--ink); color: #fff; padding: 5px 10px;
+    font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: space-between;
+  }
+  .arch-mso-head .type { font-size: 9px; font-weight: 600; opacity: 0.7; }
+  .arch-master {
+    padding: 6px 10px; border-bottom: 1px dashed var(--ink-100);
+  }
+  .arch-master-label { font-size: 9px; color: var(--sky); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+  .arch-va-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+  .arch-va-tag {
+    background: var(--sky-50); border: 1px solid var(--sky-100); color: var(--sky-600);
+    font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 4px;
+  }
+  .arch-sub {
+    padding: 6px 10px;
+  }
+  .arch-sub-label { font-size: 9px; color: var(--ink-400); font-weight: 700; margin-bottom: 2px; }
+  .arch-sub-item {
+    background: var(--ink-20); border: 1px solid var(--ink-100); border-radius: 6px;
+    padding: 3px 8px; margin-bottom: 3px; font-size: 9.5px; color: var(--ink-500);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .arch-sub-item .name { font-weight: 700; color: var(--ink); }
+  .arch-sub-item .va-mini { font-size: 8.5px; color: var(--ink-400); }
+
+  .arch-flows {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px;
+  }
+  .arch-flow-item {
+    background: var(--surface); border: 1px solid var(--ink-100); border-radius: 8px;
+    padding: 6px 10px; text-align: center;
+  }
+  .arch-flow-item .arrow { font-size: 14px; color: var(--sky); font-weight: 800; line-height: 1; }
+  .arch-flow-item .fl-title { font-size: 9.5px; font-weight: 800; color: var(--ink); margin: 2px 0 1px; }
+  .arch-flow-item .fl-desc { font-size: 8.5px; color: var(--ink-400); line-height: 1.3; }
+
+  .arch-ex-bar {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin-top: 8px; padding: 6px 0;
+  }
+  .arch-ex-bar .ex-badge {
+    background: var(--ink); color: #fff; font-size: 11px; font-weight: 800;
+    padding: 4px 16px; border-radius: 8px; letter-spacing: 0.5px;
+  }
+  .arch-ex-bar .ex-label { font-size: 10px; color: var(--ink-400); }
+
+  /* Scenario cards */
+  .scenario-card {
+    background: var(--surface); border: 1px solid var(--ink-100);
+    border-radius: 10px; padding: 18px 22px; margin-bottom: 14px;
+    box-shadow: 0 1px 4px rgba(10,24,64,0.04);
+  }
+  .scenario-card h4 { color: var(--ink); font-size: 14px; font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+  .scenario-card h4 .badge { background: var(--sky); color: #fff; font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 700; }
+  .scenario-card p { color: var(--ink-500); font-size: 12px; line-height: 1.7; }
+  .scenario-card .flow-line { display: flex; align-items: center; gap: 6px; margin: 10px 0; font-size: 12.5px; flex-wrap: wrap; }
+  .scenario-card .fstep { background: var(--ink-20); border: 1px solid var(--ink-100); border-radius: 6px; padding: 4px 10px; font-size: 11.5px; white-space: nowrap; }
+  .scenario-card .farrow { color: var(--sky); font-weight: bold; }
+
+  /* Compliance table */
+  .cmp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .cmp-card {
+    background: var(--surface); border: 1px solid var(--ink-100);
+    border-radius: 10px; padding: 16px 20px; box-shadow: 0 1px 4px rgba(10,24,64,0.04);
+  }
+  .cmp-card h4 { color: var(--ink); font-size: 14px; font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .cmp-card h4::before { content: ""; width: 4px; height: 16px; background: var(--sky); border-radius: 2px; }
+  .cmp-card ul { list-style: none; }
+  .cmp-card li { color: var(--ink-500); font-size: 12px; line-height: 1.7; padding-left: 14px; position: relative; }
+  .cmp-card li::before { content: "·"; position: absolute; left: 4px; color: var(--sky); font-weight: 700; }
+
+  /* Table */
+  table.tbl { width: 100%; border-collapse: collapse; font-size: 12px; border-radius: 8px; overflow: hidden; border: 1px solid var(--ink-100); }
+  .tbl th { background: var(--ink); color: #fff; font-weight: 700; text-align: left; padding: 9px 14px; font-size: 12px; }
+  .tbl td { padding: 8px 14px; border-bottom: 1px solid var(--ink-100); color: var(--ink-500); vertical-align: top; }
+  .tbl tr:last-child td { border-bottom: none; }
+  .tbl tr:nth-child(even) td { background: var(--ink-20); }
+  .tbl strong { color: var(--ink); }
+  .tbl .yes { color: var(--green); font-weight: 700; }
+  .tbl .no { color: var(--red); font-weight: 700; }
+
+  /* Callout */
+  .callout { display: flex; gap: 10px; align-items: flex-start; background: var(--sky-50); border: 1px solid var(--sky-100); border-radius: 8px; padding: 12px 16px; font-size: 12.5px; color: var(--ink-500); line-height: 1.65; }
+  .callout .ico { font-size: 16px; flex-shrink: 0; }
+  .callout strong { color: var(--ink); }
+  .callout.warn { background: #fffbeb; border-color: #fde68a; color: #92400e; }
+  .callout.warn strong { color: #92400e; }
+
+  /* Metric row */
+  .metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 14px 0; }
+  .metric-item { background: var(--surface); border: 1px solid var(--ink-100); border-radius: 10px; padding: 14px 16px; text-align: center; box-shadow: 0 1px 4px rgba(10,24,64,0.04); }
+  .metric-item .val { font-size: 24px; font-weight: 800; color: var(--sky); line-height: 1; margin-bottom: 4px; }
+  .metric-item .lbl { font-size: 11px; color: var(--ink-500); }
+
+  /* Timeline */
+  .timeline { display: flex; gap: 0; margin: 14px 0; }
+  .tl-phase { flex: 1; position: relative; padding: 12px 14px 12px 18px; background: var(--surface); border: 1px solid var(--ink-100); }
+  .tl-phase:first-child { border-radius: 10px 0 0 10px; }
+  .tl-phase:last-child { border-radius: 0 10px 10px 0; }
+  .tl-phase h5 { color: var(--sky); font-size: 11px; font-weight: 800; margin-bottom: 4px; }
+  .tl-phase p { color: var(--ink-500); font-size: 10.5px; line-height: 1.5; }
+  .tl-phase .weeks { color: var(--ink); font-weight: 700; font-size: 11px; margin-top: 4px; }
+
+  /* Flywheel */
+  .flywheel { text-align: center; margin: 20px 0; }
+  .flywheel .circle {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 200px; height: 200px; border-radius: 50%;
+    border: 3px solid var(--sky); background: var(--sky-50);
+    font-size: 14px; font-weight: 800; color: var(--sky);
+    text-align: center; line-height: 1.5;
+  }
+
+  /* Print mode */
+  .deck.print-mode { width: 100%; height: auto; overflow: visible; }
+  .deck.print-mode .slide {
+    display: flex !important; flex-direction: column; position: relative; inset: auto;
+    width: 100%; max-width: 1280px; margin: 0 auto 20px;
+    padding: 18px 36px 32px; height: auto; min-height: 720px;
+    aspect-ratio: 16 / 9; animation: none; overflow: hidden;
+  }
+  .deck.print-mode .slide-body { overflow: hidden; }
+  .deck.print-mode .slide-head { margin-bottom: 8px; padding-bottom: 6px; }
+  .deck.print-mode .slide-head h2 { font-size: 18px; }
+  .deck.print-mode .slide-head .subtitle { font-size: 10px; }
+  body.print-mode { overflow: auto; }
+
+  @page { size: 297mm 167mm; margin: 0; }
+  @media print {
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    html, body { width: 297mm; height: auto; overflow: visible; background: #000; }
+    .deck, .deck.print-mode { width: 297mm; max-width: none; height: auto; overflow: visible; }
+    .slide {
+      display: flex !important; flex-direction: column; position: relative !important; inset: auto !important;
+      width: 297mm !important; height: 167mm !important; min-height: 167mm !important;
+      max-width: none !important; margin: 0 !important; padding: 18px 36px 32px !important;
+      page-break-after: always; break-after: page; page-break-inside: avoid; break-inside: avoid;
+      overflow: hidden !important; animation: none !important; aspect-ratio: auto !important;
+    }
+    .slide:last-child { page-break-after: auto; break-after: auto; }
+    .slide.cover { padding: 0 !important; }
+    .slide-head { margin-bottom: 8px !important; }
+    .slide-head h2 { font-size: 18px !important; }
+    .slide-body { overflow: hidden !important; padding-bottom: 8px !important; }
+    .brand-bar { padding: 0 36px !important; bottom: 6px !important; background: none !important; }
+    .nav, .progress, .export-btn { display: none !important; }
+    .pain-grid, .adv-grid, .cap-grid { gap: 8px !important; }
+    .scenario-card { padding: 10px 14px !important; margin-bottom: 8px !important; }
+    .cmp-grid { gap: 10px !important; }
+    .tbl th { padding: 6px 10px !important; font-size: 10px !important; }
+    .tbl td { padding: 5px 10px !important; font-size: 10px !important; }
+  }
+
+  /* Export button */
+  .export-btn {
+    position: fixed; right: 20px; top: 20px; z-index: 20;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 8px; border: 1px solid var(--ink-100);
+    background: var(--surface); color: var(--ink); font-size: 12px; font-weight: 600;
+    cursor: pointer; box-shadow: 0 2px 8px rgba(10,24,64,0.08); transition: all .2s;
+  }
+  .export-btn:hover { background: var(--sky); color: #fff; border-color: var(--sky); }
+  .export-btn .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+
+  @media (max-width: 900px) {
+    .slide { padding: 32px 28px 56px; }
+    .cols-2, .pain-grid, .cmp-grid { grid-template-columns: 1fr; }
+    .cap-grid, .adv-grid { grid-template-columns: 1fr 1fr; }
+    .cover h1 { font-size: 40px; }
+    .closing-wrap h1 { font-size: 42px; }
+    .metric-grid { grid-template-columns: 1fr 1fr; }
+    .timeline { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress"><div class="progress-fill" id="progress"></div></div>
+
+<div class="deck" id="deck">
+
+  <!-- Slide 1: Cover -->
+  <section class="slide cover active">
+    <div class="cover-content">
+      <div class="cover-logo">
+        <span class="x-big"></span>
+        <span>EurewaX</span>
+      </div>
+      <h1>支付机构 Treasury Hub</h1>
+      <div class="cover-sub">EurewaX × Moolahgo 解决方案</div>
+      <div class="cover-tags">
+        <span class="cover-tag">MSO/PSP 开户</span>
+        <span class="cover-tag">多币种 VA</span>
+        <span class="cover-tag">行内转账</span>
+        <span class="cover-tag">资金归集与清算</span>
+      </div>
+      <div class="cover-meta">
+        <span><strong>提交方</strong>：EurewaX 客户经理团队</span>
+        <span><strong>版本</strong>：v2.0</span>
+        <span><strong>日期</strong>：2026-05-05</span>
+      </div>
+    </div>
+    <div class="brand-bar">
+      <span class="brand-logo"><span class="xicon"></span>EurewaX</span>
+      <span class="page-num"></span>
+    </div>
+  </section>
+
+  <!-- Slide 2: Agenda -->
+  <section class="slide">
+    <div class="slide-head">
+      <span class="mark">01</span>
+      <h2>议程 <span class="dash">·</span> Agenda</h2>
+      <span class="subtitle">平台 → 痛点 → 方案 → 场景 → 商业 → 路线图</span>
+    </div>
+    <div class="slide-body">
+      <div class="toc-grid">
+        <div class="toc-item" data-go="3">
+          <div class="num">02</div>
+          <div><div class="title">About EurewaX</div><div class="desc">跨境支付智能云平台概览与全球布局</div></div>
+        </div>
+        <div class="toc-item" data-go="4">
+          <div class="num">03</div>
+          <div><div class="title">行业痛点 · MSO 开户难</div><div class="desc">银行拒开户 / Nesting 壁垒 / 业务无法启动</div></div>
+        </div>
+        <div class="toc-item" data-go="5">
+          <div class="num">04</div>
+          <div><div class="title">方案定位 · Treasury Hub</div><div class="desc">Moolahgo + EX 打造支付机构资金枢纽</div></div>
+        </div>
+        <div class="toc-item" data-go="6">
+          <div class="num">05</div>
+          <div><div class="title">核心业务场景</div><div class="desc">PF 结算 / 资金归集 / MSO 行内清算</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="brand-bar">
+      <span class="brand-logo"><span class="xicon"></span>EurewaX</span>
+      <span class="page-num"></span>
+    </div>
+  </section>
+
+  <!-- Slide 3: About EurewaX -->
+  <section class="slide">
+    <div class="slide-head">
+      <span class="mark">02</span>
+      <h2>About EurewaX</h2>
+      <span class="subtitle">跨境支付产品创新 · 全球支付生态系统服务商</span>
+    </div>
+    <div class="slide-body">
+      <div class="about-wrap">
+        <p><strong style="color:var(--ink)">EurewaX</strong> 专注于全球跨境支付产品创新，致力于为拓展跨境业务的企业提供全球支付生态系统服务。创始团队凭借多年跨境支付经验与行业洞察，自主研发高适应性云支付平台，整合全球合规能力与端到端运营服务，帮助客户实现安全、高效的跨境业务扩展。</p>
+        <p>目前，公司已在 <strong style="color:var(--accent-2)">新加坡、马来西亚、上海</strong>设立分支机构。</p>
+        <p class="headline" style="margin-top:10px">EurewaX 以科技创新驱动双重价值：</p>
+        <p><strong style="color:var(--ink)">商业价值创造者</strong> —— 通过技术创新降低跨境支付成本，提升交易效率，为企业创造更多商业机会。</p>
+        <p><strong style="color:var(--ink)">金融生态构建者</strong> —— 基于开放式基础设施促进跨境资金流动效率，推动商业机会的无边界延伸。</p>
+        <div class="partner-row">
+          <span class="label">领投资本</span>
+          <span class="items"><span>KAIROUS</span><span>RUIFENG Wealth Management</span><span>iPayLinks</span></span>
+        </div>
+        <div class="partner-row">
+          <span class="label">合作伙伴</span>
+          <span class="items"><span>Barclays</span><span>DBS</span><span>Standard Chartered</span><span>随行付</span><span>iPayLinks</span><span>Bank of China</span><span>...</span></span>
+        </div>
+      </div>
+    </div>
+    <div class="brand-bar">
+      <span class="brand-logo"><span class="xicon"></span>EurewaX</span>
+      <span class="page-num"></span>
+    </div>
+  </section>
+
+  <!-- Slide 4: 行业痛点 -->
+  <section class="slide">
+    <div class="slide-head">
+      <span class="mark">03</span>
+      <h2>行业痛点 <span class="dash">—</span> 支付机构"开户难"</h2>
+      <span class="subtitle">新 MSO / PSP 面临的生死问题</span>
+    </div>
+    <div class="slide-body">
+      <div class="pain-grid">
+        <div class="pain-card">
+          <h4><span class="ico">🚫</span> 传统银行拒绝开户</h4>
+          <p>银行将 MSO/PSP 归为高风险客户（ML risk），新牌照机构几乎无法通过银行合规审核。审核周期 <strong style="color:var(--ink)">3~6 个月</strong>，严重影响业务启动。</p>
+        </div>
+        <div class="pain-card">
+          <h4><span class="ico">🔗</span> Nesting 合规壁垒</h4>
+          <p>其他支付机构（PSP/EMI）也不敢给同行开 VA——监管层面担忧"Nesting"（支付机构嵌套），大部分 PSP 的合规政策<strong style="color:var(--ink)">直接禁止</strong>给支付机构开户。</p>
+        </div>
+        <div class="pain-card">
+          <h4><span class="ico">💀</span> 业务无法启动</h4>
+          <p>没有银行账户 = 无法接收收单行结算款 = 无法开展收单/汇款业务。<strong style="color:var(--ink)">账户问题是支付机构的生死问题。</strong></p>
+        </div>
+        <div class="pain-card">
+          <h4><span class="ico">👥</span> 受影响群体</h4>
+          <p>• 新申请的 MSO：刚拿牌照，无银行关系<br>• 刚买牌的 MSO：银行对新股东存疑<br>• 小型 PSP/EMI：规模不够<br>• 跨境支付公司：涉及高风险走廊</p>
+        </div>
+      </div>
+      <div class="callout" style="margin-top:14px">
+        <span class="ico">💡</span>
+        <div><strong>Moolahgo 的独特优势：</strong>作为 MAS 持牌 Major Payment Institution，合规框架支持为支付机构提供 VA 服务，不构成 Nesting。已支持 <strong>14+ 货币</strong>，覆盖东南亚核心市场。</div>
+      </div>
+    </div>
+    <div class="brand-bar">
+      <span class="brand-logo"><span class="xicon"></span>EurewaX</span>
+      <span class="page-num"></span>
+    </div>
+  </section>
+
+  <!-- Slide 7: 方案定位 -->
+  <section class="slide">
+    <div class="slide-head">
+      <span class="mark">04</span>
+      <h2>方案定位 <span class="dash">—</span> Treasury Hub</h2>
+      <span class="subtitle">Moolahgo + EX = 支付机构的资金枢纽</span>
+    </div>
+    <div class="slide-body">
+      <div class="arch-visual">
+        <div class="arch-hub">
+          <div class="arch-hub-title">Moolahgo Treasury Hub</div>
+          <div class="arch-mso-row">
+            <!-- MSO-A -->
+            <div class="arch-mso">
+              <div class="arch-mso-head"><span>MSO-A</span><span class="type">Money Service Operator</span></div>
+              <div class="arch-master">
+                <div class="arch-master-label">Master Account</div>
+                <div class="arch-va-tags">
+                  <span class="arch-va-tag">SGD VA</span>
+                  <span class="arch-va-tag">USD VA</span>
+                  <span class="arch-va-tag">IDR VA</span>
+                </div>
+              </div>
+              <div class="arch-sub">
+                <div class="arch-sub-label">Sub Accounts (直客)</div>
+                <div class="arch-sub-item"><span class="name">商户 A1</span><span class="va-mini">SGD VA · USD VA</span></div>
+                <div class="arch-sub-item"><span class="name">商户 A2</span><span class="va-mini">USD VA</span></div>
+              </div>
+            </div>
+            <!-- MSO-B -->
+            <div class="arch-mso">
+              <div class="arch-mso-head"><span>MSO-B</span><span class="type">Payment Service Provider</span></div>
+              <div class="arch-master">
+                <div class="arch-master-label">Master Account</div>
+                <div class="arch-va-tags">
+                  <span class="arch-va-tag">USD VA</span>
+                  <span class="arch-va-tag">EUR VA</span>
+                </div>
+              </div>
+              <div class="arch-sub">
+                <div class="arch-sub-label">Sub Accounts (直客)</div>
+                <div class="arch-sub-item"><span class="name">商户 B1</span><span class="va-mini">USD VA · EUR VA</span></div>
+                <div class="arch-sub-item"><span class="name">商户 B2</span><span class="va-mini">EUR VA</span></div>
+              </div>
+            </div>
+            <!-- PSP-C -->
+            <div class="arch-mso">
+              <div class="arch-mso-head"><span>PSP-C</span><span class="type">Payment Service Provider</span></div>
+              <div class="arch-master">
+                <div class="arch-master-label">Master Account</div>
+                <div class="arch-va-tags">
+                  <span class="arch-va-tag">GBP VA</span>
+                  <span class="arch-va-tag">SGD VA</span>
+                </div>
+              </div>
+              <div class="arch-sub">
+                <div class="arch-sub-label">Sub Accounts (直客)</div>
+                <div class="arch-sub-item"><span class="name">商户 C1</span><span class="va-mini">GBP VA</span></div>
+              </div>
+            </div>
+          </div>
+          <!-- Fund flow annotations -->
+          <div class="arch-flows">
+            <div class="arch-flow-item">
+              <div class="arrow">↓</div>
+              <div class="fl-title">入金</div>
+              <div class="fl-desc">收单行结算 · 客户汇入<br>VA → Sub / Master</div>
+            </div>
+            <div class="arch-flow-item">
+              <div class="arrow">↑↓</div>
+              <div class="fl-title">资金归集</div>
+              <div class="fl-desc">Sub Account<br>→ Master Account</div>
+            </div>
+            <div class="arch-flow-item">
+              <div class="arrow">⇄</div>
+              <div class="fl-title">换汇 / 行内转账</div>
+              <div class="fl-desc">换汇：Master 内部<br>互转：Master ↔ Master</div>
+            </div>
+            <div class="arch-flow-item">
+              <div class="arrow">↑</div>
+              <div class="fl-title">出金</div>
+              <div class="fl-desc">Master → 外部银行<br>付款 / 结算 / 利润汇出</div>
+            </div>
+          </div>
+        </div>
+        <div class="arch-ex-bar">
+          <span class="ex-label">▲ 统一 API</span>
+          <span class="ex-badge">EX 技术平台</span>
+          <span class="ex-label">统一 API ▲</span>
+        </div>
+      </div>
+      <div class="cols-2" style="margin-top:10px; gap:12px;">
+        <div class="col" style="flex:1.4">
+          <h3 style="color:var(--sky);font-size:13px;margin-bottom:8px">🏦 对 Moolahgo 的价值</h3>
+          <div class="feature" style="margin-bottom:6px">
+            <div class="feature-icon">📈</div>
+            <div class="feature-body">
+              <div class="feature-title">批量获客 · 零销售成本</div>
+              <div class="feature-desc">EX 平台现有 <strong style="color:var(--ink)">10~30 家 MSO/PSP</strong> 租户，接入即获客，无需逐家 BD</div>
+            </div>
+          </div>
+          <div class="feature" style="margin-bottom:6px">
+            <div class="feature-icon">💰</div>
+            <div class="feature-body">
+              <div class="feature-title">多元收入来源</div>
+              <div class="feature-desc"><strong style="color:var(--ink)">VA 账管费 + FX 汇差 + 出金手续费 + 行内转账费</strong>，每新增一个 MSO 即叠加收入</div>
+            </div>
+          </div>
+          <div class="feature" style="margin-bottom:6px">
+            <div class="feature-icon">🏗️</div>
+            <div class="feature-body">
+              <div class="feature-title">资金沉淀 · 网络效应</div>
+              <div class="feature-desc">MSO 的营运资金长期留存在 Moolahgo 体系内；MSO 越多，行内转账价值越大，<strong style="color:var(--ink)">飞轮效应</strong></div>
+            </div>
+          </div>
+          <div class="feature" style="margin-bottom:6px">
+            <div class="feature-icon">🔌</div>
+            <div class="feature-body">
+              <div class="feature-title">技术零投入</div>
+              <div class="feature-desc">EX 负责全部技术对接、商户运营、API 集成，Moolahgo <strong style="color:var(--ink)">只需提供 API + 合规审核</strong></div>
+            </div>
+          </div>
+          <div class="feature" style="margin-bottom:0">
+            <div class="feature-icon">🔒</div>
+            <div class="feature-body">
+              <div class="feature-title">客户粘性极高</div>
+              <div class="feature-desc">MSO 的结算账户一旦绑定，迁移成本极高——<strong style="color:var(--ink)">收单行、合作方、监管报告全部依赖该 VA</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="col" style="flex:0.6">
+          <h3 style="color:var(--ink-400);font-size:13px;margin-bottom:8px">🏢 对 MSO/PSP</h3>
+          <div class="callout" style="margin-bottom:8px">
+            <span class="ico">🚀</span>
+            <div><strong style="color:var(--sky)">别人开不了的户，这里能开</strong><br>传统银行拒绝 → Moolahgo 5~10 工作日完成开户</div>
+          </div>
+          <div class="callout" style="margin-bottom:8px">
+            <span class="ico">🏦</span>
+            <div><strong>PF 结算账户</strong><br>VA 作为收单行结算收款账户，业务即刻启动</div>
+          </div>
+          <div class="callout" style="margin-bottom:8px">
+            <span class="ico">🔁</span>
+            <div><strong>资金归集 + 换汇</strong><br>多币种 VA + 批发汇率，一站式 Treasury 管理</div>
+          </div>
+          <div class="callout" style="margin-bottom:0">
+            <span class="ico">⚡</span>
+            <div><strong>行内清算</strong><br>MSO 之间实时转账，零/极低费用</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="brand-bar">
+      <span class="brand-logo"><span class="xicon"></span>EurewaX</span>
+      <span class="page-num"></span>
+    </div>
+  </section>
+
+  <!-- Slide 8: 核心业务场景 -->
+  <section class="slide">
+    <div class="slide-head">
+      <span class="mark">05</span>
+      <h2>核心业务场景</h2>
+      <span class="subtitle">PF 结算 · 资金归集 · 行内清算 · 商户子账户</span>
+    </div>
+    <div class="slide-body">
+      <div class="scenario-card">
+        <h4>场景一：MSO 作为 PF 接收收单行结算款 <span class="badge">核心</span></h4>
+        <div class="flow-line">
+          <span class="fstep">收单行结算</span>
+          <span class="farrow">→</span>
+          <span class="fstep">MSO 的 Moolahgo VA</span>
+          <span class="farrow">→</span>
+          <span class="fstep">资金归集</span>
+          <span class="farrow">→</span>
+          <span class="fstep">换汇</span>
+          <span class="farrow">→</span>
+          <span class="fstep">付款给商户/合作方</span>
+        </div>
+        <p>MSO 作为 PF 需要银行/VA 接收收单行结算款。传统银行拒绝 → Moolahgo 可以。收单行只需确认账户合规。</p>
+      </div>
+      <div class="scenario-card">
+        <h4>场景二：资金归集 + 换汇 + 付出</h4>
+        <div class="flow-line">
+          <span class="fstep">收单行结算</span><span class="farrow">→</span>
+          <span class="fstep">合作方付款</span><span class="farrow">→</span>
+          <span class="fstep">USD VA</span>
+          <span class="farrow">→ FX →</span>
+          <span class="fstep">IDR VA</span>
+          <span class="farrow">→</span>
+          <span class="fstep">付出</span>
+        </div>
+        <p>多来源资金统一归集到 VA → 批发汇率换汇 → 付款到外部银行/行内转账。全链路在 Moolahgo 体系内完成。</p>
+      </div>
+      <div class="scenario-card">
+        <h4>场景三：MSO 之间行内清算</h4>
+        <div class="flow-line">
+          <span class="fstep">MSO-A（收端）</span>
+          <span class="farrow">→ 行内转账 →</span>
+          <span class="fstep">MSO-B（付端）</span>
+          <span class="farrow">→</span>
+          <span class="fstep">付款给收款人</span>
+        </div>
+        <p>传统模式 SWIFT T+1~3、$15~50/笔 → Moolahgo 行内 <strong style="color:var(--sky)">实时到账、零/极低费用、7×24</strong></p>
+      </div>
+    </div>
+    <div class="brand-bar">
+      <span class="brand-logo"><span class="xicon"></span>EurewaX</span>
+      <span class="page-num"></span>
+    </div>
+  </section>
+
+
+
+  <!-- Slide 12: Closing -->
+  <section class="slide closing">
+    <div class="closing-wrap">
+      <div class="cover-logo" style="margin-bottom:32px;">
+        <span class="x-big"></span>
+        <span>EurewaX</span>
+      </div>
+      <h1>Thank You</h1>
+      <p>Moolahgo 做别人不敢做的事 —— 给支付机构开户</p>
+      <p>EX 做别人做不了的事 —— 把它规模化</p>
+      <div class="contact">
+        <span>📧 <strong>daniel@eurewax.com</strong></span>
+        <span>🌐 <strong>eurewax.com</strong></span>
+        <span>📍 <strong>新加坡 · 马来西亚 ·香港</strong></span>
+      </div>
+    </div>
+    <div class="brand-bar">
+      <span class="brand-logo"><span class="xicon"></span>EurewaX</span>
+      <span class="page-num"></span>
+    </div>
+  </section>
+
+</div>
+
+<button class="export-btn" id="exportBtn" title="导出 PDF">
+  <span class="dot"></span>
+  <span>导出 PDF</span>
+</button>
+
+<div class="nav">
+  <button id="prev" title="上一页 (←)">‹</button>
+  <button id="next" title="下一页 (→)">›</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  const pad = (n) => String(n).padStart(2, '0');
+  slides.forEach((s, idx) => {
+    const pageEl = s.querySelector('.page-num');
+    if (pageEl) pageEl.textContent = `${pad(idx + 1)} / ${pad(total)}`;
+  });
+
+  function showSlide(i) {
+    current = Math.max(0, Math.min(total - 1, i));
+    slides.forEach((s, idx) => s.classList.toggle('active', idx === current));
+    document.getElementById('progress').style.width = ((current + 1) / total * 100) + '%';
+    document.getElementById('prev').disabled = current === 0;
+    document.getElementById('next').disabled = current === total - 1;
+  }
+
+  document.getElementById('prev').onclick = () => showSlide(current - 1);
+  document.getElementById('next').onclick = () => showSlide(current + 1);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); showSlide(current + 1); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); showSlide(current - 1); }
+    if (e.key === 'Home') showSlide(0);
+    if (e.key === 'End') showSlide(total - 1);
+  });
+
+  document.querySelectorAll('.toc-item[data-go]').forEach(el => {
+    el.addEventListener('click', () => {
+      const idx = parseInt(el.dataset.go, 10) - 1;
+      if (!isNaN(idx)) showSlide(idx);
+    });
+  });
+
+  const deck = document.getElementById('deck');
+  const exportBtn = document.getElementById('exportBtn');
+
+  function enterPrintMode() {
+    document.body.classList.add('print-mode');
+    deck.classList.add('print-mode');
+    slides.forEach(s => s.classList.add('active'));
+  }
+  function exitPrintMode() {
+    document.body.classList.remove('print-mode');
+    deck.classList.remove('print-mode');
+    slides.forEach((s, idx) => s.classList.toggle('active', idx === current));
+  }
+
+  exportBtn.addEventListener('click', async () => {
+    exportBtn.textContent = '正在渲染...';
+    enterPrintMode();
+    await new Promise(r => setTimeout(r, 300));
+    window.print();
+    setTimeout(() => {
+      exitPrintMode();
+      exportBtn.innerHTML = '<span class="dot"></span><span>导出 PDF</span>';
+    }, 400);
+  });
+
+  window.addEventListener('afterprint', () => {
+    exitPrintMode();
+    exportBtn.innerHTML = '<span class="dot"></span><span>导出 PDF</span>';
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && (e.key === 'p' || e.key === 'P')) {
+      e.preventDefault();
+      exportBtn.click();
+    }
+  });
+
+  showSlide(0);
+</script>
+
+</body>
+</html>

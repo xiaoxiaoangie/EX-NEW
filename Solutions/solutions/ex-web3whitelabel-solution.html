@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EX White Label — Web3 白标门户解决方案</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;background:#f4f5f7;color:#1a1a2e;line-height:1.6;font-size:12px}
+  .page{max-width:900px;margin:0 auto;padding:32px 20px 64px}
+  h1{font-size:22px;font-weight:700;margin-bottom:4px;color:#1a1a2e}
+  h2{font-size:15px;font-weight:700;margin-bottom:12px;color:#1a1a2e;display:flex;align-items:center;gap:8px}
+  h2 .n{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:6px;background:#6366f1;color:#fff;font-size:11px;font-weight:700;flex-shrink:0}
+  h3{font-size:13px;font-weight:600;margin-bottom:6px;color:#374151}
+  .meta{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+  .mt{font-size:10px;padding:2px 8px;border-radius:20px;background:#eef2ff;color:#4f46e5;font-weight:500}
+  .sec{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:16px 18px;margin-bottom:14px}
+
+  table{width:100%;border-collapse:collapse;font-size:11px}
+  th{background:#f9fafb;font-weight:600;text-align:left;padding:6px 8px;border-bottom:2px solid #e5e7eb;white-space:nowrap;color:#374151}
+  td{padding:5px 8px;border-bottom:1px solid #f3f4f6;vertical-align:top}
+  tr:hover td{background:#fafafa}
+
+  pre{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:14px;overflow-x:auto;font-size:11px;line-height:1.5;color:#374151}
+  code{font-family:'SF Mono',Monaco,Consolas,monospace;font-size:10px;background:#f3f4f6;padding:1px 5px;border-radius:3px;color:#6366f1}
+
+  blockquote{border-left:3px solid #6366f1;margin:12px 0;padding:10px 14px;background:#f5f3ff;border-radius:0 6px 6px 0;color:#4b5563;font-size:11px}
+  blockquote strong{color:#4338ca}
+
+  a{color:#4f46e5;text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  .sub{font-size:12px;color:#6b7280;margin-bottom:4px}
+  .tag{display:inline-block;font-size:9px;padding:1px 6px;border-radius:3px;background:#fef3c7;color:#92400e;font-weight:500;margin-left:4px}
+</style>
+</head>
+<body>
+
+<div class="page">
+  <h1>EX White Label — Web3 白标门户解决方案</h1>
+  <div class="sub">无需开发，即开即用</div>
+
+  <div class="meta">
+    <span class="mt">文档类型：白标解决方案指南（Web3）</span>
+    <span class="mt">版本：v1.0</span>
+    <span class="mt">最后更新：2026-05-05</span>
+    <span class="mt">配套文档：<a href="./ex-api-solution.html">EX Open API 解决方案</a> ｜ <a href="./ex-web2whitelabel-solution.html">Web2 白标方案</a></span>
+  </div>
+
+  <div class="sec">
+    <h2><span class="n">1</span>方案概述</h2>
+    <p style="margin-bottom:10px">EX 提供<strong>白标门户（White Label Portal）</strong>方案 —— 无需开发，即开即用。</p>
+    <p style="margin-bottom:10px">Web3 白标方案聚焦于<strong>承兑产品、发卡产品和数币收单产品</strong>三大产品板块，面向加密货币交易所、数字资产服务商、Web3 支付平台等客户。</p>
+    <p style="margin-bottom:10px">EX 根据客户开通的产品线，由运营团队完成配置后，直接交付两个门户：</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>门户</th>
+          <th>英文</th>
+          <th>使用方</th>
+          <th>说明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>租户门户</strong></td>
+          <td>Tenant Portal（TP）</td>
+          <td>客户（机构）</td>
+          <td>客户自己使用的运营管理后台，管理商户、查看交易、配置产品等</td>
+        </tr>
+        <tr>
+          <td><strong>商户门户</strong></td>
+          <td>Merchant Portal（MP）</td>
+          <td>客户的终端用户（商户）</td>
+          <td>客户交付给其终端商户使用的操作门户，商户自助完成承兑、发卡、收单等操作</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <pre>
+┌─────────────────────────────────────────────────────────────┐
+│                       EX 平台                                │
+│                                                              │
+│  ┌──────────────────┐    ┌──────────────────┐               │
+│  │   运营配置完成     │ →  │   交付 TP + MP    │               │
+│  │ (产品开通+品牌配置)│    │  (即开即用)       │               │
+│  └──────────────────┘    └──────────────────┘               │
+│                                                              │
+└──────────────────────┬──────────────────────────────────────┘
+                       │
+          ┌────────────┼────────────┐
+          ▼                         ▼
+┌──────────────────┐     ┌──────────────────┐
+│  TP（租户门户）    │     │  MP（商户门户）    │
+│                   │     │                   │
+│  客户（机构）使用   │     │  终端商户使用      │
+│  管理商户/交易/配置 │     │  承兑/发卡/收单    │
+└──────────────────┘     └──────────────────┘
+    </pre>
+
+    <blockquote>
+      <strong>核心价值</strong>：客户无需任何开发投入，开通产品后即可获得完整的运营管理后台（TP）和面向终端商户的操作门户（MP），快速启动 Web3 业务。
+    </blockquote>
+  </div>
+
+  <div class="sec">
+    <h2><span class="n">2</span>谁适合 Web3 白标方案</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>客户类型</th>
+          <th>场景</th>
+          <th>推荐理由</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>加密货币交易所</strong></td>
+          <td>为用户提供法币出入金、数币充提</td>
+          <td>快速上线承兑业务，无需自建合规体系</td>
+        </tr>
+        <tr>
+          <td><strong>数字资产服务商</strong></td>
+          <td>代理数币承兑、发卡服务给终端商户</td>
+          <td>无需开发，TP 管理商户，MP 交付商户</td>
+        </tr>
+        <tr>
+          <td><strong>Web3 支付平台</strong></td>
+          <td>商户接受数币支付</td>
+          <td>收银台即开即用，商户直接用 MP 操作</td>
+        </tr>
+        <tr>
+          <td><strong>初创加密 Fintech</strong></td>
+          <td>刚起步，优先验证 Web3 业务模型</td>
+          <td>零开发成本，先跑通业务再考虑 API 集成</td>
+        </tr>
+        <tr>
+          <td><strong>虚拟卡发行平台</strong></td>
+          <td>批量发卡、资金管理</td>
+          <td>发卡全流程门户化，即开即用</td>
+        </tr>
+        <tr>
+          <td><strong>持牌金融机构</strong></td>
+          <td>拓展 Web3 新业务线（承兑、发卡、数币收单）</td>
+          <td>TP 管理，快速扩展产品线</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sec">
+    <h2><span class="n">3</span>产品矩阵</h2>
+    <p style="margin-bottom:10px">Web3 白标方案覆盖以下产品板块：</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>产品板块</th>
+          <th>产品</th>
+          <th>能力</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td rowspan="4" style="font-weight:600;color:#6366f1">承兑产品</td>
+          <td>法币账户（Fiat Account）</td>
+          <td>充值（Deposit）、提现（Withdrawal）、余额查询</td>
+        </tr>
+        <tr>
+          <td>数币钱包（Crypto Wallet）</td>
+          <td>充币（Crypto Deposit）、提币（Crypto Withdrawal）、充币退款（Crypto Refund）</td>
+        </tr>
+        <tr>
+          <td>买入数币（Buy Crypto）</td>
+          <td>买入数币、法转数（Fiat to Crypto）</td>
+        </tr>
+        <tr>
+          <td>卖出数币（Sell Crypto）</td>
+          <td>卖出数币、数转法（Crypto to Fiat）</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:#f59e0b">收单产品</td>
+          <td>数币收单（Checkout）</td>
+          <td>收单交易（Acq Authorization）、收单退款（Acq Refund）</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:#ef4444">发卡产品</td>
+          <td>VCC（Card Issuing）</td>
+          <td>开卡、卡管理、资金转入、销卡、资金转出、卡消费、3DS验证等</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sec">
+    <h2><span class="n">4</span>白标门户能力矩阵</h2>
+    <p style="margin-bottom:10px">根据客户开通的产品线，TP 和 MP 自动展示对应的功能模块：</p>
+
+    <h3>4.1 TP（租户门户）— 客户使用</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>功能模块</th>
+          <th>说明</th>
+          <th>备注</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>商户管理</strong></td>
+          <td>注册商户、商户基本信息提交与跟踪、商户状态管理</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>商户开通产品查询</td>
+          <td>查看商户开通的产品；商户增开产品预计6月上线，目前只能开单一产品</td>
+          <td>如果客户开通了一个产品，再开通其他产品，需要找运营团队支持</td>
+        </tr>
+        <tr>
+          <td>商户收费管理</td>
+          <td>管理商户产品收费</td>
+          <td>对客的标准报价需发邮件给运营；商户单独报价可在此配置；需一人配置、一人审核</td>
+        </tr>
+        <tr>
+          <td>商户汇率报价 <span class="tag">Coming Soon</span></td>
+          <td>管理商户的承兑汇率加点</td>
+          <td>默认统一加点配置发运营；商户特殊配置在此处</td>
+        </tr>
+        <tr>
+          <td>商户交易管理</td>
+          <td>查看所有商户的承兑交易、发卡交易、收单交易</td>
+          <td>按产品线展示</td>
+        </tr>
+        <tr>
+          <td>工单审核</td>
+          <td>费率、汇率的审核人员进行审核，审核通过后才能生效</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>我的分佣</td>
+          <td>您获取的交易分佣账单和结算单</td>
+          <td>所有产品</td>
+        </tr>
+        <tr>
+          <td>增值功能：销售管理</td>
+          <td>给每个销售生成一个拓客链接</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>增值功能：代理商管理</td>
+          <td>可以发展下一级的代理商</td>
+          <td>目前只有交易可以返点，汇率的返点暂不支持；操作手册可跟运营获取</td>
+        </tr>
+        <tr>
+          <td>账号权限</td>
+          <td>可以给其他人分配账号</td>
+          <td>目前权限只能控制到页面，不能控制到操作</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top:14px">4.2 MP（商户门户）— 终端商户使用</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>功能模块</th>
+          <th>说明</th>
+          <th>备注</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>商户注册+开通产品</td>
+          <td>商户提交开通承兑/发卡/收单所需的资料，包括实名认证信息和业务信息</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><strong>数币钱包</strong></td>
+          <td>查看数币钱包余额、充值地址、充币/提币记录</td>
+          <td>支持多链多币种</td>
+        </tr>
+        <tr>
+          <td><strong>法币账户</strong></td>
+          <td>查看法币账户余额、充值/提现记录</td>
+          <td>承兑产品的法币账户</td>
+        </tr>
+        <tr>
+          <td><strong>买入/卖出数币</strong></td>
+          <td>买入数币、卖出数币、法币转数币、数币转法币</td>
+          <td>实时报价，报价有效期内确认</td>
+        </tr>
+        <tr>
+          <td><strong>数币收单</strong></td>
+          <td>创建收款订单、查看收单交易记录</td>
+          <td>支持 API 直连和收银台两种模式</td>
+        </tr>
+        <tr>
+          <td><strong>发卡产品</strong></td>
+          <td>申请虚拟卡、查看卡信息、资金转入/转出、查看卡消费记录等</td>
+          <td>支持多卡管理</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sec">
+    <h2><span class="n">5</span>Web2 vs Web3 白标方案对比</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>维度</th>
+          <th>Web2 白标方案</th>
+          <th>Web3 白标方案</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>核心产品</strong></td>
+          <td>收付款产品（收款/付款/外汇/账户服务）</td>
+          <td>承兑产品（数币充提/买卖）+ 发卡 + 数币收单</td>
+        </tr>
+        <tr>
+          <td><strong>目标客户</strong></td>
+          <td>跨境电商、外贸 B2B、代理机构</td>
+          <td>加密交易所、Web3 支付、数字资产服务商</td>
+        </tr>
+        <tr>
+          <td><strong>MP 核心操作</strong></td>
+          <td>VA 收款、法币付款、换汇</td>
+          <td>数币充提、买卖数币、发卡、数币收款</td>
+        </tr>
+        <tr>
+          <td><strong>TP 管理重点</strong></td>
+          <td>收付款交易、结汇材料、贸易背景</td>
+          <td>承兑交易、发卡管理、收单交易</td>
+        </tr>
+        <tr>
+          <td><strong>代理商/分佣</strong></td>
+          <td>✅ 相同</td>
+          <td>✅ 相同</td>
+        </tr>
+        <tr>
+          <td><strong>交付流程</strong></td>
+          <td>✅ 相同</td>
+          <td>✅ 相同</td>
+        </tr>
+        <tr>
+          <td><strong>品牌配置</strong></td>
+          <td>✅ 相同</td>
+          <td>✅ 相同</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <blockquote>
+      如需同时覆盖 Web2 + Web3 场景，可组合开通两个方案的产品线，TP/MP 自动展示所有已开通产品。
+    </blockquote>
+  </div>
+
+  <div class="sec">
+    <h2><span class="n">6</span>交付流程</h2>
+
+    <pre>
+├── 1. 线下签约
+│     └── 跟客户经理签订合同
+│
+├── 2. EX 运营配置（1-2 个工作日）
+│     ├── 创建租户（Tenant）
+│     ├── 配置品牌信息（Logo、域名、邮件模板）
+│     └── 配置商户的标准报价/汇率
+│
+├── 3. 交付 TP（租户门户）
+│     └── 客户获得 TP 管理后台访问权限
+│     └── 客户可开始在 TP 中注册和管理商户
+│
+├── 4. 交付 MP（商户门户）
+│     └── 商户通过租户的链接注册
+│     └── 完成 KYC/KYB → 产品开通 → 开始使用
+│
+└── 5. 上线运营
+      └── 客户通过 TP 管理日常运营
+      └── 终端商户通过 MP 自助操作
+    </pre>
+
+    <h3 style="margin-top:14px">交付时间线</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>阶段</th>
+          <th>内容</th>
+          <th>预计耗时</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>线下签约</td>
+          <td>签订合同</td>
+          <td>1-2 天</td>
+        </tr>
+        <tr>
+          <td>运营配置</td>
+          <td>租户创建、费率配置、域名配置等</td>
+          <td>1-2 个工作日</td>
+        </tr>
+        <tr>
+          <td>交付</td>
+          <td>交付 MP 和 TP</td>
+          <td>1 天（含在上面的时间，配置完成就交付）</td>
+        </tr>
+        <tr>
+          <td>生产验证</td>
+          <td>商户注册 → KYC → 产品开通</td>
+          <td>3-5 个工作日（含审核）</td>
+        </tr>
+        <tr>
+          <td><strong>总计</strong></td>
+          <td><strong>从签约到首批商户可操作</strong></td>
+          <td><strong>2-10 工作日（看生产验证的情况）</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+</body>
+</html>
