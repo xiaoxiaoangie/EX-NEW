@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wingbee OnRamp / OffRamp — 解决方案</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  :root {
+    --bg: #ffffff;
+    --text: #1a1a2e;
+    --heading: #16213e;
+    --accent: #0f3460;
+    --border: #e0e0e0;
+    --card-bg: #f8f9fa;
+    --highlight: #e94560; 
+    --tag-bg: #eef2ff;
+    --tag-text: #3730a3;
+    --success: #059669;
+    --warn: #d97706;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 0;
+  }
+
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* Header */
+  .doc-header {
+    border-bottom: 3px solid var(--accent);
+    padding-bottom: 24px;
+    margin-bottom: 40px;
+  }
+  .doc-header h1 {
+    font-size: 28px;
+    color: var(--heading);
+    margin-bottom: 12px;
+  }
+  .doc-meta {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: #666;
+  }
+  .doc-meta span { display: inline-flex; align-items: center; gap: 4px; }
+
+  /* Sections */
+  .section { margin-bottom: 48px; }
+  .section h2 {
+    font-size: 22px;
+    color: var(--heading);
+    border-left: 4px solid var(--highlight);
+    padding-left: 12px;
+    margin-bottom: 20px;
+  }
+  .section h3 {
+    font-size: 17px;
+    color: var(--accent);
+    margin: 24px 0 12px;
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 20px;
+    font-size: 14px;
+  }
+  th {
+    background: var(--accent);
+    color: #fff;
+    text-align: left;
+    padding: 10px 14px;
+    font-weight: 600;
+  }
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tr:hover td { background: #f5f7ff; }
+
+  /* Flow boxes */
+  .flow-box {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 12px 0 20px;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+    font-size: 13.5px;
+    line-height: 2;
+    white-space: pre-wrap;
+    overflow-x: auto;
+  }
+
+  /* Architecture diagram */
+  .arch-diagram {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px;
+    margin: 16px 0 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .arch-row {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .arch-node {
+    background: #fff;
+    border: 2px solid var(--accent);
+    border-radius: 10px;
+    padding: 14px 22px;
+    text-align: center;
+    min-width: 130px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .arch-node.primary {
+    background: var(--accent);
+    color: #fff;
+  }
+  .arch-node.highlight {
+    border-color: var(--highlight);
+    color: var(--highlight);
+  }
+  .arch-node small {
+    display: block;
+    font-weight: 400;
+    font-size: 12px;
+    margin-top: 4px;
+    opacity: 0.8;
+  }
+  .arch-arrow {
+    font-size: 22px;
+    color: #999;
+  }
+  .arch-arrow-down {
+    font-size: 22px;
+    color: #999;
+    text-align: center;
+  }
+
+  /* Fund flow */
+  .fund-flow {
+    background: linear-gradient(135deg, #f0f4ff 0%, #fef3f2 100%);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 12px 0 20px;
+  }
+  .fund-flow h4 {
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: var(--accent);
+  }
+  .fund-flow .flow-line {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 8px 0;
+    font-size: 13.5px;
+  }
+  .fund-flow .flow-step {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  .fund-flow .flow-arrow { color: var(--highlight); font-weight: bold; }
+
+  /* Principle cards */
+  .principle-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin: 12px 0 20px;
+  }
+  .principle-card {
+    background: var(--card-bg);
+    border-left: 4px solid var(--highlight);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+  }
+  .principle-card strong {
+    display: block;
+    font-size: 14px;
+    color: var(--heading);
+    margin-bottom: 4px;
+  }
+  .principle-card p {
+    font-size: 13.5px;
+    color: #555;
+    margin: 0;
+  }
+
+  /* Bullet lists */
+  .bullet-list {
+    margin: 8px 0 16px 20px;
+    font-size: 14px;
+  }
+  .bullet-list li { margin-bottom: 6px; }
+
+  /* Mermaid container */
+  .mermaid-container {
+    margin: 16px 0 24px;
+    padding: 20px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow-x: auto;
+  }
+
+  /* Tags */
+  .tag {
+    display: inline-block;
+    background: var(--tag-bg);
+    color: var(--tag-text);
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  /* Callout */
+  .callout {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 12px 0 20px;
+    font-size: 14px;
+    color: #92400e;
+  }
+  .callout.info {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    color: #1e40af;
+  }
+  .callout strong { color: inherit; }
+
+  /* Strategy table special */
+  .strategy-table td:first-child { font-weight: 600; white-space: nowrap; }
+
+  /* Panorama */
+  .panorama {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px;
+    margin: 16px 0;
+  }
+  .panorama-header {
+    text-align: center;
+    background: var(--accent);
+    color: #fff;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 14px;
+  }
+  .panorama-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .panorama-col {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    background: #fff;
+  }
+  .panorama-col h4 {
+    text-align: center;
+    font-size: 15px;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .panorama-col .subtitle {
+    text-align: center;
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 12px;
+  }
+  .panorama-col ol {
+    padding-left: 20px;
+    font-size: 13px;
+  }
+  .panorama-col ol li { margin-bottom: 4px; }
+
+  /* Notes list */
+  .notes-list {
+    counter-reset: note;
+    list-style: none;
+    padding: 0;
+  }
+  .notes-list li {
+    counter-increment: note;
+    padding: 10px 14px 10px 40px;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .notes-list li::before {
+    content: counter(note);
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    background: var(--highlight);
+    color: #fff;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+  @media (max-width: 640px) {
+    .container { padding: 20px 16px 60px; }
+    .panorama-cols { grid-template-columns: 1fr; }
+    .doc-meta { flex-direction: column; gap: 6px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="doc-header">
+    <h1>Wingbee OnRamp / OffRamp — 解决方案</h1>
+    <div class="doc-meta">
+      <span>📄 Wingbee 承兑业务解决方案</span>
+      <span>📌 版本 v2.0</span>
+      <span>🕐 最后更新: 2026-05-06</span>
+      <span>👤 适用对象: Wingbee 平台</span>
+    </div>
+  </div>
+
+  <!-- 一、方案总览 -->
+  <div class="section">
+    <h2>一、方案总览</h2>
+    <p style="font-size:14px;margin-bottom:12px;">本文提供两种接入方案，Wingbee 可根据业务阶段和合规要求选择：</p>
+    <table>
+      <thead><tr><th>维度</th><th>方案一：大账户方案（智朗银行）</th><th>方案二：VA 方案</th></tr></thead>
+      <tbody>
+        <tr><td><strong>核心思路</strong></td><td>Wingbee 归集客户资金到自己的智朗银行账户，作为直客入网 BB，自己发起承兑交易</td><td>Wingbee 将客户信息推送到 SP，客户在 SP 各自拥有独立 VA</td></tr>
+        <tr><td><strong>资金归集</strong></td><td>✅ Wingbee 归集客户资金</td><td>❌ Wingbee 不归集客户资金</td></tr>
+        <tr><td><strong>Wingbee 开 VA</strong></td><td>❌ Wingbee 不开 VA（用自有智朗账户）</td><td>❌ Wingbee 不能开 VA</td></tr>
+        <tr><td><strong>客户 VA</strong></td><td>❌ 客户无独立 VA</td><td>✅ 客户在 SP 拥有独立 VA</td></tr>
+        <tr><td><strong>交易发起方</strong></td><td>Wingbee（以自身 MID 发起）</td><td>客户（以客户自身 MID 发起）</td></tr>
+        <tr><td><strong>客户入网</strong></td><td>不需要（Wingbee 以自身身份操作，客户不入网 BB）</td><td>Wingbee 推送客户信息到 SP，SP 审核并开立 VA</td></tr>
+        <tr><td><strong>适用场景</strong></td><td>Wingbee 自主管理客户资金，对接简单</td><td>合规要求客户资金隔离，不允许归集</td></tr>
+      </tbody>
+    </table>
+
+    <h3>各方角色（两方案通用）</h3>
+    <table>
+      <thead><tr><th>角色</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Wingbee</strong></td><td>面向终端客户的平台。在 EX 系统上是租户（TP），管理其下客户</td></tr>
+        <tr><td><strong>BB</strong></td><td>持牌合规通道，承兑执行方（OnRamp/OffRamp）</td></tr>
+        <tr><td><strong>EX</strong></td><td>技术服务商，纯 API 编排层，不碰钱</td></tr>
+        <tr><td><strong>客户</strong></td><td>Wingbee 的终端用户，在 Wingbee 平台完成法币 ↔ 加密货币兑换</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr>
+
+  <!-- ========== 方案一：大账户方案 ========== -->
+
+  <!-- 二、方案一概述 -->
+  <div class="section">
+    <h2 style="background:linear-gradient(90deg,#eef2ff,#fff);padding:8px 12px;border-radius:0 8px 8px 0;">方案一：大账户方案（智朗银行）</h2>
+  </div>
+
+  <div class="section">
+    <h2>二、方案一概述</h2>
+
+    <h3>2.1 核心思路</h3>
+    <p style="font-size:14px;margin-bottom:12px;">Wingbee 在智朗银行拥有自己的法币账户，<strong>直接归集客户资金</strong>。Wingbee 作为直客入网 BB，以自身身份（MID）发起 OnRamp / OffRamp 承兑交易。客户不需要在 BB 入网，所有操作均由 Wingbee 以自身商户号完成。</p>
+
+    <h3>2.2 架构关系</h3>
+    <div class="arch-diagram">
+      <div class="arch-row">
+        <div class="arch-node">客户<small>终端用户</small></div>
+        <div class="arch-arrow">→ 入网/交易 →</div>
+        <div class="arch-node primary">Wingbee<small>平台</small></div>
+        <div class="arch-arrow">→ API 对接 →</div>
+        <div class="arch-node">EX<small>技术服务</small></div>
+      </div>
+      <div class="arch-row">
+        <div style="min-width:130px"></div>
+        <div class="arch-arrow-down">↓ 银行转账</div>
+        <div style="min-width:100px"></div>
+        <div class="arch-arrow-down">↓ 系统支撑</div>
+      </div>
+      <div class="arch-row">
+        <div style="min-width:130px"></div>
+        <div class="arch-node highlight">贸易公司<small>BB代收付主体 · 智朗银行</small></div>
+        <div style="min-width:100px"></div>
+        <div class="arch-node highlight">BB<small>持牌通道</small></div>
+      </div>
+    </div>
+    <p style="font-size:14px;font-weight:600;margin-bottom:6px;">系统上的身份关系：</p>
+    <ul class="bullet-list">
+      <li><strong>Wingbee</strong> = BB 的直客商户（通过 EX 入网），拥有自己的 MID</li>
+      <li><strong>贸易公司</strong> = BB 的代收付主体，拥有智朗银行账户，用于法币收付</li>
+      <li>Wingbee 通过智朗银行与贸易公司进行行内转账</li>
+    </ul>
+    <p style="font-size:14px;font-weight:600;margin:12px 0 6px;">资金通道：</p>
+    <ul class="bullet-list">
+      <li>BB 本身没有智朗银行账户，法币收付通过贸易公司（代收付主体）的智朗银行账户完成</li>
+      <li>Wingbee 有自己的智朗银行账户</li>
+      <li>Wingbee ↔ 贸易公司之间通过智朗银行转账（行内转账）</li>
+    </ul>
+
+    <h3>2.3 核心原则</h3>
+    <div class="principle-grid">
+      <div class="principle-card">
+        <strong>OnRamp 先收后做</strong>
+        <p>Wingbee 必须先收到客户法币，转账给贸易公司并确认到账后，才发起 OnRamp。绝不垫资</p>
+      </div>
+      <div class="principle-card">
+        <strong>OffRamp 头寸自管</strong>
+        <p>Wingbee 自行管理法币头寸，可选择先垫付客户再等结算，但风险自担</p>
+      </div>
+      <div class="principle-card">
+        <strong>双方不互垫头寸</strong>
+        <p>BB 不为 Wingbee 垫资，Wingbee 不为 BB 垫资。各自管理各自的资金池</p>
+      </div>
+    </div>
+
+    <h3>2.4 资金流向总览</h3>
+    <div class="fund-flow">
+      <h4>OnRamp（法币 → 加密货币）</h4>
+      <div class="flow-line">
+        <span class="flow-step">客户法币</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">Wingbee 智朗账户</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">Wingbee 转账给贸易公司智朗账户</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">Wingbee 发起 OnRamp</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">加密货币入 Wingbee 账户</span>
+      </div>
+      <h4 style="margin-top:16px;">OffRamp（加密货币 → 法币）</h4>
+      <div class="flow-line">
+        <span class="flow-step">Wingbee 发起 OffRamp（收款人=Wingbee智朗）</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">BB 执行承兑</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">法币到 Wingbee 智朗银行账户</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">Wingbee 自行付款给客户</span>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- 三、方案一前置流程 -->
+  <div class="section">
+    <h2>三、方案一前置流程</h2>
+
+    <h3>3.1 Wingbee 自身准备</h3>
+    <div class="flow-box">├── 1. Wingbee 在智朗银行开设法币账户
+│     └── 用于接收客户法币（OnRamp）和向客户付款（OffRamp）
+│
+├── 2. Wingbee 与 EX 签约
+│     └── 作为租户入网 EX 平台
+│     └── 开通 OnRamp / OffRamp 产品
+│
+├── 3. Wingbee 作为直客入网 BB（如果已经入网，我们协助迁移）
+│     └── Wingbee 通过 EX 注册为 BB 的直客商户，完成 KYC/KYB
+│     └── 用于以 Wingbee 自身商户号发起 OnRamp / OffRamp 承兑交易
+│     └── 客户不需要在 BB 入网，所有操作均以 Wingbee MID 进行
+│
+└── 4. 技术对接
+      └── 获取 Sandbox 环境 → 配置 APP ID / 公钥 / AES Key / Webhook
+      └── 完成签名验签 + AES 加解密联调</div>
+
+    <h3>3.2 贸易公司准备（BB 侧）</h3>
+    <div class="flow-box">├── 1. 贸易公司已在智朗银行开设法币账户
+│     └── 作为 BB 的代收付主体，接收 Wingbee 转入的法币（OnRamp）
+│
+└── 2. BB 侧配置
+      └── 贸易公司由 BB 控制，作为法币收付通道</div>
+
+    <h3>3.3 Wingbee 配置收款账户（OffRamp 用）</h3>
+    <div class="flow-box">├── 1. Wingbee 在 EX 添加自己的智朗银行账户作为收款人（beneficiary）
+│     └── 收款账户 = Wingbee 的智朗银行账号
+│     └── OffRamp 完成后，法币直接到达 Wingbee 智朗银行账户
+│
+└── 2. 客户提现账户由 Wingbee 自行管理
+      └── 客户在 Wingbee 前端添加提现银行账户
+      └── Wingbee 负责维护客户收款信息，不经过 EX</div>
+  </div>
+
+  <hr>
+
+  <!-- 四、方案一 OnRamp -->
+  <div class="section">
+    <h2>四、方案一 OnRamp 流程（法币 → 加密货币）</h2>
+    <div class="callout"><strong>核心原则：Wingbee 必须先收到客户法币，转给贸易公司确认到账后，才发起 OnRamp。</strong></div>
+
+    <h3>步骤详解</h3>
+    <div class="flow-box">├── 1. 客户发起法币充值
+│     └── 客户在 Wingbee 前端发起法币充值请求
+│     └── Wingbee 向客户展示 Wingbee 智朗银行收款账户信息
+│
+├── 2. 客户打款
+│     └── 客户通过银行转账将法币打入 Wingbee 的智朗银行账户
+│
+├── 3. Wingbee 确认到账
+│     └── 在智朗银行确认收到客户法币（⚠️ 必须确认到账）
+│
+├── 4. Wingbee 银行转账给贸易公司
+│     └── Wingbee 从智朗银行账户转账至贸易公司智朗银行账户（行内转账）
+│
+├── 5. Wingbee 发起 OnRamp
+│     └── 调用 EX API，以 Wingbee MID 发起 OnRamp 请求
+│     └── EX 返回：OnRamp 订单信息（含应付法币金额、汇率、订单号）
+│
+├── 6. BB 执行 OnRamp
+│     └── BB 执行承兑（法币 → 加密货币）
+│     └── 加密货币入账到 Wingbee 的加密货币账户
+│
+└── 7. 交易完成
+      └── Webhook: OnRamp 交易结果通知
+      └── Wingbee 通知客户充值完成</div>
+
+    <h3>OnRamp 时序图</h3>
+    <div class="mermaid-container">
+      <pre class="mermaid">
+sequenceDiagram
+    participant C as 客户
+    participant W as Wingbee
+    participant ZL as 智朗银行
+    participant T as 贸易公司(BB代收付主体)
+    participant EX as EX(技术服务)
+    participant BB as BB(承兑通道)
+
+    C->>W: 发起法币充值请求
+    W->>C: 展示 Wingbee 智朗银行收款账户
+
+    C->>ZL: 银行转账（法币）→ Wingbee 账户
+    ZL-->>W: 到账通知
+    Note over W: ⚠️ 确认到账后才继续
+
+    W->>ZL: 银行转账给贸易公司（行内转账）
+    ZL-->>T: 法币到账
+
+    W->>EX: POST /onramp（Wingbee MID, 法币金额, 目标币种）
+    EX-->>W: 返回订单（应付金额, 汇率, 订单号）
+
+    BB->>BB: 执行 OnRamp（法币→加密货币）
+
+    EX-->>W: Webhook: OnRamp 交易完成
+    W-->>C: 通知充值完成（加密货币已入账）
+      </pre>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- 五、方案一 OffRamp -->
+  <div class="section">
+    <h2>五、方案一 OffRamp 流程（加密货币 → 法币）</h2>
+
+    <h3>步骤详解</h3>
+    <div class="flow-box">├── 1. 客户发起提现
+│     └── 客户在 Wingbee 前端发起加密货币提现（如 USDT → 法币）
+│
+├── 2. Wingbee 以自身商户号发起 OffRamp
+│     └── 调用 EX API，以 Wingbee MID 发起 OffRamp
+│     └── 收款人 = Wingbee 智朗银行账户（前置已配置）
+│     └── EX 返回：OffRamp 订单信息（含应付法币金额、汇率、订单号）
+│
+├── 3. BB 执行 OffRamp
+│     └── BB 执行承兑（USDT → 法币）
+│     └── 法币直接到达 Wingbee 智朗银行账户
+│
+├── 4. Wingbee 自行付款给客户
+│     └── Wingbee 根据客户提现信息，从智朗银行账户付款给客户
+│     └── 客户提现账户由 Wingbee 自行管理，不经过 EX/BB
+│
+└── 5. 交易完成
+      └── Webhook: OffRamp 交易结果通知
+      └── Wingbee 通知客户提现完成</div>
+
+    <h3>OffRamp 时序图</h3>
+    <div class="mermaid-container">
+      <pre class="mermaid">
+sequenceDiagram
+    participant C as 客户
+    participant W as Wingbee
+    participant EX as EX(技术服务)
+    participant BB as BB(承兑通道)
+    participant ZL as 智朗银行
+
+    C->>W: 发起 OffRamp 提现请求（USDT → 法币）
+
+    W->>EX: POST /offramp（Wingbee MID, USDT金额, 目标法币，收款人=Wingbee智朗账户）
+    EX-->>W: 返回订单（应付法币金额, 汇率, 订单号）
+
+    BB->>BB: 执行 OffRamp（USDT → 法币）
+    BB->>ZL: 法币到达 Wingbee 智朗银行账户
+    ZL-->>W: 法币到账
+
+    EX-->>W: Webhook: OffRamp 交易完成（含应付法币金额）
+
+    Note over W: Wingbee 自行付款给客户（不经过 EX/BB）
+    W->>ZL: 从智朗账户付款给客户
+    ZL-->>C: 法币到账
+
+    W-->>C: 通知提现完成
+      </pre>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- 六、方案一补充说明 -->
+  <div class="section">
+    <h2>六、方案一补充说明</h2>
+
+    <h3>6.1 贸易公司的角色</h3>
+    <div class="callout info"><strong>贸易公司 = BB 的代收付主体。</strong>BB 本身没有智朗银行账户，法币收付通过贸易公司完成。贸易公司由 BB 控制，拥有智朗银行账户。</div>
+    <table>
+      <thead><tr><th>场景</th><th>资金流向</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>OnRamp</td><td>Wingbee 智朗 → 贸易公司智朗（行内转账）</td><td>Wingbee 先转法币，BB 收到后执行承兑</td></tr>
+        <tr><td>OffRamp</td><td>BB 承兑后 → 法币到 Wingbee 智朗（直接到账）</td><td>Wingbee 配置自己的智朗为收款账户</td></tr>
+      </tbody>
+    </table>
+
+    <h3>6.2 头寸管理</h3>
+    <div class="principle-grid">
+      <div class="principle-card">
+        <strong>1. OnRamp：先收后做</strong>
+        <p>Wingbee 必须先收到客户法币，转给贸易公司确认到账后才能发起 OnRamp。不允许未收款就发起交易</p>
+      </div>
+      <div class="principle-card">
+        <strong>2. OffRamp：头寸自管</strong>
+        <p>Wingbee 自行管理智朗银行法币头寸。OffRamp 法币直接到 Wingbee 智朗，再自行付款给客户。可先垫付客户，再等 OffRamp 到账（风险自担）</p>
+      </div>
+      <div class="principle-card">
+        <strong>3. 双方不互垫头寸</strong>
+        <p>BB 不为 Wingbee 垫资，Wingbee 不为 BB 垫资。各管各的资金池</p>
+      </div>
+    </div>
+
+    <h3>6.3 OffRamp 头寸策略</h3>
+    <table class="strategy-table">
+      <thead><tr><th>策略</th><th>做法</th><th>风险</th><th>客户体验</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>保守策略（推荐）</td>
+          <td>等 OffRamp 法币到 Wingbee 智朗后再付款给客户</td>
+          <td>零风险</td>
+          <td>客户等待时间较长</td>
+        </tr>
+        <tr>
+          <td>激进策略</td>
+          <td>Wingbee 预先在智朗银行备足法币头寸，先垫付客户，再等 OffRamp 法币到账</td>
+          <td>汇率波动风险、资金占用</td>
+          <td>客户体验好，到账快</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout info"><strong>建议：</strong>初期采用保守策略，业务稳定后根据资金情况考虑激进策略。</div>
+  </div>
+
+  <hr>
+
+  <!-- ========== 方案二：VA 方案 ========== -->
+
+  <div class="section">
+    <h2 style="background:linear-gradient(90deg,#ecfdf5,#fff);padding:8px 12px;border-radius:0 8px 8px 0;">方案二：VA 方案</h2>
+  </div>
+
+  <!-- 七、方案二概述 -->
+  <div class="section">
+    <h2>七、方案二概述</h2>
+
+    <h3>7.1 核心思路</h3>
+    <p style="font-size:14px;margin-bottom:12px;">Wingbee 将客户信息推送到 SP，SP 为每个客户独立开立 VA。客户资金直接进入客户自己的 VA，<strong>Wingbee 不归集客户资金，Wingbee 自身也不能开 VA</strong>。</p>
+
+    <h3>7.2 架构关系</h3>
+    <div class="arch-diagram">
+      <div class="arch-row">
+        <div class="arch-node">客户<small>终端用户</small></div>
+        <div class="arch-arrow">→ 注册/交易 →</div>
+        <div class="arch-node primary">Wingbee<small>平台</small></div>
+        <div class="arch-arrow">→ API 对接 →</div>
+        <div class="arch-node">EX<small>技术编排</small></div>
+      </div>
+      <div class="arch-row">
+        <div class="arch-arrow-down">↓ 法币直接入客户 VA</div>
+        <div style="min-width:200px"></div>
+        <div class="arch-arrow-down">↓ 编排</div>
+      </div>
+      <div class="arch-row">
+        <div class="arch-node highlight" style="min-width:400px;">
+          SP（持牌服务商）<small>客户A VA · 客户B VA · 客户N VA（独立账户）<br>BB（承兑通道）── 执行 OnRamp / OffRamp</small>
+        </div>
+      </div>
+    </div>
+
+    <h3>7.3 与方案一的关键区别</h3>
+    <table>
+      <thead><tr><th>维度</th><th>方案一（大账户）</th><th>方案二（VA）</th></tr></thead>
+      <tbody>
+        <tr><td><strong>客户资金流</strong></td><td>客户 → Wingbee 智朗账户（归集）</td><td>客户 → 客户自己的 VA（不归集）</td></tr>
+        <tr><td><strong>交易主体</strong></td><td>Wingbee 以自身 MID 发起交易</td><td>以客户 MID 发起交易</td></tr>
+        <tr><td><strong>Wingbee 角色</strong></td><td>资金归集方 + 交易发起方</td><td>纯平台方，推送客户信息、编排交易</td></tr>
+        <tr><td><strong>合规主体</strong></td><td>Wingbee 对客户资金负责</td><td>SP 对客户资金负责（资金在 SP 的 VA 内）</td></tr>
+        <tr><td><strong>贸易公司</strong></td><td>需要（作为 BB 的代收付主体）</td><td>不需要</td></tr>
+        <tr><td><strong>OffRamp 收款</strong></td><td>Wingbee 智朗银行账户（直接到账）</td><td>客户 SP 法币账户</td></tr>
+      </tbody>
+    </table>
+
+    <h3>7.4 核心原则</h3>
+    <div class="principle-grid">
+      <div class="principle-card">
+        <strong>Wingbee 不碰钱</strong>
+        <p>客户资金直接进入 SP 开立的 VA，Wingbee 不归集、不中转</p>
+      </div>
+      <div class="principle-card">
+        <strong>Wingbee 不开 VA</strong>
+        <p>Wingbee 自身不在 SP 开立 VA，只推送客户信息</p>
+      </div>
+      <div class="principle-card">
+        <strong>客户独立账户</strong>
+        <p>每个客户在 SP 拥有独立 VA，资金隔离</p>
+      </div>
+      <div class="principle-card">
+        <strong>Wingbee 编排交易</strong>
+        <p>Wingbee 通过 EX API 代客户发起 OnRamp/OffRamp 交易</p>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- 八、方案二前置流程 -->
+  <div class="section">
+    <h2>八、方案二前置流程</h2>
+
+    <h3>8.1 Wingbee 准备</h3>
+    <div class="flow-box">├── 1. Wingbee 与 EX 签约
+│     └── 作为租户入网 EX 平台
+│     └── 开通 OnRamp / OffRamp 产品
+│
+└── 2. 技术对接
+      └── 获取 Sandbox 环境 → 配置 APP ID / 公钥 / AES Key / Webhook
+      └── 完成签名验签 + AES 加解密联调</div>
+    <div class="callout info"><strong>注意：</strong>方案二中 Wingbee 不需要在智朗银行开户，也不需要贸易公司。</div>
+
+    <h3>8.2 客户入网 + VA 开立</h3>
+    <div class="flow-box">├── 1. Wingbee 推送客户信息到 SP
+│     └── Wingbee 通过 EX API 推送客户 KYC/KYB 信息
+│     └── EX 转发给 SP 审核
+│
+├── 2. SP 审核客户
+│     └── SP 执行 KYC/KYB 审核
+│     └── Webhook: 审核结果通知（APPROVED / REJECTED / RFI）
+│
+├── 3. 审核通过 → SP 为客户开立独立 VA
+│     └── 每个客户拥有独立的 VA 账户
+│     └── VA 账户信息通过 EX 返回给 Wingbee
+│
+└── 4. 客户获得 VA
+      └── Wingbee 将 VA 信息展示给客户
+      └── 客户可直接向自己的 VA 打款</div>
+  </div>
+
+  <hr>
+
+  <!-- 九、方案二 OnRamp -->
+  <div class="section">
+    <h2>九、方案二 OnRamp 流程（法币 → 加密货币）</h2>
+
+    <h3>步骤详解</h3>
+    <div class="flow-box">├── 1. 客户发起法币充值
+│     └── 客户在 Wingbee 前端发起充值请求
+│     └── Wingbee 展示客户自己的 VA 收款信息
+│
+├── 2. 客户打款到自己的 VA
+│     └── 客户通过银行转账将法币直接打入自己在 SP 的 VA
+│     └── ⚠️ 资金不经过 Wingbee
+│
+├── 3. VA 入账确认
+│     └── SP 确认 VA 收到法币
+│     └── Webhook: 入账通知
+│
+├── 4. Wingbee 代客户发起 OnRamp
+│     └── Wingbee 调用 EX API，以客户 MID 发起 OnRamp
+│     └── EX 返回：OnRamp 订单信息（含应付法币金额、汇率、订单号）
+│
+├── 5. BB 执行 OnRamp
+│     └── BB 执行承兑（法币 → 加密货币）
+│     └── 加密货币入账到客户账户
+│
+└── 6. 交易完成
+      └── Webhook: OnRamp 交易结果通知
+      └── Wingbee 通知客户充值完成</div>
+
+    <h3>OnRamp 时序图</h3>
+    <div class="mermaid-container">
+      <pre class="mermaid">
+sequenceDiagram
+    participant C as 客户
+    participant W as Wingbee
+    participant EX as EX(技术编排)
+    participant SP as SP(持牌服务商)
+    participant BB as BB(承兑通道)
+
+    C->>W: 发起法币充值请求
+    W->>C: 展示客户自己的 VA 收款信息
+
+    C->>SP: 银行转账 → 客户自己的 VA
+    SP-->>EX: VA 入账确认
+    EX-->>W: Webhook: 客户 VA 入账通知
+    Note over W: 资金不经过 Wingbee
+
+    W->>EX: POST /onramp（客户 MID, 法币金额, 目标币种）
+    EX-->>W: 返回订单（应付金额, 汇率, 订单号）
+
+    BB->>BB: 执行 OnRamp（法币→加密货币）
+
+    EX-->>W: Webhook: OnRamp 交易完成
+    W-->>C: 通知充值完成（加密货币已入账）
+      </pre>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- 十、方案二 OffRamp -->
+  <div class="section">
+    <h2>十、方案二 OffRamp 流程（加密货币 → 法币）</h2>
+
+    <h3>步骤详解</h3>
+    <div class="flow-box">├── 1. 客户发起提现
+│     └── 客户在 Wingbee 前端发起加密货币提现（如 USDT → 法币）
+│
+├── 2. Wingbee 代客户发起 OffRamp
+│     └── Wingbee 调用 EX API，以客户 MID 发起 OffRamp
+│     └── EX 返回：OffRamp 订单信息（含应付法币金额、汇率、订单号）
+│
+├── 3. BB 执行 OffRamp
+│     └── BB 执行承兑（USDT → 法币）
+│     └── 法币到达客户在 SP 的法币账户
+│
+├── 4. 客户提现
+│     └── 客户从 SP 法币账户提现到自己的银行账户
+│     └── 或 Wingbee 代客户发起提现（Payout）
+│
+└── 5. 交易完成
+      └── Webhook: OffRamp 交易结果通知
+      └── Wingbee 通知客户提现完成</div>
+
+    <h3>OffRamp 时序图</h3>
+    <div class="mermaid-container">
+      <pre class="mermaid">
+sequenceDiagram
+    participant C as 客户
+    participant W as Wingbee
+    participant EX as EX(技术编排)
+    participant BB as BB(承兑通道)
+    participant SP as SP(持牌服务商)
+
+    C->>W: 发起 OffRamp 提现请求（USDT → 法币）
+
+    W->>EX: POST /offramp（客户 MID, USDT金额, 目标法币）
+    EX-->>W: 返回订单（应付法币金额, 汇率, 订单号）
+
+    BB->>BB: 执行 OffRamp（USDT → 法币）
+    Note over BB,SP: 法币到达客户在 SP 的法币账户
+
+    W->>EX: POST /payout（客户 MID, 法币金额, 客户银行账户）
+    SP->>C: 法币付款到客户银行账户
+
+    EX-->>W: Webhook: OffRamp + Payout 完成
+    W-->>C: 通知提现完成
+      </pre>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- ========== 通用说明 ========== -->
+
+  <!-- 十一、两方案对比总结 -->
+  <div class="section">
+    <h2>十一、两方案对比总结</h2>
+    <div class="panorama">
+      <div class="panorama-header">
+        <strong>方案选型指引</strong>
+      </div>
+      <div class="panorama-cols">
+        <div class="panorama-col">
+          <h4>方案一（大账户）</h4>
+          <div class="subtitle">Wingbee 归集客户资金</div>
+          <ol>
+            <li>Wingbee 归集客户资金</li>
+            <li>Wingbee 发起交易</li>
+            <li>需要贸易公司</li>
+            <li>需要智朗银行账户</li>
+            <li>OffRamp 直达智朗账户</li>
+            <li>对接简单</li>
+          </ol>
+          <p style="font-size:12px;color:#888;margin-top:8px;text-align:center;">适合：快速上线、Wingbee 自主管理客户资金</p>
+        </div>
+        <div class="panorama-col">
+          <h4>方案二（VA）</h4>
+          <div class="subtitle">客户资金直接入 VA</div>
+          <ol>
+            <li>客户资金直接入 VA</li>
+            <li>Wingbee 代客发起交易</li>
+            <li>不需要贸易公司</li>
+            <li>不需要智朗银行账户</li>
+            <li>客户资金隔离</li>
+            <li>合规要求高</li>
+          </ol>
+          <p style="font-size:12px;color:#888;margin-top:8px;text-align:center;">适合：合规要求高、客户资金不允许归集</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- 十二、Webhook 事件 -->
+  <div class="section">
+    <h2>十二、Webhook 事件（两方案通用）</h2>
+    <table>
+      <thead><tr><th>事件</th><th>触发时机</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>KYC/KYB 审核结果</td><td>客户审核完成</td><td><span class="tag">APPROVED</span> <span class="tag">REJECTED</span> <span class="tag">RFI</span></td></tr>
+        <tr><td>产品审核结果</td><td>产品申请审核完成</td><td><span class="tag">approved</span> <span class="tag">rejected</span></td></tr>
+        <tr><td>VA 入账通知</td><td>客户 VA 收到法币（方案二）</td><td>含入账金额、币种</td></tr>
+        <tr><td>收款人审核结果</td><td>收款账户审核完成（方案一）</td><td><span class="tag">APPROVED</span> <span class="tag">REJECTED</span> <span class="tag">RFI</span></td></tr>
+        <tr><td>OnRamp 交易结果</td><td>OnRamp 处理完成</td><td>含最终汇率、加密货币金额</td></tr>
+        <tr><td>OffRamp 交易结果</td><td>OffRamp 处理完成</td><td>含最终汇率、应付法币金额</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr>
+
+  <!-- 十三、注意事项 -->
+  <div class="section">
+    <h2>十三、注意事项</h2>
+
+    <h3>方案一专属</h3>
+    <ol class="notes-list">
+      <li><strong>OnRamp 必须先收后做</strong> — Wingbee 必须先收到客户法币，银行转账给贸易公司确认到账后，才能发起 OnRamp</li>
+      <li><strong>OffRamp 收款账户</strong> — Wingbee 必须在 EX 配置自己的智朗银行账户作为 OffRamp 收款人（beneficiary），法币直接到 Wingbee 智朗</li>
+      <li><strong>头寸监控</strong> — 采用激进策略时需实时监控智朗账户余额，避免付款失败</li>
+      <li><strong>对账</strong> — Wingbee 应定期核对：智朗银行流水 ↔ EX 系统交易记录</li>
+    </ol>
+
+    <h3 style="margin-top:24px;">方案二专属</h3>
+    <ol class="notes-list">
+      <li><strong>Wingbee 不能开 VA</strong> — Wingbee 自身不能在 SP 开立 VA，只能为客户开立</li>
+      <li><strong>Wingbee 不能归集客户资金</strong> — 客户资金直接进入客户自己的 VA，不经过 Wingbee</li>
+      <li><strong>客户信息必须推送到 SP</strong> — 客户 KYC/KYB 由 SP 审核，审核通过才能开 VA</li>
+    </ol>
+
+    <h3 style="margin-top:24px;">两方案通用</h3>
+    <ol class="notes-list">
+      <li><strong>汇率有时效性</strong> — OnRamp/OffRamp 的报价有过期时间，过期需重新获取</li>
+      <li><strong>RFI 及时响应</strong> — 审核过程中可能要求补充材料，超时可能导致审核失败</li>
+    </ol>
+  </div>
+
+ 
+
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      primaryColor: '#eef2ff',
+      primaryTextColor: '#1a1a2e',
+      primaryBorderColor: '#0f3460',
+      lineColor: '#0f3460',
+      secondaryColor: '#fef3f2',
+      tertiaryColor: '#f8f9fa',
+      noteBkgColor: '#fffbeb',
+      noteTextColor: '#92400e',
+      noteBorderColor: '#fde68a',
+      actorBkg: '#0f3460',
+      actorTextColor: '#fff',
+      actorBorder: '#0f3460',
+      signalColor: '#1a1a2e',
+      signalTextColor: '#1a1a2e'
+    },
+    sequence: {
+      mirrorActors: true,
+      actorMargin: 60,
+      messageMargin: 40
+    }
+  });
+</script>
+</body>
+</html>

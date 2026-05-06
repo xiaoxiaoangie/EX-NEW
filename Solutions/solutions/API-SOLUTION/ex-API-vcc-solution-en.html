@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EX API — VCC Card Issuing Solution</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;background:#f4f5f7;color:#1a1a2e;line-height:1.6;font-size:12px}
+    .page{max-width:900px;margin:0 auto;padding:32px 20px 64px}
+    h1{font-size:22px;font-weight:700;margin-bottom:4px}
+    h2{font-size:15px;font-weight:700;margin-bottom:12px;color:#1a1a2e;display:flex;align-items:center;gap:8px}
+    h2 .n{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:6px;background:#6366f1;color:#fff;font-size:11px;font-weight:700;flex-shrink:0}
+    h3{font-size:13px;font-weight:600;margin-bottom:6px;color:#374151}
+    h4{font-size:11px;font-weight:600;margin-bottom:4px;color:#4b5563}
+    .sub{font-size:12px;color:#71717a;margin-bottom:20px}
+    .meta{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+    .mt{font-size:10px;padding:2px 8px;border-radius:20px;background:#eef2ff;color:#4f46e5;font-weight:500}
+    .sec{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:16px 18px;margin-bottom:14px}
+    .bx{border:1.5px solid #d1d5db;border-radius:7px;padding:8px 10px;text-align:center;background:#fff;font-size:11px}
+    .bx.ex{border-color:#6366f1;background:#f5f3ff}.bx.ex .bt{color:#6366f1}
+    .bx.you{border-color:#10b981;background:#ecfdf5}.bx.you .bt{color:#059669}
+    .bx.sp{border-color:#f59e0b;background:#fffbeb}.bx.sp .bt{color:#b45309}
+    .bt{font-weight:700;font-size:11px;margin-bottom:2px}
+    .bd{font-size:10px;color:#6b7280;line-height:1.3}
+    .arr{color:#9ca3af;font-size:15px;display:flex;align-items:center;justify-content:center}
+    .arr-v{padding:3px 0;flex-direction:column}
+    .arr-lbl{font-size:9px;color:#9ca3af;margin-top:0}
+    table{width:100%;border-collapse:collapse;font-size:11px}
+    th{background:#f9fafb;font-weight:600;text-align:left;padding:6px 8px;border-bottom:2px solid #e5e7eb;white-space:nowrap}
+    td{padding:5px 8px;border-bottom:1px solid #f3f4f6;vertical-align:top}
+    tr:hover td{background:#fafafa}
+    .fn{padding:4px 10px;border-radius:5px;font-size:10px;font-weight:500;white-space:nowrap;border:1px solid #e5e7eb;background:#fff;display:inline-block}
+    .fn.ex{background:#eef2ff;border-color:#c7d2fe;color:#4338ca}
+    .fn.you{background:#ecfdf5;border-color:#a7f3d0;color:#047857}
+    .fn.wh{background:#fffbeb;border-color:#fde68a;color:#92400e}
+    .fn.sp{background:#f9fafb;border-color:#d1d5db;color:#374151}
+    .fa{color:#d1d5db;font-size:14px;padding:0 1px}
+    .flow-row{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin:4px 0;line-height:1}
+    .wb{display:inline-flex;align-items:center;gap:3px;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:500;background:#fffbeb;border:1px solid #fde68a;color:#92400e}
+    .wb::before{content:'⚡';font-size:8px}
+    .note{margin-top:8px;padding:6px 10px;border-radius:5px;font-size:10px}
+    .note.warn{background:#fffbeb;border:1px solid #fde68a;color:#92400e}
+    .note.info{background:#eef2ff;border:1px solid #c7d2fe;color:#4338ca}
+    details{border:1px solid #e5e7eb;border-radius:7px;margin-bottom:6px;background:#fff}
+    summary{padding:8px 12px;font-size:11px;font-weight:600;color:#1a1a2e;cursor:pointer;list-style:none;display:flex;align-items:center;gap:6px}
+    summary::before{content:'▸';color:#6366f1;font-size:12px;transition:transform .2s}
+    details[open] summary::before{transform:rotate(90deg)}
+    .det-body{padding:0 12px 10px}
+    .sf-num{width:18px;height:18px;border-radius:50%;background:#6366f1;color:#fff;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+    a{color:#4f46e5;text-decoration:none}
+    a:hover{text-decoration:underline}
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+    <div style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#ef4444,#6366f1);display:flex;align-items:center;justify-content:center">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="2" y="5" width="20" height="14" rx="2" stroke="white" stroke-width="2"/><path d="M2 10h20" stroke="white" stroke-width="2"/></svg>
+    </div>
+    <div>
+      <h1>EX API — VCC Card Issuing Solution</h1>
+      <div class="sub">Full lifecycle: Onboarding → Funding → Card Issuance → Spending</div>
+    </div>
+  </div>
+  <div class="meta">
+    <span class="mt">v1.0</span><span class="mt">2026-05-05</span><span class="mt">VCC Card Issuing</span>
+    <a href="https://open.eurewax.com/" target="_blank" style="font-size:10px;padding:2px 8px;border-radius:20px;background:#dcfce7;color:#166534;font-weight:500;text-decoration:none">📄 API Docs</a>
+  </div>
+
+  <!-- 1. Architecture -->
+  <div class="sec">
+    <h2><span class="n">1</span>Platform Architecture</h2>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:0;font-size:11px;margin-top:6px">
+      <div style="width:100%"><div class="bx you" style="width:100%;padding:10px"><div class="bt" style="font-size:12px">Tenant</div><div class="bd">EX platform customer (e.g. FlyCapital)<br>Operates all business via EX API / Portal<br>Manages merchants, VA, accounts, wallets, VCC cards</div></div></div>
+      <div class="arr arr-v" style="padding:4px 0">↕<div class="arr-lbl">EX Unified API + Webhook</div></div>
+      <div style="width:100%"><div class="bx ex" style="width:100%;padding:10px"><div class="bt" style="font-size:12px">EX Platform (EurewaX)</div><div class="bd">Unified API aggregation + business orchestration<br>Payment system · Merchant mgmt · Account system · Quote engine · Webhook</div></div></div>
+      <div class="arr arr-v" style="padding:4px 0">↕<div class="arr-lbl">SP Integration</div></div>
+      <div style="width:100%"><div class="bx sp" style="width:100%;padding:10px"><div class="bt" style="font-size:12px">Licensed SP (Service Provider)</div><div class="bd">Merchant onboarding (KYC/KYB) · Account opening · VA creation<br>Deposit address · VCC issuance · Fund custody · Risk control</div></div></div>
+    </div>
+    <div class="note info" style="margin-top:10px">ℹ️ EX only forwards and orchestrates — <b>does NOT perform KYC/KYB or risk control</b>. All reviews handled by SP.</div>
+  </div>
+
+  <!-- 2. Key Terms -->
+  <div class="sec">
+    <h2><span class="n">2</span>Key Terms</h2>
+    <table>
+      <thead><tr><th>Term</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><b>Tenant</b></td><td>EX customer who operates business via API/Portal</td></tr>
+        <tr><td><b>Merchant</b></td><td>Tenant's customer, onboarded to SP through EX</td></tr>
+        <tr><td><b>VA</b></td><td>Virtual bank account on SP side for fiat deposits</td></tr>
+        <tr><td><b>Deposit Address</b></td><td>On-chain address on SP side for crypto deposits</td></tr>
+        <tr><td><b>Shared Account</b></td><td>Card fund pool — one account supports multiple shared cards</td></tr>
+        <tr><td><b>Shared Card</b></td><td>Bound to shared account; spending deducts from shared balance</td></tr>
+        <tr><td><b>Standard Card</b></td><td>One card per account; independent balance per card</td></tr>
+        <tr><td><b>Card Program</b></td><td>VCC product config (BIN, limits, expiry, etc.)</td></tr>
+      </tbody>
+    </table>
+    <div class="note warn" style="margin-top:8px">⚠️ <b>FlyCapital special case: Tenant = Merchant</b> — same entity acts as both EX tenant and SP merchant</div>
+  </div>
+
+  <!-- 3. Account System -->
+  <div class="sec">
+    <h2><span class="n">3</span>Account System — Funding → Card Issuance</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px">
+      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:12px">
+        <h4 style="color:#10b981;margin-bottom:8px">Fiat Funding Path</h4>
+        <div style="display:flex;flex-direction:column;gap:4px;font-size:10px;text-align:center">
+          <div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:4px;padding:4px">Bank Transfer → VA</div>
+          <div style="color:#9ca3af">↓</div>
+          <div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:4px;padding:4px">Fiat Account (balance increases)</div>
+          <div style="color:#9ca3af">↓</div>
+          <div style="display:flex;gap:4px">
+            <div style="flex:1;background:#f5f3ff;border:1px solid #c7d2fe;border-radius:4px;padding:4px">Shared Acct → N cards</div>
+            <div style="flex:1;background:#f5f3ff;border:1px solid #c7d2fe;border-radius:4px;padding:4px">Standard Card (1:1)</div>
+          </div>
+        </div>
+      </div>
+      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:12px">
+        <h4 style="color:#8b5cf6;margin-bottom:8px">Crypto Funding Path</h4>
+        <div style="display:flex;flex-direction:column;gap:4px;font-size:10px;text-align:center">
+          <div style="background:#f5f3ff;border:1px solid #c7d2fe;border-radius:4px;padding:4px">On-chain Transfer → Deposit Address</div>
+          <div style="color:#9ca3af">↓</div>
+          <div style="background:#f5f3ff;border:1px solid #c7d2fe;border-radius:4px;padding:4px">Crypto Wallet (balance increases)</div>
+          <div style="color:#9ca3af">↓</div>
+          <div style="display:flex;gap:4px">
+            <div style="flex:1;background:#f5f3ff;border:1px solid #c7d2fe;border-radius:4px;padding:4px">Shared Acct → N cards</div>
+            <div style="flex:1;background:#f5f3ff;border:1px solid #c7d2fe;border-radius:4px;padding:4px">Standard Card (1:1)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Card Issuance Flow -->
+  <div class="sec">
+    <h2><span class="n">4</span>Card Issuance Full Flow</h2>
+    <details open>
+      <summary><span class="sf-num">1</span> Merchant Onboarding + Product Activation</summary>
+      <div class="det-body">
+        <div class="flow-row" style="margin-bottom:6px">
+          <span class="fn you">Submit Merchant</span><span class="fa">→</span>
+          <span class="fn ex">Forward to SP</span><span class="fa">→</span>
+          <span class="fn sp">KYC/KYB Review</span><span class="fa">→</span>
+          <span class="fn wh">KYB_APPROVED</span><span class="fa">→</span>
+          <span class="fn you">Apply VCC Product</span><span class="fa">→</span>
+          <span class="fn wh">PRODUCT_ACTIVE</span>
+        </div>
+        <div style="font-size:10px;color:#6b7280">Merchant created by tenant, pushed to SP via EX. SP performs KYC/KYB. May trigger RFI.</div>
+      </div>
+    </details>
+    <details>
+      <summary><span class="sf-num">2</span> Fiat Deposit (VA Path)</summary>
+      <div class="det-body">
+        <div class="flow-row">
+          <span class="fn you">Apply VA</span><span class="fa">→</span>
+          <span class="fn sp">VA Review</span><span class="fa">→</span>
+          <span class="fn wh">VA_ACTIVE</span><span class="fa">→</span>
+          <span class="fn you">Bank Transfer (offline)</span><span class="fa">→</span>
+          <span class="fn sp">Risk Review</span><span class="fa">→</span>
+          <span class="fn wh">FIAT_DEPOSIT_SUCCESS</span>
+        </div>
+      </div>
+    </details>
+    <details>
+      <summary><span class="sf-num">3</span> Crypto Deposit (Deposit Address Path)</summary>
+      <div class="det-body">
+        <div class="flow-row">
+          <span class="fn you">Get Deposit Address</span><span class="fa">→</span>
+          <span class="fn ex">Return {address, chain}</span><span class="fa">→</span>
+          <span class="fn you">Transfer USDT/USDC</span><span class="fa">→</span>
+          <span class="fn sp">On-chain + AML</span><span class="fa">→</span>
+          <span class="fn wh">CRYPTO_DEPOSIT_SUCCESS</span>
+        </div>
+      </div>
+    </details>
+    <details open>
+      <summary><span class="sf-num">4</span> Issue Shared Card (First Time)</summary>
+      <div class="det-body">
+        <div class="flow-row" style="margin-bottom:4px">
+          <span class="fn you">Create Shared Account</span><span class="fa">→</span>
+          <span class="fn you">Fund Shared Account</span><span class="fa">→</span>
+          <span class="fn wh">FUNDED</span><span class="fa">→</span>
+          <span class="fn you">Issue Card</span><span class="fa">→</span>
+          <span class="fn wh">CARD_ISSUED</span>
+        </div>
+        <div style="font-size:10px;color:#6b7280">First time: create & fund shared account; subsequent cards reuse existing account.</div>
+      </div>
+    </details>
+    <details>
+      <summary><span class="sf-num">5</span> Issue Shared Card (Reuse)</summary>
+      <div class="det-body">
+        <div class="flow-row">
+          <span class="fn you">Query Shared Accounts</span><span class="fa">→</span>
+          <span class="fn you">Issue Card (existing)</span><span class="fa">→</span>
+          <span class="fn wh">CARD_ISSUED</span>
+        </div>
+      </div>
+    </details>
+    <details>
+      <summary><span class="sf-num">6</span> Issue Standard Card</summary>
+      <div class="det-body">
+        <div class="flow-row">
+          <span class="fn you">Issue + Fund</span><span class="fa">→</span>
+          <span class="fn sp">Risk Review</span><span class="fa">→</span>
+          <span class="fn wh">CARD_ISSUED_AND_FUNDED</span>
+        </div>
+      </div>
+    </details>
+    <details>
+      <summary><span class="sf-num">7</span> Card Spending & Sync</summary>
+      <div class="det-body">
+        <div class="flow-row">
+          <span class="fn sp">Cardholder spends</span><span class="fa">→</span>
+          <span class="fn sp">Card network auth</span><span class="fa">→</span>
+          <span class="fn sp">SP settlement</span><span class="fa">→</span>
+          <span class="fn wh">CARD_TRANSACTION</span>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <!-- 5. RFI -->
+  <div class="sec">
+    <h2><span class="n">5</span>RFI (Supplementary Materials)</h2>
+    <div class="flow-row" style="margin-bottom:8px">
+      <span class="fn sp">SP requests docs</span><span class="fa">→</span>
+      <span class="fn wh">RFI_REQUEST</span><span class="fa">→</span>
+      <span class="fn you">Upload & Submit</span><span class="fa">→</span>
+      <span class="fn ex">Forward to SP</span><span class="fa">→</span>
+      <span class="fn wh">RFI_RESOLVED</span>
+    </div>
+    <table>
+      <thead><tr><th>Scenario</th><th>Possible Documents</th></tr></thead>
+      <tbody>
+        <tr><td>KYB Onboarding</td><td>Business license, director ID, business description</td></tr>
+        <tr><td>VA Application</td><td>Source of funds, business contracts</td></tr>
+        <tr><td>Large Fiat Deposit</td><td>Bank statements, trade documents</td></tr>
+        <tr><td>Crypto Deposit</td><td>On-chain source of funds proof</td></tr>
+        <tr><td>Card Issuance</td><td>Cardholder ID, spending purpose</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 6. API -->
+  <div class="sec">
+    <h2><span class="n">6</span>API Reference</h2>
+    <div class="note info" style="margin-bottom:10px">Full documentation: <a href="https://open.eurewax.com/" target="_blank">open.eurewax.com</a></div>
+    <h3>6.1 Common Services</h3>
+    <table style="margin-bottom:10px">
+      <thead><tr><th>Function</th><th>API</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Configure Webhook URL</td><td>Configure Notification URL</td><td>—</td></tr>
+        <tr><td>Upload File</td><td>Upload File</td><td>—</td></tr>
+        <tr><td>Submit RFI Materials</td><td>Submit Business Materials</td><td>RFI scenarios</td></tr>
+        <tr><td>Get Merchant Token</td><td>Get Merchant Token</td><td>Authentication</td></tr>
+      </tbody>
+    </table>
+    <h3>6.2 Onboarding</h3>
+    <div class="note warn" style="margin-bottom:6px">⚠️ First-time onboarding = product activation. "Add Product" API in development, ETA <b>May 20</b>.</div>
+    <table style="margin-bottom:10px">
+      <thead><tr><th>Function</th><th>API</th><th>Webhook</th></tr></thead>
+      <tbody>
+        <tr><td>Register Merchant</td><td>Register Merchant</td><td>—</td></tr>
+        <tr><td>KYC Application</td><td>KYC Application</td><td>KYC Review Result</td></tr>
+        <tr><td>KYB Application</td><td>KYB Application</td><td>KYB Review Result</td></tr>
+        <tr><td>Query KYC Result</td><td>Query KYC Result</td><td>—</td></tr>
+        <tr><td>Query KYB Result</td><td>Query KYB Result</td><td>—</td></tr>
+      </tbody>
+    </table>
+    <h3>6.3 Crypto Services (Deposit)</h3>
+    <table style="margin-bottom:10px">
+      <thead><tr><th>Function</th><th>API</th><th>Webhook</th></tr></thead>
+      <tbody>
+        <tr><td>Query Exchange Rate</td><td>Query Rate</td><td>—</td></tr>
+        <tr><td>Query Supported Assets</td><td>Query Assets</td><td>—</td></tr>
+        <tr><td>Query Account List</td><td>Query Accounts</td><td>—</td></tr>
+        <tr><td>Query Collection Tools</td><td>Query Tools</td><td>Includes VA / Deposit Address</td></tr>
+        <tr><td>Fiat Deposit</td><td>Fiat Deposit</td><td>Transaction Result</td></tr>
+        <tr><td>Crypto Deposit</td><td>Crypto Deposit</td><td>Transaction Result</td></tr>
+        <tr><td>Fee Estimation</td><td>Fee Estimation</td><td>—</td></tr>
+        <tr><td>Query Transaction Detail</td><td>Query Detail</td><td>—</td></tr>
+        <tr><td>Query Transaction Records</td><td>Query Records</td><td>—</td></tr>
+      </tbody>
+    </table>
+    <h3>6.4 VCC Services</h3>
+    <table>
+      <thead><tr><th>Function</th><th>API</th><th>Webhook</th></tr></thead>
+      <tbody>
+        <tr><td>Query Card Programs</td><td>Query Product List</td><td>—</td></tr>
+        <tr><td>Card Application</td><td>Virtual Card Application</td><td>Card Application Result</td></tr>
+        <tr><td>Query Application</td><td>Query Application Detail</td><td>—</td></tr>
+        <tr><td>Query Card CVV</td><td>Query Card CVV</td><td>—</td></tr>
+        <tr><td>Query Card Info</td><td>Query Card Info</td><td>—</td></tr>
+        <tr><td>Query Card Balance</td><td>Query Card Balance</td><td>—</td></tr>
+        <tr><td>Activate / Freeze / Unfreeze / Cancel</td><td>Card Management APIs</td><td>Card Status Change</td></tr>
+        <tr><td>Modify Limit / Cardholder</td><td>Modify APIs</td><td>—</td></tr>
+        <tr><td>Fund In / Fund Out</td><td>Fund In / Fund Out</td><td>Card Transaction Result</td></tr>
+        <tr><td>Query Transactions</td><td>Query Transaction List</td><td>—</td></tr>
+        <tr><td>Card 3DS Verification</td><td>—</td><td>Card 3DS Notification</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 7. Integration Timeline -->
+  <div class="sec">
+    <h2><span class="n">7</span>Integration Timeline</h2>
+
+    <table>
+      <thead><tr><th>Phase</th><th>Content</th><th>ETA</th></tr></thead>
+      <tbody>
+        <tr><td><b>Phase 0 · Environment Setup</b></td><td>Keys, Webhook config, signature/encryption testing</td><td>1-2 days</td></tr>
+        <tr><td><b>Phase 1 · Prerequisites</b></td><td>Merchant registration + KYC/KYB + product activation</td><td>3-5 days</td></tr>
+        <tr><td><b>Phase 2 · Core Business</b></td><td>VCC card issuing product integration</td><td>7-10 days</td></tr>
+        <tr><td><b>Phase 3 · Integration Testing</b></td><td>End-to-end verification, edge case coverage</td><td>5-7 days</td></tr>
+        <tr><td><b>Phase 4 · Go Live</b></td><td>Production switch, monitoring setup</td><td>2-3 days</td></tr>
+      </tbody>
+    </table>
+
+    <div style="display:flex;gap:12px;margin-top:12px">
+      <div style="flex:1;background:#f5f3ff;border:1.5px solid #c7d2fe;border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:10px;color:#6b7280">Full VCC Integration</div>
+        <div style="font-size:28px;font-weight:800;color:#4338ca">20-25</div>
+        <div style="font-size:10px;color:#6b7280">days</div>
+      </div>
+      <div style="flex:1;background:#ecfdf5;border:1.5px solid #a7f3d0;border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:10px;color:#6b7280">Daily Card Issuing</div>
+        <div style="font-size:24px;font-weight:800;color:#059669">Real-time</div>
+        <div style="font-size:10px;color:#6b7280">minutes</div>
+      </div>
+    </div>
+    <div style="margin-top:8px;padding:6px 10px;border-radius:5px;font-size:10px;background:#eef2ff;border:1px solid #c7d2fe;color:#4338ca">ℹ️ Actual time depends on team size. VCC single product line typically completes in 20-25 days.</div>
+  </div>
+
+  <!-- 8. Notes -->
+  <div class="sec">
+    <h2><span class="n">8</span>Important Notes</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:10px">
+      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:8px"><b>EX Role</b>: API aggregation + orchestration layer. No KYC/KYB, no risk control.</div>
+      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:8px"><b>SP Role</b>: Licensed institution performing reviews, account opening, card issuance, fund custody.</div>
+      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:8px"><b>Batch Issuance</b>: Shared accounts ideal for batch card issuance; standard cards for independent fund management.</div>
+      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:8px"><b>Balance Monitoring</b>: Subscribe to Webhooks for real-time wallet/account/card balance updates.</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
