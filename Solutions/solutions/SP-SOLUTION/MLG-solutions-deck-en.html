@@ -386,7 +386,7 @@
         </div>
         <div class="toc-item" data-go="6">
           <div class="num">05</div>
-          <div><div class="title">Core Business Scenarios</div><div class="desc">PF settlement / Fund consolidation / Internal clearing</div></div>
+          <div><div class="title">Core Business Scenarios</div><div class="desc">Acquiring PF · Client consolidation · Local payout · Internal transfer</div></div>
         </div>
       </div>
     </div>
@@ -625,47 +625,58 @@
     <div class="slide-head">
       <span class="mark">05</span>
       <h2>Core Business Scenarios</h2>
-      <span class="subtitle">PF Settlement · Fund Consolidation · Internal Clearing</span>
+      <span class="subtitle">Acquiring PF · Client Consolidation · Local Payout · Internal Transfer</span>
     </div>
     <div class="slide-body">
       <div class="scenario-card">
-        <h4>Scenario 1: MSO as PF Receiving Acquirer Settlement <span class="badge">Core</span></h4>
-        <div class="flow-line">
-          <span class="fstep">Acquirer Settlement</span>
-          <span class="farrow">→</span>
-          <span class="fstep">MSO's Moolahgo VA</span>
-          <span class="farrow">→</span>
-          <span class="fstep">Fund Consolidation</span>
-          <span class="farrow">→</span>
-          <span class="fstep">FX</span>
-          <span class="farrow">→</span>
-          <span class="fstep">Payout to Merchants/Partners</span>
-        </div>
-        <p>MSOs acting as PFs need a bank/VA to receive acquirer settlement funds. Traditional banks refuse → Moolahgo can. Acquirers only need to verify account compliance.</p>
-      </div>
-      <div class="scenario-card">
-        <h4>Scenario 2: Fund Consolidation + FX + Payout</h4>
+        <h4>Scenario 1: Acquiring PF Receiving Settlement <span class="badge">Licensed</span></h4>
         <div class="flow-line">
           <span class="fstep">Acquirer Settlement</span><span class="farrow">→</span>
-          <span class="fstep">Partner Payments</span><span class="farrow">→</span>
-          <span class="fstep">USD VA</span>
-          <span class="farrow">→ FX →</span>
-          <span class="fstep">IDR VA</span>
+          <span class="fstep">PF's Moolahgo VA</span>
           <span class="farrow">→</span>
-          <span class="fstep">Payout</span>
+          <span class="fstep">PF's Moolahgo Master Account</span>
+          <span class="farrow">→</span>
+          <span class="fstep">FX / Withdrawal</span>
         </div>
-        <p>Consolidate funds from multiple sources into VA → wholesale FX conversion → payout to external banks / internal transfer. Entire flow completes within the Moolahgo ecosystem.</p>
+        <p>Acquiring PFs (licensed institutions) open VAs as acquirer settlement accounts. Settlement funds can be converted or withdrawn to their own bank accounts.</p>
       </div>
       <div class="scenario-card">
-        <h4>Scenario 3: Internal Clearing Between MSOs</h4>
-        <div class="flow-line">
-          <span class="fstep">MSO-A (Sender)</span>
-          <span class="farrow">→ Internal Transfer →</span>
-          <span class="fstep">MSO-B (Receiver)</span>
-          <span class="farrow">→</span>
-          <span class="fstep">Payout to Beneficiary</span>
+        <h4>Scenario 2: MSO End-Client VA Fund Consolidation <span class="badge">End Clients</span></h4>
+        <p style="margin-bottom:6px">MSOs open VAs for downstream merchants. Funds auto-consolidate to Master Account:</p>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin:6px 0">
+          <div style="background:var(--ink-20);border:1px solid var(--ink-100);border-radius:6px;padding:6px 8px;font-size:10.5px">
+            <div style="font-weight:700;color:var(--sky);margin-bottom:2px">Platform Payouts</div>
+            <div style="color:var(--ink-500);line-height:1.4">Lazada/TikTok settlement → Merchant VA → Consolidate to Master Account</div>
+          </div>
+          <div style="background:var(--ink-20);border:1px solid var(--ink-100);border-radius:6px;padding:6px 8px;font-size:10.5px">
+            <div style="font-weight:700;color:var(--sky);margin-bottom:2px">Counterparty Payments</div>
+            <div style="color:var(--ink-500);line-height:1.4">Trade / Advertising / Tech services bank transfer → Merchant VA → Consolidate to Master Account</div>
+          </div>
+          <div style="background:var(--ink-20);border:1px solid var(--ink-100);border-radius:6px;padding:6px 8px;font-size:10.5px">
+            <div style="font-weight:700;color:var(--sky);margin-bottom:2px">Cross-PSP Inflows</div>
+            <div style="color:var(--ink-500);line-height:1.4">Acquirer settlement / other PSP payments → Merchant VA → Consolidate to Master Account</div>
+          </div>
         </div>
-        <p>Traditional: SWIFT T+1–3, $15–50/txn → Moolahgo internal: <strong style="color:var(--sky)">real-time settlement, zero/minimal fees, 24/7</strong></p>
+      </div>
+      <div class="scenario-card">
+        <h4>Scenario 3: MSO Local Payout to Clients</h4>
+        <div class="flow-line">
+          <span class="fstep">MSO Master Account</span>
+          <span class="farrow">→ Local Clearing →</span>
+          <span class="fstep">Merchant Local Account / Wallet</span>
+        </div>
+        <p>MSOs disburse funds from Master Account directly to merchants' local bank accounts or e-wallets — end-to-end from consolidation to distribution.</p>
+      </div>
+      <div class="scenario-card">
+        <h4>Scenario 4: MSO Internal Transfer Within Moolahgo</h4>
+        <div class="flow-line">
+          <span class="fstep">MSO-A Master Account</span>
+          <span class="farrow">→ Internal Transfer →</span>
+          <span class="fstep">MSO-B Master Account</span>
+          <span class="farrow">→</span>
+          <span class="fstep">FX / Withdrawal</span>
+        </div>
+        <p>MSOs transfer funds instantly within the Moolahgo ecosystem via internal transfers — <strong style="color:var(--sky)">real-time settlement, zero channel cost, 24/7</strong>.</p>
       </div>
     </div>
     <div class="brand-bar">

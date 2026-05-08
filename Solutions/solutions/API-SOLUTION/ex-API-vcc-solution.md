@@ -6,39 +6,39 @@
 
 ---
 
-## 1. 平台架构与名词解释
+## 1. 平台概览与名词解释
 
-### 1.1 三层架构
+### 1.1 EurewaX 开放平台
+
+EurewaX 是跨境支付智能云平台，为合作伙伴提供 **一套 API 覆盖全链路金融基础设施**。
+
+**您将获得的核心能力：**
+
+| 维度 | 说明 |
+|------|------|
+| **合规即服务** | 一次提交商户材料，平台统一管理 KYC/KYB 审核，您无需单独对接合规机构 |
+| **全产品覆盖** | VCC 发卡 + 法币收付 + 数币充提 + 承兑兑换 —— 一个平台全包含 |
+| **统一技术栈** | RESTful API + Webhook + 统一签名/加密体系，对接一次，所有产品线复用 |
+| **灵活组合** | 按需开通产品线，可先接 VCC，后续随时增开其他产品 |
+| **多服务商覆盖** | 底层对接多家持牌服务商，不同地区/币种/能力自动路由，对您完全透明 |
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│  Layer 1: 租户 (Tenant)                                   │
-│  - EX 平台的客户（如 FlyCapital）                         │
-│  - 通过 EX API / Portal 操作所有业务                      │
-│  - 管理其下的商户、VA、账户、钱包、VCC 卡                  │
-└─────────────────────────────────────────────────────────┘
-                            │ EX 统一 API / Webhook
-                            ▼
-┌─────────────────────────────────────────────────────────┐
-│  Layer 2: EX 平台 (EurewaX)                               │
-│  - 统一 API 聚合层 + 业务编排层                            │
-│  - 面向租户：API / Portal / Webhook                       │
-│  - 面向 SP：对接 SP 能力，转发业务请求                     │
-│  - 支付系统：交易处理、清结算、对账                        │
-│  - 商户管理：入网编排、产品开通、商户生命周期              │
-│  - 账户体系：多币种账户管理、余额聚合                      │
-│  - 报价引擎：汇率询价、锁汇、承兑报价                     │
-│  - 通知体系：Webhook 分发、状态同步                        │
-└─────────────────────────────────────────────────────────┘
-                            │ 对接 SP
-                            ▼
-┌─────────────────────────────────────────────────────────┐
-│  Layer 3: 持牌 SP (Service Provider)                     │
-│  - 商户实际入网（KYC/KYB 审核、AML 合规）                │
-│  - 实际账户开户（法币账户、数币钱包）                     │
-│  - VA 创建 + 充币地址分配 + VCC 发卡 + 资金托管          │
-│  - 风控审核（充值/交易/提现等）                           │
-└─────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────┐
+│                      您的系统                              │
+│  (发卡平台 / Fintech / BaaS / 电商平台 / 支付平台)        │
+└──────────────────┬───────────────────────────────────────┘
+                   │  统一 RESTful API + Webhook
+                   ▼
+┌──────────────────────────────────────────────────────────┐
+│                   EurewaX 开放平台                         │
+│                                                          │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐   │
+│  │ 产品开通  │ │ 法币账户  │ │ 数币钱包  │ │ VCC 发卡  │   │
+│  │ KYC/KYB  │ │ 充值/提现 │ │ 充币/提币 │ │ 开卡/管理 │   │
+│  └──────────┘ └──────────┘ └──────────┘ └──────────┘   │
+│                                                          │
+│  合规 · 风控 · 发卡 · 资金托管 —— 全部由持牌服务商执行    │
+└──────────────────────────────────────────────────────────┘
 ```
 
 ### 1.2 核心名词
@@ -56,7 +56,6 @@
 | **共享账户** | Shared Account   | 卡资金池，一个共享账户可发多张共享卡，所有卡共享余额                 |
 | **共享卡**   | Shared Card      | 绑定共享账户，消费时扣减共享账户余额                                 |
 | **充值卡**   | Standard Card    | 一卡一账户，每张卡背后有独立账户，需单独充值                         |
-| **卡组**     | Card Program     | VCC 卡产品配置（卡 BIN、额度规则、有效期等）                         |
 
 ### 1.3 角色关系
 
@@ -146,7 +145,24 @@
 
 ## 2. 发卡全流程
 
-### 2.1 阶段一：商户入网 + 产品开通
+### 2.1 第一步：商户注册
+
+在 EX 平台创建商户记录，获取商户标识。此步骤仅在 EX 侧注册，**不涉及 KYC/KYB 审核**。
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant T as 租户 (FlyCapital)
+    participant EX as EX 平台
+
+    T->>EX: 注册商户（基本信息）
+    EX-->>T: 返回商户标识
+    Note over T,EX: 商户已在 EX 注册，尚未入网 SP
+```
+
+### 2.2 第二步：开通产品 + KYC/KYB（首次需客户入网）
+
+申请开通 VCC 产品时，如果是首次入网，需同时提交 KYC/KYB 材料，SP 审核通过后产品自动开通。
 
 > ⚠️ FlyCapital 特殊情况：租户 = 商户，FlyCapital 自己既是 EX 租户也是推到 SP 的商户。
 
@@ -159,37 +175,32 @@ sequenceDiagram
 
     Note over T,SP: FlyCapital 场景：租户 = 商户（同一主体）
 
-    T->>EX: 推送商户入网<br/>POST /merchants/onboarding<br/>（提交 KYB 资料）
-    EX->>SP: 转发商户入网请求 + KYB 材料
+    T->>EX: 申请开通 VCC 产品 + 提交 KYB 资料（首次入网）
+    EX->>SP: 转发入网 + 产品开通请求 + KYB 材料
     SP->>SP: SP 执行 KYC/KYB 审核
 
-    alt 需要补充材料（RFI）
+    alt RFI（补充材料）
         SP-->>EX: RFI 请求
         EX-->>T: Webhook: RFI_REQUEST
-        T->>EX: 上传补充文件<br/>POST /files/upload
+        T->>EX: 上传补充文件
         EX->>SP: 转发补充材料
         SP->>SP: 重新审核
     end
 
-    SP-->>EX: 审核通过
-    EX-->>T: Webhook: KYB_APPROVED
-
-    T->>EX: 申请开通 VCC 产品<br/>POST /products/apply
-    EX->>SP: 转发产品开通请求
-    SP->>SP: 产品审核 + 配置卡组
-    SP-->>EX: 产品开通成功
-    EX-->>T: Webhook: PRODUCT_ACTIVE (VCC)
+    SP-->>EX: KYB 审核通过 + 产品开通成功
+    EX-->>T: Webhook: KYB 通过
+    EX-->>T: Webhook: VCC 产品已开通
 ```
 
 **关键说明**：
 
-- **租户**（FlyCapital）在 EX 注册，是 EX 的客户
-- **商户**是租户的客户，由租户通过 EX 推送至 SP，SP 执行 KYC/KYB
+- **第一步（注册）**：仅在 EX 创建商户记录，不涉及 SP、不需要 KYC/KYB
+- **第二步（开通产品）**：首次入网需提交 KYB 资料，SP 审核通过后产品开通；非首次入网（已有 KYB）只需申请开通产品，无需重复 KYB
 - **EX** 只做转发和编排，不做 KYC/KYB、不做风控
 - FlyCapital 场景中租户 = 商户，用同一主体
 - 后续新增产品只需调用「开通产品」接口，SP 可能额外审核
 
-### 2.2 阶段二：法币充值（VA 路径）
+### 2.3 阶段二：法币充值（VA 路径）
 
 ```mermaid
 sequenceDiagram
@@ -198,31 +209,31 @@ sequenceDiagram
     participant EX as EX 平台
     participant SP as 持牌 SP
 
-    T->>EX: 申请 VA<br/>POST /va/accounts
+    T->>EX: 申请 VA
     EX->>SP: 转发 VA 申请
     SP->>SP: VA 审核
     alt RFI
-        SP-->>EX: RFI
-        EX-->>T: Webhook: RFI_REQUEST
+        SP-->>EX: 需要补充材料
+        EX-->>T: Webhook: 补充材料请求
         T->>EX: 上传补充文件
         EX->>SP: 转发
     end
     SP-->>EX: VA 创建成功
-    EX-->>T: Webhook: VA_ACTIVE<br/>{accountNumber, bankInfo}
+    EX-->>T: Webhook: VA 已激活（含账号信息）
 
     T->>T: 租户线下银行转账至 VA
     SP->>SP: 资金到账 VA + 入账风控审核
     alt RFI
-        SP-->>EX: RFI
-        EX-->>T: Webhook: RFI_REQUEST
+        SP-->>EX: 需要补充材料
+        EX-->>T: Webhook: 补充材料请求
         T->>EX: 上传补充文件
         EX->>SP: 转发
     end
     SP-->>EX: 入账成功
-    EX-->>T: Webhook: FIAT_DEPOSIT_SUCCESS<br/>法币账户余额增加
+    EX-->>T: Webhook: 法币充值成功（余额增加）
 ```
 
-### 2.3 阶段二（备选）：数币充值（充币地址路径）
+### 2.4 阶段二（备选）：数币充值（充币地址路径）
 
 ```mermaid
 sequenceDiagram
@@ -231,24 +242,24 @@ sequenceDiagram
     participant EX as EX 平台
     participant SP as 持牌 SP
 
-    T->>EX: 获取充币地址<br/>POST /wallet/deposit-address
+    T->>EX: 获取充币地址
     EX->>SP: 转发请求
-    SP-->>EX: {address, chain, memo}
+    SP-->>EX: 返回充币地址信息
     EX-->>T: 返回充币地址
 
     T->>T: 租户向充币地址转入 USDT/USDC
     SP->>SP: 链上确认 + AML/合规风控审核
     alt RFI
-        SP-->>EX: RFI
-        EX-->>T: Webhook: RFI_REQUEST
+        SP-->>EX: 需要补充材料
+        EX-->>T: Webhook: 补充材料请求
         T->>EX: 上传补充文件
         EX->>SP: 转发
     end
     SP-->>EX: 充值成功
-    EX-->>T: Webhook: CRYPTO_DEPOSIT_SUCCESS<br/>数币钱包余额增加
+    EX-->>T: Webhook: 数币充值成功（余额增加）
 ```
 
-### 2.4 阶段三：开卡
+### 2.5 阶段三：开卡
 
 #### 共享卡 — 首次（需创建共享账户）
 
@@ -259,21 +270,21 @@ sequenceDiagram
     participant EX as EX 平台
     participant SP as 持牌 SP
 
-    T->>EX: 创建共享账户<br/>POST /vcc/shared-accounts
+    T->>EX: 创建共享账户
     EX->>SP: 转发
     SP-->>EX: 共享账户创建成功
-    EX-->>T: {sharedAccountId}
+    EX-->>T: 返回共享账户标识
 
-    T->>EX: 共享账户充值<br/>POST /vcc/shared-accounts/{id}/fund<br/>{from: FIAT_ACCOUNT, amount}
+    T->>EX: 共享账户充值（从法币/数币账户划转）
     EX->>SP: 转发划转请求
     SP->>SP: 风控审核
     SP-->>EX: 划转成功
-    EX-->>T: Webhook: SHARED_ACCOUNT_FUNDED
+    EX-->>T: Webhook: 共享账户充值成功
 
-    T->>EX: 发共享卡<br/>POST /vcc/cards<br/>{sharedAccountId, cardProgram}
+    T->>EX: 发共享卡（指定共享账户）
     EX->>SP: 转发发卡请求
-    SP-->>EX: 卡创建成功<br/>{cardNumber, cvv, expiry}
-    EX-->>T: Webhook: CARD_ISSUED<br/>{cardToken, maskedCard}
+    SP-->>EX: 卡创建成功
+    EX-->>T: Webhook: 发卡成功（含卡信息）
 ```
 
 #### 共享卡 — 非首次（复用已有共享账户）
@@ -285,13 +296,13 @@ sequenceDiagram
     participant EX as EX 平台
     participant SP as 持牌 SP
 
-    T->>EX: 查询已有共享账户<br/>GET /vcc/shared-accounts
+    T->>EX: 查询已有共享账户
     EX-->>T: 返回共享账户列表
 
-    T->>EX: 发共享卡（选已有账户）<br/>POST /vcc/cards<br/>{sharedAccountId: existing}
+    T->>EX: 发共享卡（选已有账户）
     EX->>SP: 转发发卡请求
     SP-->>EX: 卡创建成功
-    EX-->>T: Webhook: CARD_ISSUED
+    EX-->>T: Webhook: 发卡成功
 ```
 
 #### 充值卡
@@ -303,14 +314,14 @@ sequenceDiagram
     participant EX as EX 平台
     participant SP as 持牌 SP
 
-    T->>EX: 发充值卡 + 充值<br/>POST /vcc/cards<br/>{cardProgram, fundAmount,<br/>from: CRYPTO_WALLET}
+    T->>EX: 发充值卡 + 充值（从法币/数币账户划转）
     EX->>SP: 转发发卡 + 充值请求
     SP->>SP: 风控审核
     SP-->>EX: 卡创建成功（已充值）
-    EX-->>T: Webhook: CARD_ISSUED_AND_FUNDED
+    EX-->>T: Webhook: 发卡+充值成功
 ```
 
-### 2.5 阶段四：卡消费与记录同步
+### 2.6 阶段四：卡消费与记录同步
 
 ```mermaid
 sequenceDiagram
@@ -332,7 +343,7 @@ sequenceDiagram
 
     SP->>SP: 清算扣款（共享/充值账户）
     SP->>EX: 交易通知
-    EX->>T: Webhook: CARD_TRANSACTION<br/>{cardId, amount, merchant, status}
+    EX->>T: Webhook: 卡消费通知（含金额、商户等）
     T->>T: 记录消费流水
 ```
 
@@ -350,18 +361,18 @@ sequenceDiagram
     participant SP as 持牌 SP
 
     SP-->>EX: 风控审核需补充材料
-    EX-->>T: Webhook: RFI_REQUEST<br/>{rfiId, rfiType, requiredFiles}
+    EX-->>T: Webhook: 补充材料请求（含类型、所需文件）
 
-    T->>EX: 上传文件<br/>POST /files/upload → fileUrl
-    T->>EX: 提交 RFI 回复<br/>POST /rfi/submit<br/>{rfiId, files: [fileUrl]}
+    T->>EX: 上传文件
+    T->>EX: 提交补充材料回复
     EX->>SP: 转发补充材料
 
     alt 审核通过
         SP-->>EX: 通过
-        EX-->>T: Webhook: RFI_RESOLVED
+        EX-->>T: Webhook: 补充材料审核通过
     else 仍不通过
-        SP-->>EX: 拒绝 / 再次 RFI
-        EX-->>T: Webhook: RFI_REJECTED / RFI_REQUEST
+        SP-->>EX: 拒绝 / 再次要求补充
+        EX-->>T: Webhook: 审核拒绝 / 再次补充材料请求
     end
 ```
 

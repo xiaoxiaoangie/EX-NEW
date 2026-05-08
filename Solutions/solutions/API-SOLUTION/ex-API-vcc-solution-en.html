@@ -71,15 +71,23 @@
 
   <!-- 1. Architecture -->
   <div class="sec">
-    <h2><span class="n">1</span>Platform Architecture</h2>
-    <div style="display:flex;flex-direction:column;align-items:center;gap:0;font-size:11px;margin-top:6px">
-      <div style="width:100%"><div class="bx you" style="width:100%;padding:10px"><div class="bt" style="font-size:12px">Tenant</div><div class="bd">EX platform customer (e.g. FlyCapital)<br>Operates all business via EX API / Portal<br>Manages merchants, VA, accounts, wallets, VCC cards</div></div></div>
-      <div class="arr arr-v" style="padding:4px 0">↕<div class="arr-lbl">EX Unified API + Webhook</div></div>
-      <div style="width:100%"><div class="bx ex" style="width:100%;padding:10px"><div class="bt" style="font-size:12px">EX Platform (EurewaX)</div><div class="bd">Unified API aggregation + business orchestration<br>Payment system · Merchant mgmt · Account system · Quote engine · Webhook</div></div></div>
-      <div class="arr arr-v" style="padding:4px 0">↕<div class="arr-lbl">SP Integration</div></div>
-      <div style="width:100%"><div class="bx sp" style="width:100%;padding:10px"><div class="bt" style="font-size:12px">Licensed SP (Service Provider)</div><div class="bd">Merchant onboarding (KYC/KYB) · Account opening · VA creation<br>Deposit address · VCC issuance · Fund custody · Risk control</div></div></div>
+    <h2><span class="n">1</span>EurewaX Open Platform</h2>
+    <p style="font-size:11px;color:#374151;margin-bottom:10px">EurewaX is a cross-border payment cloud platform providing partners with <b>one unified API covering full-stack financial infrastructure</b>. Integrate once, access everything.</p>
+    <table style="margin-bottom:10px">
+      <thead><tr><th>Core Value</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><b>Compliance as a Service</b></td><td>Submit merchant documents once, platform manages KYC/KYB centrally — no separate compliance integration</td></tr>
+        <tr><td><b>Full Product Coverage</b></td><td>VCC Card Issuing + Fiat Payments + Crypto Wallet + Exchange — all in one platform</td></tr>
+        <tr><td><b>Unified Tech Stack</b></td><td>RESTful API + Webhook + unified signing/encryption — integrate once, reuse across all products</td></tr>
+        <tr><td><b>Flexible Combinations</b></td><td>Activate products as needed; start with VCC, add more products anytime</td></tr>
+        <tr><td><b>Multi-SP Coverage</b></td><td>Multiple licensed service providers behind the scenes, auto-routing by region/currency — fully transparent to you</td></tr>
+      </tbody>
+    </table>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:0;font-size:11px">
+      <div style="width:100%"><div class="bx you" style="width:100%;padding:10px"><div class="bt" style="font-size:12px">Your System</div><div class="bd">Card Issuing Platform / Fintech / BaaS / E-commerce / Payment Platform</div></div></div>
+      <div class="arr arr-v" style="padding:4px 0">↓<div class="arr-lbl">Unified RESTful API + Webhook</div></div>
+      <div style="width:100%"><div class="bx ex" style="width:100%;padding:10px"><div class="bt" style="font-size:12px">EurewaX Open Platform</div><div class="bd">Onboarding · Fiat Accounts · Crypto Wallet · VCC Card Issuing<br><span style="color:#6b7280;font-size:9px">Compliance · Risk Control · Card Issuance · Fund Custody — all performed by licensed service providers</span></div></div></div>
     </div>
-    <div class="note info" style="margin-top:10px">ℹ️ EX only forwards and orchestrates — <b>does NOT perform KYC/KYB or risk control</b>. All reviews handled by SP.</div>
   </div>
 
   <!-- 2. Key Terms -->
@@ -95,7 +103,6 @@
         <tr><td><b>Shared Account</b></td><td>Card fund pool — one account supports multiple shared cards</td></tr>
         <tr><td><b>Shared Card</b></td><td>Bound to shared account; spending deducts from shared balance</td></tr>
         <tr><td><b>Standard Card</b></td><td>One card per account; independent balance per card</td></tr>
-        <tr><td><b>Card Program</b></td><td>VCC product config (BIN, limits, expiry, etc.)</td></tr>
       </tbody>
     </table>
     <div class="note warn" style="margin-top:8px">⚠️ <b>FlyCapital special case: Tenant = Merchant</b> — same entity acts as both EX tenant and SP merchant</div>
@@ -338,8 +345,8 @@
   <div class="sec">
     <h2><span class="n">8</span>Important Notes</h2>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:10px">
-      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:8px"><b>EX Role</b>: API aggregation + orchestration layer. No KYC/KYB, no risk control.</div>
-      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:8px"><b>SP Role</b>: Licensed institution performing reviews, account opening, card issuance, fund custody.</div>
+      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:8px"><b>Single Entry Point</b>: You only integrate with one EurewaX API — compliance/risk/card issuance handled by licensed providers.</div>
+      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:8px"><b>SP Transparency</b>: Multiple service providers behind the scenes — fully invisible to you, auto-routed.</div>
       <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:8px"><b>Batch Issuance</b>: Shared accounts ideal for batch card issuance; standard cards for independent fund management.</div>
       <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:8px"><b>Balance Monitoring</b>: Subscribe to Webhooks for real-time wallet/account/card balance updates.</div>
     </div>

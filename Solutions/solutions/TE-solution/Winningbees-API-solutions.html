@@ -425,7 +425,7 @@
       </div>
       <div class="arch-row">
         <div style="min-width:130px"></div>
-        <div class="arch-node highlight">贸易公司<small>BB代收付主体 · 智朗银行</small></div>
+        <div class="arch-node highlight">B代收付主体<small>BB代收付主体 · 智朗银行</small></div>
         <div style="min-width:100px"></div>
         <div class="arch-node highlight">BB<small>持牌通道</small></div>
       </div>
@@ -433,21 +433,21 @@
     <p style="font-size:14px;font-weight:600;margin-bottom:6px;">系统上的身份关系：</p>
     <ul class="bullet-list">
       <li><strong>Wingbee</strong> = BB 的直客商户（通过 EX 入网），拥有自己的 MID</li>
-      <li><strong>贸易公司</strong> = BB 的代收付主体，拥有智朗银行账户，用于法币收付</li>
-      <li>Wingbee 通过智朗银行与贸易公司进行行内转账</li>
+      <li><strong>B代收付主体</strong> = BB 的代收付主体，拥有智朗银行账户，用于法币收付</li>
+      <li>Wingbee 通过智朗银行与B代收付主体进行行内转账</li>
     </ul>
     <p style="font-size:14px;font-weight:600;margin:12px 0 6px;">资金通道：</p>
     <ul class="bullet-list">
-      <li>BB 本身没有智朗银行账户，法币收付通过贸易公司（代收付主体）的智朗银行账户完成</li>
+      <li>BB 本身没有智朗银行账户，法币收付通过B代收付主体（代收付主体）的智朗银行账户完成</li>
       <li>Wingbee 有自己的智朗银行账户</li>
-      <li>Wingbee ↔ 贸易公司之间通过智朗银行转账（行内转账）</li>
+      <li>Wingbee ↔ B代收付主体之间通过智朗银行转账（行内转账）</li>
     </ul>
 
     <h3>2.3 核心原则</h3>
     <div class="principle-grid">
       <div class="principle-card">
         <strong>OnRamp 先收后做</strong>
-        <p>Wingbee 必须先收到客户法币，转账给贸易公司并确认到账后，才发起 OnRamp。绝不垫资</p>
+        <p>Wingbee 必须先收到客户法币，转账给B代收付主体并确认到账后，才发起 OnRamp。绝不垫资</p>
       </div>
       <div class="principle-card">
         <strong>OffRamp 头寸自管</strong>
@@ -467,7 +467,7 @@
         <span class="flow-arrow">→</span>
         <span class="flow-step">Wingbee 智朗账户</span>
         <span class="flow-arrow">→</span>
-        <span class="flow-step">Wingbee 转账给贸易公司智朗账户</span>
+        <span class="flow-step">Wingbee 转账给B代收付主体智朗账户</span>
         <span class="flow-arrow">→</span>
         <span class="flow-step">Wingbee 发起 OnRamp</span>
         <span class="flow-arrow">→</span>
@@ -475,13 +475,13 @@
       </div>
       <h4 style="margin-top:16px;">OffRamp（加密货币 → 法币）</h4>
       <div class="flow-line">
-        <span class="flow-step">Wingbee 发起 OffRamp（收款人=Wingbee智朗）</span>
+        <span class="flow-step">Wingbee 发起 OffRamp</span>
         <span class="flow-arrow">→</span>
         <span class="flow-step">BB 执行承兑</span>
         <span class="flow-arrow">→</span>
-        <span class="flow-step">法币到 Wingbee 智朗银行账户</span>
+        <span class="flow-step">B代收付主体智朗行内转账给 Wingbee</span>
         <span class="flow-arrow">→</span>
-        <span class="flow-step">Wingbee 自行付款给客户</span>
+        <span class="flow-step">Wingbee 转发给商户</span>
       </div>
     </div>
   </div>
@@ -509,12 +509,12 @@
       └── 获取 Sandbox 环境 → 配置 APP ID / 公钥 / AES Key / Webhook
       └── 完成签名验签 + AES 加解密联调</div>
 
-    <h3>3.2 贸易公司准备（BB 侧）</h3>
-    <div class="flow-box">├── 1. 贸易公司已在智朗银行开设法币账户
+    <h3>3.2 B代收付主体准备（BB 侧）</h3>
+    <div class="flow-box">├── 1. B代收付主体已在智朗银行开设法币账户
 │     └── 作为 BB 的代收付主体，接收 Wingbee 转入的法币（OnRamp）
 │
 └── 2. BB 侧配置
-      └── 贸易公司由 BB 控制，作为法币收付通道</div>
+      └── B代收付主体由 BB 控制，作为法币收付通道</div>
 
     <h3>3.3 Wingbee 配置收款账户（OffRamp 用）</h3>
     <div class="flow-box">├── 1. Wingbee 在 EX 添加自己的智朗银行账户作为收款人（beneficiary）
@@ -531,7 +531,7 @@
   <!-- 四、方案一 OnRamp -->
   <div class="section">
     <h2>四、方案一 OnRamp 流程（法币 → 加密货币）</h2>
-    <div class="callout"><strong>核心原则：Wingbee 必须先收到客户法币，转给贸易公司确认到账后，才发起 OnRamp。</strong></div>
+    <div class="callout"><strong>核心原则：Wingbee 必须先收到客户法币，转给B代收付主体确认到账后，才发起 OnRamp。</strong></div>
 
     <h3>步骤详解</h3>
     <div class="flow-box">├── 1. 客户发起法币充值
@@ -544,8 +544,8 @@
 ├── 3. Wingbee 确认到账
 │     └── 在智朗银行确认收到客户法币（⚠️ 必须确认到账）
 │
-├── 4. Wingbee 银行转账给贸易公司
-│     └── Wingbee 从智朗银行账户转账至贸易公司智朗银行账户（行内转账）
+├── 4. Wingbee 银行转账给B代收付主体
+│     └── Wingbee 从智朗银行账户转账至B代收付主体智朗银行账户（行内转账）
 │
 ├── 5. Wingbee 发起 OnRamp
 │     └── 调用 EX API，以 Wingbee MID 发起 OnRamp 请求
@@ -566,7 +566,7 @@ sequenceDiagram
     participant C as 客户
     participant W as Wingbee
     participant ZL as 智朗银行
-    participant T as 贸易公司(BB代收付主体)
+    participant B as B代收付主体
     participant EX as EX(技术服务)
     participant BB as BB(承兑通道)
 
@@ -577,8 +577,10 @@ sequenceDiagram
     ZL-->>W: 到账通知
     Note over W: ⚠️ 确认到账后才继续
 
-    W->>ZL: 银行转账给贸易公司（行内转账）
-    ZL-->>T: 法币到账
+    W->>ZL: 行内转账给B代收付主体
+    ZL-->>B: 法币到账
+
+    B-->>W: 上账确认（B给WB上账）
 
     W->>EX: POST /onramp（Wingbee MID, 法币金额, 目标币种）
     EX-->>W: 返回订单（应付金额, 汇率, 订单号）
@@ -608,9 +610,9 @@ sequenceDiagram
 │
 ├── 3. BB 执行 OffRamp
 │     └── BB 执行承兑（USDT → 法币）
-│     └── 法币直接到达 Wingbee 智朗银行账户
+│     └── B代收付主体通过智朗银行行内转账给 Wingbee
 │
-├── 4. Wingbee 自行付款给客户
+├── 4. Wingbee 转发给商户
 │     └── Wingbee 根据客户提现信息，从智朗银行账户付款给客户
 │     └── 客户提现账户由 Wingbee 自行管理，不经过 EX/BB
 │
@@ -626,20 +628,22 @@ sequenceDiagram
     participant W as Wingbee
     participant EX as EX(技术服务)
     participant BB as BB(承兑通道)
+    participant B as B代收付主体
     participant ZL as 智朗银行
 
     C->>W: 发起 OffRamp 提现请求（USDT → 法币）
 
-    W->>EX: POST /offramp（Wingbee MID, USDT金额, 目标法币，收款人=Wingbee智朗账户）
+    W->>EX: POST /offramp（Wingbee MID, USDT金额, 目标法币）
     EX-->>W: 返回订单（应付法币金额, 汇率, 订单号）
 
     BB->>BB: 执行 OffRamp（USDT → 法币）
-    BB->>ZL: 法币到达 Wingbee 智朗银行账户
+
+    B->>ZL: B代收付主体智朗行内转账给Wingbee
     ZL-->>W: 法币到账
 
     EX-->>W: Webhook: OffRamp 交易完成（含应付法币金额）
 
-    Note over W: Wingbee 自行付款给客户（不经过 EX/BB）
+    Note over W: Wingbee 转发给商户
     W->>ZL: 从智朗账户付款给客户
     ZL-->>C: 法币到账
 
@@ -654,13 +658,13 @@ sequenceDiagram
   <div class="section">
     <h2>六、方案一补充说明</h2>
 
-    <h3>6.1 贸易公司的角色</h3>
-    <div class="callout info"><strong>贸易公司 = BB 的代收付主体。</strong>BB 本身没有智朗银行账户，法币收付通过贸易公司完成。贸易公司由 BB 控制，拥有智朗银行账户。</div>
+    <h3>6.1 B代收付主体的角色</h3>
+    <div class="callout info"><strong>B代收付主体 = BB 的代收付主体。</strong>BB 本身没有智朗银行账户，法币收付通过B代收付主体完成。B代收付主体由 BB 控制，拥有智朗银行账户。</div>
     <table>
       <thead><tr><th>场景</th><th>资金流向</th><th>说明</th></tr></thead>
       <tbody>
-        <tr><td>OnRamp</td><td>Wingbee 智朗 → 贸易公司智朗（行内转账）</td><td>Wingbee 先转法币，BB 收到后执行承兑</td></tr>
-        <tr><td>OffRamp</td><td>BB 承兑后 → 法币到 Wingbee 智朗（直接到账）</td><td>Wingbee 配置自己的智朗为收款账户</td></tr>
+        <tr><td>OnRamp</td><td>Wingbee 智朗 → B代收付主体智朗（行内转账）</td><td>Wingbee 先转法币，BB 收到后执行承兑</td></tr>
+        <tr><td>OffRamp</td><td>BB 承兑后 → B代收付主体智朗行内转账给 Wingbee</td><td>Wingbee 收到后转发给商户</td></tr>
       </tbody>
     </table>
 
@@ -668,7 +672,7 @@ sequenceDiagram
     <div class="principle-grid">
       <div class="principle-card">
         <strong>1. OnRamp：先收后做</strong>
-        <p>Wingbee 必须先收到客户法币，转给贸易公司确认到账后才能发起 OnRamp。不允许未收款就发起交易</p>
+        <p>Wingbee 必须先收到客户法币，转给B代收付主体确认到账后才能发起 OnRamp。不允许未收款就发起交易</p>
       </div>
       <div class="principle-card">
         <strong>2. OffRamp：头寸自管</strong>
@@ -745,7 +749,7 @@ sequenceDiagram
         <tr><td><strong>交易主体</strong></td><td>Wingbee 以自身 MID 发起交易</td><td>以客户 MID 发起交易</td></tr>
         <tr><td><strong>Wingbee 角色</strong></td><td>资金归集方 + 交易发起方</td><td>纯平台方，推送客户信息、编排交易</td></tr>
         <tr><td><strong>合规主体</strong></td><td>Wingbee 对客户资金负责</td><td>SP 对客户资金负责（资金在 SP 的 VA 内）</td></tr>
-        <tr><td><strong>贸易公司</strong></td><td>需要（作为 BB 的代收付主体）</td><td>不需要</td></tr>
+        <tr><td><strong>B代收付主体</strong></td><td>需要（作为 BB 的代收付主体）</td><td>不需要</td></tr>
         <tr><td><strong>OffRamp 收款</strong></td><td>Wingbee 智朗银行账户（直接到账）</td><td>客户 SP 法币账户</td></tr>
       </tbody>
     </table>
@@ -785,7 +789,7 @@ sequenceDiagram
 └── 2. 技术对接
       └── 获取 Sandbox 环境 → 配置 APP ID / 公钥 / AES Key / Webhook
       └── 完成签名验签 + AES 加解密联调</div>
-    <div class="callout info"><strong>注意：</strong>方案二中 Wingbee 不需要在智朗银行开户，也不需要贸易公司。</div>
+    <div class="callout info"><strong>注意：</strong>方案二中 Wingbee 不需要在智朗银行开户，也不需要B代收付主体。</div>
 
     <h3>8.2 客户入网 + VA 开立</h3>
     <div class="flow-box">├── 1. Wingbee 推送客户信息到 SP
@@ -936,7 +940,7 @@ sequenceDiagram
           <ol>
             <li>Wingbee 归集客户资金</li>
             <li>Wingbee 发起交易</li>
-            <li>需要贸易公司</li>
+            <li>需要B代收付主体</li>
             <li>需要智朗银行账户</li>
             <li>OffRamp 直达智朗账户</li>
             <li>对接简单</li>
@@ -949,7 +953,7 @@ sequenceDiagram
           <ol>
             <li>客户资金直接入 VA</li>
             <li>Wingbee 代客发起交易</li>
-            <li>不需要贸易公司</li>
+            <li>不需要B代收付主体</li>
             <li>不需要智朗银行账户</li>
             <li>客户资金隔离</li>
             <li>合规要求高</li>
@@ -986,7 +990,7 @@ sequenceDiagram
 
     <h3>方案一专属</h3>
     <ol class="notes-list">
-      <li><strong>OnRamp 必须先收后做</strong> — Wingbee 必须先收到客户法币，银行转账给贸易公司确认到账后，才能发起 OnRamp</li>
+      <li><strong>OnRamp 必须先收后做</strong> — Wingbee 必须先收到客户法币，银行转账给B代收付主体确认到账后，才能发起 OnRamp</li>
       <li><strong>OffRamp 收款账户</strong> — Wingbee 必须在 EX 配置自己的智朗银行账户作为 OffRamp 收款人（beneficiary），法币直接到 Wingbee 智朗</li>
       <li><strong>头寸监控</strong> — 采用激进策略时需实时监控智朗账户余额，避免付款失败</li>
       <li><strong>对账</strong> — Wingbee 应定期核对：智朗银行流水 ↔ EX 系统交易记录</li>

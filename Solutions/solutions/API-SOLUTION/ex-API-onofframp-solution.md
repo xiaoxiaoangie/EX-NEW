@@ -6,39 +6,39 @@
 
 ---
 
-## 1. 平台架构与名词解释
+## 1. 平台概览与名词解释
 
-### 1.1 三层架构
+### 1.1 EurewaX 开放平台
+
+EurewaX 是跨境支付智能云平台，为合作伙伴提供 **一套 API 覆盖全链路金融基础设施**。
+
+**您将获得的核心能力：**
+
+| 维度 | 说明 |
+|------|------|
+| **合规即服务** | 一次提交商户材料，平台统一管理 KYC/KYB 审核，您无需单独对接合规机构 |
+| **全产品覆盖** | 法币充提 + 数币充提 + OnRamp/OffRamp 承兑 + 收付款 + VCC 发卡 —— 一个平台全包含 |
+| **统一技术栈** | RESTful API + Webhook + 统一签名/加密体系，对接一次，所有产品线复用 |
+| **灵活组合** | 按需开通产品线，可先接承兑，后续随时增开其他产品 |
+| **多服务商覆盖** | 底层对接多家持牌服务商，不同地区/币种/能力自动路由，对您完全透明 |
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│  Layer 1: 租户 (Tenant)                                   │
-│  - EX 平台的客户（如 FlyCapital）                         │
-│  - 通过 EX API / Portal 操作所有业务                      │
-│  - 管理其下商户的法币账户、数币钱包、OnRamp/OffRamp        │
-└─────────────────────────────────────────────────────────┘
-                            │ EX 统一 API / Webhook
-                            ▼
-┌─────────────────────────────────────────────────────────┐
-│  Layer 2: EX 平台 (EurewaX)                               │
-│  - 统一 API 聚合层 + 业务编排层                            │
-│  - 面向租户：API / Portal / Webhook                       │
-│  - 面向 SP：对接 SP 能力，转发业务请求                     │
-│  - 支付系统：交易处理、清结算、对账                        │
-│  - 商户管理：入网编排、产品开通、商户生命周期              │
-│  - 账户体系：多币种账户管理、余额聚合                      │
-│  - 报价引擎：汇率询价、锁汇、承兑报价                     │
-│  - 通知体系：Webhook 分发、状态同步                        │
-└─────────────────────────────────────────────────────────┘
-                            │ 对接 SP
-                            ▼
-┌─────────────────────────────────────────────────────────┐
-│  Layer 3: 持牌 SP (Service Provider)                     │
-│  - 商户实际入网（KYC/KYB 审核、AML 合规）                │
-│  - 实际账户开户（法币账户、数币钱包）                     │
-│  - VA 创建 + 充币地址分配                                │
-│  - 提现/提币执行 + 风控审核                              │
-└─────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────┐
+│                      您的系统                              │
+│  (加密交易所 / Fintech / BaaS / 支付平台 / 钱包应用)      │
+└──────────────────┬───────────────────────────────────────┘
+                   │  统一 RESTful API + Webhook
+                   ▼
+┌──────────────────────────────────────────────────────────┐
+│                   EurewaX 开放平台                         │
+│                                                          │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐   │
+│  │ 产品开通  │ │ 法币账户  │ │ 数币钱包  │ │ 承兑兑换  │   │
+│  │ KYC/KYB  │ │ 充值/提现 │ │ 充币/提币 │ │On/OffRamp│   │
+│  └──────────┘ └──────────┘ └──────────┘ └──────────┘   │
+│                                                          │
+│  合规 · 风控 · 承兑 · 资金托管 —— 全部由持牌服务商执行    │
+└──────────────────────────────────────────────────────────┘
 ```
 
 ### 1.2 核心名词
@@ -113,13 +113,30 @@
 
 ---
 
-## 2. 前置流程：商户入网 + 产品开通
+## 2. 前置流程：商户注册 + 开通产品（含 KYC/KYB）
 
 > ⚠️ FlyCapital 特殊情况：租户 = 商户，同一主体。
 >
 > 如果已在 VCC 方案中完成商户入网，此处无需重复 KYB，只需单独申请开通承兑产品即可。
 
-### 2.1 首次入网（完整 KYB）
+### 2.1 第一步：商户注册
+
+在 EX 平台创建商户记录，获取商户标识。此步骤仅在 EX 侧注册，**不涉及 KYC/KYB 审核**。
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant T as 租户 (FlyCapital)
+    participant EX as EX 平台
+
+    T->>EX: 注册商户（基本信息）
+    EX-->>T: 返回商户标识
+    Note over T,EX: 商户已在 EX 注册，尚未入网 SP
+```
+
+### 2.2 第二步：开通产品 + KYC/KYB（首次需客户入网）
+
+申请开通承兑产品时，如果是首次入网，需同时提交 KYC/KYB 材料，SP 审核通过后产品自动开通。
 
 ```mermaid
 sequenceDiagram
@@ -130,40 +147,30 @@ sequenceDiagram
 
     Note over T,SP: FlyCapital 场景：租户 = 商户（同一主体）
 
-    T->>EX: 推送商户入网<br/>POST /merchants/onboarding<br/>（提交 KYB 资料）
-    EX->>SP: 转发商户入网请求 + KYB 材料
+    T->>EX: 申请开通承兑产品 + 提交 KYB 资料（首次入网）
+    EX->>SP: 转发入网 + 产品开通请求 + KYB 材料
     SP->>SP: SP 执行 KYC/KYB 审核
 
-    alt RFI
+    alt RFI（补充材料）
         SP-->>EX: RFI 请求
         EX-->>T: Webhook: RFI_REQUEST
-        T->>EX: 上传补充文件<br/>POST /files/upload
+        T->>EX: 上传补充文件
         EX->>SP: 转发补充材料
         SP->>SP: 重新审核
     end
 
-    SP-->>EX: 审核通过
-    EX-->>T: Webhook: KYB_APPROVED
-```
-
-### 2.2 开通承兑产品
-
-```mermaid
-sequenceDiagram
-    autonumber
-    participant T as 租户 (FlyCapital)
-    participant EX as EX 平台
-    participant SP as 持牌 SP
-
-    Note over T,SP: 商户已入网通过，无需重复 KYB
-
-    T->>EX: 申请开通产品<br/>POST /products/apply<br/>{products: [FIAT_ONRAMP, FIAT_OFFRAMP,<br/>FIAT_ACCOUNT, CRYPTO_WALLET]}
-    EX->>SP: 转发产品开通请求
-    SP->>SP: 产品审核（可能 RFI）
-    SP-->>EX: 产品开通成功
-    EX-->>T: Webhook: PRODUCT_ACTIVE
+    SP-->>EX: KYB 审核通过 + 产品开通成功
+    EX-->>T: Webhook: KYB 通过
+    EX-->>T: Webhook: 承兑产品已开通
     Note over T,SP: SP 侧自动开立法币账户 + 数币钱包
 ```
+
+**关键说明**：
+
+- **第一步（注册）**：仅在 EX 创建商户记录，不涉及 SP、不需要 KYC/KYB
+- **第二步（开通产品）**：首次入网需提交 KYB 资料，SP 审核通过后产品开通；非首次入网（已有 KYB）只需申请开通产品，无需重复 KYB
+- **EX** 只做转发和编排，不做 KYC/KYB、不做风控
+- FlyCapital 场景中租户 = 商户，用同一主体
 
 ---
 
@@ -178,28 +185,28 @@ sequenceDiagram
     participant EX as EX 平台
     participant SP as 持牌 SP
 
-    T->>EX: 申请 VA<br/>POST /va/accounts
+    T->>EX: 申请 VA
     EX->>SP: 转发 VA 申请
     SP->>SP: VA 审核
     alt RFI
-        SP-->>EX: RFI
-        EX-->>T: Webhook: RFI_REQUEST
+        SP-->>EX: 需要补充材料
+        EX-->>T: Webhook: 补充材料请求
         T->>EX: 上传补充文件
         EX->>SP: 转发
     end
     SP-->>EX: VA 创建成功
-    EX-->>T: Webhook: VA_ACTIVE<br/>{accountNumber, bankInfo}
+    EX-->>T: Webhook: VA 已激活（含账号信息）
 
     T->>T: 租户线下银行转账至 VA
     SP->>SP: 资金到账 VA + 入账风控审核
     alt RFI
-        SP-->>EX: RFI
-        EX-->>T: Webhook: RFI_REQUEST
+        SP-->>EX: 需要补充材料
+        EX-->>T: Webhook: 补充材料请求
         T->>EX: 上传补充文件
         EX->>SP: 转发
     end
     SP-->>EX: 入账成功
-    EX-->>T: Webhook: FIAT_DEPOSIT_SUCCESS<br/>法币账户余额增加
+    EX-->>T: Webhook: 法币充值成功（余额增加）
 ```
 
 ### 3.2 数币充值（充币地址路径）
@@ -211,21 +218,21 @@ sequenceDiagram
     participant EX as EX 平台
     participant SP as 持牌 SP
 
-    T->>EX: 获取充币地址<br/>POST /wallet/deposit-address
+    T->>EX: 获取充币地址
     EX->>SP: 转发请求
-    SP-->>EX: {address, chain, memo}
+    SP-->>EX: 返回充币地址信息
     EX-->>T: 返回充币地址
 
     T->>T: 租户向充币地址转入 USDT/USDC
     SP->>SP: 链上确认 + AML/合规风控审核
     alt RFI
-        SP-->>EX: RFI
-        EX-->>T: Webhook: RFI_REQUEST
+        SP-->>EX: 需要补充材料
+        EX-->>T: Webhook: 补充材料请求
         T->>EX: 上传补充文件
         EX->>SP: 转发
     end
     SP-->>EX: 充值成功
-    EX-->>T: Webhook: CRYPTO_DEPOSIT_SUCCESS<br/>数币钱包余额增加
+    EX-->>T: Webhook: 数币充值成功（余额增加）
 ```
 
 ---
@@ -243,23 +250,23 @@ sequenceDiagram
 
     Note over T,SP: 前置条件：商户已入网 + OnRamp 产品已开通<br/>+ 法币账户有余额
 
-    T->>EX: 获取报价<br/>POST /onramp/quote<br/>{fromCurrency: USD, toCurrency: USDT, amount}
+    T->>EX: 获取报价（法币→数币）
     EX->>SP: 转发询价
-    SP-->>EX: {quoteId, rate, fromAmount, toAmount, expiresAt}
+    SP-->>EX: 返回报价（汇率、金额、有效期）
     EX-->>T: 返回报价
 
-    T->>EX: 确认下单<br/>POST /onramp/orders<br/>{quoteId}
+    T->>EX: 确认下单（锁定报价）
     EX->>SP: 转发下单
     SP->>SP: 风控审核
     alt RFI
-        SP-->>EX: RFI
-        EX-->>T: Webhook: RFI_REQUEST
+        SP-->>EX: 需要补充材料
+        EX-->>T: Webhook: 补充材料请求
         T->>EX: 上传补充文件
         EX->>SP: 转发
     end
-    SP->>SP: 法币账户扣款<br/>数币钱包入账
+    SP->>SP: 法币账户扣款 → 数币钱包入账
     SP-->>EX: 交易完成
-    EX-->>T: Webhook: ONRAMP_SETTLED<br/>{fromAmount, toAmount, rate}
+    EX-->>T: Webhook: OnRamp 完成（含金额、汇率）
 ```
 
 ### 4.2 OffRamp（数币 → 法币）
@@ -273,23 +280,23 @@ sequenceDiagram
 
     Note over T,SP: 前置条件：商户已入网 + OffRamp 产品已开通<br/>+ 数币钱包有余额
 
-    T->>EX: 获取报价<br/>POST /offramp/quote<br/>{fromCurrency: USDT, toCurrency: USD, amount}
+    T->>EX: 获取报价（数币→法币）
     EX->>SP: 转发询价
-    SP-->>EX: {quoteId, rate, fromAmount, toAmount, expiresAt}
+    SP-->>EX: 返回报价（汇率、金额、有效期）
     EX-->>T: 返回报价
 
-    T->>EX: 确认下单<br/>POST /offramp/orders<br/>{quoteId}
+    T->>EX: 确认下单（锁定报价）
     EX->>SP: 转发下单
     SP->>SP: 风控审核
     alt RFI
-        SP-->>EX: RFI
-        EX-->>T: Webhook: RFI_REQUEST
+        SP-->>EX: 需要补充材料
+        EX-->>T: Webhook: 补充材料请求
         T->>EX: 上传补充文件
         EX->>SP: 转发
     end
-    SP->>SP: 数币钱包扣款<br/>法币账户入账
+    SP->>SP: 数币钱包扣款 → 法币账户入账
     SP-->>EX: 交易完成
-    EX-->>T: Webhook: OFFRAMP_SETTLED<br/>{fromAmount, toAmount, rate}
+    EX-->>T: Webhook: OffRamp 完成（含金额、汇率）
 ```
 
 **关键说明**：
@@ -314,30 +321,30 @@ sequenceDiagram
     participant EX as EX 平台
     participant SP as 持牌 SP
 
-    T->>EX: 添加收款人（银行账户）<br/>POST /beneficiaries<br/>{type: BANK, name, accountNumber, bankCode}
+    T->>EX: 添加收款人（银行账户信息）
     EX->>SP: 转发收款人信息
     SP->>SP: 收款人风控审核
     alt RFI
-        SP-->>EX: RFI
-        EX-->>T: Webhook: RFI_REQUEST
+        SP-->>EX: 需要补充材料
+        EX-->>T: Webhook: 补充材料请求
         T->>EX: 上传补充文件
         EX->>SP: 转发
     end
     SP-->>EX: 收款人审核通过
-    EX-->>T: Webhook: BENEFICIARY_APPROVED
+    EX-->>T: Webhook: 收款人审核通过
 
-    T->>EX: 发起提现<br/>POST /payout/orders<br/>{beneficiaryId, amount, currency: USD}
+    T->>EX: 发起法币提现
     EX->>SP: 转发付款请求
     SP->>SP: 付款风控审核
     alt RFI
-        SP-->>EX: RFI
-        EX-->>T: Webhook: RFI_REQUEST
+        SP-->>EX: 需要补充材料
+        EX-->>T: Webhook: 补充材料请求
         T->>EX: 上传补充文件
         EX->>SP: 转发
     end
     SP->>SP: 执行银行付款
     SP-->>EX: 付款状态更新
-    EX-->>T: Webhook: PAYOUT_PROCESSING → PAYOUT_SUCCESS
+    EX-->>T: Webhook: 提现处理中 → 提现成功
 ```
 
 > ⚠️ 目前暂无独立接口获取付款水单。
@@ -353,30 +360,30 @@ sequenceDiagram
     participant EX as EX 平台
     participant SP as 持牌 SP
 
-    T->>EX: 添加收款人（链上地址）<br/>POST /beneficiaries<br/>{type: CRYPTO, chain, address}
+    T->>EX: 添加收款人（链上地址）
     EX->>SP: 转发收款人信息
     SP->>SP: 收款人风控审核
     alt RFI
-        SP-->>EX: RFI
-        EX-->>T: Webhook: RFI_REQUEST
+        SP-->>EX: 需要补充材料
+        EX-->>T: Webhook: 补充材料请求
         T->>EX: 上传补充文件
         EX->>SP: 转发
     end
     SP-->>EX: 收款人审核通过
-    EX-->>T: Webhook: BENEFICIARY_APPROVED
+    EX-->>T: Webhook: 收款人审核通过
 
-    T->>EX: 发起提币<br/>POST /crypto/withdraw<br/>{beneficiaryId, amount, currency: USDT, chain}
+    T->>EX: 发起数币提币
     EX->>SP: 转发提币请求
     SP->>SP: 提币风控审核
     alt RFI
-        SP-->>EX: RFI
-        EX-->>T: Webhook: RFI_REQUEST
+        SP-->>EX: 需要补充材料
+        EX-->>T: Webhook: 补充材料请求
         T->>EX: 上传补充文件
         EX->>SP: 转发
     end
     SP->>SP: 执行链上转账
     SP-->>EX: 提币状态更新
-    EX-->>T: Webhook: CRYPTO_WITHDRAW_PROCESSING → SUCCESS
+    EX-->>T: Webhook: 提币处理中 → 提币成功
 ```
 
 ---
@@ -393,18 +400,18 @@ sequenceDiagram
     participant SP as 持牌 SP
 
     SP-->>EX: 风控审核需补充材料
-    EX-->>T: Webhook: RFI_REQUEST<br/>{rfiId, rfiType, requiredFiles}
+    EX-->>T: Webhook: 补充材料请求（含类型、所需文件）
 
-    T->>EX: 上传文件<br/>POST /files/upload → fileUrl
-    T->>EX: 提交 RFI 回复<br/>POST /rfi/submit<br/>{rfiId, files: [fileUrl]}
+    T->>EX: 上传文件
+    T->>EX: 提交补充材料回复
     EX->>SP: 转发补充材料
 
     alt 审核通过
         SP-->>EX: 通过
-        EX-->>T: Webhook: RFI_RESOLVED
+        EX-->>T: Webhook: 补充材料审核通过
     else 仍不通过
-        SP-->>EX: 拒绝 / 再次 RFI
-        EX-->>T: Webhook: RFI_REJECTED / RFI_REQUEST
+        SP-->>EX: 拒绝 / 再次要求补充
+        EX-->>T: Webhook: 审核拒绝 / 再次补充材料请求
     end
 ```
 
@@ -482,22 +489,22 @@ sequenceDiagram
 
 ## 8. 集成时间规划
 
-| 阶段                       | 内容                                    | 预计耗时   |
-| -------------------------- | --------------------------------------- | ---------- |
-| **Phase 0 · 环境准备** | 获取密钥、配置 Webhook、签名/加密联调   | 1-2 天     |
-| **Phase 1 · 前置流程** | 商户注册 + KYC/KYB + 产品开通           | 3-5 天     |
-| **Phase 2 · 核心业务** | 按需接入各承兑产品线（可并行）          | 5-7 天     |
-| **Phase 3 · 联调测试** | 端到端流程验证、异常场景覆盖            | 5-7 天     |
-| **Phase 4 · 上线**     | 生产环境切换、监控配置                  | 2-3 天     |
+| 阶段                          | 内容                                  | 预计耗时 |
+| ----------------------------- | ------------------------------------- | -------- |
+| **Phase 0 · 环境准备** | 获取密钥、配置 Webhook、签名/加密联调 | 1-2 天   |
+| **Phase 1 · 前置流程** | 商户注册 + KYC/KYB + 产品开通         | 3-5 天   |
+| **Phase 2 · 核心业务** | 按需接入各承兑产品线（可并行）        | 5-7 天   |
+| **Phase 3 · 联调测试** | 端到端流程验证、异常场景覆盖          | 5-7 天   |
+| **Phase 4 · 上线**     | 生产环境切换、监控配置                | 2-3 天   |
 
 ### Phase 2 分产品线时间
 
-| 产品                       | 预计耗时 | 可并行 |
-| -------------------------- | -------- | ------ |
-| 法币账户（充值 + 提现）    | 3-5 天   | ✅     |
-| 数币钱包（充币 + 提币）    | 5-7 天   | ✅     |
-| 买入数币（买入 + 法转数）  | 3-5 天   | ✅     |
-| 卖出数币（卖出 + 数转法）  | 3-5 天   | ✅     |
+| 产品                      | 预计耗时 | 可并行 |
+| ------------------------- | -------- | ------ |
+| 法币账户（充值 + 提现）   | 3-5 天   | ✅     |
+| 数币钱包（充币 + 提币）   | 5-7 天   | ✅     |
+| 买入数币（买入 + 法转数） | 3-5 天   | ✅     |
+| 卖出数币（卖出 + 数转法） | 3-5 天   | ✅     |
 
 > **承兑全产品接入**：约 20-25 天 `<br>`
 > **日常 OnRamp/OffRamp**：实时（秒级兑换）`<br>`

@@ -71,17 +71,25 @@
     <a href="https://open.eurewax.com/" target="_blank" style="font-size:10px;padding:2px 8px;border-radius:20px;background:#dcfce7;color:#166534;font-weight:500;text-decoration:none">📄 API 文档</a>
   </div>
 
-  <!-- 1. 架构 -->
+  <!-- 1. 平台概览 -->
   <div class="sec">
-    <h2><span class="n">1</span>平台架构</h2>
-    <div style="display:flex;flex-direction:column;align-items:center;gap:0;font-size:11px;margin-top:6px">
-      <div style="width:100%"><div class="bx you" style="width:100%;padding:10px"><div class="bt" style="font-size:12px">租户（Tenant）</div><div class="bd">EX 平台的客户<br>通过 EX API / Portal 操作所有业务<br>管理商户、法币账户、数币钱包、承兑交易</div></div></div>
-      <div class="arr arr-v" style="padding:4px 0">↕<div class="arr-lbl">EX 统一 API + Webhook</div></div>
-      <div style="width:100%"><div class="bx ex" style="width:100%;padding:10px"><div class="bt" style="font-size:12px">EX 平台（EurewaX）</div><div class="bd">统一 API 聚合层 + 业务编排层<br>商户管理 · 账户体系 · 报价引擎 · 承兑路由 · Webhook 通知</div></div></div>
-      <div class="arr arr-v" style="padding:4px 0">↕<div class="arr-lbl">对接 SP</div></div>
-      <div style="width:100%"><div class="bx sp" style="width:100%;padding:10px"><div class="bt" style="font-size:12px">持牌 SP（Service Provider）</div><div class="bd">商户入网（KYC/KYB）· 法币账户 · VA 分配 · 数币钱包<br>OnRamp（法币→数币）· OffRamp（数币→法币）· 风控审核</div></div></div>
+    <h2><span class="n">1</span>EurewaX 开放平台</h2>
+    <p style="font-size:11px;color:#374151;margin-bottom:10px">EurewaX 是跨境支付智能云平台，为合作伙伴提供 <b>一套 API 覆盖全链路金融基础设施</b>。对接一次，全部搞定。</p>
+    <table style="margin-bottom:10px">
+      <thead><tr><th>核心价值</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td><b>合规即服务</b></td><td>一次提交商户材料，平台统一管理 KYC/KYB 审核，您无需单独对接合规机构</td></tr>
+        <tr><td><b>全产品覆盖</b></td><td>法币充提 + 数币充提 + OnRamp/OffRamp 承兑 + 收付款 + VCC 发卡 —— 一个平台全包含</td></tr>
+        <tr><td><b>统一技术栈</b></td><td>RESTful API + Webhook + 统一签名/加密，对接一次所有产品线复用</td></tr>
+        <tr><td><b>灵活组合</b></td><td>按需开通产品线，可先接承兑，后续随时增开其他产品</td></tr>
+        <tr><td><b>多服务商覆盖</b></td><td>底层对接多家持牌服务商，不同地区/币种自动路由，对您完全透明</td></tr>
+      </tbody>
+    </table>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:0;font-size:11px">
+      <div style="width:100%"><div class="bx you" style="width:100%;padding:10px"><div class="bt" style="font-size:12px">您的系统</div><div class="bd">加密交易所 / Fintech / BaaS / 支付平台 / 钱包应用</div></div></div>
+      <div class="arr arr-v" style="padding:4px 0">↓<div class="arr-lbl">统一 RESTful API + Webhook</div></div>
+      <div style="width:100%"><div class="bx ex" style="width:100%;padding:10px"><div class="bt" style="font-size:12px">EurewaX 开放平台</div><div class="bd">产品开通 · 法币账户 · 数币钱包 · 承兑兑换（OnRamp/OffRamp）<br><span style="color:#6b7280;font-size:9px">合规 · 风控 · 承兑 · 资金托管 —— 全部由持牌服务商执行</span></div></div></div>
     </div>
-    <div class="note info" style="margin-top:10px">ℹ️ EX 只做转发和编排，<b>不执行 KYC/KYB、不做风控、不做承兑</b>。实际兑换由 SP 完成。</div>
   </div>
 
   <!-- 2. 核心名词 -->
@@ -137,17 +145,28 @@
     <h3 style="margin-bottom:8px;color:#6366f1;border-bottom:2px solid #6366f1;padding-bottom:4px">前置流程</h3>
 
     <details open>
-      <summary><span class="sf-num">1</span> 商户入网 + 产品开通</summary>
+      <summary><span class="sf-num">1</span> 商户注册 + 开通产品（含 KYC/KYB）</summary>
       <div class="det-body">
-        <div class="flow-row" style="margin-bottom:4px">
-          <span class="fn you">推送商户入网</span><span class="fa">→</span>
+        <div style="font-size:10px;font-weight:600;color:#374151;margin-bottom:4px">第一步：商户注册</div>
+        <div class="flow-row" style="margin-bottom:6px">
+          <span class="fn you">注册商户（基本信息）</span><span class="fa">→</span>
+          <span class="fn ex">EX 创建商户记录</span><span class="fa">→</span>
+          <span class="fn ex">返回商户标识</span>
+        </div>
+        <div style="font-size:10px;color:#6b7280;margin-bottom:8px">仅在 EX 侧注册，不涉及 SP、不需要 KYC/KYB</div>
+
+        <div style="font-size:10px;font-weight:600;color:#374151;margin-bottom:4px">第二步：开通产品 + KYC/KYB（首次需客户入网）</div>
+        <div class="flow-row" style="margin-bottom:6px">
+          <span class="fn you">申请承兑产品 + KYB 资料</span><span class="fa">→</span>
           <span class="fn ex">转发 SP</span><span class="fa">→</span>
           <span class="fn sp">KYC/KYB 审核</span><span class="fa">→</span>
-          <span class="fn wh">KYB_APPROVED</span><span class="fa">→</span>
-          <span class="fn you">申请 OnRamp/OffRamp 产品</span><span class="fa">→</span>
-          <span class="fn wh">PRODUCT_ACTIVE</span>
+          <span class="fn wh">KYB 通过 + 承兑产品已开通</span>
         </div>
-        <div style="font-size:10px;color:#6b7280">入网即同时申请承兑产品。SP 执行所有 KYC/KYB，EX 不做审核。</div>
+        <div style="font-size:10px;color:#6b7280;line-height:1.5">
+          • 首次入网需提交 KYB 资料，SP 审核通过后产品开通，SP 自动开立法币账户 + 数币钱包<br>
+          • 非首次入网（已有 KYB）只需申请开通产品，无需重复 KYB<br>
+          • 可能触发 RFI 补充材料
+        </div>
       </div>
     </details>
 
@@ -157,10 +176,10 @@
         <div class="flow-row">
           <span class="fn you">申请 VA</span><span class="fa">→</span>
           <span class="fn sp">VA 审核</span><span class="fa">→</span>
-          <span class="fn wh">VA_ACTIVE</span><span class="fa">→</span>
+          <span class="fn wh">VA 已激活</span><span class="fa">→</span>
           <span class="fn you">线下银行转账</span><span class="fa">→</span>
           <span class="fn sp">入账风控</span><span class="fa">→</span>
-          <span class="fn wh">FIAT_DEPOSIT_SUCCESS</span>
+          <span class="fn wh">法币充值成功</span>
         </div>
       </div>
     </details>
@@ -170,10 +189,10 @@
       <div class="det-body">
         <div class="flow-row">
           <span class="fn you">获取充币地址</span><span class="fa">→</span>
-          <span class="fn ex">返回 {address, chain}</span><span class="fa">→</span>
+          <span class="fn ex">返回充币地址</span><span class="fa">→</span>
           <span class="fn you">链上转入</span><span class="fa">→</span>
           <span class="fn sp">链上确认 + AML</span><span class="fa">→</span>
-          <span class="fn wh">CRYPTO_DEPOSIT_SUCCESS</span>
+          <span class="fn wh">数币充值成功</span>
         </div>
       </div>
     </details>
@@ -184,11 +203,11 @@
       <summary><span class="sf-num">4</span> OnRamp — 买入数币</summary>
       <div class="det-body">
         <div class="flow-row" style="margin-bottom:4px">
-          <span class="fn you">获取 OnRamp 报价</span><span class="fa">→</span>
-          <span class="fn ex">返回 {汇率, 费用, 过期时间}</span><span class="fa">→</span>
-          <span class="fn you">执行 OnRamp</span><span class="fa">→</span>
-          <span class="fn sp">扣法币 + 承兑 + 入数币</span><span class="fa">→</span>
-          <span class="fn wh">ONRAMP_SUCCESS</span>
+          <span class="fn you">获取报价（法币→数币）</span><span class="fa">→</span>
+          <span class="fn ex">返回报价（汇率、金额、有效期）</span><span class="fa">→</span>
+          <span class="fn you">确认下单</span><span class="fa">→</span>
+          <span class="fn sp">扣法币 → 数币入账</span><span class="fa">→</span>
+          <span class="fn wh">OnRamp 完成</span>
         </div>
         <div class="note warn" style="margin-top:4px">⚠️ 报价有过期时间，必须在过期前执行或重新获取报价</div>
       </div>
@@ -199,9 +218,9 @@
       <div class="det-body">
         <div class="flow-row">
           <span class="fn you">获取法转数报价</span><span class="fa">→</span>
-          <span class="fn you">执行法转数</span><span class="fa">→</span>
-          <span class="fn sp">扣法币 + 兑换 + 入数币</span><span class="fa">→</span>
-          <span class="fn wh">FIAT_TO_CRYPTO_SUCCESS</span>
+          <span class="fn you">确认下单</span><span class="fa">→</span>
+          <span class="fn sp">扣法币 → 数币入账</span><span class="fa">→</span>
+          <span class="fn wh">法转数完成</span>
         </div>
         <div style="font-size:10px;color:#6b7280;margin-top:4px">法转数 = 法币账户余额直接兑换为数币（不经过链上充币）</div>
       </div>
@@ -213,11 +232,11 @@
       <summary><span class="sf-num">6</span> OffRamp — 卖出数币</summary>
       <div class="det-body">
         <div class="flow-row" style="margin-bottom:4px">
-          <span class="fn you">获取 OffRamp 报价</span><span class="fa">→</span>
-          <span class="fn ex">返回 {汇率, 费用, 过期时间}</span><span class="fa">→</span>
-          <span class="fn you">执行 OffRamp</span><span class="fa">→</span>
-          <span class="fn sp">扣数币 + 承兑 + 入法币</span><span class="fa">→</span>
-          <span class="fn wh">OFFRAMP_SUCCESS</span>
+          <span class="fn you">获取报价（数币→法币）</span><span class="fa">→</span>
+          <span class="fn ex">返回报价（汇率、金额、有效期）</span><span class="fa">→</span>
+          <span class="fn you">确认下单</span><span class="fa">→</span>
+          <span class="fn sp">扣数币 → 法币入账</span><span class="fa">→</span>
+          <span class="fn wh">OffRamp 完成</span>
         </div>
       </div>
     </details>
@@ -227,9 +246,9 @@
       <div class="det-body">
         <div class="flow-row">
           <span class="fn you">获取数转法报价</span><span class="fa">→</span>
-          <span class="fn you">执行数转法</span><span class="fa">→</span>
-          <span class="fn sp">扣数币 + 兑换 + 入法币</span><span class="fa">→</span>
-          <span class="fn wh">CRYPTO_TO_FIAT_SUCCESS</span>
+          <span class="fn you">确认下单</span><span class="fa">→</span>
+          <span class="fn sp">扣数币 → 法币入账</span><span class="fa">→</span>
+          <span class="fn wh">数转法完成</span>
         </div>
       </div>
     </details>
@@ -240,12 +259,12 @@
       <summary><span class="sf-num">8</span> 法币提现（Fiat Withdrawal）</summary>
       <div class="det-body">
         <div class="flow-row" style="margin-bottom:4px">
-          <span class="fn you">创建 Beneficiary</span><span class="fa">→</span>
+          <span class="fn you">添加收款人</span><span class="fa">→</span>
           <span class="fn sp">收款人审核</span><span class="fa">→</span>
-          <span class="fn wh">BENEFICIARY_ACTIVE</span><span class="fa">→</span>
+          <span class="fn wh">收款人审核通过</span><span class="fa">→</span>
           <span class="fn you">发起法币提现</span><span class="fa">→</span>
           <span class="fn sp">风控 + 付款</span><span class="fa">→</span>
-          <span class="fn wh">WITHDRAWAL_SUCCESS</span>
+          <span class="fn wh">提现成功</span>
         </div>
         <div style="font-size:10px;color:#6b7280;margin-top:4px">提现到 Beneficiary 的银行账户，需先创建并审核通过收款人</div>
       </div>
@@ -255,10 +274,11 @@
       <summary><span class="sf-num">9</span> 数币提币（Crypto Withdrawal）</summary>
       <div class="det-body">
         <div class="flow-row">
-          <span class="fn you">发起链上提币</span><span class="fa">→</span>
-          <span class="fn sp">AML 风控</span><span class="fa">→</span>
-          <span class="fn sp">链上广播</span><span class="fa">→</span>
-          <span class="fn wh">CRYPTO_WITHDRAWAL_SUCCESS</span>
+          <span class="fn you">添加收款人（链上地址）</span><span class="fa">→</span>
+          <span class="fn sp">收款人审核</span><span class="fa">→</span>
+          <span class="fn you">发起数币提币</span><span class="fa">→</span>
+          <span class="fn sp">AML 风控 + 链上转账</span><span class="fa">→</span>
+          <span class="fn wh">提币成功</span>
         </div>
       </div>
     </details>
@@ -269,11 +289,11 @@
     <h2><span class="n">5</span>RFI（补充材料）处理</h2>
     <div class="flow-row" style="margin-bottom:8px">
       <span class="fn sp">SP 需补材料</span><span class="fa">→</span>
-      <span class="fn wh">RFI_REQUEST</span><span class="fa">→</span>
+      <span class="fn wh">补充材料请求</span><span class="fa">→</span>
       <span class="fn you">上传文件</span><span class="fa">→</span>
-      <span class="fn you">提交 RFI</span><span class="fa">→</span>
+      <span class="fn you">提交补充材料</span><span class="fa">→</span>
       <span class="fn ex">转发 SP</span><span class="fa">→</span>
-      <span class="fn wh">RFI_RESOLVED / REJECTED</span>
+      <span class="fn wh">审核通过 / 拒绝</span>
     </div>
     <table>
       <thead><tr><th>场景</th><th>可能要求的文件</th></tr></thead>
@@ -405,8 +425,8 @@
   <div class="sec">
     <h2><span class="n">8</span>注意事项</h2>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:10px">
-      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:8px"><b>EX 角色</b>：API 聚合 + 编排层，不做 KYC、不做风控、不做承兑</div>
-      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:8px"><b>SP 角色</b>：持牌机构，执行审核、承兑兑换、资金托管</div>
+      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:8px"><b>统一入口</b>：您只需对接 EurewaX 一套 API，合规/风控/承兑由持牌服务商完成</div>
+      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:8px"><b>服务商透明</b>：底层多 SP 对您完全不可见，系统自动路由</div>
       <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:8px"><b>报价过期</b>：所有报价有 TTL，过期后需重新获取</div>
       <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:8px"><b>Beneficiary 先审后用</b>：法币提现前必须创建并通过审核</div>
       <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:8px"><b>Webhook 必须</b>：所有异步操作通过 Webhook 通知结果</div>
