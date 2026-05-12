@@ -41,8 +41,8 @@ SA 发起上架申请（草稿）
 | | Payouts 付款 | PAYOUTS | 非同名法币付款、非同名链上付币 |
 | **业务类**（编排 / 增值） | OnRamp 入金 | ON_RAMP | 法币 -> 数币承兑（编排层） |
 | | OffRamp 出金 | OFF_RAMP | 数币 -> 法币承兑（编排层） |
-| | VCC 发卡 | VCC | 虚拟卡发行与管理 |
-| | Crypto Checkout 收单 | CRYPTO_CHECKOUT | 数币在线收单 |
+| | VCC 发卡 | VCC | VCC 发行与管理 |
+| | Crypto Checkout 收单 | CRYPTO_CHECKOUT | Crypto Checkout 在线收单 |
 
 ### 产品依赖关系
 
@@ -93,7 +93,7 @@ Crypto Checkout ── 依赖 ──> 数币钱包（收单资金入账）
 | 做非同名代收代付 | 法币账户 + Payins + Payouts | 不需要 OnRamp/OffRamp |
 | 做汇款（Remittance） | 法币账户 + Payins + Payouts + Remittance | 编排层产品 |
 | 做发卡（VCC） | 法币账户 + VCC | 不需要 Payins/Payouts |
-| 做数币收单 | 数币钱包 + Crypto Checkout | 不需要法币账户 |
+| 做 Crypto Checkout | 数币钱包 + Crypto Checkout | 不需要法币账户 |
 | 未来 SVF（纯持有） | 法币账户（关闭同名充值/提现开关） | 只持有余额 |
 
 **4. 账户作为独立产品仍有意义**

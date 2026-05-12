@@ -360,6 +360,71 @@
     .closing-wrap h1 { font-size: 48px !important; }
     .closing-wrap p { font-size: 13px !important; }
     .closing-contact { font-size: 11px !important; gap: 24px !important; }
+
+    /* ===== FIX: remove dark backgrounds for PDF export ===== */
+
+    /* Cover & Closing: white background instead of dark gradient */
+    .slide.cover, .slide.closing {
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 55%, #e0e7ff 100%) !important;
+    }
+    .slide.cover .brand-logo, .slide.closing .brand-logo { color: var(--ink-400) !important; }
+    .slide.cover .brand-logo .xicon::before, .slide.cover .brand-logo .xicon::after,
+    .slide.closing .brand-logo .xicon::before, .slide.closing .brand-logo .xicon::after { background: var(--sky) !important; }
+    .slide.cover .page-num, .slide.closing .page-num { color: var(--ink-400) !important; }
+    .cover h1 { color: var(--ink) !important; }
+    .cover .cover-sub { color: var(--ink-500) !important; }
+    .cover-tag { border-color: var(--sky) !important; color: var(--sky) !important; background: rgba(37,99,235,0.08) !important; }
+    .cover-meta { color: var(--ink-500) !important; }
+    .cover-meta strong { color: var(--ink) !important; }
+    .cover-logo { color: var(--ink) !important; }
+    .cover-logo .x-big::before, .cover-logo .x-big::after { background: var(--sky) !important; }
+    .closing-wrap h1 { color: var(--ink) !important; }
+    .closing-wrap p { color: var(--ink-500) !important; }
+    .closing-contact { color: var(--ink-500) !important; }
+    .closing-contact div strong { color: var(--ink) !important; }
+
+    /* Table headers: light background instead of dark */
+    .tbl th {
+      background: var(--sky-50) !important;
+      color: var(--ink) !important;
+      border-bottom: 2px solid var(--sky) !important;
+    }
+
+    /* Slide backgrounds: pure white, no gradients */
+    .slide {
+      background: #ffffff !important;
+    }
+    .slide::before {
+      background-image: none !important;
+    }
+
+    /* Cap icons: light fill */
+    .cap-card .cap-icon {
+      background: var(--sky-50) !important;
+      color: var(--sky) !important;
+      border: 1px solid var(--sky) !important;
+    }
+
+    /* Flow step number circles: lighter */
+    .flow-steps li::before {
+      background: var(--sky-50) !important;
+      color: var(--sky) !important;
+      border: 1.5px solid var(--sky) !important;
+    }
+
+    /* Pain card top borders: thinner to avoid ink waste */
+    .pain-card { border-top-width: 2px !important; }
+
+    /* Architecture layer borders only, no heavy fills */
+    .arch-layer.ex {
+      background: #fff !important;
+      border: 1.5px solid var(--ink-200) !important;
+    }
+
+    /* Brand bar: white bg, no gradient */
+    .brand-bar {
+      background: #fff !important;
+    }
   }
 
   @media (max-width: 900px) {

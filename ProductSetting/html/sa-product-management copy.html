@@ -263,8 +263,8 @@
                     <thead><tr><th>服务商ID</th><th>服务商名称</th><th>所在地区</th><th>提供产品</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead>
                     <tbody>
                         <tr><td>SP001</td><td style="color:var(--gray-800);font-weight:500">GlobalCard Solutions</td><td>香港</td><td><span class="tag">VCC发卡</span></td><td><span class="badge badge-green">启用</span></td><td>2026-01-15</td><td><button class="btn btn-link btn-sm" onclick="openDrawer()">详情</button></td></tr>
-                        <tr><td>SP002</td><td style="color:var(--gray-800);font-weight:500">CryptoPayment Inc</td><td>新加坡</td><td><span class="tag">数币收单</span></td><td><span class="badge badge-green">启用</span></td><td>2026-02-01</td><td><button class="btn btn-link btn-sm" onclick="openDrawer()">详情</button></td></tr>
-                        <tr><td>SP003</td><td style="color:var(--gray-800);font-weight:500">Asia Payment Gateway</td><td>美国</td><td><span class="tag">VCC发卡</span><span class="tag">数币收单</span></td><td><span class="badge badge-green">启用</span></td><td>2026-02-10</td><td><button class="btn btn-link btn-sm" onclick="openDrawer()">详情</button></td></tr>
+                        <tr><td>SP002</td><td style="color:var(--gray-800);font-weight:500">CryptoPayment Inc</td><td>新加坡</td><td><span class="tag">Crypto Checkout</span></td><td><span class="badge badge-green">启用</span></td><td>2026-02-01</td><td><button class="btn btn-link btn-sm" onclick="openDrawer()">详情</button></td></tr>
+                        <tr><td>SP003</td><td style="color:var(--gray-800);font-weight:500">Asia Payment Gateway</td><td>美国</td><td><span class="tag">VCC发卡</span><span class="tag">Crypto Checkout</span></td><td><span class="badge badge-green">启用</span></td><td>2026-02-10</td><td><button class="btn btn-link btn-sm" onclick="openDrawer()">详情</button></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -279,7 +279,7 @@
                     <thead><tr><th>产品Code</th><th>产品名称</th><th>服务商MID</th><th>服务商名称</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead>
                     <tbody>
                         <tr><td style="font-weight:600">VCC_53422618</td><td>VCC - Visa USD</td><td>SP001</td><td>GlobalCard Solutions</td><td><span class="badge badge-green">启用</span></td><td>2026-02-15</td><td><button class="btn btn-link btn-sm" onclick="go('pg-binlist')">详情</button><button class="btn btn-link btn-sm" onclick="go('pg-binlist')">编辑</button></td></tr>
-                        <tr><td style="font-weight:600">CRYPTO_001</td><td>数币收单 - USDT</td><td>SP002</td><td>CryptoPayment Inc</td><td><span class="badge badge-green">启用</span></td><td>2026-02-20</td><td><button class="btn btn-link btn-sm">详情</button><button class="btn btn-link btn-sm">编辑</button></td></tr>
+                        <tr><td style="font-weight:600">CRYPTO_001</td><td>Crypto Checkout - USDT</td><td>SP002</td><td>CryptoPayment Inc</td><td><span class="badge badge-green">启用</span></td><td>2026-02-20</td><td><button class="btn btn-link btn-sm">详情</button><button class="btn btn-link btn-sm">编辑</button></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -619,9 +619,9 @@
                 </div>
             </div>
         </div>
-        <!-- 数币收单产品配置页面 -->
+        <!-- Crypto Checkout 产品配置页面 -->
         <div id="pg-crypto-config" class="page">
-            <div class="main-header"><div class="page-title" id="cryptoConfigTitle">上架数币收单产品</div><div class="page-desc">配置 Crypto Checkout 产品的所有属性（产品层）</div></div>
+            <div class="main-header"><div class="page-title" id="cryptoConfigTitle">上架 Crypto Checkout 产品</div><div class="page-desc">配置 Crypto Checkout 产品的所有属性（产品层）</div></div>
             <div class="main-body">
                 <div class="toolbar"><button class="btn btn-ghost" onclick="go('pg-product')">← 返回产品列表</button><div></div></div>
                 <!-- Steps -->
@@ -1406,11 +1406,11 @@
                 <thead><tr><th>产品类型</th><th style="width:200px;text-align:center">选择服务商</th></tr></thead>
                 <tbody>
                     <tr>
-                        <td style="vertical-align:middle"><div style="display:flex;align-items:center;gap:10px"><div class="icon vcc" style="width:36px;height:36px;font-size:18px;flex-shrink:0">💳</div><div><div style="font-weight:600;color:var(--gray-900)">VCC（虚拟卡）</div><div style="font-size:12px;color:var(--gray-400)">虚拟卡发卡，线上消费、广告投放</div></div></div></td>
+                        <td style="vertical-align:middle"><div style="display:flex;align-items:center;gap:10px"><div class="icon vcc" style="width:36px;height:36px;font-size:18px;flex-shrink:0">💳</div><div><div style="font-weight:600;color:var(--gray-900)">VCC</div><div style="font-size:12px;color:var(--gray-400)">VCC 发卡，线上消费、广告投放</div></div></div></td>
                         <td style="text-align:center;vertical-align:middle"><div style="display:flex;gap:6px;justify-content:center"><button class="btn btn-ghost btn-sm" onclick="pickProduct('vcc','IPL')">IPL</button><button class="btn btn-ghost btn-sm" onclick="pickProduct('vcc','BB')">BB</button></div></td>
                     </tr>
                     <tr>
-                        <td style="vertical-align:middle"><div style="display:flex;align-items:center;gap:10px"><div class="icon crypto" style="width:36px;height:36px;font-size:18px;flex-shrink:0">₿</div><div><div style="font-weight:600;color:var(--gray-900)">数币收单（Crypto Checkout）</div><div style="font-size:12px;color:var(--gray-400)">USDT、USDC 等稳定币收款</div></div></div></td>
+                        <td style="vertical-align:middle"><div style="display:flex;align-items:center;gap:10px"><div class="icon crypto" style="width:36px;height:36px;font-size:18px;flex-shrink:0">₿</div><div><div style="font-weight:600;color:var(--gray-900)">Crypto Checkout</div><div style="font-size:12px;color:var(--gray-400)">USDT、USDC 等稳定币收款</div></div></div></td>
                         <td style="text-align:center;vertical-align:middle"><div style="display:flex;gap:6px;justify-content:center"><button class="btn btn-ghost btn-sm" onclick="pickProduct('crypto','IPL')">IPL</button><button class="btn btn-ghost btn-sm" onclick="pickProduct('crypto','BB')">BB</button></div></td>
                     </tr>
                     <tr>
@@ -1640,8 +1640,8 @@ function showCryptoPanel() {
 function nextCryptoStep() { if (curCryptoStep < 5) { curCryptoStep++; renderCryptoSteps(); showCryptoPanel(); } }
 function prevCryptoStep() { if (curCryptoStep > 1) { curCryptoStep--; renderCryptoSteps(); showCryptoPanel(); } }
 function jumpCryptoStep(n) { curCryptoStep = n; renderCryptoSteps(); showCryptoPanel(); }
-function saveCryptoDraft() { alert('数币收单配置已保存草稿'); }
-function submitCrypto() { alert('数币收单产品配置保存成功！'); go('pg-product'); }
+function saveCryptoDraft() { alert('Crypto Checkout 配置已保存草稿'); }
+function submitCrypto() { alert('Crypto Checkout 产品配置保存成功！'); go('pg-product'); }
 
 // Crypto country control
 function toggleCryptoCountry(v) {

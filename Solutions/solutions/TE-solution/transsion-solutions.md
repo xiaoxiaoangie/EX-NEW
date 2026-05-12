@@ -1,4 +1,4 @@
-# Transsion（传音）数币收单 — 解决方案
+# Transsion（传音）Crypto Checkout — 解决方案
 
 > **文档类型**：Transsion 接入解决方案
 > **版本**：v2.0（简化版）
@@ -16,14 +16,14 @@
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
 | **传音（Transsion）** | 终端 App / 钱包 / 市场的运营方。在 EX 系统上以**商户**身份入网开通产品                                                         |
 | **C 端会员**          | 传音 App / 市场上的终端用户。**EX 不感知 C 端**，C 端的账户与余额由传音自行记账                                                |
-| **SP**                | **实际的数币收单 / 承兑 / 付款持牌机构**。传音的法币账户与数币账户真实开在 SP 处，EX 仅做技术对接与 SP 编排，传音不直接感知 SP |
+| **SP**                | **实际的 Crypto Checkout / 承兑 / 付款持牌机构**。传音的法币账户与数币账户真实开在 SP 处，EX 仅做技术对接与 SP 编排，传音不直接感知 SP |
 | **EX**                | 技术 + 合规运营平台，提供 API、Webhook 接入，并做 SP 路由、风控、对账与合规管控                                                      |
 
 ### 1.2 能力与币种范围
 
 | 能力                              | 支持范围                                           |
 | --------------------------------- | -------------------------------------------------- |
-| **数币收单（收 U）**        | USDT / USDC（链上收款）                            |
+| **Crypto Checkout（收 U）** | USDT / USDC（链上收款）                            |
 | **承兑 OnRamp（法 → U）**  | 仅支持**USD**（美金）<br />其他币种建设中    |
 | **承兑 OffRamp（U → 法）** | 仅支持**USD**（美金）<br />其他币种建设中    |
 | **数币提现（提 U）**        | USDT / USDC 链上出金                               |
@@ -35,13 +35,13 @@
 
 ```
 场景一（钱包充值 · OffRamp 式）：
-  C 端 USDT → 链上 → SP 数币收单地址
+  C 端 USDT → 链上 → SP Crypto Checkout 地址
   → OffRamp 数转法（USDT → USD，由 SP 执行）
   → USD 到传音在 SP 的 USD 账户
-  → 传音给 C 端法币钱包（内部账本）上账
+  → 传音给 C 端 Fiat Account（内部账本）上账
 
-场景二（市场消费 · 数币收单）：
-  C 端 USDT → 链上 → SP 数币收单地址
+场景二（市场消费 · Crypto Checkout）：
+  C 端 USDT → 链上 → SP Crypto Checkout 地址
   → USDT 到传音在 SP 的 USDT 账户
   → 传音标记订单已付 → 触发发货
 
@@ -136,7 +136,7 @@
 7. EX 自动触发 OffRamp（按 SP 实际成交时的实时汇率）
 8. USD 到账传音 SP 端 USD 账户 → Webhook: OFFRAMP_SETTLED
    {bizOrderNo, actualFiatAmount: 实际到账 USD}
-9. 传音按 actualFiatAmount 给 C 端法币钱包上账 → 通知 C 端
+9. 传音按 actualFiatAmount 给 C 端 Fiat Account 上账 → 通知 C 端
 ```
 
 **时序图：**
@@ -147,7 +147,7 @@ sequenceDiagram
     participant C as C 端会员
     participant TX as 传音
     participant EX as EX 平台
-    participant SP as SP (数币收单 / OffRamp)
+    participant SP as SP (Crypto Checkout / OffRamp)
 
     C->>TX: 发起充值 100 USD
 
@@ -174,7 +174,7 @@ sequenceDiagram
     SP-->>SP: 实际 USD 入账传音 SP 端 USD 账户
     EX->>TX: Webhook: OFFRAMP_SETTLED<br/>{bizOrderNo, actualFiatAmount}
 
-    TX->>TX: C 端法币钱包 +actualFiatAmount
+    TX->>TX: C 端 Fiat Account +actualFiatAmount
     TX-->>C: 充值成功（展示实际到账金额）
 ```
 
@@ -206,7 +206,7 @@ sequenceDiagram
     participant C as C 端会员
     participant TX as 传音
     participant EX as EX 平台
-    participant SP as SP (数币收单)
+    participant SP as SP (Crypto Checkout)
 
     C->>TX: 下单
     TX->>EX: POST /cashier/orders<br/>{bizOrderNo, currency:USDT}
@@ -296,7 +296,7 @@ sequenceDiagram
 | 场景                                                                         | 用到的接口                                                                                                | 预计耗时 | 可并行            |
 | ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | -------- | ----------------- |
 | **场景一**：钱包充值（实时询价 + 数币收款 + 自动 OffRamp → 法币上账） | `/offramp/quote`（前端定时刷新）+ `/cashier/orders`（`autoOffRamp:true`）+ `OFFRAMP_SETTLED` 回调 | 7-10 天  | —                |
-| **场景二**：市场消费（数币收单）                                       | `/cashier/orders` + `CRYPTO_PAYIN_SUCCESS` 回调                                                       | 3-5 天   | ✅ 可与场景一并行 |
+| **场景二**：市场消费（Crypto Checkout）                                | `/cashier/orders` + `CRYPTO_PAYIN_SUCCESS` 回调                                                       | 3-5 天   | ✅ 可与场景一并行 |
 | **场景三**：提现 / 提币                                                | `/payout/orders`（USD）+ `/crypto/withdraw`（USDT）                                                   | 3-5 天   | ✅                |
 
 > 多场景可并行开发；全量接入约 22 天。

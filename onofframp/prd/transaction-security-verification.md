@@ -508,7 +508,7 @@ flowchart TD
 | **法币兑换（FX）**          | Assets → Exchange                | 法币之间兑换，余额结构变动               |
 | **On-Ramp（法币换U）**      | Assets → Exchange                | 法币买入加密货币                         |
 | **Off-Ramp（U换法币）**     | Assets → Exchange                | 加密货币卖出为法币                       |
-| **卡充值（Card Top-up）**   | Cards                             | 向虚拟卡充值，账户余额减少               |
+| **卡充值（Card Top-up）**   | Cards                             | 向 VCC 充值，账户余额减少                |
 | **同名充值**                | Assets → Fiat Accounts           | 从外部充值到账户（入金，部分场景需验证） |
 | **同名充币**                | Assets → Crypto Wallet           | 从外部充币到钱包（入金，部分场景需验证） |
 
@@ -561,7 +561,7 @@ flowchart TD
 | **商户配置**      | 修改商户名称、配置 Webhook、API Key 查看                 |
 | **成员管理**      | 邀请成员、修改成员角色、移除成员（Owner/Admin 权限）     |
 | **发票/订阅管理** | 创建 Invoice、创建 Subscription Plan                     |
-| **卡管理**        | 申请虚拟卡、查看卡信息（非明文）、冻结/解冻卡            |
+| **卡管理**        | 申请 VCC、查看卡信息（非明文）、冻结/解冻卡              |
 | **开发者设置**    | 查看 API Key（非重置）、配置 Webhook URL                 |
 
 ### 11.6 操作分类总览图

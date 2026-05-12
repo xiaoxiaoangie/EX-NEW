@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bonbillhk 收单结算解决方案 v2.0</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+:root{--bg:#fff;--text:#1a1a2e;--heading:#16213e;--accent:#0f3460;--border:#e0e0e0;--card-bg:#f8f9fa;--highlight:#e94560;--tag-bg:#eef2ff;--tag-text:#3730a3;--success:#059669;--warn:#d97706;--bonbillhk:#7c3aed}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans SC",sans-serif;background:var(--bg);color:var(--text);line-height:1.7;padding:0}
+.container{max-width:1000px;margin:0 auto;padding:40px 24px 80px}
+.doc-header{border-bottom:3px solid var(--bonbillhk);padding-bottom:24px;margin-bottom:40px}
+.doc-header h1{font-size:28px;color:var(--heading);margin-bottom:12px}
+.doc-meta{display:flex;gap:24px;flex-wrap:wrap;font-size:13px;color:#666}
+.section{margin-bottom:48px}
+.section h2{font-size:22px;color:var(--heading);border-left:4px solid var(--highlight);padding-left:12px;margin-bottom:20px}
+.section h3{font-size:17px;color:var(--accent);margin:24px 0 12px}
+.section h4{font-size:15px;color:#444;margin:16px 0 8px}
+p{margin:8px 0 12px;font-size:15px}
+table{width:100%;border-collapse:collapse;margin:12px 0 20px;font-size:14px}
+th{background:var(--accent);color:#fff;text-align:left;padding:10px 14px;font-weight:600}
+td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:hover td{background:#f5f7ff}
+.flow-box{background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:20px 24px;margin:12px 0 20px;font-family:"SF Mono","Fira Code",monospace;font-size:13.5px;line-height:2;white-space:pre-wrap;overflow-x:auto}
+.mermaid-wrapper{background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:24px;margin:16px 0 20px;overflow-x:auto}
+.mermaid{display:flex;justify-content:center}
+.callout{background:#eff6ff;border-left:4px solid #3b82f6;padding:14px 18px;margin:12px 0 20px;border-radius:0 8px 8px 0;font-size:14px}
+.callout.warn{background:#fffbeb;border-left-color:var(--warn)}
+.callout.success{background:#ecfdf5;border-left-color:var(--success)}
+.callout strong{color:var(--accent)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:12px 0 20px}
+.col-card{background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:20px}
+.col-card h4{margin:0 0 12px;font-size:15px;color:var(--accent)}
+.divider{border:none;border-top:2px solid var(--border);margin:48px 0}
+.stab{display:inline-block;padding:4px 14px;border-radius:16px;font-size:13px;font-weight:600;margin-right:8px}
+.stab.s1{background:#eff6ff;color:#1d4ed8}
+.stab.s2{background:#f5f3ff;color:#7c3aed}
+ol,ul{margin:8px 0 12px 20px;font-size:15px}
+li{margin-bottom:4px}
+.arch-diagram{background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:28px;margin:16px 0 20px;display:flex;flex-direction:column;align-items:center;gap:16px}
+.arch-row{display:flex;gap:20px;align-items:center;flex-wrap:wrap;justify-content:center}
+.arch-node{background:#fff;border:2px solid var(--accent);border-radius:10px;padding:14px 22px;text-align:center;min-width:130px;font-size:14px;font-weight:600;color:var(--accent)}
+.arch-node.primary{background:var(--accent);color:#fff}
+.arch-node.highlight{border-color:var(--highlight);color:var(--highlight)}
+.arch-node.bh{border-color:var(--bonbillhk);color:var(--bonbillhk);background:#f5f3ff}
+.arch-node small{display:block;font-weight:400;font-size:12px;margin-top:4px;opacity:.8}
+.arch-arrow{font-size:22px;color:#999}
+.arch-arrow-down{font-size:22px;color:#999;text-align:center}
+@media(max-width:700px){.two-col{grid-template-columns:1fr}.container{padding:20px 16px 60px}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="doc-header">
+  <h1>Bonbillhk 收单结算解决方案</h1>
+  
+</div>
+
+<!-- 一、背景 -->
+<div class="section">
+  <h2>一、背景与目标</h2>
+  <p>Bonbillhk 通过 Worldpay 进行收单业务。Worldpay 定期将收单结算款打给 Bonbillhk，Bonbillhk 需要与各供应商进行结算。</p>
+  <table>
+    <tr><th>问题</th><th>具体情况</th></tr>
+    <tr><td><strong>结算收款</strong></td><td>Worldpay 结算款需打入银行账户，Bonbillhk 已在智朗银行成功开户</td></tr>
+    <tr><td><strong>供应商结算</strong></td><td>供应商分布在不同地区，传统 SWIFT 逐笔结算成本高、到账慢</td></tr>
+    <tr><td><strong>账户体系</strong></td><td>缺乏统一的账户体系来管理商户资金、结算、提现全流程</td></tr>
+  </table>
+
+  <h3>方案总览</h3>
+  <table>
+    <tr><th>维度</th><th><span class="stab s1">方案一</span>VA 法币收付</th><th><span class="stab s2">方案二</span>数币结算</th></tr>
+    <tr><td><strong>核心思路</strong></td><td>Bonbillhk 在 IPL 开 VA 接收 Worldpay 结算款，Payout 给供应商</td><td>结算款→OnRamp→Winingbees 钱包直接提币到商户钱包</td></tr>
+    <tr><td><strong>结算收款</strong></td><td>VA 直接接收 Worldpay 结算款</td><td>智朗银行→行内转账→OnRamp 数币化</td></tr>
+    <tr><td><strong>下发方式</strong></td><td>法币 Payout（银行转账）给供应商</td><td>数币钱包直接提币到商户钱包</td></tr>
+    <tr><td><strong>承兑环节</strong></td><td>无</td><td>两次（OnRamp + OffRamp）</td></tr>
+    <tr><td><strong>商户入网</strong></td><td>不需要</td><td>需要（BB 开 MID + 钱包）</td></tr>
+    <tr><td><strong>适用场景</strong></td><td>供应商少、单笔大、快速上线</td><td>多地区、需账户体系、追求时效</td></tr>
+  </table>
+</div>
+
+<hr class="divider">
+
+<!-- 方案一 -->
+<div class="section">
+  <h2><span class="stab s1">方案一</span> VA 法币收付方案</h2>
+
+  <h3>核心思路</h3>
+  <p>Bonbillhk 入网 EX 平台，在 IPL（法币 SP）开立 VA。该 VA 作为 Worldpay 结算收款账户，Bonbillhk 收到结算款后通过法币 Payout 向各供应商结算。</p>
+
+  <h3>各方角色</h3>
+  <table>
+    <tr><th>实体</th><th>角色</th><th>说明</th></tr>
+    <tr><td><strong>Bonbillhk</strong></td><td>EX 租户</td><td>在 IPL 开 VA，接收 Worldpay 结算款，发起 Payout 给供应商</td></tr>
+    <tr><td><strong>IPL</strong></td><td>法币 SP</td><td>为 Bonbillhk 开立 VA，执行 Payout</td></tr>
+    <tr><td><strong>EX</strong></td><td>技术服务平台</td><td>API 编排层，不碰钱</td></tr>
+    <tr><td><strong>供应商</strong></td><td>Bonbillhk 的供应商</td><td>提供银行账户信息，接收法币结算款</td></tr>
+  </table>
+
+  <h3>账户结构</h3>
+  <div class="two-col">
+    <div class="col-card"><h4>IPL 侧</h4><div class="flow-box">└── Bonbillhk（MID-B）
+    └── VA（HKD/USD）
+        接收 Worldpay 结算 + Payout 给供应商</div></div>
+    <div class="col-card"><h4>供应商侧</h4><div class="flow-box">├── 供应商 A —— 银行账户
+├── 供应商 B —— 银行账户
+└── 供应商 N ...</div></div>
+  </div>
+  <div class="callout success"><strong>关键：</strong>供应商不需要入网任何平台。只需提供银行账户信息给 Bonbillhk。Bonbillhk 自己作为 EX 租户直接调用 API。</div>
+
+  <h3>端到端资金流程</h3>
+  <div class="mermaid-wrapper"><div class="mermaid">
+sequenceDiagram
+    autonumber
+    participant WP as Worldpay
+    participant VA as Bonbillhk VA
+    participant BH as Bonbillhk 系统
+    participant EX as EX 平台
+    participant IPL as IPL（法币SP）
+    participant BANK as 供应商银行
+
+    WP->>VA: 结算款打入 Bonbillhk VA
+    VA-->>BH: Webhook 通知入账
+    Note over BH: 清算引擎计算各供应商结算金额
+    loop 逐供应商结算
+        BH->>EX: 调 Payout 接口
+        EX->>IPL: 路由执行
+        IPL->>BANK: 法币到供应商银行
+    end
+    EX-->>BH: Webhook：Payout 完成
+  </div></div>
+
+  <h3>合规要点</h3>
+  <table>
+    <tr><th>要点</th><th>说明</th></tr>
+    <tr><td>VA 开户审核</td><td>Bonbillhk 入网 EX，通过 KYB 审核后在 IPL 开立 VA</td></tr>
+    <tr><td>Worldpay 验证</td><td>需验证 VA 账户合规性（持有人与收单主体一致）</td></tr>
+    <tr><td>FRI 贸易背景</td><td>Payout 时需提供贸易背景材料（结算单、交易明细等）</td></tr>
+    <tr><td>AML/KYC</td><td>IPL 作为法币 SP 执行 AML 监控</td></tr>
+  </table>
+
+  
+</div>
+
+<hr class="divider">
+
+<!-- 方案二 -->
+<div class="section">
+  <h2><span class="stab s2">方案二</span> 数币结算方案</h2>
+
+  <h3>核心思路</h3>
+  <ol>
+    <li><strong>Worldpay 结算款数币化</strong> — 收到法币后通过 OnRamp 转为 USDT</li>
+    <li><strong>数币链路结算给商户</strong> — Winingbees 钱包直接提币到各商户钱包（一跳到位）</li>
+    <li><strong>商户自主提现</strong> — 商户可通过 OffRamp 兑换为法币提现到银行</li>
+  </ol>
+
+  <h3>角色关系</h3>
+  <div class="arch-diagram">
+    <div style="font-size:13px;color:#666">商户视角（商户只看到这一层）</div>
+    <div class="arch-row">
+      <div class="arch-node highlight">收单商户<small>刷卡 / 查看结算 / 提现</small></div>
+      <div class="arch-arrow">⟷</div>
+      <div class="arch-node bh">Bonbillhk<small>清算 + 结算 + 钱包账本</small></div>
+    </div>
+    <div class="arch-arrow-down">▼ 通过 Winingbees 渠道执行（商户不可见）</div>
+    <div class="arch-row">
+      <div class="arch-node">Winingbees<small>EX 租户 / API</small></div>
+      <div class="arch-arrow">⟷</div>
+      <div class="arch-node">EX<small>API 编排层</small></div>
+      <div class="arch-arrow">⟷</div>
+      <div class="arch-node primary">BB<small>持牌承兑通道</small></div>
+    </div>
+  </div>
+
+  <h3>各方身份</h3>
+  <table>
+    <tr><th>实体</th><th>现实角色</th><th>系统身份</th><th>说明</th></tr>
+    <tr><td><strong>收单商户</strong></td><td>Bonbillhk 签约商户</td><td>Winingbees 下商户（代开）</td><td>在 BB 有独立 MID + 数币钱包，不感知底层</td></tr>
+    <tr><td><strong>Bonbillhk</strong></td><td>Worldpay 收单方</td><td>不在 BB 入网</td><td>负责清算、结算触发，不拥有 MID/数币钱包</td></tr>
+    <tr><td><strong>Winingbees</strong></td><td>下发渠道</td><td>EX 租户 + BB 商户</td><td>双重身份：调 API + 拥有数币钱包，OnRamp 后直接提币给商户</td></tr>
+    <tr><td><strong>BB</strong></td><td>持牌承兑通道</td><td>SP</td><td>执行 OnRamp/OffRamp，管理钱包</td></tr>
+    <tr><td><strong>智朗银行</strong></td><td>法币通道</td><td>银行</td><td>Bonbillhk 和 Winingbees 均在智朗开户</td></tr>
+  </table>
+
+  <h3>账户结构</h3>
+  <div class="flow-box">BB 侧（持牌服务商）：
+│
+├── Winingbees（MID-W）
+│   ├── 数币钱包（USDT）— OnRamp 入账 → 直接提币给商户
+│   └── 智朗银行账户 — 法币收付
+│
+├── 商户 A（MID-A）
+│   └── 数币钱包（USDT）— 接收提币 + OffRamp
+│
+├── 商户 B（MID-B2）└── 数币钱包
+└── 商户 N ...</div>
+  <div class="callout"><strong>注意：</strong>Bonbillhk 不在 BB 入网，没有 MID 和数币钱包。OnRamp 以 Winingbees MID 执行，数币直接从 Winingbees 钱包提币到各商户钱包。</div>
+
+  <h3>Bonbillhk 商户钱包体系</h3>
+  <p>Bonbillhk 为每个商户建立<strong>钱包账本体系</strong>。底层数币钱包由 BB 托管，Bonbillhk 维护商户可见的钱包视图。</p>
+  <div class="two-col">
+    <div class="col-card"><h4>Bonbillhk 平台（商户可见）</h4><div class="flow-box" style="font-size:13px">├── 商户 A
+│   ├── 待结算余额 — 法币计价
+│   ├── 可用余额 — USDT 计价
+│   ├── 冻结余额 — 拒付/风控
+│   └── 提现中
+└── Bonbillhk 自有账户
+    ├── 待 OnRamp 余额
+    └── 手续费收入</div></div>
+    <div class="col-card"><h4>BB 侧（商户不可见）</h4><div class="flow-box" style="font-size:13px">├── Winingbees 数币钱包
+│   OnRamp 入账→提币给商户
+├── 商户 A 数币钱包（USDT）
+├── 商户 B 数币钱包（USDT）
+└── ...</div></div>
+  </div>
+
+  
+</div>
+
+<!-- 五、端到端资金流程 -->
+<div class="section">
+  <h2>五、端到端资金流程</h2>
+
+  <h3>流程全景</h3>
+  <div class="flow-box"><strong>Phase 1:</strong> 消费者刷卡 → Worldpay 收单 → 结算款打入 Bonbillhk 智朗
+<strong>Phase 2:</strong> Bonbillhk 智朗 → 行内转账 → Winingbees 智朗 → OnRamp → USDT 入 Winingbees 钱包
+<strong>Phase 3:</strong> Winingbees 钱包 → 直接提币 → 各商户钱包（一跳到位）
+<strong>Phase 4:</strong> 商户数币钱包 → OffRamp → 法币到商户银行</div>
+
+  <h3>5.2 OnRamp：结算款数币化</h3>
+  <div class="mermaid-wrapper"><div class="mermaid">
+sequenceDiagram
+    autonumber
+    participant WP as Worldpay
+    participant BH as Bonbillhk 智朗
+    participant WB as Winingbees 智朗
+    participant BD as BB代收付主体
+    participant EX as EX 平台
+    participant BB as BB 承兑
+
+    WP->>BH: 结算款（HKD）到账
+    Note over BH: 确认到账
+    BH->>WB: 智朗行内转账
+    WB->>BD: 行内转账给 BB 代收付主体
+    BD-->>WB: 确认到账，Winingbees 上账
+    WB->>EX: 调 OnRamp（Winingbees MID, 金额, USDT）
+    EX-->>WB: 返回订单（汇率, 订单号）
+    BB->>BB: 执行 OnRamp（法币→USDT）
+    EX-->>WB: Webhook: OnRamp 完成
+    Note over WB: USDT 入 Winingbees 数币钱包
+  </div></div>
+
+
+  <h3>5.3 数币结算：Winingbees → 商户钱包</h3>
+  <p><strong>结算是 Bonbillhk 系统内部发起的动作。</strong>先在账本中将「待结算余额」转为「结算中」，然后触发 Winingbees 提币到商户钱包。</p>
+  <div class="mermaid-wrapper"><div class="mermaid">
+sequenceDiagram
+    autonumber
+    participant BH as Bonbillhk 系统
+    participant WB as Winingbees
+    participant EX as EX 平台
+    participant MW as 商户钱包
+
+    Note over BH: 结算周期到达，计算各商户金额
+    Note over BH: 账本：「待结算」→「结算中」
+    BH->>WB: 结算指令（商户列表 + USDT 金额）
+    loop 逐商户
+        WB->>EX: 提币：Winingbees钱包→商户钱包
+        EX-->>WB: 完成
+        Note over MW: 到账
+    end
+    WB-->>BH: 返回执行结果
+    Note over BH: 账本：「结算中」→「可用余额」↑
+  </div></div>
+
+  <div class="callout success">
+    <strong>核心要点：</strong><br>
+    • 结算主体是 Bonbillhk，逻辑全在 Bonbillhk 系统内<br>
+    • Winingbees 是执行层，从自己钱包直接提币到商户钱包（一跳到位）<br>
+    • 商户只看到 Bonbillhk 平台余额变化，底层 BB 钱包不可见<br>
+    • 双层一致性：Bonbillhk 账本 与 BB 实际余额 定期对账
+  </div>
+
+  <h3>5.4 商户提现 OffRamp</h3>
+  <div class="mermaid-wrapper"><div class="mermaid">
+sequenceDiagram
+    autonumber
+    participant M as 商户
+    participant BH as Bonbillhk 平台
+    participant WB as Winingbees
+    participant EX as EX 平台
+    participant BB as BB 承兑
+    participant BANK as 商户银行
+
+    M->>BH: 点击「提现」
+    BH->>WB: 转发提现请求
+    WB->>EX: 调 OffRamp（商户MID, 金额, 目标法币）
+    EX-->>WB: 返回订单
+    BB->>BB: 从商户钱包扣 USDT → 兑换法币
+    BB->>BANK: 法币到商户银行
+    EX-->>WB: Webhook: OffRamp 完成
+    WB-->>BH: 通知完成
+    BH-->>M: 平台展示提现成功
+  </div></div>
+  <div class="callout"><strong>关键：</strong>OffRamp 使用商户自己的 MID，从商户自己的数币钱包出款。全程在 Bonbillhk 平台操作，底层对商户透明。</div>
+</div>
+
+<!-- 六、Bonbillhk 需建设能力 -->
+<div class="section">
+  <h2>六、Bonbillhk 需要建设的能力</h2>
+  <table>
+    <tr><th>#</th><th>能力</th><th>说明</th><th>优先级</th></tr>
+    <tr><td>1</td><td>商户钱包账本</td><td>为每个商户维护钱包账本（待结算/可用/冻结/提现中），与 BB 数币钱包保持双层一致性</td><td><span class="stab" style="background:#fee2e2;color:#dc2626">P0</span></td></tr>
+    <tr><td>2</td><td>清算引擎</td><td>根据收单交易计算各商户待结算金额（含手续费扣除、拒付处理等）</td><td><span class="stab" style="background:#fee2e2;color:#dc2626">P0</span></td></tr>
+    <tr><td>3</td><td>结算触发</td><td>按结算周期自动或手动触发结算，生成结算指令发送给 Winingbees</td><td><span class="stab" style="background:#fee2e2;color:#dc2626">P0</span></td></tr>
+    <tr><td>4</td><td>商户提现入口</td><td>商户在 Bonbillhk 平台从「可用余额」发起提现，转发给 Winingbees 执行 OffRamp</td><td><span class="stab" style="background:#fee2e2;color:#dc2626">P0</span></td></tr>
+    <tr><td>5</td><td>Winingbees 对接</td><td>与 Winingbees 之间的 API 通信（结算指令、执行结果、提现请求）</td><td><span class="stab" style="background:#fee2e2;color:#dc2626">P0</span></td></tr>
+    <tr><td>6</td><td>余额同步与对账</td><td>定期查询商户 BB 钱包实际余额，与本地账本做对账校验</td><td><span class="stab" style="background:#fee2e2;color:#dc2626">P0</span></td></tr>
+    <tr><td>7</td><td>商户 KYB 收集</td><td>收集商户 KYB 材料并传递给 Winingbees 提交审核</td><td><span class="stab" style="background:#fee2e2;color:#dc2626">P0</span></td></tr>
+    <tr><td>8</td><td>冻结/解冻</td><td>支持冻结商户可用余额（拒付、风控场景）</td><td><span class="stab" style="background:#fee2e2;color:#dc2626">P0</span></td></tr>
+  </table>
+
+ 
+</div>
+
+<!-- 七、前置流程 -->
+<div class="section">
+  <h2>七、前置流程</h2>
+  <div class="flow-box"><strong>阶段 1：开户与入网</strong>
+├── Bonbillhk 智朗银行开户 ✅（已完成）
+├── Winingbees 智朗银行开户 ✅（已完成）
+├── Winingbees 作为 EX 租户入网 ✅（已完成）
+└── Winingbees 作为自己租户下的商户在 BB 入网
+
+<strong>阶段 2：商户入网</strong>
+├── Bonbillhk 收集商户 KYB 材料
+├── 通过 Winingbees 提交至 EX/BB 审核
+└── 审核通过 → 商户获得 MID + 数币钱包
+
+<strong>阶段 3：系统对接</strong>
+├── Bonbillhk ↔ Winingbees 接口联调
+├── 结算流程测试（OnRamp → 提币 → 商户到账）
+└── 提现流程测试（OffRamp → 法币到账）
+
+<strong>阶段 4：Worldpay 配置</strong>
+└── 将 Bonbillhk 智朗银行账户设置为 Worldpay 结算账户</div>
+</div>
+
+<!-- 八、成本 -->
+<div class="section">
+  <h2>八、成本与经济性分析</h2>
+  <h3>成本构成</h3>
+  <table>
+    <tr><th>环节</th><th>费用类型</th><th>说明</th></tr>
+    <tr><td>Worldpay → Bonbillhk</td><td>收单手续费</td><td>已有，无变化</td></tr>
+    <tr><td>Bonbillhk → Winingbees</td><td>智朗行内转账</td><td>免费</td></tr>
+    <tr><td>Winingbees → BB 代收付</td><td>智朗行内转账</td><td>免费</td></tr>
+    <tr><td><strong>OnRamp（法币→USDT）</strong></td><td>承兑费率</td><td>Winingbees 承担</td></tr>
+    <tr><td>Winingbees → 商户</td><td>提币手续费</td><td>Winingbees 承担</td></tr>
+    <tr><td><strong>OffRamp（USDT→法币）</strong></td><td>承兑费率</td><td>收单商户承担</td></tr>
+  </table>
+
+  
+</div>
+
+
+
+<hr class="divider">
+
+<!-- 九、方案总结 -->
+<div class="section">
+  <h2>九、方案总结</h2>
+
+  <h3>方案一核心架构</h3>
+  <div class="arch-diagram">
+    <div class="arch-node primary">Worldpay<small>结算</small></div>
+    <div class="arch-arrow-down">▼</div>
+    <div class="arch-node bh">Bonbillhk VA（IPL）<small>接收结算款 + 清算</small></div>
+    <div class="arch-arrow-down">▼ Payout</div>
+    <div class="arch-row">
+      <div class="arch-node">供应商 A<small>银行账户</small></div>
+      <div class="arch-node">供应商 B<small>银行账户</small></div>
+      <div class="arch-node">供应商 N<small>银行账户</small></div>
+    </div>
+  </div>
+
+  <h3>方案二核心架构</h3>
+  <div class="arch-diagram">
+    <div class="arch-row">
+      <div class="arch-node primary">Worldpay<small>结算</small></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-node bh">Bonbillhk 智朗<small>行内转账</small></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-node">Winingbees 智朗<small>行内转账</small></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-node">BB 代收付<small>OnRamp</small></div>
+    </div>
+    <div class="arch-arrow-down">▼ USDT</div>
+    <div class="arch-node">Winingbees 数币钱包<small>直接提币给商户</small></div>
+    <div class="arch-arrow-down">▼ 提币（一跳到位）</div>
+    <div class="arch-row">
+      <div class="arch-node highlight">商户 A 钱包<small>USDT</small></div>
+      <div class="arch-node highlight">商户 B 钱包<small>USDT</small></div>
+      <div class="arch-node highlight">商户 N 钱包<small>USDT</small></div>
+    </div>
+  </div>
+
+  <h3>两方案对比</h3>
+  <table>
+    <tr><th>维度</th><th>方案一（VA 法币收付）</th><th>方案二（数币结算）</th></tr>
+    <tr><td>复杂度</td><td>低（纯法币）</td><td>中（OnRamp/OffRamp/提币）</td></tr>
+    <tr><td>法币转账次数</td><td>0（VA 直收）</td><td>2（Bonbillhk→WB→BB）</td></tr>
+    <tr><td>数币提币次数</td><td>0</td><td>1（Winingbees→商户，一跳到位）</td></tr>
+    <tr><td>成本结构</td><td>Payout 手续费（按笔）</td><td>承兑费率×2 + 提币费</td></tr>
+    <tr><td>到账时效</td><td>银行通道（T+0~3）</td><td>链上分钟级 + OffRamp</td></tr>
+    <tr><td>账户体系</td><td>无</td><td>有（商户独立数币钱包）</td></tr>
+    <tr><td>商户入网</td><td>不需要</td><td>需要（BB 开 MID + 钱包）</td></tr>
+    <tr><td>适用阶段</td><td>初期、供应商少、快速上线</td><td>规模化、需要账户体系</td></tr>
+  </table>
+
+  
+
+<div style="text-align:center;color:#999;font-size:13px;margin-top:60px">
+  <p>— Bonbillhk 收单结算解决方案 v2.0 —</p>
+  <p>最近更新：2026-05-10</p>
+</div>
+
+</div>
+
+<script>
+mermaid.initialize({
+  startOnLoad: true,
+  theme: 'base',
+  themeVariables: {
+    primaryColor: '#f5f3ff',
+    primaryBorderColor: '#7c3aed',
+    primaryTextColor: '#1a1a2e',
+    lineColor: '#6b7280',
+    secondaryColor: '#eff6ff',
+    tertiaryColor: '#ecfdf5',
+    fontSize: '14px'
+  },
+  sequence: {
+    diagramMarginX: 20,
+    diagramMarginY: 10,
+    actorMargin: 60,
+    width: 180,
+    height: 50,
+    boxMargin: 10,
+    useMaxWidth: true,
+    wrap: true
+  }
+});
+</script>
+</body>
+</html>

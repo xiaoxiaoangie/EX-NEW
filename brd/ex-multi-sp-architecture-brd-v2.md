@@ -620,8 +620,8 @@ trade-off：
 
 ```
 BB 内部（承兑闭环，推导❹）：
-  买入数币：BB 法币 → 承兑 → BB 数币钱包
-  卖出数币：BB 数币钱包 → 承兑 → BB 法币
+  Buy Crypto：BB 法币 → 承兑 → BB Crypto Wallet
+  Sell Crypto：BB Crypto Wallet → 承兑 → BB 法币
   ⚠ 不涉及 IPL 账户
 
 IPL 内部（法币收付闭环）：

@@ -249,7 +249,7 @@ sequenceDiagram
 | 产品            | 产品编码        | SP | 说明     |
 | --------------- | --------------- | -- | -------- |
 | VCC 发卡        | VCC             | BB | 数币发卡 |
-| Crypto Checkout | CRYPTO_CHECKOUT | BB | 数币收单 |
+| Crypto Checkout | CRYPTO_CHECKOUT | BB | Crypto Checkout |
 
 > v1.0 仅开放 BB 提供的产品。法币相关产品（Payins/Payouts 等）待多 SP 版本支持。
 

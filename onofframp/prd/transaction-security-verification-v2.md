@@ -392,7 +392,7 @@ PIN 锁定期间：
 | 法币兑换（FX）          | Assets → Exchange                | 法币间兑换             |
 | On-Ramp（法币换 U）     | Assets → Exchange                | 法币买入加密货币       |
 | Off-Ramp（U 换法币）    | Assets → Exchange                | 加密货币卖出为法币     |
-| 卡充值（Card Top-up）   | Cards                             | 向虚拟卡充值           |
+| 卡充值（Card Top-up）   | Cards                             | 向 VCC 充值            |
 
 > 入金操作（充值/充币/VA 收款/链上收款）由对手方发起，商户侧无需主动触发验证。
 
@@ -432,7 +432,7 @@ PIN 锁定期间：
 | 通讯录    | 新增/编辑/删除 Beneficiary / Remitter       |
 | 商户配置  | 修改商户名称、配置 Webhook                  |
 | 发票/订阅 | 创建 Invoice、创建 Subscription Plan        |
-| 卡管理    | 申请虚拟卡、查看卡信息（非明文）、冻结/解冻 |
+| 卡管理    | 申请 VCC、查看卡信息（非明文）、冻结/解冻   |
 | 开发者    | 查看 API Key（非重置）、配置 Webhook URL    |
 
 ### 6.6 操作分级总览

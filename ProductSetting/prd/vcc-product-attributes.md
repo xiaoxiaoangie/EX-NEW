@@ -1,4 +1,4 @@
-# EX 平台产品属性定义 — VCC（虚拟卡）
+# EX 平台产品属性定义 — VCC
 
 > 文档版本：v2.1 | 最后更新：2026-02-25
 > 关联文档：`product-attributes.md` / `productfee.md` / `productionopening.md`
@@ -7,9 +7,9 @@
 
 ## 产品定位
 
-**VCC（Virtual Card）** 是 EX 平台的虚拟卡发卡产品：
+**VCC（Virtual Card）** 是 EX 平台的 VCC 发卡产品：
 
-- SP 向商户提供虚拟卡发卡能力，商户可为其用户/业务场景开立虚拟卡
+- SP 向商户提供 VCC 发卡能力，商户可为其用户/业务场景开立 VCC
 - 用于线上消费、广告投放、订阅支付等场景
 - **本期所有配置均在 Bin 维度**，不设项目（Programme）维度
 - **本期只做预付卡（Prepaid）**，授信卡（Credit / Deferred Credit）下期再做
@@ -86,8 +86,8 @@
 > **示例：**
 > ```json
 > {
->   "zh-CN": "适用于广告投放场景的企业虚拟卡\n支持 Google Ads、Facebook Ads 等主流广告平台\n单笔限额 50,000 USD，适合大额广告投放",
->   "en-US": "Corporate virtual card for advertising scenarios\nSupports major platforms like Google Ads, Facebook Ads\nTransaction limit: 50,000 USD per transaction"
+>   "zh-CN": "适用于广告投放场景的企业 VCC\n支持 Google Ads、Facebook Ads 等主流广告平台\n单笔限额 50,000 USD，适合大额广告投放",
+>   "en-US": "Corporate VCC for advertising scenarios\nSupports major platforms like Google Ads, Facebook Ads\nTransaction limit: 50,000 USD per transaction"
 > }
 > ```
 
@@ -555,4 +555,4 @@ VCC 与其他产品的资金流向：
 ---
 
 *文档版本：v2.1 | 最后更新：2026-02-25*
-*定位：虚拟卡发卡产品，Bin 维度配置，本期仅 Prepaid，支持 Programme Managed / Cardholder Managed*
+*定位：VCC 发卡产品，Bin 维度配置，本期仅 Prepaid，支持 Programme Managed / Cardholder Managed*

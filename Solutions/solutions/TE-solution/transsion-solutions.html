@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Transsion（传音）数币收单 — 解决方案</title>
+<title>Transsion（传音）Crypto Checkout — 解决方案</title>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 <style>
   :root {
@@ -289,7 +289,7 @@
 
   <!-- Header -->
   <div class="doc-header">
-    <h1>Transsion（传音）数币收单 — 解决方案</h1>
+    <h1>Transsion（传音）Crypto Checkout — 解决方案</h1>
     <div class="doc-meta">
       <span class="tag">客户解决方案</span>
       <span>版本 v2.1（精简版）</span>
@@ -327,7 +327,7 @@
       </div>
       <div class="role-card">
         <div class="role-name">SP（实际持牌机构）</div>
-        <div class="role-desc">实际的<strong>数币收单 / 承兑 / 付款</strong>持牌机构。传音的法币 / 数币账户真实开在 SP 处，EX 仅做技术对接与 SP 编排，传音不直接感知 SP。</div>
+        <div class="role-desc">实际的<strong>Crypto Checkout / 承兑 / 付款</strong>持牌机构。传音的法币 / 数币账户真实开在 SP 处，EX 仅做技术对接与 SP 编排，传音不直接感知 SP。</div>
       </div>
       <div class="role-card">
         <div class="role-name">EX</div>
@@ -338,7 +338,7 @@
     <h3>1.2 能力与币种范围</h3>
     <table>
       <tr><th width="35%">能力</th><th>支持范围</th></tr>
-      <tr><td><strong>数币收单（收 U）</strong></td><td>USDT / USDC（链上收款）</td></tr>
+      <tr><td><strong>Crypto Checkout（收 U）</strong></td><td>USDT / USDC（链上收款）</td></tr>
       <tr><td><strong>承兑 OnRamp（法 → U）</strong></td><td>仅 <strong>USD</strong>（其他币种建设中）</td></tr>
       <tr><td><strong>承兑 OffRamp（U → 法）</strong></td><td>仅 <strong>USD</strong>（其他币种建设中）</td></tr>
       <tr><td><strong>数币提现（提 U）</strong></td><td>USDT / USDC 链上出金</td></tr>
@@ -351,13 +351,13 @@
 
     <h3>1.3 资金流向总览</h3>
     <pre class="flow">场景一（钱包充值 · OffRamp 式）：
-  C 端 USDT → 链上 → SP 数币收单地址
+  C 端 USDT → 链上 → SP Crypto Checkout 地址
   → OffRamp 数转法（USDT → USD，由 SP 执行，按实时汇率）
   → USD 到传音在 SP 的 USD 账户
-  → 传音给 C 端法币钱包（内部账本）上账
+  → 传音给 C 端 Fiat Account（内部账本）上账
 
-场景二（市场消费 · 数币收单）：
-  C 端 USDT → 链上 → SP 数币收单地址
+场景二（市场消费 · Crypto Checkout）：
+  C 端 USDT → 链上 → SP Crypto Checkout 地址
   → USDT 到传音在 SP 的 USDT 账户
   → 传音标记订单已付 → 触发发货
 
@@ -457,7 +457,7 @@
 7. EX 自动触发 OffRamp（按 SP 实际成交时的实时汇率）
 8. USD 到账传音 SP 端 USD 账户 → Webhook: OFFRAMP_SETTLED
    {bizOrderNo, actualFiatAmount: 实际到账 USD}
-9. 传音按 actualFiatAmount 给 C 端法币钱包上账 → 通知 C 端</pre>
+9. 传音按 actualFiatAmount 给 C 端 Fiat Account 上账 → 通知 C 端</pre>
 
     <h4>时序图</h4>
     <div class="mermaid">
@@ -466,7 +466,7 @@ sequenceDiagram
     participant C as C 端会员
     participant TX as 传音
     participant EX as EX 平台
-    participant SP as SP (数币收单 / OffRamp)
+    participant SP as SP (Crypto Checkout / OffRamp)
 
     C->>TX: 发起充值 100 USD
 
@@ -493,7 +493,7 @@ sequenceDiagram
     SP-->>SP: 实际 USD 入账传音 SP 端 USD 账户
     EX->>TX: Webhook: OFFRAMP_SETTLED<br/>{bizOrderNo, actualFiatAmount}
 
-    TX->>TX: C 端法币钱包 +actualFiatAmount
+    TX->>TX: C 端 Fiat Account +actualFiatAmount
     TX-->>C: 充值成功（展示实际到账金额）
     </div>
 
@@ -521,7 +521,7 @@ sequenceDiagram
     participant C as C 端会员
     participant TX as 传音
     participant EX as EX 平台
-    participant SP as SP (数币收单)
+    participant SP as SP (Crypto Checkout)
 
     C->>TX: 下单
     TX->>EX: POST /cashier/orders<br/>{bizOrderNo, currency:USDT}
@@ -627,7 +627,7 @@ sequenceDiagram
         <td>—</td>
       </tr>
       <tr>
-        <td><strong>场景二</strong><br>市场消费（数币收单）</td>
+        <td><strong>场景二</strong><br>市场消费（Crypto Checkout）</td>
         <td><code>/cashier/orders</code> + <code>CRYPTO_PAYIN_SUCCESS</code> 回调</td>
         <td>3-5 天</td>
         <td>✅ 可与场景一并行</td>
