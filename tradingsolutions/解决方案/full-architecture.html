@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>全局架构图：商户 · 桥接主体 · B · A · SRO · 渠道</title>
+<style>
+* { box-sizing: border-box; }
+body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: #f8fafc; color: #1e293b; line-height: 1.7; margin: 0; padding: 28px; }
+.container { max-width: 1200px; margin: 0 auto; }
+h1 { font-size: 26px; color: #0f172a; border-bottom: 3px solid #7c3aed; padding-bottom: 10px; margin-bottom: 6px; }
+.sub { color: #64748b; font-size: 13.5px; margin-bottom: 28px; }
+h2 { font-size: 21px; color: #0f172a; margin-top: 44px; padding: 10px 14px; background: #ede9fe; border-left: 5px solid #7c3aed; border-radius: 0 6px 6px 0; }
+h3 { font-size: 16.5px; color: #0f172a; margin-top: 28px; padding-bottom: 4px; border-bottom: 1px solid #e2e8f0; }
+
+/* 大架构图 */
+.mega-arch { background: white; border: 2px solid #7c3aed; border-radius: 16px; padding: 30px 24px; margin: 24px 0; position: relative; overflow: hidden; }
+.mega-arch::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #3b82f6, #6366f1, #7c3aed, #f59e0b, #22c55e, #ec4899, #94a3b8); }
+.mega-title { font-weight: 700; font-size: 18px; color: #5b21b6; text-align: center; margin-bottom: 20px; }
+.mega-subtitle { font-size: 12px; color: #94a3b8; text-align: center; margin-top: -16px; margin-bottom: 20px; }
+
+/* 层 */
+.layer { display: flex; align-items: stretch; gap: 14px; margin: 8px 0; flex-wrap: wrap; }
+.layer-label { writing-mode: vertical-rl; text-orientation: mixed; background: #f1f5f9; color: #475569; font-size: 12px; font-weight: 700; padding: 10px 6px; border-radius: 6px; display: flex; align-items: center; justify-content: center; min-width: 28px; letter-spacing: 2px; }
+.layer-content { flex: 1; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+
+/* 节点 */
+.node { border-radius: 10px; padding: 12px 16px; text-align: center; font-size: 12.5px; font-weight: 600; min-width: 110px; position: relative; }
+.node .label { font-size: 10.5px; font-weight: 400; color: inherit; opacity: 0.75; margin-top: 2px; }
+.node.customer { background: #dbeafe; color: #1e40af; border: 2px solid #3b82f6; }
+.node.b-platform { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border: 2px solid #4f46e5; min-width: 160px; }
+.node.msb { background: #e0e7ff; color: #3730a3; border: 2px solid #6366f1; }
+.node.sro { background: #dcfce7; color: #166534; border: 2px solid #22c55e; }
+.node.a-entity { background: #fef3c7; color: #92400e; border: 2px solid #f59e0b; }
+.node.t-bridge { background: #fff7ed; color: #9a3412; border: 2px dashed #fb923c; }
+.node.x-bridge { background: #fef3c7; color: #92400e; border: 2px dashed #f59e0b; }
+.node.k-shell { background: #fce7f3; color: #9d174d; border: 2px dashed #ec4899; }
+.node.bank { background: #f1f5f9; color: #475569; border: 2px solid #94a3b8; }
+.node.bank-k { background: #fdf2f8; color: #9d174d; border: 2px solid #f9a8d4; }
+.node.channel { background: #f0fdf4; color: #166534; border: 1px solid #86efac; }
+.node.channel-k { background: #fdf2f8; color: #9d174d; border: 1px dashed #f9a8d4; }
+
+/* 连线标签 */
+.conn { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #7c3aed; font-weight: 600; }
+.conn .arrow { font-size: 18px; }
+.conn .lbl { font-size: 10px; font-weight: 500; color: #64748b; background: #f5f3ff; padding: 1px 6px; border-radius: 3px; }
+
+/* 分隔线 */
+.sep { border: none; border-top: 2px dashed #e2e8f0; margin: 16px 0; }
+.sep-label { text-align: center; font-size: 11px; color: #94a3b8; margin: -10px 0 8px; background: white; display: inline-block; padding: 0 12px; position: relative; left: 50%; transform: translateX(-50%); }
+
+/* 图例 */
+.legend { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0; padding: 12px 16px; background: #faf5ff; border-radius: 8px; font-size: 11.5px; }
+.legend-item { display: flex; align-items: center; gap: 5px; }
+.legend-dot { width: 14px; height: 14px; border-radius: 4px; flex-shrink: 0; }
+
+/* 场景标签 */
+.scenario-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10.5px; font-weight: 600; margin-left: 4px; }
+.tag-ba { background: #fef3c7; color: #92400e; }
+.tag-sro { background: #dcfce7; color: #166534; }
+.tag-k { background: #fce7f3; color: #9d174d; }
+
+/* 说明框 */
+.note-box { background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 20px; margin: 16px 0; font-size: 13px; }
+.note-box h4 { margin: 0 0 8px; font-size: 14px; color: #0f172a; }
+.note-box ul { margin: 4px 0 0 16px; padding: 0; }
+.note-box li { margin: 3px 0; }
+
+/* 全景图 Grid 版 */
+.arch-grid { display: grid; grid-template-columns: 28px 1fr; gap: 0; margin: 10px 0; }
+.row-label { writing-mode: vertical-rl; text-orientation: mixed; background: #f1f5f9; color: #475569; font-size: 11px; font-weight: 700; padding: 8px 4px; border-radius: 6px 0 0 6px; display: flex; align-items: center; justify-content: center; letter-spacing: 1px; }
+.row-content { display: flex; align-items: center; gap: 8px; padding: 10px 14px; flex-wrap: wrap; border-bottom: 1px dashed #e2e8f0; }
+.row-content:last-child { border-bottom: none; }
+
+/* 分组框 */
+.group { border: 2px solid; border-radius: 10px; padding: 10px 14px; display: flex; flex-direction: column; gap: 6px; align-items: center; position: relative; }
+.group-label { position: absolute; top: -10px; left: 12px; background: white; padding: 0 6px; font-size: 10px; font-weight: 600; }
+.group.b-group { border-color: #6366f1; }
+.group.b-group .group-label { color: #4f46e5; }
+.group.a-group { border-color: #f59e0b; }
+.group.a-group .group-label { color: #92400e; }
+.group.sro-group { border-color: #22c55e; }
+.group.sro-group .group-label { color: #166534; }
+.group.ch-group { border-color: #94a3b8; }
+.group.ch-group .group-label { color: #475569; }
+.group.k-group { border-color: #ec4899; border-style: dashed; }
+.group.k-group .group-label { color: #9d174d; }
+
+.footer { font-size: 11.5px; color: #94a3b8; text-align: center; margin-top: 40px; padding-top: 14px; border-top: 1px solid #e2e8f0; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>全局架构图：B 生态主体关系总览</h1>
+<p class="sub">整合 B-A（T 桥接）、B-X-SRO（X 桥接 + K 壳主体）三套方案，展示商户、桥接主体、平台、通道、渠道之间的完整关系。</p>
+
+<!-- ============ 图例 ============ -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#dbeafe;border:2px solid #3b82f6;"></div>商户/客户</div>
+  <div class="legend-item"><div class="legend-dot" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);"></div>B 平台</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#e0e7ff;border:2px solid #6366f1;"></div>MSB 主体</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#dcfce7;border:2px solid #22c55e;"></div>SRO 主体</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#fef3c7;border:2px solid #f59e0b;"></div>A 通道（法币持牌）</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#fff7ed;border:2px dashed #fb923c;"></div>T 桥接（B-A 场景）</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#fef3c7;border:2px dashed #f59e0b;"></div>X 桥接（B-SRO 场景）</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#fce7f3;border:2px dashed #ec4899;"></div>K 壳主体（渠道侧）</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#f1f5f9;border:2px solid #94a3b8;"></div>渠道银行</div>
+</div>
+
+<!-- ============ 全景大图 ============ -->
+<h2>一、全景架构图</h2>
+
+<div class="mega-arch">
+  <div class="mega-title">B 生态全景：商户 → 平台 → 桥接 → SRO → 渠道</div>
+  <div class="mega-subtitle">从上到下：商户层 → 面客层 → 桥接层 → SRO 通道 → 渠道层（含 A 通道 / K 壳主体 / 银行）</div>
+
+  <!-- Row 1: 商户层 -->
+  <div style="display:flex;align-items:stretch;gap:0;margin-bottom:4px;">
+    <div class="row-label" style="min-height:80px;">商户层</div>
+    <div style="flex:1;display:flex;align-items:center;gap:12px;padding:12px 16px;background:#f0f9ff;border-radius:0 8px 8px 0;flex-wrap:wrap;">
+      <div class="node customer" style="min-width:130px;">
+        优质客户<br><div class="label">满足 SRO 标准（极少）</div>
+      </div>
+      <div class="node customer" style="min-width:130px;">
+        普通/历史客户<br><div class="label">不满足 SRO 标准（多数）</div>
+      </div>
+      <div style="flex:1;font-size:11px;color:#64748b;padding-left:12px;line-height:1.6;">
+        所有客户入口统一：<strong>入网 B (MSB)</strong><br>
+        客户不感知 SRO / A / T / X / K<br>
+        <span style="color:#92400e;">B-A 场景的客户就是 B 的客户，不是单独群体，<br>只是在处理流程中走了不同链路</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;font-size:18px;color:#6366f1;font-weight:700;margin:4px 0;">▼</div>
+
+  <!-- Row 2: 面客层 (MSB / B) -->
+  <div style="display:flex;align-items:stretch;gap:0;margin-bottom:4px;">
+    <div class="row-label" style="background:#e0e7ff;color:#3730a3;">面客层</div>
+    <div style="flex:1;display:flex;align-items:center;gap:16px;padding:14px 16px;background:#eef2ff;border-radius:0 8px 8px 0;flex-wrap:wrap;">
+      <div class="group b-group" style="flex:1;min-width:280px;flex-direction:row;gap:14px;padding:16px 20px;">
+        <div class="group-label">B 平台生态</div>
+        <div class="node msb">
+          B 的面客主体<br><div class="label">相对宽松的牌照（如 MSB 等）<br>对外面客、低门槛 KYC<br>承兑报价、客户管理</div>
+        </div>
+        <div style="font-size:11px;color:#64748b;text-align:center;line-height:1.5;">
+          不一定是 MSB<br>泛指 B 持有的<br>相对宽松的牌照主体
+        </div>
+        <div class="node b-platform">
+          B 平台核心<br><div class="label" style="color:#e0e7ff;">OnRamp/OffRamp 引擎<br>U 库存 · 汇率 · 风控</div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:#94a3b8;min-width:100px;">
+        <strong>客户只看到这一层</strong><br>
+        不知道后面是 SRO 还是 A
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;font-size:18px;color:#7c3aed;font-weight:700;margin:4px 0;">▼ <span style="font-size:11px;color:#94a3b8;font-weight:400;">分流：优质客户直连 SRO / 普通客户走桥接</span></div>
+
+  <!-- Row 3: 桥接层 -->
+  <div style="display:flex;align-items:stretch;gap:0;margin-bottom:4px;">
+    <div class="row-label" style="background:#fef3c7;color:#92400e;">桥接层</div>
+    <div style="flex:1;display:flex;align-items:center;gap:16px;padding:14px 16px;background:#fffbeb;border-radius:0 8px 8px 0;flex-wrap:wrap;">
+      <!-- X 独立描述 -->
+      <div style="flex:1;min-width:220px;background:white;border:2px dashed #f59e0b;border-radius:10px;padding:14px 16px;">
+        <div style="font-weight:700;font-size:13px;color:#92400e;margin-bottom:6px;">X（桥接主体） <span class="scenario-tag tag-sro">B-X-SRO</span></div>
+        <div style="font-size:11px;color:#475569;line-height:1.6;">
+          <strong>定位：</strong>连接 面客主体 ↔ SRO，是 SRO 的合规直客<br><br>
+          <strong>合规要求：<span style="color:#dc2626;">高</span></strong><br>
+          • 满足 SRO 标准（护照 + SFC 芯片验证等）<br>
+          • 有真实经营（非空壳）<br>
+          • 在 SRO 做了 full KYC<br><br>
+          <strong>客户可见性：<span style="color:#dc2626;">完全不可见</span></strong><br>
+          • 客户不知道 X 的存在（架构设计上隔离）<br><br>
+          <strong>通道关系：</strong><br>
+          • X 是 SRO 看到的<u>唯一</u>"客户"<br>
+          • 客户基本不在 SRO 入网，不向 SRO 报备
+        </div>
+      </div>
+      <!-- T 独立描述 -->
+      <div style="flex:1;min-width:220px;background:white;border:2px dashed #fb923c;border-radius:10px;padding:14px 16px;">
+        <div style="font-weight:700;font-size:13px;color:#9a3412;margin-bottom:6px;">T（桥接主体） <span class="scenario-tag tag-ba">B-A</span></div>
+        <div style="font-size:11px;color:#475569;line-height:1.6;">
+          <strong>定位：</strong>连接 客户 ↔ A，是 A 的商户<br><br>
+          <strong>合规要求：<span style="color:#166534;">相对低</span></strong><br>
+          • 满足 A 和 B 的基本合规要求即可<br>
+          • 在 A 和 B 都入网<br>
+          • 有真实经营（非空壳）<br><br>
+          <strong>客户可见性：<span style="color:#f59e0b;">不一定</span></strong><br>
+          • 取决于客户是否接受/知道 T 的存在<br>
+          • 不像 X 那样架构上强制隔离<br><br>
+          <strong>通道关系：</strong><br>
+          • T 是 A 的一个商户（与客户共存）<br>
+          • 客户能入网 A 就优先入网<br>
+          • 仅当客户无法/拒绝入网时才纯走 T
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;font-size:18px;color:#22c55e;font-weight:700;margin:4px 0;">▼</div>
+
+  <!-- Row 4: SRO 通道层 -->
+  <div style="display:flex;align-items:stretch;gap:0;margin-bottom:4px;">
+    <div class="row-label" style="background:#dcfce7;color:#166534;">SRO通道</div>
+    <div style="flex:1;display:flex;align-items:center;gap:16px;padding:14px 16px;background:#f0fdf4;border-radius:0 8px 8px 0;flex-wrap:wrap;">
+      <div class="group sro-group" style="min-width:220px;">
+        <div class="group-label">B 的 SRO 主体</div>
+        <div class="node sro">
+          SRO 通道<br><div class="label">VA · POBO · 承兑引擎<br>高合规要求、支付能力强</div>
+        </div>
+        <div class="scenario-tag tag-sro" style="margin-top:4px;">B-X-SRO 场景</div>
+      </div>
+      <div style="font-size:11px;color:#64748b;min-width:200px;line-height:1.6;">
+        <strong>SRO 是 B 自己的牌照主体</strong><br>
+        • 提供 VA、POBO、承兑引擎<br>
+        • 客户基本不在 SRO 入网，只看到 X<br>
+        • SRO 看不到 K、看不到客户、看不到 A
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;font-size:18px;color:#94a3b8;font-weight:700;margin:4px 0;">▼ <span style="font-size:11px;font-weight:400;">SRO → 渠道层（包含 A 通道、银行、K 壳主体）</span></div>
+
+  <!-- Row 5: 渠道层（包含 A） -->
+  <div style="display:flex;align-items:stretch;gap:0;">
+    <div class="row-label" style="background:#f1f5f9;color:#475569;">渠道层</div>
+    <div style="flex:1;padding:14px 16px;background:#f8fafc;border-radius:0 8px 8px 0;">
+
+      <div style="font-size:12px;color:#475569;font-weight:600;margin-bottom:12px;">物理渠道 ≠ 运营渠道，三种典型场景：</div>
+
+      <!-- 场景1: A + T -->
+      <div style="background:white;border:1px solid #f59e0b;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+        <div style="font-weight:700;font-size:13px;color:#92400e;margin-bottom:8px;">① A 通道 + T 桥接 <span class="scenario-tag tag-ba">B-A 场景</span></div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;">
+          <div style="flex:1;min-width:200px;">
+            <table style="font-size:11.5px;border-collapse:collapse;width:100%;">
+              <tr style="background:#fef3c7;"><td style="padding:6px 10px;font-weight:600;border:1px solid #fde68a;">物理渠道</td><td style="padding:6px 10px;border:1px solid #fde68a;"><strong>A 通道</strong>（法币持牌）<br>B/SRO 与 A 有渠道关系</td></tr>
+              <tr style="background:#fff7ed;"><td style="padding:6px 10px;font-weight:600;border:1px solid #fde68a;">运营渠道</td><td style="padding:6px 10px;border:1px solid #fde68a;"><strong>T</strong>（桥接主体）<br>当客户无法在 A 入网时，通过 T 直接付出</td></tr>
+            </table>
+          </div>
+          <div style="flex:1;min-width:220px;font-size:11px;color:#64748b;line-height:1.6;">
+            <strong>特点：</strong><br>
+            • T 就是 A 中的一个商户（在 A 做了 full KYC）<br>
+            • B/SRO 和 A 有渠道关系，只是需要桥接主体<br>
+            • 客户能入网 A 就入网（客户在 A 可见）<br>
+            • 仅当客户无法/拒绝入网时，才纯走 T 付出
+          </div>
+        </div>
+      </div>
+
+      <!-- 场景2: Reap + Slash (K 美国主体) -->
+      <div style="background:white;border:1px solid #ec4899;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+        <div style="font-weight:700;font-size:13px;color:#9d174d;margin-bottom:8px;">② Reap + Slash（K 美国主体） <span class="scenario-tag tag-k">K 壳主体</span></div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;">
+          <div style="flex:1;min-width:200px;">
+            <table style="font-size:11.5px;border-collapse:collapse;width:100%;">
+              <tr style="background:#fce7f3;"><td style="padding:6px 10px;font-weight:600;border:1px solid #fbcfe8;">物理渠道</td><td style="padding:6px 10px;border:1px solid #fbcfe8;"><strong>Reap</strong>（有签约关系）<br>系统上挂在 Reap 下方</td></tr>
+              <tr style="background:#fdf2f8;"><td style="padding:6px 10px;font-weight:600;border:1px solid #fbcfe8;">运营渠道</td><td style="padding:6px 10px;border:1px solid #fbcfe8;"><strong>Slash</strong>（实际走款）<br>通过 K（美国主体）签约</td></tr>
+            </table>
+          </div>
+          <div style="flex:1;min-width:220px;font-size:11px;color:#64748b;line-height:1.6;">
+            <strong>特点：</strong><br>
+            • BB/SRO 无法直接跟 Slash 签协议<br>
+            • 需要借桥接主体 <strong>K（美国主体）</strong><br>
+            • K 不持牌，在系统上挂在有商业协议的渠道（Reap）下方<br>
+            • SRO 看到的是 Reap，实际走款通过 K → Slash
+          </div>
+        </div>
+      </div>
+
+      <!-- 场景3: 智朗银行 -->
+      <div style="background:white;border:1px solid #94a3b8;border-radius:10px;padding:14px 16px;margin-bottom:4px;">
+        <div style="font-weight:700;font-size:13px;color:#475569;margin-bottom:8px;">③ 智朗银行（一般户做客资） <span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:10.5px;font-weight:600;background:#fef2f2;color:#991b1b;">待合规评估</span></div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;">
+          <div style="flex:1;min-width:200px;">
+            <table style="font-size:11.5px;border-collapse:collapse;width:100%;">
+              <tr style="background:#f1f5f9;"><td style="padding:6px 10px;font-weight:600;border:1px solid #e2e8f0;">物理渠道</td><td style="padding:6px 10px;border:1px solid #e2e8f0;"><strong>智朗银行</strong></td></tr>
+              <tr style="background:#f8fafc;"><td style="padding:6px 10px;font-weight:600;border:1px solid #e2e8f0;">运营渠道</td><td style="padding:6px 10px;border:1px solid #e2e8f0;"><strong>智朗银行（一般户）</strong><br>B 以一般户做客资业务</td></tr>
+            </table>
+          </div>
+          <div style="flex:1;min-width:220px;font-size:11px;color:#64748b;line-height:1.6;">
+            <strong>特点：</strong><br>
+            • B 无法在智朗开机构户，只能开一般户<br>
+            • 银行可能允许一般户做客资业务<br>
+            • <span style="color:#dc2626;font-weight:600;">需要合规评估</span>：一般户做客资是否合规<br>
+            • 物理渠道 = 运营渠道（无中间层）
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============ 信息流向总结 ============ -->
+<h2>二、三条业务链路对比</h2>
+
+<h3>链路 1：B-A 场景（T 桥接）</h3>
+<div style="background:white;border:1px solid #e2e8f0;border-left:4px solid #f59e0b;border-radius:0 10px 10px 0;padding:16px 20px;margin:12px 0;">
+  <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12.5px;">
+    <div class="node customer" style="padding:6px 10px;min-width:auto;">客户</div>
+    <span class="conn"><span class="arrow">→</span><span class="lbl">入网</span></span>
+    <div class="node msb" style="padding:6px 10px;min-width:auto;">B 平台 (MSB)</div>
+    <span class="conn"><span class="arrow">→</span><span class="lbl">U ↔ 法币</span></span>
+    <div class="node t-bridge" style="padding:6px 10px;min-width:auto;">T（桥接）</div>
+    <span class="conn"><span class="arrow">→</span><span class="lbl">full KYC 直客</span></span>
+    <div class="node a-entity" style="padding:6px 10px;min-width:auto;">A 通道</div>
+    <span class="conn"><span class="arrow">→</span><span class="lbl">VA / POBO</span></span>
+    <div class="node bank" style="padding:6px 10px;min-width:auto;">A 的渠道银行</div>
+  </div>
+  <div style="margin-top:8px;font-size:12px;color:#64748b;">
+    <strong>客户入网逻辑</strong>：<span style="color:#166534;font-weight:600;">客户能入网 A 就入网</span>，客户 + T 都在 A 有账户；只有客户无法/拒绝入网时才纯走 T。<br>
+    <strong>提现</strong>：T 名义出款到客户账户 ｜ <strong>付第三方</strong>：必须从客户 在 A 的账户出（POBO 客户名义）
+  </div>
+</div>
+
+<h3>链路 2：B-X-SRO 场景（X 桥接）</h3>
+<div style="background:white;border:1px solid #e2e8f0;border-left:4px solid #22c55e;border-radius:0 10px 10px 0;padding:16px 20px;margin:12px 0;">
+  <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12.5px;">
+    <div class="node customer" style="padding:6px 10px;min-width:auto;">客户</div>
+    <span class="conn"><span class="arrow">→</span><span class="lbl">入网 MSB</span></span>
+    <div class="node msb" style="padding:6px 10px;min-width:auto;">B 的 MSB</div>
+    <span class="conn"><span class="arrow">→</span></span>
+    <div class="node x-bridge" style="padding:6px 10px;min-width:auto;">X（桥接）</div>
+    <span class="conn"><span class="arrow">→</span><span class="lbl">合规直客</span></span>
+    <div class="node sro" style="padding:6px 10px;min-width:auto;">B 的 SRO</div>
+    <span class="conn"><span class="arrow">→</span><span class="lbl">VA / POBO</span></span>
+    <div class="node bank" style="padding:6px 10px;min-width:auto;">渠道银行</div>
+  </div>
+  <div style="margin-top:8px;font-size:12px;color:#64748b;">
+    <strong>客户入网逻辑</strong>：<span style="color:#dc2626;font-weight:600;">客户基本不在 SRO 入网，不向 SRO 报备</span>。SRO 只看到 X（合规直客）。<br>
+    <strong>优质客户例外</strong>：极少数完全满足 SRO 标准的客户可直连 SRO，但是少数。
+  </div>
+</div>
+
+<h3>链路 3：K 壳主体（渠道侧）</h3>
+<div style="background:white;border:1px solid #e2e8f0;border-left:4px solid #ec4899;border-radius:0 10px 10px 0;padding:16px 20px;margin:12px 0;">
+  <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12.5px;">
+    <div class="node sro" style="padding:6px 10px;min-width:auto;">SRO</div>
+    <span class="conn"><span class="arrow">→</span><span class="lbl" style="color:#dc2626;">开不了户 ❌</span></span>
+    <div class="node bank" style="padding:6px 10px;min-width:auto;opacity:0.4;">渠道银行 B</div>
+    <span style="font-size:14px;color:#94a3b8;margin:0 8px;">实际改为 →</span>
+    <div class="node sro" style="padding:6px 10px;min-width:auto;">SRO</div>
+    <span class="conn"><span class="arrow">→</span><span class="lbl">指令</span></span>
+    <div class="node k-shell" style="padding:6px 10px;min-width:auto;">K（壳主体）</div>
+    <span class="conn"><span class="arrow">→</span><span class="lbl">K 开户 ✓</span></span>
+    <div class="node bank-k" style="padding:6px 10px;min-width:auto;">渠道银行 B</div>
+  </div>
+  <div style="margin-top:8px;font-size:12px;color:#64748b;">
+    <strong>适用</strong>：SRO/MSB 是 crypto 主体，银行拒绝开户（如美国发卡渠道）。K 用传统行业身份开户。<br>
+    <strong>SRO 看到</strong>：物理渠道（渠道银行 B） ｜ <strong>实际走</strong>：运营渠道（K → 渠道银行 B）
+  </div>
+</div>
+
+<!-- ============ 主体关系矩阵 ============ -->
+<h2>三、主体关系矩阵</h2>
+
+<table style="width:100%;border-collapse:collapse;font-size:12.5px;background:white;">
+  <thead>
+    <tr style="background:#f1f5f9;">
+      <th style="border:1px solid #e2e8f0;padding:10px;width:12%;">主体</th>
+      <th style="border:1px solid #e2e8f0;padding:10px;width:10%;">场景</th>
+      <th style="border:1px solid #e2e8f0;padding:10px;">定位</th>
+      <th style="border:1px solid #e2e8f0;padding:10px;">在谁那入网</th>
+      <th style="border:1px solid #e2e8f0;padding:10px;width:10%;">客户可见</th>
+      <th style="border:1px solid #e2e8f0;padding:10px;width:10%;">SRO 可见</th>
+      <th style="border:1px solid #e2e8f0;padding:10px;width:10%;">A 可见</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="border:1px solid #e2e8f0;padding:10px;font-weight:600;">客户</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">全部</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">终端商户，发起交易需求</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">B/MSB（必须）<br>A（能入就入，优先入网）<br>SRO（基本不入网）</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">— 自己</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;"><span style="color:#dc2626;">基本 ✗</span><br><span style="font-size:11px;">极少数优质客户例外</span></td>
+      <td style="border:1px solid #e2e8f0;padding:10px;"><span style="color:#166534;">能入 ✓ 优先入网</span><br><span style="font-size:11px;">无法入网才纯走 T</span></td>
+    </tr>
+    <tr style="background:#faf5ff;">
+      <td style="border:1px solid #e2e8f0;padding:10px;font-weight:600;">B / MSB</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">全部</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">面客平台，承兑引擎，客户管理</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">—</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">✓ 唯一面客</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">✓（B 拥有 SRO）</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">✓（B 是 A 的合作方）</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #e2e8f0;padding:10px;font-weight:600;color:#166534;">SRO</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;"><span class="scenario-tag tag-sro">B-X-SRO</span></td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">B 的 SRO 牌照主体，底层支付通道</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">—</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">✗</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">— 自己</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">—</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #e2e8f0;padding:10px;font-weight:600;color:#92400e;">A</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;"><span class="scenario-tag tag-ba">B-A</span></td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">外部法币持牌通道，VA/POBO/法币下发</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">—</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">部分可见</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">—</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">— 自己</td>
+    </tr>
+    <tr style="background:#fffbeb;">
+      <td style="border:1px solid #e2e8f0;padding:10px;font-weight:600;color:#92400e;">X（桥接）</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;"><span class="scenario-tag tag-sro">B-X-SRO</span></td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">客户侧桥梁：连接 MSB ↔ SRO<br><span style="color:#dc2626;font-size:11px;">⚠ 客户基本不在 SRO 入网/报备</span></td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">SRO（full KYC 直客）<br><span style="font-size:11px;color:#64748b;">客户不入网 SRO</span></td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">✗</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">✓ X 可见<br><span style="color:#dc2626;font-size:11px;">客户 ✗ 不可见</span></td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">—</td>
+    </tr>
+    <tr style="background:#fff7ed;">
+      <td style="border:1px solid #e2e8f0;padding:10px;font-weight:600;color:#9a3412;">T（桥接）</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;"><span class="scenario-tag tag-ba">B-A</span></td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">客户侧桥梁：连接 客户 ↔ A<br><span style="color:#166534;font-size:11px;">✓ 客户优先入网 A；无法入网才纯走 T</span></td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">B（客户）+ A（full KYC 直客）<br><span style="font-size:11px;color:#64748b;">客户可同时入网 A</span></td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">✗（部分感知）</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">—</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">✓ T 可见<br><span style="color:#166534;font-size:11px;">客户可能也可见</span></td>
+    </tr>
+    <tr style="background:#fdf2f8;">
+      <td style="border:1px solid #e2e8f0;padding:10px;font-weight:600;color:#9d174d;">K（壳主体）</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;"><span class="scenario-tag tag-k">渠道侧</span></td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">渠道侧桥梁：替 SRO 在银行开户</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">不入网任何方<br>（只在渠道银行开户）</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">✗</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;color:#dc2626;font-weight:600;">✗ 不可见</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">—</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #e2e8f0;padding:10px;font-weight:600;">渠道银行</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">全部</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">VA 开设、清算、SWIFT/本地汇路</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">—</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">✗</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">物理渠道 ✓<br>运营渠道 ✗</td>
+      <td style="border:1px solid #e2e8f0;padding:10px;">✓（A 直连）</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ============ 可见性矩阵 ============ -->
+<h2>四、可见性隔离矩阵</h2>
+<p style="font-size:13px;color:#64748b;">谁能看到谁？每个主体的信息边界。</p>
+
+<table style="width:100%;border-collapse:collapse;font-size:12px;background:white;">
+  <thead>
+    <tr style="background:#f1f5f9;">
+      <th style="border:1px solid #e2e8f0;padding:8px;width:14%;">↓ 观察者 \ 被观察 →</th>
+      <th style="border:1px solid #e2e8f0;padding:8px;">客户</th>
+      <th style="border:1px solid #e2e8f0;padding:8px;">B/MSB</th>
+      <th style="border:1px solid #e2e8f0;padding:8px;">SRO</th>
+      <th style="border:1px solid #e2e8f0;padding:8px;">A</th>
+      <th style="border:1px solid #e2e8f0;padding:8px;">X</th>
+      <th style="border:1px solid #e2e8f0;padding:8px;">T</th>
+      <th style="border:1px solid #e2e8f0;padding:8px;">K</th>
+      <th style="border:1px solid #e2e8f0;padding:8px;">渠道银行</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="border:1px solid #e2e8f0;padding:8px;font-weight:600;background:#dbeafe;">客户</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;">—</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;color:#22c55e;font-weight:600;">✓</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;color:#dc2626;">✗</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;color:#f59e0b;">部分</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;color:#dc2626;">✗</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;color:#dc2626;">✗</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;color:#dc2626;">✗</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;color:#dc2626;">✗</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #e2e8f0;padding:8px;font-weight:600;background:#dcfce7;">SRO</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;color:#f59e0b;">优质 ✓</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;color:#22c55e;font-weight:600;">✓</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;">—</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;color:#dc2626;">✗</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;color:#22c55e;font-weight:600;">✓ 直客</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;color:#dc2626;">✗</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;color:#dc2626;font-weight:700;">✗ 绝对不可见</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;color:#f59e0b;">物理渠道 ✓<br>运营渠道 ✗</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #e2e8f0;padding:8px;font-weight:600;background:#fef3c7;">A</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;color:#f59e0b;">部分</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;color:#22c55e;font-weight:600;">✓</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;color:#dc2626;">✗</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;">—</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;color:#dc2626;">✗</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;color:#22c55e;font-weight:600;">✓ 直客</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;color:#dc2626;">✗</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;color:#22c55e;">✓ A 直连</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #e2e8f0;padding:8px;font-weight:600;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:white;">B 运营</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;color:#22c55e;font-weight:600;">✓ 全部</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;">—</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;color:#22c55e;font-weight:600;">✓</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;color:#22c55e;font-weight:600;">✓</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;color:#22c55e;font-weight:600;">✓</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;color:#22c55e;font-weight:600;">✓</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;color:#22c55e;font-weight:600;">✓</td>
+      <td style="border:1px solid #e2e8f0;padding:8px;color:#22c55e;font-weight:600;">✓ 运营渠道</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="note-box" style="border-left:4px solid #dc2626;margin-top:16px;">
+  <h4 style="color:#991b1b;">🔐 隔离红线</h4>
+  <ul>
+    <li><strong>客户绝不能看到</strong>：SRO、X、T、K、渠道银行</li>
+    <li><strong>SRO 绝不能看到</strong>：K（壳主体）、运营渠道（K 开户的渠道）</li>
+    <li><strong>A 绝不能看到</strong>：SRO、X、K</li>
+    <li><strong>只有 B 运营团队</strong>能看到全景（所有主体 + 物理/运营渠道映射）</li>
+  </ul>
+</div>
+
+<p class="footer">v0.1 · 2026-05-16 · B 生态全局架构图（B-A + B-X-SRO + K）</p>
+
+</div>
+</body>
+</html>

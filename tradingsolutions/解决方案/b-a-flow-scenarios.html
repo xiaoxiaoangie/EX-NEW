@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>B-A 联动场景：OnRamp / OffRamp 流程</title>
+<style>
+* { box-sizing: border-box; }
+body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: #f8fafc; color: #1e293b; line-height: 1.7; margin: 0; padding: 28px; }
+.container { max-width: 1100px; margin: 0 auto; }
+h1 { font-size: 26px; color: #0f172a; border-bottom: 3px solid #0ea5e9; padding-bottom: 10px; margin-bottom: 6px; }
+.sub { color: #64748b; font-size: 13.5px; margin-bottom: 28px; }
+h2 { font-size: 21px; color: #0f172a; margin-top: 44px; padding: 10px 14px; background: #e0f2fe; border-left: 5px solid #0284c7; border-radius: 0 6px 6px 0; }
+h3 { font-size: 16.5px; color: #0f172a; margin-top: 28px; padding-bottom: 4px; border-bottom: 1px solid #e2e8f0; }
+h4 { font-size: 15px; color: #475569; margin: 18px 0 6px; }
+
+/* 文档说明 */
+.intro { background: linear-gradient(135deg, #dbeafe 0%, #e0f2fe 100%); border: 1px solid #0284c7; border-radius: 10px; padding: 16px 20px; margin: 16px 0; }
+.intro h3 { margin: 0 0 10px; color: #075985; border: none; padding: 0; }
+.intro p { margin: 6px 0; font-size: 13.5px; }
+.intro ul { margin: 4px 0 10px 18px; padding: 0; font-size: 13.5px; }
+.intro li { margin: 3px 0; }
+
+/* 背景框 */
+.bg-box { background: linear-gradient(135deg, #fef3c7 0%, #fef9c3 100%); border: 1px solid #f59e0b; border-radius: 10px; padding: 16px 20px; margin: 16px 0; }
+.bg-box h3 { border: none; margin-top: 0; color: #78350f; }
+.bg-box ul { margin: 6px 0 0 18px; padding: 0; }
+.bg-box li { margin: 4px 0; }
+
+/* 场景卡 */
+.case { background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px 22px; margin: 16px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.03); }
+.case.normal { border-left: 5px solid #16a34a; }
+.case.abnormal { border-left: 5px solid #ea580c; }
+.case.skip { border-left: 5px solid #94a3b8; opacity: 0.85; }
+
+.case-title { font-size: 16px; font-weight: 600; margin: 0 0 4px; display: flex; align-items: center; gap: 8px; }
+.case-desc { color: #64748b; font-size: 13.5px; margin-bottom: 12px; }
+.tag-normal { display: inline-block; background: #dcfce7; color: #166534; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+.tag-abnormal { display: inline-block; background: #ffedd5; color: #9a3412; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+.tag-skip { display: inline-block; background: #e2e8f0; color: #475569; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+
+/* 步骤 */
+.steps { margin: 10px 0; padding: 0; list-style: none; }
+.steps li { padding: 6px 0 6px 36px; position: relative; font-size: 14px; }
+.steps li::before { content: counter(step-counter); counter-increment: step-counter; position: absolute; left: 0; top: 6px; width: 24px; height: 24px; background: #0ea5e9; color: white; border-radius: 50%; text-align: center; line-height: 24px; font-size: 12px; font-weight: 600; }
+.steps { counter-reset: step-counter; }
+
+/* 资金流 */
+.flow { background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 12px 14px; margin: 12px 0; }
+.flow-title { font-size: 12px; color: #075985; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+.flow-row { display: flex; align-items: center; justify-content: flex-start; gap: 6px; flex-wrap: wrap; font-size: 13px; }
+.b { padding: 8px 12px; border-radius: 7px; font-weight: 600; font-size: 12.5px; min-width: 80px; text-align: center; line-height: 1.3; }
+.b small { display: block; font-size: 10.5px; font-weight: 400; opacity: 0.75; margin-top: 2px; }
+.b-c { background: #e0f2fe; border: 1.5px solid #0284c7; color: #075985; }
+.b-a { background: #dcfce7; border: 1.5px solid #16a34a; color: #14532d; }
+.b-b { background: #f3e8ff; border: 1.5px solid #9333ea; color: #581c87; }
+.b-t { background: #ffedd5; border: 1.5px solid #ea580c; color: #7c2d12; }
+.b-x { background: #f1f5f9; border: 1.5px solid #64748b; color: #334155; }
+.ar { color: #475569; font-weight: bold; font-size: 16px; }
+.ar-lbl { display: inline-block; font-size: 10.5px; color: #64748b; background: white; padding: 1px 5px; border-radius: 3px; border: 1px solid #cbd5e1; margin: 0 2px; }
+
+/* 进阶 · 下一步 */
+.next-step { background: #faf5ff; border: 1px solid #c4b5fd; border-left: 3px solid #9333ea; padding: 12px 14px; margin: 12px 0; font-size: 13px; border-radius: 0 8px 8px 0; }
+.next-step .head { font-weight: 600; color: #6b21a8; margin-bottom: 6px; font-size: 13.5px; }
+.next-step ol, .next-step ul { margin: 4px 0 6px 22px; padding: 0; }
+.next-step ol li, .next-step ul li { margin: 3px 0; }
+.next-step .val { background: white; padding: 6px 10px; border-radius: 6px; margin-top: 6px; border: 1px dashed #c4b5fd; }
+.next-step .val strong { color: #6b21a8; }
+
+/* T 作用 */
+.t-role { background: #fff7ed; border-left: 3px solid #ea580c; padding: 8px 12px; margin: 10px 0; font-size: 13px; border-radius: 0 6px 6px 0; }
+.t-role strong { color: #9a3412; }
+
+/* 优化方向 */
+.opt { background: #faf5ff; border-left: 3px solid #9333ea; padding: 10px 14px; margin: 14px 0; font-size: 13px; border-radius: 0 6px 6px 0; }
+.opt strong { color: #6b21a8; }
+
+/* Legend */
+.legend { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0 24px; padding: 10px 14px; background: white; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 12px; }
+.legend span { padding: 4px 9px; border-radius: 5px; font-weight: 500; }
+
+/* 客户画像 */
+.profile { background: #fffbeb; border: 1px solid #fbbf24; border-radius: 10px; padding: 16px 20px; margin: 16px 0; }
+.profile h4 { margin: 0 0 8px; color: #92400e; font-size: 14px; border: none; padding: 0; }
+.profile table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.profile th { background: #fef3c7; border: 1px solid #fde68a; padding: 6px 10px; text-align: left; font-weight: 600; color: #78350f; }
+.profile td { border: 1px solid #fde68a; padding: 6px 10px; }
+
+/* 讨论框 */
+.discuss { background: #f0fdf4; border: 1px solid #86efac; border-left: 4px solid #16a34a; border-radius: 0 10px 10px 0; padding: 14px 18px; margin: 16px 0; font-size: 13px; }
+.discuss h4 { margin: 0 0 8px; color: #166534; font-size: 14px; border: none; padding: 0; }
+.discuss .q { font-weight: 600; color: #166534; margin: 8px 0 4px; }
+.discuss .a { margin: 0 0 10px; padding-left: 14px; border-left: 2px solid #bbf7d0; }
+
+/* 待办 */
+.todo-box { background: #fef2f2; border: 1px solid #fca5a5; border-radius: 10px; padding: 16px 20px; margin: 16px 0; }
+.todo-box h4 { margin: 0 0 10px; color: #991b1b; font-size: 14px; border: none; padding: 0; }
+.todo-box table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.todo-box th { background: #fee2e2; border: 1px solid #fecaca; padding: 6px 10px; text-align: left; font-weight: 600; color: #991b1b; }
+.todo-box td { border: 1px solid #fecaca; padding: 6px 10px; }
+
+.footer { font-size: 11.5px; color: #94a3b8; text-align: center; margin-top: 40px; padding-top: 14px; border-top: 1px solid #e2e8f0; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>B-A 联动场景：OnRamp / OffRamp 流程</h1>
+<p class="sub">基于 MSO 牌照监管框架 + 后端渠道（DBS / ICBC / BC 等）"服务直客"硬要求设计的实际业务流程。</p>
+
+<!-- ============ 文档说明 ============ -->
+<div class="intro">
+  <h3>📘 文档说明</h3>
+  <p><strong>目的</strong>：充分利用 A 的核心能力，承接 B 客户的法币收付需求。</p>
+  <p><strong>A 的核心价值</strong>：</p>
+  <ul>
+    <li><strong>优势大行通道</strong>（DBS / ICBC / BC 等）—— 资金到账快、合规背书强、银行评级高</li>
+    <li><strong>小币种覆盖</strong> —— 大量非主流币种可结汇 / 下发，是 B 客户最稀缺的能力</li>
+    <li><strong>本地下发能力</strong> —— 本地清算网络（ACH / FPS / SEPA / 各国本地汇路），不走 SWIFT，成本低、效率高、到账快</li>
+    <li><strong>POBO 能力</strong> —— 替客户名义出款（Payment On Behalf Of），客户不用自己开境外账户也能完成跨境付款</li>
+  </ul>
+  <p><strong>当前痛点</strong>：A 合规政策保守（材料严、客户分级硬、白名单制），<strong>部分 B 客户场景无法走 A 直连</strong>。</p>
+  <p><strong>解决思路</strong>：业务分场景设计 ——</p>
+  <ul>
+    <li><span style="color:#16a34a;font-weight:600">正常场景</span>：客户走 A 直连，T 不介入</li>
+    <li><span style="color:#ea580c;font-weight:600">异常场景</span>：借用 T 桥接（替代收付 / 提供材料），让业务合规可走</li>
+  </ul>
+</div>
+
+<!-- ============ 背景 ============ -->
+<div class="bg-box">
+  <h3>🎯 业务背景</h3>
+  <ul>
+    <li>MSO 牌照监管角度，A 可以接 SRO（B 这类持牌主体）做通道</li>
+    <li><strong>但</strong> A 后端主要渠道（DBS / ICBC / BC 等）要求：<strong>不能做 nesting，必须服务直客</strong></li>
+    <li>解决方案：B 通过 API 把客户推送到 A，<strong>A 对该客户做 full KYC</strong>，客户在 A 是直客身份</li>
+    <li>这样既满足渠道"直客"要求，又让 B 客户能用 A 的能力（VA 收款 / POBO 付款 / 本地下发）</li>
+  </ul>
+</div>
+
+<div class="opt">
+  <strong>💡 优化方向：</strong>full KYC 需要审核时效，影响客户开户体验。最优是<strong>说服渠道允许 nesting + 简单 KYC + 实时下号</strong>——这是未来争取的战略空间。
+</div>
+
+<div class="legend">
+  <span class="b-c">客户客户001</span>
+  <span class="b-a">A · 法币持牌</span>
+  <span class="b-b">B · 数币持牌</span>
+  <span class="b-t">T · 桥接主体</span>
+  <span class="b-x">买家 / 供应商</span>
+</div>
+
+<!-- ============ OnRamp ============ -->
+<h2>一、OnRamp 场景（法币 → U）</h2>
+<p style="font-size:13.5px;color:#64748b;margin-bottom:14px;">按<strong>资金来源</strong>分两类：客户自己同名充值 / 境外买家付款。</p>
+
+<h3>1.1 同名充值（客户001 自己境外账户充值法币上链）</h3>
+<p style="font-size:13px;color:#64748b;margin:6px 0 12px;">客户001 用自己境外同名银行账户向 A 的 VA 充值，然后在 B 上链拿 U。</p>
+
+<h4>✓ 正常场景</h4>
+
+<!-- 1.1 正常 -->
+<div class="case normal">
+  <div class="case-title"><span class="tag-normal">正常</span> 客户001 自己同名充值</div>
+  <div class="case-desc">客户001 自己的境外同名银行账户 → 充值到 A 的 VA → 在 B 拿 U</div>
+  <ol class="steps">
+    <li>客户001 在 B 入网 → B 通过 API 推送到 A → A full KYC 通过开户 + 开 VA</li>
+    <li>VA 信息同步回 B，客户001 在 B 端可见</li>
+    <li>客户001 从境外同名银行账户向 VA 充值</li>
+    <li>A 入账审核通过 → 通知 B 到账</li>
+    <li>B OnRamp 按汇率把 U 发到 客户001 钱包</li>
+  </ol>
+  <div class="flow">
+    <div class="flow-title">💰 资金流</div>
+    <div class="flow-row">
+      <div class="b b-c">客户001 境外<br>同名账户</div>
+      <span class="ar">→</span><span class="ar-lbl">同名充值</span>
+      <div class="b b-a">A 给 客户001 的<br>VA</div>
+      <span class="ar">→</span>
+      <div class="b b-b">B OnRamp</div>
+      <span class="ar">→</span>
+      <div class="b b-c">客户001 U 钱包</div>
+    </div>
+  </div>
+  <div class="t-role"><strong>T 的作用：</strong>无</div>
+</div>
+
+<h4>✗ 异常场景</h4>
+
+<!-- 1.1 异常 - 外部承兑 USD -->
+<div class="case skip">
+  <div class="case-title"><span class="tag-skip">异常</span> 客户001 从其他承兑机构 USD 进 A 的 VA</div>
+  <div class="case-desc">USD 来自外部承兑（即 OffRamp 在别的机构做的），A 要求流水 + 贸易背景，无法解释</div>
+  <ol class="steps">
+    <li>客户001 在外部承兑机构（非我方）把 U 换成 USD</li>
+    <li>外部承兑机构把 USD 转入 客户001 在 A 的 VA</li>
+    <li>A 入账时要求资金来源流水 + 贸易背景</li>
+    <li>客户001 难以解释 USD 真实来源（来自数币 OffRamp，A 不接此类资金）</li>
+    <li>资金被退回或冻结</li>
+  </ol>
+  <div class="t-role"><strong>处置：</strong>暂不接此类资金。<br><strong>拓客思路：</strong>把客户的 OffRamp 业务整体拿过来在我方做，从源头闭环。</div>
+  <div class="next-step">
+    <div class="head">🚀 进阶 · 把客户的 OffRamp 业务拿过来一起做</div>
+    <ol>
+      <li>BD 阶段说服客户001 把承兑业务整体迁到我方 B 平台</li>
+      <li>客户001 直接在 B 做 OffRamp（U → 法币），资金合规来源完整闭环</li>
+      <li>同步开通 OnRamp / 法币收付能力，形成全链路客户</li>
+      <li>如客户资质低，引入 T 提供贸易背景服务（参 1.2 异常 2）</li>
+    </ol>
+    <div class="val"><strong>价值</strong>：B 获得高 GMV 客户（承兑场景客单量大）；A 通过完整链路证据接得下；客户的 OnRamp + OffRamp 同时在我方做。</div>
+  </div>
+</div>
+
+<h3>1.2 买家付款（境外买家付款给客户001）</h3>
+<p style="font-size:13px;color:#64748b;margin:6px 0 12px;">境外买家按贸易关系付款到客户001 的 A VA，客户001 再在 B 上链。</p>
+
+<h4>✓ 正常场景</h4>
+
+<!-- 1.2 正常 -->
+<div class="case normal">
+  <div class="case-title"><span class="tag-normal">正常</span> 境外买家付款给 客户001</div>
+  <div class="case-desc">客户001 与境外买家有常规贸易合作，材料齐备</div>
+  <ol class="steps">
+    <li>客户001 在 B 入网 → B API 推送到 A → A full KYC 通过开户 + 开 VA</li>
+    <li>客户001 把 VA 信息发给境外买家</li>
+    <li>境外买家按贸易合同向 客户001 的 A VA 付款</li>
+    <li>A 入账审核通过，资金进入 客户001 在 A 的账户</li>
+    <li>客户001 在 B 发起 OnRamp，拿 U</li>
+  </ol>
+  <div class="flow">
+    <div class="flow-title">💰 资金流</div>
+    <div class="flow-row">
+      <div class="b b-x">境外买家</div>
+      <span class="ar">→</span><span class="ar-lbl">贸易付款</span>
+      <div class="b b-a">A 给 客户001 的<br>VA</div>
+      <span class="ar">→</span>
+      <div class="b b-b">B OnRamp</div>
+      <span class="ar">→</span>
+      <div class="b b-c">客户001 U 钱包</div>
+    </div>
+  </div>
+  <div class="t-role"><strong>T 的作用：</strong>无（客户001 自己提供贸易材料）</div>
+</div>
+
+<h3>异常场景</h3>
+
+<!-- 异常 1 -->
+<div class="case abnormal">
+  <div class="case-title"><span class="tag-abnormal">异常 1</span> 买家与 客户001 缺贸易材料，双方接受 T 代收</div>
+  <div class="case-desc">客户001 ↔ 买家之间没有完整贸易背景材料；双方同意 T 介入</div>
+  <ol class="steps">
+    <li>T 在 B 入网 → B API 推送到 A → A full KYC 通过开户 + 开 VA</li>
+    <li>T 把 VA 信息提供给买家</li>
+    <li>买家付款到 T 的 A VA</li>
+    <li>A 入账审核通过，资金进入 T 在 A 的账户</li>
+    <li>T 在 B 发起 OnRamp → U 发到 客户001 钱包</li>
+  </ol>
+  <div class="flow">
+    <div class="flow-title">💰 资金流</div>
+    <div class="flow-row">
+      <div class="b b-x">境外买家</div>
+      <span class="ar">→</span>
+      <div class="b b-a">A 给 T 的<br>VA</div>
+      <span class="ar">→</span>
+      <div class="b b-t">T 在 B 法币</div>
+      <span class="ar">→</span>
+      <div class="b b-b">B OnRamp<br>(T 发起)</div>
+      <span class="ar">→</span>
+      <div class="b b-c">客户001 U 钱包</div>
+    </div>
+  </div>
+  <div class="t-role"><strong>T 的作用：</strong>替代收款 —— T 在 A 是合规直客，提供完整贸易材料；客户001 不在资金链路上</div>
+  <div class="next-step">
+    <div class="head">🚀 进阶 · B 拉客户数版本（T 引流供应商到 B 平台）</div>
+    <ol>
+      <li>客户001 也入网 B 平台（成为 B 客户，不需要去 A 开户）</li>
+      <li>T 收到买家资金到 T 的 A VA，A 审核通过入账 T</li>
+      <li>T 在 B 平台发起内部转账，把法币转给 客户001 在 B 的法币账户（B 平台内记账）</li>
+      <li>B 平台记录 T→客户001 转账（依据 T-客户001 服务合同 + 发票）</li>
+      <li>客户001 在 B 平台法币账户收到法币后，直接发起 OnRamp 上链拿 U</li>
+    </ol>
+    <div class="val"><strong>价值</strong>：客户001 全程只在 B 平台操作，不接触 A；T 扮演中间人角色，把供应商引流到 B 平台。B 获得客户数 + GMV；客户001 享受自名上链体验；T 从代收升级为"渠道商 + 贸易服务商"双重角色。</div>
+  </div>
+</div>
+
+<!-- 异常 2 -->
+<div class="case abnormal">
+  <div class="case-title"><span class="tag-abnormal">异常 2</span> 客户001 自身材料不足，T 协助找材料</div>
+  <div class="case-desc">资金流与正常场景一致（买家→客户001 VA→OnRamp），但客户001 缺贸易材料（典型：涉美国制裁 / 行业敏感）。一般客户自己会准备材料，如不足则 T 协助。</div>
+  <ol class="steps">
+    <li>客户001 在 B 和 A 入网，拿到 VA 信息提供给买家</li>
+    <li>买家付款到 客户001 的 A VA</li>
+    <li>A 入账审核 → 客户001 材料不足时，T 协助寻找匹配贸易材料提交</li>
+    <li>审核通过，资金入账 客户001</li>
+    <li>客户001 在 B 发起 OnRamp，拿 U</li>
+  </ol>
+  <div class="flow">
+    <div class="flow-title">💰 资金流（不变）</div>
+    <div class="flow-row">
+      <div class="b b-x">境外买家</div>
+      <span class="ar">→</span>
+      <div class="b b-a">A 给 客户001 的<br>VA</div>
+      <span class="ar">→</span>
+      <div class="b b-b">B OnRamp</div>
+      <span class="ar">→</span>
+      <div class="b b-c">客户001 U 钱包</div>
+    </div>
+    <div style="font-size: 12px; color: #64748b; margin-top: 8px;">📋 信息流：T → 提供匹配贸易材料 → A</div>
+  </div>
+  <div class="t-role"><strong>T 的作用：</strong>提供贸易材料（不进资金链路）—— 典型场景是涉美国制裁，市面找匹配材料</div>
+  <div class="next-step">
+    <div class="head">🚀 进阶 · T 合规材料服务产品化</div>
+    <ul>
+      <li>T 把"市面匹配材料"做成标准化合规服务产品（按笔 / 按月订阅）</li>
+      <li>客户001 长期订阅 T 的服务，T 不在资金链路，纯服务费收入</li>
+      <li>T 横向扩展：服务多个有类似困境的 B 客户，形成"合规材料供应商"角色</li>
+      <li>可与场景一结合：T 引流这类客户同时在 B 入网 + 订阅 T 材料服务</li>
+    </ul>
+    <div class="val"><strong>价值</strong>：T 从单次代办升级为持续服务商；B 批量解决敏感场景客户。</div>
+  </div>
+</div>
+
+<!-- 异常 3 -->
+<div class="case skip">
+  <div class="case-title"><span class="tag-skip">异常 3</span> 客户001 从其他承兑机构 USD 到 A 的 VA</div>
+  <div class="case-desc">USD 来自外部承兑（即 OffRamp 在别的机构做的），A 要求流水 + 贸易背景</div>
+  <ol class="steps">
+    <li>客户001 在外部承兑机构（非我方）把 U 换成 USD</li>
+    <li>外部承兑机构把 USD 转入 客户001 在 A 的 VA</li>
+    <li>A 入账时要求资金来源流水 + 贸易背景</li>
+    <li>客户001 难以解释 USD 真实来源（来自数币 OffRamp，A 不接此类资金）</li>
+    <li>资金被退回或冻结</li>
+  </ol>
+  <div class="t-role"><strong>处置：</strong>暂不考虑该场景。<br><strong>拓客思路：</strong>将该客户的承兑业务搬到我方做 OffRamp，从源头闭环。</div>
+  <div class="next-step">
+    <div class="head">🚀 进阶 · 把外部承兑客户搬到我方</div>
+    <ol>
+      <li>BD 阶段说服客户001 把承兑业务整体迁到我方 B 平台</li>
+      <li>客户001 直接在 B 做 OffRamp（U → 法币），资金合规来源完整闭环</li>
+      <li>同步开通 OnRamp / 法币收付能力，形成全链路客户</li>
+      <li>如客户资质低，引入 T 提供贸易背景服务（参 异常 2 进阶）</li>
+    </ol>
+    <div class="val"><strong>价值</strong>：B 获得高 GMV 客户（承兑场景客单量大）；A 通过完整链路证据接得下。</div>
+  </div>
+</div>
+
+<!-- ============ OffRamp ============ -->
+<h2>二、OffRamp 场景（U → 法币）</h2>
+<p style="font-size:13.5px; color:#64748b; margin-bottom: 14px;">OffRamp 分为两大类：<strong>提现（回自己同名账户）</strong>和<strong>付第三方（POBO 付给收款人）</strong>。核心规则：<strong style="color:#dc2626;">凡是付给第三方，必须从客户001 在 A 的账户出款</strong>（收款行调单会查到 A，需要客户名义 POBO）。</p>
+
+<div class="bg-box" style="background:linear-gradient(135deg,#fef2f2,#fff1f2);border-color:#f87171;">
+  <h3 style="color:#991b1b;">⚠️ OffRamp 核心规则</h3>
+  <ul>
+    <li><strong>提现（同名回自己）</strong>：需要贸易背景解释"外汇收入从哪来"——什么生意让你有外币收入要提现？</li>
+    <li><strong>付第三方</strong>：需要提供与收款方的凭证（合同/发票/PI）。客户没有的话 T 可以出。</li>
+    <li><strong>付第三方必须客户名义</strong>：收款行可能调单（发邮件到 A 确认），所以只要付第三方都必须从客户001 在 A 的账户出，确保 POBO 名义是客户001。</li>
+    <li><strong>T 名义出款仅限提现</strong>：T 直接 POBO 到第三方会导致收款行调单时对不上，运营风险大。</li>
+  </ul>
+</div>
+
+<!-- ======= 2.1 提现 ======= -->
+<h3>2.1 提现（法币回客户自己同名账户）</h3>
+<p style="font-size:13px;color:#64748b;margin-bottom:10px;">客户001 把 U 换成法币后，提现到自己的境外同名银行账户。A 审核重点：外汇收入来源（什么贸易/服务让你有这笔钱）。</p>
+
+<h4>正常：客户001 能自己解释收入来源</h4>
+<div class="case normal">
+  <div class="case-title"><span class="tag-normal">正常</span> 客户001 有贸易背景解释外汇收入</div>
+  <div class="case-desc">客户001 做跨境贸易/服务（如出口货物、提供技术服务），有外汇收入的合理来源，材料齐全。</div>
+  <ol class="steps">
+    <li>客户001 在 B 入网 → B API 推送到 A → A full KYC 通过开户</li>
+    <li>客户001 在 B 发起 OffRamp，U 转到 B 指定地址</li>
+    <li>B 卖出 U 得法币 → 转到 客户001 在 A 的账户</li>
+    <li>客户001 在 A 发起提现（同名转出）→ 法币到客户001 境外同名银行账户</li>
+  </ol>
+  <div class="flow">
+    <div class="flow-title">💰 资金流</div>
+    <div class="flow-row">
+      <div class="b b-c">客户001 U 钱包</div>
+      <span class="ar">→</span>
+      <div class="b b-b">B OffRamp</div>
+      <span class="ar">→</span><span class="ar-lbl">法币</span>
+      <div class="b b-a">客户001 在 A<br>的账户</div>
+      <span class="ar">→</span><span class="ar-lbl">同名提现</span>
+      <div class="b b-c">客户001<br>境外同名账户</div>
+    </div>
+  </div>
+  <div class="t-role"><strong>T 的作用：</strong>无</div>
+  <div class="case-desc" style="margin-top:12px;background:#f0fdf4;border:1px solid #86efac;">
+    <strong>🎯 匹配客户画像：</strong><br>
+    • 跨境电商卖家有海外销售收入 / 服务外包公司有外币服务费收入 / 有海外投资回报<br>
+    • 能提供：出口合同、服务协议、海外平台销售记录等证明外汇收入来源
+  </div>
+</div>
+
+<h4>非正常：客户001 无法解释收入来源，T 代为提现</h4>
+<div class="case abnormal">
+  <div class="case-title"><span class="tag-abnormal">非正常</span> 客户001 无行业资质 / 无法解释外汇来源，T 代为提现</div>
+  <div class="case-desc">客户001 是特殊行业（大宗/矿产等）无行业资质，或纯 U 持有者无法解释外汇来源。T 以 T 名义 OffRamp + 提现到客户001 的账户。</div>
+  <ol class="steps">
+    <li>T 在 B 和 A 入网（A full KYC 通过开户）</li>
+    <li>客户001 把 U 发到 T 在 B 的钱包地址</li>
+    <li>T 在 B 发起 OffRamp → B 卖 U 得法币 → 进 T 在 A 的账户</li>
+    <li>T 在 A 发起提现/转账（T 名义出款）→ 下发到客户001 指定的同名境外账户</li>
+  </ol>
+  <div class="flow">
+    <div class="flow-title">💰 资金流</div>
+    <div class="flow-row">
+      <div class="b b-c">客户001 U 钱包</div>
+      <span class="ar">→</span>
+      <div class="b b-t">T 在 B 钱包</div>
+      <span class="ar">→</span>
+      <div class="b b-b">B OffRamp<br>(T 发起)</div>
+      <span class="ar">→</span><span class="ar-lbl">法币</span>
+      <div class="b b-a">T 在 A 账户</div>
+      <span class="ar">→</span><span class="ar-lbl">T 名义出款</span>
+      <div class="b b-c">客户001 账户</div>
+    </div>
+  </div>
+  <div class="t-role"><strong>T 的作用：</strong>替代提现方 —— T 有行业资质或贸易背景解释外汇来源，以 T 名义出款到客户001 账户</div>
+  <div class="case-desc" style="margin-top:12px;background:#fffbeb;border:1px solid #fbbf24;">
+    <strong>🎯 匹配客户画像：</strong><br>
+    • <strong>画像 A</strong>：特殊行业客户（大宗/矿产/化工品），有交易但无行业经营资质<br>
+    • <strong>画像 B</strong>：纯 U 持有者（币圈原生/Web3），完全没有贸易背景解释外汇来源<br>
+    • <strong>T 的要求</strong>：T 有对应行业资质或贸易关系网络，能向 A 解释资金来源的合规性
+  </div>
+</div>
+
+<!-- ======= 2.2 付第三方 ======= -->
+<h3>2.2 付第三方（POBO 付给收款人）</h3>
+<p style="font-size:13px;color:#64748b;margin-bottom:10px;">客户001 把 U 换成法币后，要付给供应商/合作方等第三方。<strong style="color:#dc2626;">必须从客户001 在 A 的账户出款（客户名义 POBO）</strong>，因为收款行调单时会发邮件到 A 核实，汇款人必须是客户001。</p>
+
+<h4>正常：客户001 能自己提供与收款方的凭证</h4>
+<div class="case normal">
+  <div class="case-title"><span class="tag-normal">正常</span> 客户001 自己有与收款方的合同/发票</div>
+  <div class="case-desc">客户001 有与供应商的贸易合同/服务合同/发票，材料齐全，可以自名义 POBO。</div>
+  <ol class="steps">
+    <li>客户001 在 B 入网 → B API 推送到 A → A full KYC 通过开户</li>
+    <li>客户001 在 B 发起 OffRamp，U 转到 B 指定地址</li>
+    <li>B 卖出 U 得法币 → 转到 客户001 在 A 的账户</li>
+    <li>客户001 在 A 发起 POBO（客户001 名义出款）→ 下发到最终收款人</li>
+  </ol>
+  <div class="flow">
+    <div class="flow-title">💰 资金流</div>
+    <div class="flow-row">
+      <div class="b b-c">客户001 U 钱包</div>
+      <span class="ar">→</span>
+      <div class="b b-b">B OffRamp</div>
+      <span class="ar">→</span><span class="ar-lbl">法币</span>
+      <div class="b b-a">客户001 在 A<br>的账户</div>
+      <span class="ar">→</span><span class="ar-lbl">POBO (客户001 名义)</span>
+      <div class="b b-x">最终收款人</div>
+    </div>
+  </div>
+  <div class="t-role"><strong>T 的作用：</strong>无</div>
+  <div class="case-desc" style="margin-top:12px;background:#f0fdf4;border:1px solid #86efac;">
+    <strong>🎯 匹配客户画像：</strong><br>
+    • 有真实付款对手方 + 材料齐全（合同/PI/发票）<br>
+    • 如外贸卖家付供应商货款、企业付海外服务费等
+  </div>
+</div>
+
+<h4>非正常：客户001 没有与收款方的凭证，T 提供材料</h4>
+<div class="case abnormal">
+  <div class="case-title"><span class="tag-abnormal">非正常</span> 客户001 缺凭证，T 提供付款材料，但出款仍从客户001 账户</div>
+  <div class="case-desc">客户001 要付第三方，但没有正规的合同/发票。T 协助提供付款凭证（T 与收款方有贸易关系）。出款必须从客户001 在 A 的账户发起（客户名义 POBO），因为收款行调单会核实汇款人。</div>
+  <ol class="steps">
+    <li>客户001 在 B 入网 + A 入网（各自 full KYC 通过）；T 在 B 和 A 入网</li>
+    <li>U 到 客户001 在 B 的钱包（客户001 在 B 有链上收款记录）</li>
+    <li>客户001 在 B 平台内转账给 T（B 记录 客户001→T 转账交易）</li>
+    <li>T 在 B 发起 OffRamp → B 卖 U 得法币 → 进 T 在 A 的账户</li>
+    <li>T 在 A 内转给 客户001 在 A 的账户（T 提供服务合同/发票作为内转依据）</li>
+    <li>客户001 在 A 发起 POBO（客户001 自名出款）→ 下发到最终收款人（T 提供的付款凭证用于 A 审核）</li>
+  </ol>
+  <div class="flow">
+    <div class="flow-title">💰 资金流</div>
+    <div class="flow-row">
+      <div class="b b-c">U 到 客户001<br>B 钱包</div>
+      <span class="ar">→</span><span class="ar-lbl">B 内转账</span>
+      <div class="b b-t">T 在 B 钱包</div>
+      <span class="ar">→</span>
+      <div class="b b-b">B OffRamp<br>(T 发起)</div>
+      <span class="ar">→</span><span class="ar-lbl">法币</span>
+      <div class="b b-a">T 在 A</div>
+      <span class="ar">→</span><span class="ar-lbl">A 内转</span>
+      <div class="b b-a">客户001 在 A</div>
+      <span class="ar">→</span><span class="ar-lbl">POBO (客户001 名义)</span>
+      <div class="b b-x">最终收款人</div>
+    </div>
+  </div>
+  <div class="x-role"><strong>B 获得的价值：</strong>客户001 在 B 入网（+1 客户数）+ 链上收 U 交易 + 内转给 T 交易 = B 有真实客户和交易量</div>
+  <div class="t-role"><strong>T 的作用：</strong>① OffRamp 通道（T 在 B 做 OffRamp）② 提供 A 内转依据 ③ 提供客户001 POBO 所需的付款凭证（T 与收款方的贸易关系材料）</div>
+  <div class="case-desc" style="margin-top:12px;background:#fffbeb;border:1px solid #fbbf24;">
+    <strong>🎯 匹配客户画像：</strong><br>
+    • 有自己的贸易背景但缺 OffRamp 通道 + 缺与特定收款方的正规凭证<br>
+    • 需要 T 的贸易关系网络来补齐付款材料<br>
+    • 客户001 接受在 A 入网（因为 POBO 必须自名义）
+  </div>
+  <div class="discuss" style="margin-top:12px;">
+    <h4>⚠️ 为什么付第三方不能从 T 账户出？</h4>
+    <div class="a">
+      收款行在处理跨境入账时可能调单（发邮件到付款行/A），核实：<br>
+      • 汇款人是谁？<br>
+      • 与收款人是什么关系？<br>
+      如果汇款人是 T 而不是客户001，收款方会疑问"这是谁付的款？"；A 回复调单时也对不上客户001 的交易。<br>
+      <strong>结论</strong>：只要付第三方，必须从客户001 在 A 的账户出（客户名义 POBO）。
+    </div>
+  </div>
+</div>
+
+<!-- ============ 汇总 ============ -->
+<h2>三、场景汇总</h2>
+
+<table style="width: 100%; border-collapse: collapse; font-size: 13px; background: white;">
+  <thead>
+    <tr style="background: #f1f5f9;">
+      <th style="border: 1px solid #e2e8f0; padding: 10px; text-align: left;">业务</th>
+      <th style="border: 1px solid #e2e8f0; padding: 10px; text-align: left;">场景</th>
+      <th style="border: 1px solid #e2e8f0; padding: 10px; text-align: left;">T 介入</th>
+      <th style="border: 1px solid #e2e8f0; padding: 10px; text-align: left;">T 的角色</th>
+      <th style="border: 1px solid #e2e8f0; padding: 10px; text-align: left;">适合客户画像</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td rowspan="5" style="border: 1px solid #e2e8f0; padding: 10px; font-weight: 600;">OnRamp</td>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">正常 1 · 同名充值</td>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">✗</td>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">—</td>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">有境外同名银行账户、合规材料齐</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">正常 2 · 境外买家付款</td>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">✗</td>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">—</td>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">有真实贸易关系、材料齐（PI/物流/三流）</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">异常 1 · 接受 T 代收</td>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">✓</td>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">替代收款（T 是 A 直客）</td>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">缺材料 + 信任 T + 接受资金走 T</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">异常 2 · T 协助找材料</td>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">✓</td>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">提供贸易材料（不进资金链路）</td>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">有资金通路但材料有短板（涉敏感地区/行业）</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">异常 3 · 外部承兑 USD 到 VA</td>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">—</td>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">不接，转化为 OffRamp 拓客</td>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">在别的机构做 OffRamp 的客户</td>
+    </tr>
+    <tr>
+      <td rowspan="3" style="border: 1px solid #e2e8f0; padding: 10px; font-weight: 600;">OffRamp</td>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">正常 · 有贸易背景</td>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">✗</td>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">—</td>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">有真实付款对手方 + 材料齐</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">非正常 1 · 接受 T 代付</td>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">✓</td>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">替代付款（T 名义 POBO）</td>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">缺材料 + 不在意出款名义 + 信任 T</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">非正常 2 · 客户要自名 POBO</td>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">✓</td>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">OffRamp 通道 + A 内转给 客户001</td>
+      <td style="border: 1px solid #e2e8f0; padding: 10px;">有自己的贸易背景但缺 OffRamp 通道、要求自名出款</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ============ 客户画像 ============ -->
+<h2>四、需要走 T 的客户画像</h2>
+<p style="font-size:13.5px;color:#64748b;margin-bottom:14px;">结合材料难易程度和合规要求，以下客户类型大概率需要 T 介入。</p>
+
+<div class="profile">
+  <h4>🎯 画像 1：有贸易但材料不完整</h4>
+  <table>
+    <tr><th>特征</th><th>说明</th></tr>
+    <tr><td>客户类型</td><td>跨境电商卖家 / 小 B 贸易商</td></tr>
+    <tr><td>痛点</td><td>有真实交易但缺标准化材料（无正式 PI、无完整物流单据、结汇网站未备案等）</td></tr>
+    <tr><td>材料难度</td><td>中 —— 材料存在但不规范，T 可协助整理补齐</td></tr>
+    <tr><td>适用场景</td><td>OnRamp 异常 2（T 协助找材料）</td></tr>
+    <tr><td>T 角色</td><td>合规材料顾问（不碰资金）</td></tr>
+  </table>
+</div>
+
+<div class="profile">
+  <h4>🎯 画像 2：涉敏感地区（非特殊行业）</h4>
+  <table>
+    <tr><th>特征</th><th>说明</th></tr>
+    <tr><td>客户类型</td><td>买家国涉美国制裁 / 主体在灰名单 / 贸易对手方国家风险高</td></tr>
+    <tr><td>痛点</td><td>A 的渠道对这类交易背景审核极严，客户自身难以提供让 A 满意的材料</td></tr>
+    <tr><td>材料难度</td><td>高 —— 需要市面找匹配材料或 T 用自身贸易关系覆盖</td></tr>
+    <tr><td>适用场景</td><td>OnRamp 异常 1（T 代收）/ OnRamp 异常 2（T 找材料）</td></tr>
+    <tr><td>T 角色</td><td>替代收款方 或 合规材料供应商</td></tr>
+    <tr><td>⚠️ 排除</td><td><strong>特殊行业（大宗、食品等）暂不走 T 模式</strong>，建议 OffRamp 直接接 Cregis</td></tr>
+  </table>
+</div>
+
+<div class="profile">
+  <h4>🎯 画像 3：纯 U 持有者，无法币出款通道</h4>
+  <table>
+    <tr><th>特征</th><th>说明</th></tr>
+    <tr><td>客户类型</td><td>币圈原生用户 / Web3 项目方 / DAO 出款</td></tr>
+    <tr><td>痛点</td><td>手里有 U，想换法币付供应商 / 员工 / 房租等，但没有贸易背景可提交给 A</td></tr>
+    <tr><td>材料难度</td><td>极高 —— 本身没有传统贸易关系，无法自行解决</td></tr>
+    <tr><td>适用场景</td><td>OffRamp 非正常 1（T 代付）</td></tr>
+    <tr><td>T 角色</td><td>替代付款方（T 名义 POBO）</td></tr>
+  </table>
+</div>
+
+<div class="profile">
+  <h4>🎯 画像 4：有贸易背景但缺 OffRamp 通道</h4>
+  <table>
+    <tr><th>特征</th><th>说明</th></tr>
+    <tr><td>客户类型</td><td>传统外贸卖家，收到 U 作为货款，需要换法币后自名 POBO 付供应商</td></tr>
+    <tr><td>痛点</td><td>有完整贸易材料但没有合规的 OffRamp → 法币 → POBO 通道</td></tr>
+    <tr><td>材料难度</td><td>低 —— 客户自有材料齐全，只需 T 提供 OffRamp 通道</td></tr>
+    <tr><td>适用场景</td><td>OffRamp 非正常 2（客户自名 POBO）</td></tr>
+    <tr><td>T 角色</td><td>OffRamp 通道提供者 + A 内转</td></tr>
+  </table>
+</div>
+
+<!-- ============ A 可见性讨论 ============ -->
+<h2>五、A 的可见性讨论：客户能否不知道 A 的存在？</h2>
+
+<div class="discuss">
+  <h4>📌 OnRamp 场景：客户001 能否不感知 A？</h4>
+  <div class="q">Q：OnRamp 中有没有客户001 不知道 A 存在、但我们利用 A 能力的可能？</div>
+  <div class="a">
+    <strong>结论：没有。</strong><br>
+    VA 是开在 客户001 名下的（A full KYC 直客要求），客户001 一定知道 VA 来自 A。即使入账时没调单，出款时 A 也可能调单，客户会看到 A 的邮件 / 通知。<br>
+    除非入账出款全程不调单（A 白名单制），但这不可控，不能作为产品假设。<br>
+    <strong>所以 OnRamp 所有场景中，客户001 对 A 可见。</strong>
+  </div>
+</div>
+
+<div class="discuss">
+  <h4>📌 OffRamp 场景：客户001 能否不感知 A？</h4>
+  <div class="q">Q：OffRamp 非正常 1 中，T 代收 U → OffRamp → T 在 A 账户 POBO 给客户001，客户001 能不知道 A 吗？</div>
+  <div class="a">
+    <strong>结论：技术上可以，但运营上有风险。</strong><br>
+    在 OffRamp 非正常 1 中：客户001 只与 T 和 B 交互（发 U 到 T 钱包），最终收到的法币是 T 名义 POBO 出款，客户001 看到的汇款人是 T（不是 A）。<br>
+    <strong>但有以下运营问题：</strong>
+    <ul>
+      <li><strong>合规审计可追溯</strong> —— A 持有 T 的 KYC 和所有交易记录，监管 / 合规查到 A 一定能查到最终收款人是 客户001</li>
+      <li><strong>客户查询穿透</strong> —— 客户001 如果对收到的款项有疑问（金额差异 / 到账延迟），找 B 或 T 客服，客服排查时需要查 A 的交易记录，可能暴露 A 的存在</li>
+      <li><strong>退款 / 争议处理</strong> —— 如果 POBO 出款被银行退回 / 冻结，处理链路会涉及 A，客户001 可能收到 A 侧的通知或 SWIFT 报文中的银行信息</li>
+      <li><strong>前后台沟通成本</strong> —— B 的前台客服需要理解"背后有 A"的链路，增加培训成本；如果 B 客服直接告诉客户"我们的资金通过 XX 机构处理"，则 A 暴露</li>
+    </ul>
+    <strong>建议</strong>：不刻意隐藏 A，而是在客户沟通中把 A 定位为"合规资金通道合作伙伴"，降低客户对 A 的关注度但不回避。
+  </div>
+</div>
+
+<div class="discuss">
+  <h4>📌 OffRamp 非正常 2：客户001 一定知道 A</h4>
+  <div class="q">Q：OffRamp 非正常 2（客户自名 POBO）中客户001 对 A 的感知？</div>
+  <div class="a">
+    <strong>结论：一定知道。</strong><br>
+    客户001 自己在 A 入网开户 + 自己在 A 发起 POBO，完全感知 A。这个场景下 A 对客户001 是透明的。
+  </div>
+</div>
+
+<!-- ============ 待办清单 ============ -->
+<h2>六、落地待办清单</h2>
+
+<div class="todo-box">
+  <h4>📋 T 主体规划</h4>
+  <table>
+    <tr><th>待办项</th><th>说明</th><th>状态</th></tr>
+    <tr><td>需要几个 T？</td><td>按业务量和风险隔离需求决定。建议初期 1 个 T 跑通链路，规模化后按业务类型拆分（OnRamp T / OffRamp T / 材料服务 T）</td><td>待定</td></tr>
+    <tr><td>T 的法律主体</td><td><strong>不需要持牌。</strong>核心原则：按 A 的审核逻辑，T 不能只是“代收付”，最好能碰到货。分两类：<br>
+        ① <strong>货物贸易</strong>：货代公司 / 有进出口资质的贸易公司 / 供应链管理公司（能提供物流单据、提单、仓单等“碰货”证据）<br>
+        ② <strong>服务贸易</strong>：技术服务公司 / 咨询公司 / IT 外包公司 / 营销服务公司（能提供服务合同 + 交付物 + 发票，证明“服务已实际发生”）</td><td>已确认</td></tr>
+    <tr><td>T 的基本要求</td><td>• 不能是刚成立的空壳公司（建议注册≥ 2 年，有实际经营流水）<br>• 有真实业务背景（银行流水 / 报税记录 / 供应商合同）<br>• A 入网时会审核 T 的经营历史和贸易真实性</td><td>已确认</td></tr>
+    <tr><td>T 与 B 的关系</td><td>T 是 B 的关联公司？独立第三方？控股子公司？影响合规审视和 nesting 判定</td><td>待定</td></tr>
+    <tr><td>T 在 A 的开户</td><td>T 需要在 A 做 full KYC 开户，走 A 的标准商户入网流程</td><td>待办</td></tr>
+    <tr><td>T 在 B 的开户</td><td>T 需要在 B 入网成为 B 客户</td><td>待办</td></tr>
+  </table>
+</div>
+
+<div class="todo-box">
+  <h4>📋 T 的运营体系</h4>
+  <table>
+    <tr><th>待办项</th><th>说明</th><th>状态</th></tr>
+    <tr><td colspan="3" style="background:#fee2e2;font-weight:600;">日常运营</td></tr>
+    <tr><td>T 与客户001 的协议模板</td><td>代收 / 代付 / 服务合同 / 集采分销协议，需法务准备标准模板</td><td>待办</td></tr>
+    <tr><td>T 的贸易材料储备</td><td>T 需要维护自己的贸易关系网络（进出口合同、物流商、结汇网站），用于异常场景的材料供给</td><td>待办</td></tr>
+    <tr><td>T 的客服流程</td><td>客户001 查询到 T 相关信息时，B 客服如何应答？需要前后台话术统一</td><td>待办</td></tr>
+    <tr><td>T 的业务拓展</td><td>如何发展新客户、维护老客户、T 的客户分级管理</td><td>待办</td></tr>
+    <tr><td colspan="3" style="background:#fee2e2;font-weight:600;">财务体系</td></tr>
+    <tr><td>T 的对账结算流程</td><td>T 代收/代付后与客户001 的对账、佣金结算、服务费收取的 SOP</td><td>待办</td></tr>
+    <tr><td>T 的资金管理</td><td>T 在 A 和 B 的余额监控、头寸管理、日终对账</td><td>待办</td></tr>
+    <tr><td>T 的财务报表</td><td>T 的收入确认、税务处理、成本分摊、利润计算</td><td>待办</td></tr>
+    <tr><td>T 的发票管理</td><td>T 与客户001 之间的服务费发票 / T 与买家之间的贸易发票（用于 A 审核）</td><td>待办</td></tr>
+    <tr><td>T 的资金安全</td><td>客户001 U 到 T 后的风险控制（汇率波动、在途资金敎口、单笔限额）</td><td>待办</td></tr>
+  </table>
+</div>
+
+<div class="todo-box">
+  <h4>📋 产品 / 系统层面</h4>
+  <table>
+    <tr><th>待办项</th><th>说明</th><th>状态</th></tr>
+    <tr><td>B 平台内部转账能力</td><td>进阶场景中 T 在 B 内转账给客户001，B 平台是否支持？需要产品化</td><td>待确认</td></tr>
+    <tr><td>A 内转流程</td><td>T → 客户001 在 A 的内转，A 的 OTHER 出金场景是否支持？白名单是否需要提前配置？</td><td>待确认</td></tr>
+    <tr><td>OnRamp 指定钱包</td><td>T 发起 OnRamp 但 U 发到客户001 钱包，B 系统是否支持"出款到非发起人钱包"？</td><td>待确认</td></tr>
+    <tr><td>前台 A 可见性策略</td><td>B 端 UI/客服话术中如何展示 A 相关信息？VA 展示为"合作银行账户"还是直接显示 A 品牌？</td><td>待讨论</td></tr>
+    <tr><td>合规检查穿透</td><td>A 合规检查时要求提供最终受益人信息，T 代收/代付场景下如何向 A 报备？</td><td>待讨论</td></tr>
+  </table>
+</div>
+
+<p class="footer">v0.2 · 2026-05-16 · 基于 MSO 牌照监管 + A 后端渠道"服务直客"硬要求</p>
+
+</div>
+</body>
+</html>
