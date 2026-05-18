@@ -168,15 +168,12 @@ h3 { font-size: 16.5px; color: #0f172a; margin-top: 28px; padding-bottom: 4px; b
         <div style="font-weight:700;font-size:13px;color:#92400e;margin-bottom:6px;">X（桥接主体） <span class="scenario-tag tag-sro">B-X-SRO</span></div>
         <div style="font-size:11px;color:#475569;line-height:1.6;">
           <strong>定位：</strong>连接 面客主体 ↔ SRO，是 SRO 的合规直客<br><br>
-          <strong>合规要求：<span style="color:#dc2626;">高</span></strong><br>
-          • 满足 SRO 标准（护照 + SFC 芯片验证等）<br>
-          • 有真实经营（非空壳）<br>
-          • 在 SRO 做了 full KYC<br><br>
-          <strong>客户可见性：<span style="color:#dc2626;">完全不可见</span></strong><br>
-          • 客户不知道 X 的存在（架构设计上隔离）<br><br>
-          <strong>通道关系：</strong><br>
-          • X 是 SRO 看到的<u>唯一</u>"客户"<br>
-          • 客户基本不在 SRO 入网，不向 SRO 报备
+          <strong>存在原因：<span style="color:#dc2626;">SRO 入网要求高</span></strong><br>
+          • SRO 标准严格（护照 + SFC 芯片验证等）<br>
+          • 多数客户无法满足，需要 X 作为桥接<br><br>
+          <strong>客户入网逻辑：</strong><br>
+          • 客户满足 SRO 要求 → 入网 SRO<br>
+          • 客户不满足 → 不入网，X 是 SRO 看到的“客户”
         </div>
       </div>
       <!-- T 独立描述 -->
@@ -184,18 +181,21 @@ h3 { font-size: 16.5px; color: #0f172a; margin-top: 28px; padding-bottom: 4px; b
         <div style="font-weight:700;font-size:13px;color:#9a3412;margin-bottom:6px;">T（桥接主体） <span class="scenario-tag tag-ba">B-A</span></div>
         <div style="font-size:11px;color:#475569;line-height:1.6;">
           <strong>定位：</strong>连接 客户 ↔ A，是 A 的商户<br><br>
-          <strong>合规要求：<span style="color:#166534;">相对低</span></strong><br>
-          • 满足 A 和 B 的基本合规要求即可<br>
-          • 在 A 和 B 都入网<br>
-          • 有真实经营（非空壳）<br><br>
-          <strong>客户可见性：<span style="color:#f59e0b;">不一定</span></strong><br>
-          • 取决于客户是否接受/知道 T 的存在<br>
-          • 不像 X 那样架构上强制隔离<br><br>
-          <strong>通道关系：</strong><br>
-          • T 是 A 的一个商户（与客户共存）<br>
-          • 客户能入网 A 就优先入网<br>
-          • 仅当客户无法/拒绝入网时才纯走 T
+          <strong>存在原因：<span style="color:#9a3412;">客户不满足A入网条件</span></strong><br>
+          • A 的合规要求相对低，但需要贸易背景材料<br>
+          • 客户缺失贸易材料时，需要 T 提供贸易背景作为桥接<br><br>
+          <strong>客户入网逻辑：</strong><br>
+          • 客户满足 A 的要求 → 入网 A<br>
+          • 客户不满足a的要求 → 不入网，纯走 T 付出
         </div>
+      </div>
+      <!-- X vs T 核心区别 -->
+      <div style="min-width:180px;max-width:200px;background:#fefce8;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;font-size:11px;color:#713f12;line-height:1.6;">
+        <strong>X vs T 核心区别：</strong><br>
+        入网逻辑相同：满足就入网，不满足就不入网<br><br>
+        <strong>存在原因不同：</strong><br>
+        • <span style="color:#dc2626;font-weight:600;">X</span>：SRO 入网要求高（护照 + SFC 等）<br>
+        • <span style="color:#9a3412;font-weight:600;">T</span>：客户缺少贸易背景材料
       </div>
     </div>
   </div>
