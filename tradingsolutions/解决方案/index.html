@@ -29,7 +29,13 @@ h1 { font-size: 28px; color: #0f172a; border-bottom: 3px solid #7c3aed; padding-
   <a class="card" href="./full-architecture.html">
     <div><span class="tag tag-arch">架构</span></div>
     <h2>全局架构图</h2>
-    <p>B 生态主体关系总览：商户 → 平台 → 桥接 → SRO → 渠道，涵盖 X/T 桥接、K 壳主体、物理渠道 vs 运营渠道三种场景。</p>
+    <p>B 生态主体关系总览：商户 → 平台 → 桥接 → SRO → 渠道，涵盖 X/T 桥接、K 壳主体、持牌渠道 vs 运营渠道三种场景。</p>
+  </a>
+
+  <a class="card" href="./full-architecture.md">
+    <div><span class="tag tag-arch">架构</span></div>
+    <h2>EX 平台全局架构（MD）</h2>
+    <p>商户 · 租户 · EX · SP 四层架构，含 BB/BBSRO 双 SP 签约场景、客户映射规则、可见性对比。</p>
   </a>
 
   <a class="card" href="./b-a-flow-scenarios.html">
@@ -41,7 +47,19 @@ h1 { font-size: 28px; color: #0f172a; border-bottom: 3px solid #7c3aed; padding-
   <a class="card" href="./b-x-sro-flow-scenarios.html">
     <div><span class="tag tag-sro">B-X-SRO</span></div>
     <h2>B-X-SRO Flow Scenarios</h2>
-    <p>B 的双主体架构（面客主体 + SRO），X 桥接、K 壳主体、物理渠道与运营渠道分离。</p>
+    <p>BB 租户 + SRO(SP系统) + 渠道独立开户。桥接主体映射、信息流同步、调单流程。</p>
+  </a>
+
+  <a class="card" href="./bb-x-sro-channel-flows.html">
+    <div><span class="tag" style="background:#ecfeff;color:#155e75;">信息流/资金流</span></div>
+    <h2>BB-X-SRO-渠道 信息流与资金流详解</h2>
+    <p>按渠道维度（MTC / A-IPL / 智朗）拆解 OnRamp/OffRamp 的资金流、信息流、调单链路。含异名出款风险分析、T/X 是否统一讨论。</p>
+  </a>
+
+  <a class="card" href="./k-channel-bridge.html">
+    <div><span class="tag" style="background:#fce7f3;color:#9d174d;">K-渠道桥接</span></div>
+    <h2>K 主体：渠道层桥接主体</h2>
+    <p>持牌渠道 vs 运营渠道双层架构。当 SRO 无法在某些银行开户时，由 K 代为开户并对 SRO 隐藏。风险分析与应对方案。</p>
   </a>
 
   <div class="footer">Trading Solutions 文档站</div>

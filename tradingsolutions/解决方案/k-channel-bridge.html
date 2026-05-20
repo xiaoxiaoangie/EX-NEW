@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>K 主体：渠道层桥接主体（持牌渠道 vs 运营渠道）</title>
+<style>
+* { box-sizing: border-box; }
+body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: #f8fafc; color: #1e293b; line-height: 1.7; margin: 0; padding: 28px; }
+.container { max-width: 1100px; margin: 0 auto; }
+h1 { font-size: 26px; color: #0f172a; border-bottom: 3px solid #ec4899; padding-bottom: 10px; margin-bottom: 6px; }
+.sub { color: #64748b; font-size: 13.5px; margin-bottom: 28px; }
+h2 { font-size: 21px; color: #0f172a; margin-top: 44px; padding: 10px 14px; background: #fce7f3; border-left: 5px solid #ec4899; border-radius: 0 6px 6px 0; }
+h3 { font-size: 16.5px; color: #0f172a; margin-top: 28px; padding-bottom: 4px; border-bottom: 1px solid #e2e8f0; }
+h4 { font-size: 15px; color: #475569; margin: 18px 0 6px; }
+
+.intro { background: linear-gradient(135deg, #fce7f3 0%, #fdf2f8 100%); border: 1px solid #ec4899; border-radius: 10px; padding: 16px 20px; margin: 16px 0; }
+.intro h3 { margin: 0 0 10px; color: #9d174d; border: none; padding: 0; }
+.intro p { margin: 6px 0; font-size: 13.5px; }
+.intro ul { margin: 4px 0 10px 18px; padding: 0; font-size: 13.5px; }
+.intro li { margin: 3px 0; }
+
+.bg-box { background: linear-gradient(135deg, #fce7f3 0%, #fdf2f8 100%); border: 1px solid #ec4899; border-radius: 10px; padding: 16px 20px; margin: 16px 0; }
+.bg-box h3 { border: none; margin-top: 0; color: #9d174d; }
+.bg-box ul { margin: 6px 0 0 18px; padding: 0; }
+.bg-box li { margin: 4px 0; }
+
+.arch { background: white; border: 2px solid #ec4899; border-radius: 12px; padding: 20px; margin: 20px 0; }
+.arch-title { font-weight: 700; font-size: 15px; color: #9d174d; text-align: center; margin-bottom: 14px; }
+.arch-row { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 10px 0; flex-wrap: wrap; }
+.arch-box { padding: 12px 18px; border-radius: 8px; text-align: center; font-size: 13px; font-weight: 600; min-width: 120px; }
+.arch-box.sro { background: #dcfce7; color: #166534; border: 2px solid #22c55e; }
+.arch-box.k { background: #fce7f3; color: #9d174d; border: 2px solid #ec4899; }
+.arch-box.bank { background: #f1f5f9; color: #475569; border: 2px solid #94a3b8; }
+.arch-arrow { font-size: 22px; color: #ec4899; font-weight: 700; }
+.arch-label { font-size: 11px; color: #64748b; text-align: center; }
+
+.discuss { background: #fff1f2; border: 1px solid #fecdd3; border-left: 4px solid #f43f5e; border-radius: 0 10px 10px 0; padding: 14px 18px; margin: 16px 0; font-size: 13px; }
+.discuss h4 { margin: 0 0 8px; color: #9d174d; font-size: 14px; border: none; padding: 0; }
+.discuss .q { font-weight: 600; color: #9d174d; margin: 8px 0 4px; }
+.discuss .a { margin: 0 0 10px; padding-left: 14px; border-left: 2px solid #fecdd3; }
+
+.case-desc { font-size: 13px; color: #64748b; padding: 6px 10px; background: #f8fafc; border-radius: 5px; }
+
+.todo-box { background: #fef2f2; border: 1px solid #fca5a5; border-radius: 10px; padding: 16px 20px; margin: 16px 0; }
+.todo-box h4 { margin: 0 0 10px; color: #991b1b; font-size: 14px; border: none; padding: 0; }
+.todo-box table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.todo-box th { background: #fee2e2; border: 1px solid #fecaca; padding: 6px 10px; text-align: left; font-weight: 600; color: #991b1b; }
+.todo-box td { border: 1px solid #fecaca; padding: 6px 10px; }
+
+table.std { width: 100%; border-collapse: collapse; font-size: 13px; background: white; margin: 12px 0; }
+table.std th { background: #f1f5f9; border: 1px solid #e2e8f0; padding: 10px; text-align: left; }
+table.std td { border: 1px solid #e2e8f0; padding: 10px; }
+
+.footer { color: #94a3b8; font-size: 12px; text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0; }
+
+.ref { background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 10px 14px; margin: 12px 0; font-size: 12.5px; color: #166534; }
+.ref a { color: #15803d; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>K 主体：渠道层桥接主体</h1>
+<p class="sub">K 是连接 SRO 与受限渠道银行的渠道侧桥梁。SRO/B 主体因合规属性无法在某些银行开户时，由 K（壳主体 / 关联运营公司）代为开户。本文档通过<strong>「持牌渠道 vs 运营渠道」</strong>双层架构实现 SRO 视野隔离。</p>
+
+<div class="ref">
+  📎 关联文档：<a href="b-x-sro-flow-scenarios.html">B-X-SRO 联动场景</a>（客户侧桥接 X） · <a href="b-a-flow-scenarios.html">B-A 联动场景</a>（客户侧桥接 T）
+</div>
+
+<!-- ============ 文档说明 ============ -->
+<div class="intro">
+  <h3>文档说明</h3>
+  <p>本文档单独描述 EX 平台<strong>渠道层</strong>的桥接主体 K，与客户层的 X / T 桥接形成对照：</p>
+  <ul>
+    <li><strong>客户层桥接（X / T）</strong>：解决"客户不达 SRO/A 入网标准"问题（详见 b-x-sro / b-a 文档）</li>
+    <li><strong>渠道层桥接（K）</strong>：解决"SRO/B 主体不达渠道银行开户标准"问题（本文档）</li>
+    <li><strong>K 的本质</strong>：不是客户、不做业务，只是"渠道开户的合规马甲"</li>
+    <li><strong>核心方案</strong>：通过<strong>持牌渠道（SRO 视角）vs 运营渠道（实际资金路径）</strong>双层映射，让 SRO 后台/合规报表只展示持牌渠道，K 仅在运营层存在</li>
+  </ul>
+</div>
+
+<!-- ============ 背景 ============ -->
+<h2>一、为什么需要 K？</h2>
+
+<div class="bg-box">
+  <h3>核心矛盾</h3>
+  <ul>
+    <li><strong>渠道银行的开户限制</strong> —— 部分银行对开户主体有严格要求（如美国发卡渠道要求美国主体 + 传统行业背景）</li>
+    <li><strong>SRO / B 主体被拒</strong> —— SRO 是 crypto 牌照主体、B 主体是科技公司或 MSO，这些主体在传统大行（尤其是美国系银行、卡组发卡渠道）很难开户</li>
+    <li><strong>商业现实</strong> —— 部分关键业务能力（如美国发卡、特定币种清算）必须依赖这些受限渠道</li>
+    <li><strong>解决思路</strong> —— 用 K（壳主体 / 关联运营公司）去这些渠道开户，资金实际流经 K，但 SRO 视角看不到 K</li>
+  </ul>
+</div>
+
+<h3>K 的角色定位</h3>
+
+<table class="std">
+  <tr>
+    <th style="width:18%;">维度</th>
+    <th>说明</th>
+  </tr>
+  <tr>
+    <td style="font-weight:600;">主体性质</td>
+    <td>B 控制的本地壳公司（如美国注册的传统行业公司）。可以是关联公司、子公司、或独立法人</td>
+  </tr>
+  <tr>
+    <td style="font-weight:600;">是否客户</td>
+    <td><strong>不是</strong>。K 不在 B / SRO 入网，不享受任何业务能力，只用于渠道开户</td>
+  </tr>
+  <tr>
+    <td style="font-weight:600;">资金归属</td>
+    <td>K 账户中的资金本质上属于 SRO 业务（K 是受 B/SRO 控制的运营账户）</td>
+  </tr>
+  <tr>
+    <td style="font-weight:600;">对 SRO 可见性</td>
+    <td><strong>不可见</strong>（默认方案）/ 有限可见（备选方案，见五.2）</td>
+  </tr>
+  <tr>
+    <td style="font-weight:600;">业务能力</td>
+    <td>仅在渠道银行开户、过资金。不做面客、不做承兑、不做清算</td>
+  </tr>
+</table>
+
+<!-- ============ 双层渠道架构 ============ -->
+<h2>二、持牌渠道 vs 运营渠道 — 核心方案</h2>
+<p style="font-size:13.5px;color:#64748b;">把"渠道"概念拆成两层：SRO 看到的<strong>持牌渠道</strong>（合规报表层）与系统实际走的<strong>运营渠道</strong>（执行层）。</p>
+
+<div class="arch">
+  <div class="arch-title">双层渠道架构</div>
+  <div class="arch-row">
+    <div style="text-align:center;font-size:13px;font-weight:600;color:#166534;min-width:200px;">
+      SRO 视角（持牌渠道）<br>
+      <span style="font-size:11px;font-weight:400;color:#64748b;">SRO 看到的、合规报表上的</span>
+    </div>
+    <div style="width:40px;"></div>
+    <div style="text-align:center;font-size:13px;font-weight:600;color:#9d174d;min-width:200px;">
+      实际运营（运营渠道）<br>
+      <span style="font-size:11px;font-weight:400;color:#64748b;">系统实际走的、资金实际经过的</span>
+    </div>
+  </div>
+  <div class="arch-row" style="margin-top:12px;">
+    <div class="arch-box sro" style="min-width:200px;">SRO → 渠道银行 A<br><span style="font-size:11px;font-weight:400;">（SRO 自己能开户的银行）</span></div>
+    <div style="width:40px;text-align:center;font-size:11px;color:#94a3b8;">——</div>
+    <div class="arch-box sro" style="min-width:200px;">SRO → 渠道银行 A<br><span style="font-size:11px;font-weight:400;">（同一个，没问题）</span></div>
+  </div>
+  <div class="arch-row" style="margin-top:8px;">
+    <div class="arch-box sro" style="min-width:200px;opacity:0.4;">SRO → 渠道银行 B ❌<br><span style="font-size:11px;font-weight:400;">（SRO 开不了户）</span></div>
+    <div style="width:40px;text-align:center;font-size:20px;color:#ec4899;">≠</div>
+    <div class="arch-box k" style="min-width:200px;">K → 渠道银行 B ✓<br><span style="font-size:11px;font-weight:400;">（K 能开户，实际走 K）</span></div>
+  </div>
+  <div class="arch-label" style="margin-top:14px;">
+    <strong>SRO 合规报表上写的是"渠道银行 B"（持牌渠道），实际系统走的是"K → 渠道银行 B"（运营渠道）</strong>
+  </div>
+</div>
+
+<h3>2.1 概念定义</h3>
+<table class="std">
+  <tr>
+    <th style="width:18%;">概念</th>
+    <th>说明</th>
+    <th style="width:20%;">对谁可见</th>
+  </tr>
+  <tr>
+    <td style="font-weight:600;">持牌渠道</td>
+    <td>SRO 名义上对接的渠道银行。合规报表、监管报告、SRO 后台展示的都是持牌渠道。<br>例：渠道银行 B（SRO 视角认为自己直连了这个银行）</td>
+    <td>SRO ✓<br>监管 ✓<br>客户 ✗</td>
+  </tr>
+  <tr>
+    <td style="font-weight:600;color:#9d174d;">运营渠道</td>
+    <td>实际走资金的通道。系统内部用运营渠道路由交易。<br>例：K 在渠道银行 B 的账户（K 开的户，资金实际经过 K）</td>
+    <td>运营团队 ✓<br>SRO ✗<br>客户 ✗</td>
+  </tr>
+  <tr>
+    <td style="font-weight:600;">映射关系</td>
+    <td>一个持牌渠道可能对应多个运营渠道（如同一家银行有 SRO 自己的户 + K 的户）。<br>系统根据交易类型/币种/地区自动选择运营渠道，SRO 后台只展示持牌渠道。</td>
+    <td>系统配置层</td>
+  </tr>
+</table>
+
+<h3>2.2 EX 系统改造要点</h3>
+<div class="case-desc" style="background:#fffbeb;border:1px solid #fbbf24;padding:12px 16px;border-radius:8px;margin:12px 0;">
+  <strong>🔧 渠道中心改造</strong><br>
+  • 渠道管理模块增加"渠道类型"字段：<strong>持牌渠道 / 运营渠道</strong><br>
+  • 运营渠道绑定到持牌渠道（N:1 关系）<br>
+  • SRO 后台的渠道列表、交易明细、对账报表 → 只展示持牌渠道<br>
+  • 运营后台（B 内部）→ 展示运营渠道，看到真实的资金路径<br>
+  • 路由引擎基于运营渠道做交易路由，生成报表时映射回持牌渠道
+</div>
+
+<!-- ============ K vs T/X 对比 ============ -->
+<h2>三、K 与客户层桥接（T / X）的对比</h2>
+
+<table class="std">
+  <tr>
+    <th style="width:18%;"></th>
+    <th>T（B-A 客户层桥接）</th>
+    <th>X（B-X-SRO 客户层桥接）</th>
+    <th style="color:#9d174d;">K（渠道层桥接）</th>
+  </tr>
+  <tr>
+    <td style="font-weight:600;">所在层</td>
+    <td>客户层</td>
+    <td>客户层</td>
+    <td style="color:#9d174d;font-weight:600;">渠道层</td>
+  </tr>
+  <tr>
+    <td style="font-weight:600;">连接对象</td>
+    <td>客户 ↔ A</td>
+    <td>B 主体客户 ↔ SRO</td>
+    <td>SRO ↔ 渠道银行</td>
+  </tr>
+  <tr>
+    <td style="font-weight:600;">是否入网</td>
+    <td>✓ 是 B / A 的客户</td>
+    <td>✓ 是 SRO 的客户（B 不入网）</td>
+    <td>✗ 不入网</td>
+  </tr>
+  <tr>
+    <td style="font-weight:600;">谁不可见</td>
+    <td>客户001 不直接感知 T</td>
+    <td>SRO 不感知客户原始身份</td>
+    <td>SRO 不感知 K</td>
+  </tr>
+  <tr>
+    <td style="font-weight:600;">解决问题</td>
+    <td>客户无法在 A 入网 / 提供材料</td>
+    <td>客户不达 SRO 入网标准</td>
+    <td>SRO / B 无法在某些银行开户</td>
+  </tr>
+  <tr>
+    <td style="font-weight:600;">主体类型</td>
+    <td>有真实业务的贸易/服务公司</td>
+    <td>有真实业务的合规公司</td>
+    <td>壳公司（传统行业注册，B 控制）</td>
+  </tr>
+  <tr>
+    <td style="font-weight:600;">核心风险</td>
+    <td>A 穿透追查 T 背后客户</td>
+    <td>SRO 穿透追查 X 背后客户</td>
+    <td>SRO 审计持牌渠道时资金对不上</td>
+  </tr>
+</table>
+
+<!-- ============ 风险分析 ============ -->
+<h2>四、风险分析</h2>
+
+<div class="discuss">
+  <h4>⚠️ 核心风险：SRO 审计持牌渠道时资金对不上</h4>
+  <div class="q">场景：SRO 去查渠道银行 B 的资金流水/交易记录，发现与自己系统的记录对不上</div>
+  <div class="a">
+    <strong>问题拆解：</strong>
+    <ul>
+      <li><strong>SRO 系统记录</strong>：交易走了"持牌渠道 = 渠道银行 B"，金额 $100,000</li>
+      <li><strong>实际情况</strong>：资金走了 K 在渠道银行 B 的账户，开户主体是 K 不是 SRO</li>
+      <li><strong>如果 SRO 直接找渠道银行 B 调数据</strong>：银行说"SRO 没在我这开户，K 开了户"→ 穿帮</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============ 应对方案 ============ -->
+<h2>五、应对方案</h2>
+
+<h3>5.1 方案 1：K 作为 SRO 的"技术服务商 / 支付代理"（推荐）</h3>
+<div class="discuss">
+  <div class="a">
+    K 与 SRO 签订《渠道代理协议》/《支付技术服务协议》：<br>
+    • K 受 SRO 委托，在特定渠道银行开设运营账户<br>
+    • K 按 SRO 指令处理交易，资金归属权是 SRO 的<br>
+    • K 定期向 SRO 出具对账报告<br><br>
+    <strong>话术</strong>：SRO 通过技术服务商 K 接入渠道银行 B，K 是 SRO 的外包合作方，不是独立运营。<br>
+    <strong>优点</strong>：有合同基础，能解释为什么开户主体是 K<br>
+    <strong>缺点</strong>：SRO 需要知道 K 的存在（有限可见），但 K 不是 SRO 的客户
+  </div>
+</div>
+
+<h3>5.2 方案 2：完全隔离，SRO 不知道 K（默认方案）</h3>
+<div class="discuss">
+  <div class="a">
+    SRO 后台只看到持牌渠道（渠道银行 B），不知道实际通过 K 走。<br>
+    • 日常运营没问题（交易正常，金额对得上）<br>
+    • <strong>风险点</strong>：SRO 审计时直接联系渠道银行 B 调数据 → 对不上<br>
+    • <strong>缓解</strong>：控制 SRO 的审计权限，渠道银行的对接由 B 运营团队统一管理，SRO 不直接接触渠道银行<br>
+    • <strong>话术储备</strong>：
+    <ul>
+      <li>"渠道银行 B 的开户主体是我们的关联运营公司，用于满足银行对主体类型的要求"</li>
+      <li>"交易量和金额与 SRO 系统一致，只是开户法人不同，这是银行端的技术限制"</li>
+      <li>"资金归属权不变，关联公司账户资金全部归属 SRO 业务"</li>
+    </ul>
+  </div>
+</div>
+
+<h3>5.3 方案 3：混合方案 — 部分渠道 SRO 直连 + 部分走 K（实操推荐）</h3>
+<div class="discuss">
+  <div class="a">
+    SRO 能开户的渠道银行 → SRO 直连（无风险）<br>
+    SRO 开不了户的渠道银行 → K 开户（仅限必要场景）<br><br>
+    <strong>优点</strong>：K 的使用范围最小化，降低被穿透的概率<br>
+    <strong>建议</strong>：这是实际操作的推荐方式 —— 只在 SRO 确实开不了户的渠道才用 K
+  </div>
+</div>
+
+<!-- ============ 调账风险 ============ -->
+<h2>六、调账 / 对账风险</h2>
+
+<div class="bg-box" style="background:linear-gradient(135deg,#fef2f2,#fff1f2);border-color:#f87171;">
+  <h3 style="color:#991b1b;">⚠️ 关键运营风险</h3>
+  <ul>
+    <li><strong>日常对账</strong>：K 在渠道银行 B 的流水 vs SRO 系统的交易记录 → 需要运营团队每日核对，确保金额一致</li>
+    <li><strong>调拨记录</strong>：SRO 系统显示"资金调拨到渠道银行 B"，但实际是调拨到 K 在渠道银行 B 的账户 → 记录层面需要一致</li>
+    <li><strong>SRO 审计时</strong>：如果 SRO 要求看渠道银行 B 的银行流水（statement），需要提前准备 K 账户的 statement，并确保交易明细与 SRO 系统记录吻合</li>
+    <li><strong>关键原则</strong>：<strong style="color:#dc2626;">金额和交易笔数必须对得上</strong>，开户主体不同可以用"关联运营公司"解释，但金额对不上无法解释</li>
+  </ul>
+</div>
+
+<!-- ============ 待办清单 ============ -->
+<h2>七、落地待办清单</h2>
+
+<div class="todo-box" style="border-color:#f9a8d4;background:#fdf2f8;">
+  <h4 style="color:#9d174d;">📋 K 主体规划</h4>
+  <table>
+    <tr>
+      <th style="background:#fce7f3;color:#9d174d;border-color:#f9a8d4;">待办项</th>
+      <th style="background:#fce7f3;color:#9d174d;border-color:#f9a8d4;">说明</th>
+      <th style="background:#fce7f3;color:#9d174d;border-color:#f9a8d4;">状态</th>
+    </tr>
+    <tr><td style="border-color:#f9a8d4;">K 主体清单</td><td style="border-color:#f9a8d4;">目前有几个 K？分别在哪些渠道开了户？每个 K 的注册地 / 行业 / 开户银行</td><td style="border-color:#f9a8d4;">待梳理</td></tr>
+    <tr><td style="border-color:#f9a8d4;">持牌渠道 ↔ 运营渠道映射表</td><td style="border-color:#f9a8d4;">列出所有渠道：哪些 SRO 自己开户（持牌=运营），哪些走 K（持牌≠运营）</td><td style="border-color:#f9a8d4;">待梳理</td></tr>
+    <tr><td style="border-color:#f9a8d4;">系统渠道双层改造</td><td style="border-color:#f9a8d4;">渠道管理模块增加持牌 / 运营渠道字段，SRO 后台只展示持牌渠道，运营后台展示运营渠道</td><td style="border-color:#f9a8d4;">待开发</td></tr>
+    <tr><td style="border-color:#f9a8d4;">K ↔ SRO 对账机制</td><td style="border-color:#f9a8d4;">K 在渠道银行的流水 vs SRO 系统记录，每日核对确保金额 / 笔数一致</td><td style="border-color:#f9a8d4;">待办</td></tr>
+    <tr><td style="border-color:#f9a8d4;">SRO 审计应对预案</td><td style="border-color:#f9a8d4;">如果 SRO 审计渠道银行 B，话术和材料准备（方案 1 / 2 / 3 选定）</td><td style="border-color:#f9a8d4;">待讨论</td></tr>
+    <tr><td style="border-color:#f9a8d4;">K 的资金安全</td><td style="border-color:#f9a8d4;">K 账户的资金管理：余额监控、调拨记录、防止 K 账户被银行冻结的应急方案</td><td style="border-color:#f9a8d4;">待办</td></tr>
+    <tr><td style="border-color:#f9a8d4;">K 与 SRO 的法律关系</td><td style="border-color:#f9a8d4;">是否需要 K 与 SRO 签订代理协议？还是完全隔离？影响审计应对方案</td><td style="border-color:#f9a8d4;">待定</td></tr>
+  </table>
+</div>
+
+<p class="footer">v0.1 · 2026-05-20 · 渠道层桥接主体方案（持牌渠道 vs 运营渠道双层架构）</p>
+
+</div>
+</body>
+</html>
