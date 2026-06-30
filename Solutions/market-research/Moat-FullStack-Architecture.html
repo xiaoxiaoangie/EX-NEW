@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>护城河 · 全栈技术架构 + 开放式生态</title>
+<style>
+  :root {
+    --orange: #f6a623;
+    --orange-2: #ff8c2f;
+    --cyan: #4fd0e3;
+    --line: rgba(130, 170, 255, 0.28);
+    --pill-bg: rgba(255, 255, 255, 0.05);
+    --pill-border: rgba(140, 175, 255, 0.30);
+    --text: #eaf0ff;
+    --muted: #b7c4e6;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { background: #060c22; }
+  body {
+    background: #060c22;
+    font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", Helvetica, Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 36px;
+    padding: 36px 24px;
+  }
+
+  /* 16:9 slide */
+  .slide {
+    position: relative;
+    width: 1280px;
+    height: 720px;
+    border-radius: 18px;
+    overflow: hidden;
+    background:
+      radial-gradient(1200px 700px at 88% 18%, rgba(54, 110, 220, 0.55), transparent 60%),
+      linear-gradient(125deg, #0a1230 0%, #102a63 58%, #173a84 100%);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+    color: var(--text);
+    padding: 40px 48px 44px;
+  }
+
+  .title {
+    font-size: 38px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    margin-bottom: 26px;
+  }
+  .title .accent { color: var(--orange); }
+
+  .body {
+    display: grid;
+    grid-template-columns: 1.42fr 1fr;
+    gap: 40px;
+    height: calc(100% - 78px);
+  }
+
+  /* ---------- LEFT: architecture ---------- */
+  .arch { display: flex; flex-direction: column; gap: 9px; }
+
+  .bar {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    padding: 9px;
+    border-radius: 9px;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.04);
+    color: #dbe5ff;
+  }
+
+  .layer {
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    background: rgba(255, 255, 255, 0.028);
+    padding: 11px 12px 12px;
+    position: relative;
+  }
+  .layer .lname {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--cyan);
+    letter-spacing: .4px;
+    margin-bottom: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .ex-chip {
+    background: linear-gradient(135deg, var(--orange) 0%, var(--orange-2) 100%);
+    color: #2a1700;
+    font-weight: 800;
+    font-size: 12px;
+    padding: 5px 14px;
+    border-radius: 7px;
+    box-shadow: 0 4px 14px rgba(246, 166, 35, 0.45);
+  }
+
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pill {
+    flex: 1 1 auto;
+    text-align: center;
+    font-size: 12.5px;
+    color: #e7eeff;
+    background: var(--pill-bg);
+    border: 1px solid var(--pill-border);
+    border-radius: 8px;
+    padding: 8px 10px;
+    white-space: nowrap;
+  }
+  .pill.wide { flex-basis: 46%; }
+
+  .sp-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 4px;
+  }
+  .sp {
+    display: flex;
+    gap: 8px;
+  }
+  .sp-box {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 9px;
+    border: 1px dashed rgba(236, 130, 190, 0.6);
+    background: rgba(190, 80, 150, 0.14);
+    color: #ffd9ee;
+  }
+  .arrow { color: var(--orange); font-size: 20px; font-weight: 800; }
+
+  /* ---------- RIGHT: narrative ---------- */
+  .narrative { display: flex; flex-direction: column; gap: 18px; }
+  .lead {
+    color: var(--orange);
+    font-size: 19px;
+    font-weight: 800;
+    line-height: 1.5;
+  }
+  .block { border-left: 3px solid var(--cyan); padding-left: 14px; }
+  .block h3 {
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 7px;
+  }
+  .block h3 .brand { color: var(--cyan); }
+  .block p, .block ol {
+    font-size: 13.5px;
+    line-height: 1.62;
+    color: var(--muted);
+  }
+  .block ol { padding-left: 18px; }
+  .block ol li { margin-bottom: 3px; }
+  .block ol li b { color: #e7eeff; font-weight: 700; }
+
+  .footer {
+    position: absolute;
+    right: 48px;
+    bottom: 22px;
+    font-size: 12px;
+    color: rgba(190, 205, 240, 0.6);
+    letter-spacing: 1px;
+  }
+
+  /* ---------- shared sub-lead + note ---------- */
+  .lead-sub { font-size: 17px; color: var(--muted); margin-bottom: 18px; }
+  .note {
+    margin-top: 18px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--muted);
+    background: rgba(246, 166, 35, 0.08);
+    border-left: 3px solid var(--orange);
+    padding: 12px 16px;
+    border-radius: 8px;
+  }
+  .note b { color: var(--orange); font-weight: 800; }
+  .conn { text-align: center; color: #5f78b5; font-size: 16px; margin: 5px 0; }
+  .bar.pink {
+    border-color: rgba(236, 130, 190, 0.5);
+    background: rgba(190, 80, 150, 0.12);
+    color: #ffd9ee;
+  }
+
+  /* ---------- 1.1 three pillars ---------- */
+  .pillars3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .company {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.035);
+    padding: 20px 20px 22px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .company::before {
+    content: ""; position: absolute; left: 0; top: 0; height: 100%; width: 4px;
+    background: linear-gradient(180deg, var(--cyan), transparent);
+  }
+  .company.b::before { background: linear-gradient(180deg, var(--orange), transparent); }
+  .company.e::before { background: linear-gradient(180deg, #a78bfa, transparent); }
+  .cname { font-size: 20px; font-weight: 800; color: #fff; display: flex; align-items: baseline; gap: 8px; }
+  .cname span { font-size: 14px; color: var(--muted); font-weight: 600; }
+  .cname b { margin-left: auto; font-size: 12px; color: #2a1700; background: linear-gradient(135deg, var(--orange), var(--orange-2)); padding: 4px 11px; border-radius: 20px; }
+  .crole { margin-top: 12px; font-size: 14px; color: var(--cyan); font-weight: 700; }
+  .ckeys { margin-top: 12px; font-size: 13.5px; color: var(--muted); line-height: 1.7; }
+
+  /* ---------- 1.5 flow ---------- */
+  .flow { display: flex; align-items: stretch; gap: 14px; }
+  .flow-col {
+    flex: 1; border: 1px solid var(--line); border-radius: 14px;
+    background: rgba(255, 255, 255, 0.035); padding: 22px 16px; text-align: center;
+  }
+  .flow-col.main { border-color: rgba(246, 166, 35, 0.55); background: rgba(246, 166, 35, 0.08); }
+  .fc-head { font-size: 17px; font-weight: 800; color: #fff; }
+  .fc-sub { margin-top: 8px; font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .flow-arrow { align-self: center; color: var(--orange); font-size: 24px; font-weight: 800; }
+  .rails { margin-top: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .rail {
+    font-size: 13.5px; color: #e7eeff; border: 1px solid var(--pill-border);
+    background: var(--pill-bg); border-radius: 9px; padding: 11px 16px;
+  }
+  .rail b { color: var(--cyan); }
+  .rail.alt { border-style: dashed; border-color: rgba(236, 130, 190, 0.5); background: rgba(190, 80, 150, 0.10); color: #ffd9ee; }
+  .rail.alt b { color: #ffd9ee; }
+  .roles { margin-top: 16px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+  /* ---------- 1.5 pipeline (4-step) ---------- */
+  .pipeline { display: flex; align-items: stretch; gap: 10px; }
+  .step {
+    flex: 1; border: 1px solid var(--line); border-radius: 14px;
+    background: rgba(255, 255, 255, 0.035); padding: 18px 14px 16px; text-align: center;
+  }
+  .step.main { border-color: rgba(246, 166, 35, 0.55); background: rgba(246, 166, 35, 0.08); }
+  .step-no {
+    width: 30px; height: 30px; line-height: 30px; margin: 0 auto 10px;
+    border-radius: 50%; background: linear-gradient(135deg, var(--cyan), #2f9fd0);
+    color: #04222b; font-weight: 800; font-size: 15px;
+  }
+  .step.main .step-no { background: linear-gradient(135deg, var(--orange), var(--orange-2)); color: #2a1700; }
+  .step-stage { font-size: 16px; font-weight: 800; color: #fff; }
+  .step-tag { margin-top: 8px; font-size: 12px; color: var(--orange); font-weight: 700; min-height: 30px; }
+  .step-desc { margin-top: 8px; font-size: 12.5px; color: var(--muted); line-height: 1.55; }
+  .step-arrow { align-self: center; color: var(--orange); font-size: 20px; font-weight: 800; }
+</style>
+</head>
+<body>
+  <!-- ===== Slide 1.1 · 一个生态，三块基石 ===== -->
+  <div class="slide">
+    <div class="title">一个生态，<span class="accent">三块基石</span> / One Ecosystem, Three Pillars</div>
+    <p class="lead-sub">一个完整、开放式的下一代跨境支付生态 —— 持牌金融网络 + 链上清算 + AI 科技中台，合为一体。</p>
+
+    <div class="bar">客户层 / Clients　·　机构 · 跨境贸易商 · 出海电商 · 钱包/银行</div>
+    <div class="conn">▼</div>
+
+    <div class="pillars3">
+      <div class="company">
+        <div class="cname">iPayLinks <span>艾贝盈</span><b>11 年</b></div>
+        <div class="crole">持牌法币跨境支付</div>
+        <div class="ckeys">收款 · 付款 · 收单 · 换汇 · 全球账户</div>
+      </div>
+      <div class="company b">
+        <div class="cname">BlancBlock<b>5+ 年</b></div>
+        <div class="crole">Web3 稳定币基础设施</div>
+        <div class="ckeys">钱包 · 托管 · 稳定币清算 · 发卡</div>
+      </div>
+      <div class="company e">
+        <div class="cname">EurewaX<b>2 年</b></div>
+        <div class="crole">全栈科技赋能平台</div>
+        <div class="ckeys">AI 风控 · 跨链编排 · Agent Pay · 开放平台</div>
+      </div>
+    </div>
+
+    <div class="conn">▼</div>
+    <div class="bar pink">法币 SP（iPayLinks 等）　⇄　数币 SP（BlancBlock 等）</div>
+
+    <div class="note"><b>一句话</b>：iPayLinks 解决“合规与落地”，BlancBlock 解决“链上与资产”，EurewaX 解决“智能与连接”。三者叠加，覆盖一笔跨境资金从发起到落地的全链路。</div>
+
+    <div class="footer">机密文件，未经授权不得转发 · Confidential</div>
+  </div>
+
+  <!-- ===== Slide · 护城河 ===== -->
+  <div class="slide">
+    <div class="title">护城河：<span class="accent">全栈技术架构</span> + 开放式生态</div>
+
+    <div class="body">
+      <!-- LEFT -->
+      <div class="arch">
+        <div class="bar">客户层 / Clients &nbsp;·&nbsp; 机构 1 · 机构 2 · … · 机构 N</div>
+        <div class="bar">API 接入层 / API Access Layer</div>
+
+        <div class="layer">
+          <div class="lname"><span>AI 平台层 / AI Platform</span><span class="ex-chip">EX · EurewaX</span></div>
+          <div class="pills">
+            <div class="pill">自主合规网络</div>
+            <div class="pill">自进化风控</div>
+            <div class="pill">智能交易大脑</div>
+            <div class="pill">智能资金网络</div>
+          </div>
+          <div class="pills" style="margin-top:8px;">
+            <div class="pill wide">Agent 支付基础设施</div>
+            <div class="pill wide">AI 原生运营</div>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="lname"><span>交易层 / Transaction Layer</span></div>
+          <div class="pills">
+            <div class="pill">交易处理</div>
+            <div class="pill">发行与承兑</div>
+            <div class="pill">链上钱包</div>
+            <div class="pill">链上账本</div>
+            <div class="pill">客户管理</div>
+          </div>
+          <div class="pills" style="margin-top:8px;">
+            <div class="pill">全链路由</div>
+            <div class="pill">智能合约</div>
+            <div class="pill">链上清算</div>
+            <div class="pill">跨链桥接</div>
+            <div class="pill">合规风控</div>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="lname"><span>链上基座 / On-chain Infrastructure</span></div>
+          <div class="pills">
+            <div class="pill">多链适配</div>
+            <div class="pill">节点服务</div>
+            <div class="pill">链上监听</div>
+            <div class="pill">Gas 管理</div>
+            <div class="pill">密钥管理</div>
+          </div>
+        </div>
+
+        <div class="bar">SDK 接入层 / SDK Layer</div>
+
+        <div class="sp-row">
+          <div class="sp">
+            <div class="sp-box">法币 SP：iPayLinks</div>
+            <div class="sp-box">法币 SPn：***</div>
+          </div>
+          <div class="arrow">⇄</div>
+          <div class="sp">
+            <div class="sp-box">数币 SP：BlancBlock</div>
+            <div class="sp-box">数币 SPn：***</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="narrative">
+        <div class="lead">我们正在建设的是一个完整的、开放式的下一代跨境支付生态体系。</div>
+
+        <div class="block">
+          <h3><span class="brand">BlancBlock</span> 核心业务</h3>
+          <p>负责稳定币的支付、发行、资产托管与实时清算，构建资产流转的核心闭环。</p>
+        </div>
+
+        <div class="block">
+          <h3><span class="brand">EurewaX</span> 全栈技术基座</h3>
+          <ol>
+            <li><b>底层高性能结算层</b>：提供跨链编排，有效降低生态割裂；</li>
+            <li><b>用户接入层</b>：统一的钱包管理与身份服务；</li>
+            <li><b>Agent Pay</b>：灵活的代理支付与自动化执行基座；</li>
+            <li><b>机构赋能</b>：开放式科技平台，支持各类机构快速接入与业务定制。</li>
+          </ol>
+        </div>
+
+        <div class="block">
+          <h3><span class="brand">iPayLinks</span> 生态融合</h3>
+          <p>整合传统银行账户体系与庞大的跨境客户生态，实现链上技术与线下业务的无缝衔接。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">机密文件，未经授权不得转发 · Confidential</div>
+  </div>
+
+  <!-- ===== Slide 1.5 · 三位一体如何运转 ===== -->
+  <div class="slide">
+    <div class="title">三位一体<span class="accent">如何运转</span> / How the Three Work Together</div>
+    <p class="lead-sub">以一笔“越南 → 中国”的跨境贸易结算为例，资金按 <b style="color:#fff">收款 → 编排 → 清算 → 到账</b> 四步走完，每一步都有明确执行方：</p>
+
+    <div class="pipeline">
+      <div class="step">
+        <div class="step-no">1</div>
+        <div class="step-stage">本地收款</div>
+        <div class="step-tag">iPayLinks / BlancBlock</div>
+        <div class="step-desc">越南买家 / 贸易商<br>VND / USD + 合规 USDT</div>
+      </div>
+      <div class="step-arrow">▶</div>
+      <div class="step main">
+        <div class="step-no">2</div>
+        <div class="step-stage">智能编排</div>
+        <div class="step-tag">EurewaX</div>
+        <div class="step-desc">FX 锁价 · 订单管理<br>AI 风控 · 三方对账</div>
+      </div>
+      <div class="step-arrow">▶</div>
+      <div class="step">
+        <div class="step-no">3</div>
+        <div class="step-stage">双通道清算</div>
+        <div class="step-tag">iPayLinks 法币 / BlancBlock 稳定币</div>
+        <div class="step-desc">实时锁汇换汇<br>缺美元时走 USDT 中段 T+0</div>
+      </div>
+      <div class="step-arrow">▶</div>
+      <div class="step">
+        <div class="step-no">4</div>
+        <div class="step-stage">落地到账</div>
+        <div class="step-tag">iPayLinks</div>
+        <div class="step-desc">与国内持牌机构合作<br>CNY（在岸）入企业对公账户</div>
+      </div>
+    </div>
+
+    <div class="roles">
+      <div class="block"><h3><span class="brand">EurewaX</span></h3><p>统一编排 · 智能路由 · AI 风控合规 · 对账</p></div>
+      <div class="block"><h3><span class="brand">iPayLinks</span></h3><p>持牌法币清算 · 换汇 · 落地账户</p></div>
+      <div class="block"><h3><span class="brand">BlancBlock</span></h3><p>稳定币加速通道 · 链上可追溯 · 资产托管</p></div>
+    </div>
+
+    <div class="note"><b>差异化</b>：市场上要么是纯法币玩家（慢/贵/受美元约束），要么是纯加密玩家（合规缺失）。<b>我们是少数同时拥有持牌法币网络 + 合规链上能力 + AI 科技中台的一体化服务商。</b></div>
+
+    <div class="footer">机密文件，未经授权不得转发 · Confidential</div>
+  </div>
+</body>
+</html>

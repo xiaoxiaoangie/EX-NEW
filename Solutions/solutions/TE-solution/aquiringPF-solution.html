@@ -455,8 +455,8 @@
       </div>
       <div class="cover-meta">
         <span><strong>提交方</strong>：EurewaX 客户经理团队</span>
-        <span><strong>版本</strong>：v2.0</span>
-        <span><strong>日期</strong>：2026-05-06</span>
+        <span><strong>版本</strong>：v3.0</span>
+        <span><strong>日期</strong>：2026-05-25</span>
       </div>
     </div>
     <div class="brand-bar"><span class="brand-logo"><span class="xicon"></span>EurewaX</span><span class="page-num"></span></div>
@@ -471,22 +471,51 @@
     </div>
     <div class="slide-body">
       <div class="toc-grid">
-        <div class="toc-item" data-go="3"><div class="num">02</div><div><div class="title">About EurewaX</div><div class="desc">跨境支付智能云平台概览</div></div></div>
-        <div class="toc-item" data-go="4"><div class="num">03</div><div><div class="title">合作模式 · API + SaaS</div><div class="desc">云原生微服务架构 · 双模式接入</div></div></div>
+        <div class="toc-item" data-go="3"><div class="num">02</div><div><div class="title">方案概述</div><div class="desc">背景、核心思路与方案亮点</div></div></div>
+        <div class="toc-item" data-go="4"><div class="num">03</div><div><div class="title">About EurewaX</div><div class="desc">跨境支付智能云平台概览</div></div></div>
         <div class="toc-item" data-go="5"><div class="num">04</div><div><div class="title">平台架构</div><div class="desc">统一 API + 多服务商 + A2A 即时转账</div></div></div>
         <div class="toc-item" data-go="6"><div class="num">05</div><div><div class="title">收单 PF 痛点分析</div><div class="desc">跨境结算成本高、时效慢、缺乏账户体系</div></div></div>
         <div class="toc-item" data-go="7"><div class="num">06</div><div><div class="title">解决方案</div><div class="desc">VA + A2A + 换汇结汇 + 行内即时调拨</div></div></div>
-        <div class="toc-item" data-go="8"><div class="num">07</div><div><div class="title">核心业务流程</div><div class="desc">端到端：入网 → 收款 → 结算 → 下发</div></div></div>
-        <div class="toc-item" data-go="9"><div class="num">08</div><div><div class="title">价值对比 & 集成规划</div><div class="desc">32 天内完成全流程接入</div></div></div>
+        <div class="toc-item" data-go="8"><div class="num">07</div><div><div class="title">账户结构与角色</div><div class="desc">主子账户体系 · A/B 双 SP 架构</div></div></div>
+        <div class="toc-item" data-go="9"><div class="num">08</div><div><div class="title">核心业务流程</div><div class="desc">端到端：入网 → 收款 → 结算 → 下发</div></div></div>
+        <div class="toc-item" data-go="10"><div class="num">09</div><div><div class="title">关键业务规则 & WB 特殊需求</div><div class="desc">主子规则 · A2A 结算 · 换汇定价 · 自有通道</div></div></div>
+        <div class="toc-item" data-go="11"><div class="num">10</div><div><div class="title">计费返点 & 风险管控</div><div class="desc">租户定价 · 承兑返点 · 合规与资金风险</div></div></div>
+        <div class="toc-item" data-go="12"><div class="num">11</div><div><div class="title">价值对比 & 集成规划</div><div class="desc">34 天内完成全流程接入</div></div></div>
       </div>
     </div>
     <div class="brand-bar"><span class="brand-logo"><span class="xicon"></span>EurewaX</span><span class="page-num"></span></div>
   </section>
 
-  <!-- Slide 3: About EurewaX -->
+  <!-- Slide 3: 方案概述 -->
   <section class="slide">
     <div class="slide-head">
       <span class="mark">02</span>
+      <h2>方案概述</h2>
+      <span class="subtitle">背景、核心思路与方案亮点</span>
+    </div>
+    <div class="slide-body">
+      <div class="about-wrap">
+        <p class="headline">背景</p>
+        <p>收单平台（PF）通过收单行（Acquirer）为旗下商户提供收单服务。收单行定期将结算款打给 PF，PF 需要再与各商户进行分账结算。收单行结算到 PF 有两种方式：① 直接结算到 PF 在 A 开立的 VA；② 结算到 PF 自有银行账户，PF 再通过同名充值到 A 的 VA。</p>
+        <p class="headline" style="margin-top:10px">核心思路</p>
+        <p>① PF 在 A（法币 SP）入网，开立 VA 接收收单行结算款；② PF 的商户在 A 入网，建立主子账户关系；③ PF 同名充值到 A 的 VA，资金入账 PF 主账户；④ PF 通过 A2A 转账，即时分发给各商户子账户；⑤ 商户自助操作：在 A 内换汇/结汇，或通过 B 做 OnRamp（法币→数币）。<em>OffRamp 一期暂不开放。</em></p>
+      </div>
+      <div class="cap-grid" style="margin-top:14px">
+        <div class="cap-card"><div class="cap-head"><div class="cap-icon">⚡</div><div class="cap-title">即时结算</div></div><div class="cap-desc">A2A 同 SP 体内完成，秒级到账，零银行手续费</div></div>
+        <div class="cap-card"><div class="cap-head"><div class="cap-icon">🏦</div><div class="cap-title">账户体系</div></div><div class="cap-desc">PF 主账户 + 商户子账户，主子关系清晰</div></div>
+        <div class="cap-card"><div class="cap-head"><div class="cap-icon">📤</div><div class="cap-title">灵活下发</div></div><div class="cap-desc">支持 API 批量结算，也支持上传结算记录表导入</div></div>
+        <div class="cap-card"><div class="cap-head"><div class="cap-icon">🔧</div><div class="cap-title">商户自助</div></div><div class="cap-desc">商户到账后可自主换汇、结汇、B 侧 OnRamp</div></div>
+        <div class="cap-card"><div class="cap-head"><div class="cap-icon">💰</div><div class="cap-title">租户定价</div></div><div class="cap-desc">换汇/结汇/OnRamp 费率由租户加价报价</div></div>
+        <div class="cap-card"><div class="cap-head"><div class="cap-icon">🔄</div><div class="cap-title">返点分佣</div></div><div class="cap-desc">商户在 B 做 OnRamp 业务归属租户体系，支持返点分佣</div></div>
+      </div>
+    </div>
+    <div class="brand-bar"><span class="brand-logo"><span class="xicon"></span>EurewaX</span><span class="page-num"></span></div>
+  </section>
+
+  <!-- Slide 4: About EurewaX -->
+  <section class="slide">
+    <div class="slide-head">
+      <span class="mark">03</span>
       <h2>About EurewaX</h2>
       <span class="subtitle">跨境支付产品创新 · 全球支付生态系统服务商</span>
     </div>
@@ -510,34 +539,6 @@
     <div class="brand-bar"><span class="brand-logo"><span class="xicon"></span>EurewaX</span><span class="page-num"></span></div>
   </section>
 
-  <!-- Slide 4: 合作模式 -->
-  <section class="slide">
-    <div class="slide-head">
-      <span class="mark">03</span>
-      <h2>合作模式 <span class="dash">—</span> API + SaaS</h2>
-      <span class="subtitle">云原生微服务架构 · 弹性扩展 · 快速集成</span>
-    </div>
-    <div class="slide-body">
-      <div class="cols-2">
-        <div class="col">
-          <h3>先进技术架构</h3>
-          <div class="feature"><div class="feature-icon">☁️</div><div class="feature-body"><div class="feature-title">云原生设计</div><div class="feature-desc">容器化部署 + 自动化运维，确保系统高可用性</div></div></div>
-          <div class="feature"><div class="feature-icon">⚡</div><div class="feature-body"><div class="feature-title">微服务架构</div><div class="feature-desc">独立部署的动态可扩展模块，快速适应业务需求变化</div></div></div>
-          <div class="feature"><div class="feature-icon">🔄</div><div class="feature-body"><div class="feature-title">多种集成方式</div><div class="feature-desc">API 集成 / 白牌模式，满足不同客户需求</div></div></div>
-        </div>
-        <div class="col">
-          <h3>集成模式</h3>
-          <div class="mode-cards">
-            <div class="mode-card"><div class="mode-title">API 集成</div><div class="mode-desc">灵活定制；保留自有前端与业务形态，通过开放 API 快速集成全部能力。</div></div>
-            <div class="mode-card"><div class="mode-title">白牌模式</div><div class="mode-desc">完全定制品牌和界面；快速拥有自己的跨境支付平台。</div></div>
-          </div>
-          <div class="callout" style="margin-top:18px"><span class="ico">💎</span><div>核心业务微服务 · <strong>账户管理 / 币种管理 / 风控服务 / 清算服务</strong>，支持<strong>多币种、弹性扩展、多通道</strong>。</div></div>
-        </div>
-      </div>
-    </div>
-    <div class="brand-bar"><span class="brand-logo"><span class="xicon"></span>EurewaX</span><span class="page-num"></span></div>
-  </section>
-
   <!-- Slide 5: 平台架构 -->
   <section class="slide">
     <div class="slide-head">
@@ -549,7 +550,7 @@
       <div class="arch-box">
         <div class="arch-layer you"><h4 style="color:var(--sky)">您的系统（收单平台 PF）</h4><p>通过 EurewaX 统一 API 管理商户、开 VA、结算、换汇/结汇/付款</p></div>
         <div class="arch-arrow">↓ 统一 RESTful API + Webhook</div>
-        <div class="arch-layer ex"><h4>EurewaX 开放平台</h4><p>产品开通 · VA 收款 · A2A 转账 · 换汇/结汇 · 付款/提现 · VCC 发卡</p><p style="margin-top:6px;font-size:10.5px;color:var(--ink-400)">合规 · 风控 · 开户 · 资金托管 —— 全部由持牌服务商执行</p></div>
+        <div class="arch-layer ex"><h4>EurewaX 开放平台</h4><p>产品开通 · VA 收款 · A2A 转账 · 换汇/结汇 · OnRamp · 付款/提现 · VCC 发卡</p><p style="margin-top:6px;font-size:10.5px;color:var(--ink-400)">合规 · 风控 · 开户 · 资金托管 —— 全部由持牌服务商执行</p></div>
       </div>
       <div class="callout" style="margin-top:14px"><span class="ico">⚡</span><div><strong>关键特性：同服务商内跨租户 A2A</strong> — 不同租户只要在同一持牌服务商内，A2A 转账即时完成，无需走银行通道，<strong>零成本 · 秒级到账</strong>。资金全程在持牌服务商体系内流转，安全合规。</div></div>
     </div>
@@ -586,10 +587,10 @@
     </div>
     <div class="slide-body">
       <div class="sol-grid">
-        <div class="sol-card"><h4>🏦 开 VA 接收结算款</h4><p>PF 通过 API 开立 VA（虚拟账户），将 VA 提供给收单行作为结算账户。收单行结算款直接入账 VA，Webhook 实时通知。</p></div>
+        <div class="sol-card"><h4>🏦 开 VA 接收结算款</h4><p>PF 通过 API 开立 VA（虚拟账户），收单行可直接打款到 VA（方式①），或打到 PF 银行账户后同名充值到 VA（方式②）。资金入账后 Webhook 实时通知。</p></div>
         <div class="sol-card"><h4>⚡ A2A 即时结算</h4><p>PF 收到结算款后，通过 A2A 转账即时结算给商户。同服务商内转账 = 记账操作，<strong>秒级到账、零手续费</strong>，支持批量指令。</p></div>
         <div class="sol-card"><h4>💱 商户自助换汇/结汇</h4><p>商户可自主换汇（USD→其他币种）、结汇（USD→CNY 自动匹配额度）、提现到绑定银行账户，全程 API 完成。</p></div>
-        <div class="sol-card"><h4>🔗 扩展能力 · 行内即时调拨</h4><p>如需使用 On/Off Ramp、承兑等更多产品能力，资金可通过行内转账即时调拨，无需出金再入金，高效利用每一分资金。</p></div>
+        <div class="sol-card"><h4>🔗 扩展能力 · 行内即时调拨</h4><p>如需使用 OnRamp（法币→数币）等更多产品能力，资金可通过行内转账即时调拨到 B 侧，无需出金再入金，高效利用每一分资金。OffRamp 一期暂不开放。</p></div>
       </div>
       <div class="callout" style="margin-top:14px"><span class="ico">🔐</span><div><strong>资金安全</strong>：资金全程在持牌服务商体系内流转。合规/风控/KYC 由持牌服务商执行，对您完全透明。</div></div>
     </div>
@@ -600,6 +601,57 @@
   <section class="slide">
     <div class="slide-head">
       <span class="mark">07</span>
+      <h2>账户结构与角色</h2>
+      <span class="subtitle">主子账户体系 · A/B 双 SP 架构</span>
+    </div>
+    <div class="slide-body">
+      <div class="cols-2">
+        <div class="col">
+          <h3>A 侧 — 法币 SP 账户体系</h3>
+          <div class="arch-box" style="margin-bottom:10px">
+            <div style="font-size:12px;color:var(--ink-500);line-height:1.8">
+              <strong style="color:var(--ink)">PF 租户（如 WB）</strong><br/>
+              ├─ PF 主账户（VA + 余额账户）<br/>
+              │  ├─ VA 账户 — 接收收单行结算款<br/>
+              │  │   方式①：收单行直接结算到 VA<br/>
+              │  │   方式②：收单行 → PF 银行账户 → 同名充值到 VA<br/>
+              │  └─ 余额账户 — A2A 转出给商户<br/>
+              ├─ 商户 A（子账户）— 余额账户<br/>
+              ├─ 商户 B（子账户）— 余额账户<br/>
+              └─ 商户 N（子账户）— 余额账户
+            </div>
+          </div>
+          <div class="callout"><span class="ico">🔗</span><div><strong>主子关系</strong>：PF 主账户持有 VA 和余额，负责接收收单行结算款（两种结算方式）；子账户接收 PF 的 A2A 转账，资金归商户自主管理。</div></div>
+          <div class="callout" style="margin-top:8px"><span class="ico">💡</span><div><strong>为何选择 WB 而非 Bonbillhk</strong>：Bonbillhk 仅提供法币业务，没有数币业务；WB 的客户有数币需求，且 WB 需要通过分佣模式获取收益。</div></div>
+        </div>
+        <div class="col">
+          <h3>B 侧 — 承兑 SP 与角色关系</h3>
+          <div class="arch-box" style="margin-bottom:10px">
+            <div style="font-size:12px;color:var(--ink-500);line-height:1.8">
+              <strong style="color:var(--ink)">B（承兑 SP）</strong> — OnRamp：A 法币 → B 数币<br/>
+              ├─ 商户 A — 数币钱包（USDT）<br/>
+              └─ 商户 B — 数币钱包（USDT）<br/>
+              <em>OffRamp（数币→法币）一期暂不开放</em><br/><br/>
+              <strong style="color:var(--ink)">五方角色</strong><br/>
+              ① 收单 PF — 结算发起方<br/>
+              ② 商户 — 结算接收方<br/>
+              ③ A — 法币 SP（VA/A2A/换汇）<br/>
+              ④ B — 承兑 SP（OnRamp，法币→数币）<br/>
+              ⑤ EX — 技术编排层
+            </div>
+          </div>
+          <div class="callout"><span class="ico">⚡</span><div><strong>跨 SP 协同</strong>：A 法币 ↔ B 承兑通过「同名提现/充值」完成，资金先收后做，禁止垫资。</div></div>
+          <div class="callout" style="margin-top:8px"><span class="ico">💱</span><div><strong>汇率机制</strong>：A/B SP 提供批发汇率作为基准，租户（PF）在此基础上加价报价给商户，差价归租户。</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="brand-bar"><span class="brand-logo"><span class="xicon"></span>EurewaX</span><span class="page-num"></span></div>
+  </section>
+
+  <!-- Slide 8: 核心业务流程 -->
+  <section class="slide">
+    <div class="slide-head">
+      <span class="mark">08</span>
       <h2>核心业务流程</h2>
       <span class="subtitle">端到端：入网 → 收款 → 结算 → 下发</span>
     </div>
@@ -607,51 +659,149 @@
       <ol class="flow-steps">
         <li><strong>PF 入网（KYB）</strong> — PF 向 EurewaX 提交 KYB 材料 → 审核通过 → 开立 PF 主 VA + 开通产品</li>
         <li><strong>商户批量入网</strong> — PF 通过 API 批量推送商户 → KYC 审核 → 为商户开立独立账户</li>
-        <li><strong>收单行结算 → PF VA</strong> — PF 将 VA 提供给收单行 → 收单行按 T+3 打款 → PF VA 余额增加 → Webhook 通知</li>
+        <li><strong>收单行结算 → PF</strong> — 方式①：收单行直接打款到 PF VA；方式②：收单行打到 PF 银行账户 → PF 同名充值到 VA → Webhook 通知到账</li>
         <li><strong>PF 结算给商户（A2A）</strong> — PF 通过 API 提交批量结算指令 → A2A 即时完成 → 商户余额增加 → Webhook 通知</li>
         <li><strong>商户自助操作</strong> — 商户在余额中选择：换汇 / 结汇 / 提现到银行账户，全程 API 完成</li>
-        <li><strong>扩展能力调拨（可选）</strong> — 如需 On/Off Ramp 等更多能力，资金可通过行内转账即时调拨，高效利用</li>
+        <li><strong>扩展能力调拨（可选）</strong> — 如需 OnRamp（法币→数币），资金可通过同名提现/充值到 B 侧执行。OffRamp 一期暂不开放。</li>
       </ol>
       <div class="callout" style="margin-top:12px"><span class="ico">💡</span><div>VA 是持牌服务商开立的真实银行账户，收单行直接打款到该 VA。全程资金在持牌服务商体系内流转。</div></div>
     </div>
     <div class="brand-bar"><span class="brand-logo"><span class="xicon"></span>EurewaX</span><span class="page-num"></span></div>
   </section>
 
-  <!-- Slide 10: 价值对比 & 集成规划 -->
+  <!-- Slide 9: 关键业务规则 & WB 特殊需求 -->
   <section class="slide">
     <div class="slide-head">
-      <span class="mark">08</span>
+      <span class="mark">09</span>
+      <h2>关键业务规则 <span class="dash">&</span> WB 特殊需求</h2>
+      <span class="subtitle">主子账户 · A2A 结算 · 换汇定价 · 自有结汇通道</span>
+    </div>
+    <div class="slide-body">
+      <div class="cols-2">
+        <div class="col">
+          <h3>关键业务规则</h3>
+          <table class="tbl" style="margin-bottom:10px">
+            <tr><th>规则</th><th>说明</th></tr>
+            <tr><td><strong>主子关系</strong></td><td>PF 主账户自动创建；推送商户入网时，子账户自动挂到 PF 主账户下</td></tr>
+            <tr><td><strong>A2A 方向</strong></td><td>只能从 PF 主账户 → 商户子账户单向转入（结算方向）</td></tr>
+            <tr><td><strong>到账时效</strong></td><td>同 SP 体内 A2A，即时到账（秒级），零手续费</td></tr>
+            <tr><td><strong>结算触发</strong></td><td>PF 主动发起，支持 API 批量或文件上传（CSV/Excel）</td></tr>
+            <tr><td><strong>换汇定价</strong></td><td>租户（PF）可自行定价，EX 提供灵活计费配置能力</td></tr>
+            <tr><td><strong>承兑原则</strong></td><td>先收后做，B 侧法币到账后才执行 OnRamp，禁止垫资</td></tr>
+          </table>
+        </div>
+        <div class="col">
+          <h3>WB 特殊需求：自有结汇通道</h3>
+          <div class="callout" style="margin-bottom:12px"><span class="ico">💡</span><div>选择 WB 而非 Bonbillhk 的原因：Bonbillhk 仅提供法币业务，没有数币业务；WB 的客户有数币需求，且 WB 需要通过分佣模式获取收益。</div></div>
+          <div class="sol-grid">
+            <div class="sol-card"><h4>🚀 短期方案</h4><p>WB 将自有结汇通道以 API 方式接入 A 平台。通过路由配置，WB 旗下商户结汇请求自动路由到 WB 自有通道，非 WB 商户仍走平台默认通道。</p></div>
+            <div class="sol-card"><h4>🏗️ 长期方案</h4><p>WB 以「结汇 SP」身份入驻 EX 平台，不仅服务自有商户，还可赋能平台上其他租户。WB 结汇能力产品化，成为 EX 基础设施服务。</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="brand-bar"><span class="brand-logo"><span class="xicon"></span>EurewaX</span><span class="page-num"></span></div>
+  </section>
+
+  <!-- Slide 10: 计费返点 & 风险管控 -->
+  <section class="slide">
+    <div class="slide-head">
+      <span class="mark">10</span>
+      <h2>计费返点 <span class="dash">&</span> 风险管控</h2>
+      <span class="subtitle">租户定价 · 承兑返点 · 合规与资金风险</span>
+    </div>
+    <div class="slide-body">
+      <div class="cols-2">
+        <div class="col">
+          <h3>计费与返点分佣</h3>
+          <div class="feature"><div class="feature-icon">💱</div><div class="feature-body"><div class="feature-title">换汇/结汇计费</div><div class="feature-desc">A/B SP 提供批发汇率作为基准，租户（PF）在此基础上加价报价给商户，差价归 PF。</div></div></div>
+          <div class="feature"><div class="feature-icon">🔄</div><div class="feature-body"><div class="feature-title">承兑业务返点（B 侧）</div><div class="feature-desc">商户在 B 做 OnRamp 产生的手续费，由 B（承兑 SP）按配置比例直接返点给 PF 租户。如 B 收 1%，其中 30% 直接返点给 WB。OffRamp 一期暂不开放。</div></div></div>
+          <div class="feature"><div class="feature-icon">📋</div><div class="feature-body"><div class="feature-title">A2A 结算计费</div><div class="feature-desc">一期暂不启用，零手续费促进业务落地；二期支持 PF 自主定价，平台提供计费引擎。</div></div></div>
+        </div>
+        <div class="col">
+          <h3>风险与注意事项</h3>
+          <div class="feature"><div class="feature-icon">🛡️</div><div class="feature-body"><div class="feature-title">合规风险</div><div class="feature-desc">收单行需验证 VA 持有人与 PF 主体一致；多层代开户下 PF 做第一层审核 + A 做最终审核。</div></div></div>
+          <div class="feature"><div class="feature-icon">⚙️</div><div class="feature-body"><div class="feature-title">运营风险</div><div class="feature-desc">结算记录表支持预审核模式（先预览再执行）；建立定期对账机制，商户新增/注销实时同步。</div></div></div>
+          <div class="feature"><div class="feature-icon">🔒</div><div class="feature-body"><div class="feature-title">资金风险</div><div class="feature-desc">严格先收后结，禁止垫资；A2A 即时完成无法撤回，大额需二次验证；换汇/承兑支持锁汇模式。</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="brand-bar"><span class="brand-logo"><span class="xicon"></span>EurewaX</span><span class="page-num"></span></div>
+  </section>
+
+  <!-- Slide 11: 价值对比 & 集成规划 -->
+  <section class="slide">
+    <div class="slide-head">
+      <span class="mark">11</span>
       <h2>价值对比 <span class="dash">&</span> 集成规划</h2>
-      <span class="subtitle">32 天内完成全流程接入</span>
+      <span class="subtitle">34 天内完成全流程接入</span>
     </div>
     <div class="slide-body">
       <table class="tbl">
         <tr><th>维度</th><th>现状（PF 自行结算）</th><th>接入 EurewaX 后</th><th>提升</th></tr>
         <tr><td><strong>结算成本</strong></td><td>SWIFT $25+/笔</td><td>A2A 转账 $0</td><td><strong style="color:var(--sky)">降低 100%</strong></td></tr>
         <tr><td><strong>到账时效</strong></td><td>T+4~5（收单行+SWIFT）</td><td>T+3 + 即时（A2A）= <strong>T+3</strong></td><td><strong style="color:var(--sky)">即时结算</strong></td></tr>
-        <tr><td><strong>换汇成本</strong></td><td>中间行加点 0.5-1.5%</td><td>批发汇率 +0.1-0.3%</td><td><strong style="color:var(--sky)">降低 70%</strong></td></tr>
+        <tr><td><strong>换汇成本</strong></td><td>中间行加点 0.5-1.5%</td><td>SP 批发汇率，租户可加价报价</td><td><strong style="color:var(--sky)">降低 70%</strong></td></tr>
         <tr><td><strong>商户操作</strong></td><td>每笔上传还原订单</td><td>自动匹配结汇额度</td><td><strong style="color:var(--sky)">零操作</strong></td></tr>
         <tr><td><strong>入网效率</strong></td><td>人工逐个开户</td><td>API 批量入网</td><td><strong style="color:var(--sky)">提升 10x</strong></td></tr>
         <tr><td><strong>账户体系</strong></td><td>无（逐笔打款）</td><td>完整账户 + 余额 + 流水</td><td><strong style="color:var(--sky)">从 0 到 1</strong></td></tr>
       </table>
 
-      <h3 style="color:var(--ink); font-size:14px; margin:20px 0 10px; padding-left:10px; border-left:3px solid var(--sky)">集成时间规划（32 天内完成）</h3>
+      <h3 style="color:var(--ink); font-size:14px; margin:20px 0 10px; padding-left:10px; border-left:3px solid var(--sky)">集成时间规划（34 天内完成）</h3>
       <table class="tbl">
         <tr><th>阶段</th><th>内容</th><th>预计耗时</th><th>累计</th></tr>
         <tr><td><strong>Phase 0</strong></td><td>Sandbox 开通、密钥配置、签名验签联调</td><td>1-2 天</td><td>2 天</td></tr>
-        <tr><td><strong>Phase 1</strong></td><td>PF KYB + VA 开立 + 产品开通</td><td>3-5 天</td><td>7 天</td></tr>
-        <tr><td><strong>Phase 2</strong></td><td>商户入网 API + A2A 结算 + 换汇/结汇/提现</td><td>10-15 天</td><td>22 天</td></tr>
-        <tr><td><strong>Phase 3</strong></td><td>端到端联调 + 异常场景测试</td><td>5-7 天</td><td>29 天</td></tr>
-        <tr><td><strong>Phase 4</strong></td><td>生产环境切换、监控配置</td><td>2-3 天</td><td>32 天</td></tr>
+        <tr><td><strong>Phase 1</strong></td><td>PF KYB + VA 开立 + 主子账户体系建立</td><td>3-5 天</td><td>7 天</td></tr>
+        <tr><td><strong>Phase 2</strong></td><td>商户批量入网 API + A2A 结算联调</td><td>5-7 天</td><td>14 天</td></tr>
+        <tr><td><strong>Phase 3</strong></td><td>换汇/结汇接入联调（可选）</td><td>3-5 天</td><td>19 天</td></tr>
+        <tr><td><strong>Phase 4</strong></td><td>承兑链路接入联调（可选，B 侧）</td><td>5-7 天</td><td>26 天</td></tr>
+        <tr><td><strong>Phase 5</strong></td><td>端到端测试 + 异常场景 + 小额验证</td><td>3-5 天</td><td>31 天</td></tr>
+        <tr><td><strong>Phase 6</strong></td><td>正式上线 + 监控配置</td><td>2-3 天</td><td>34 天</td></tr>
       </table>
     </div>
     <div class="brand-bar"><span class="brand-logo"><span class="xicon"></span>EurewaX</span><span class="page-num"></span></div>
   </section>
 
-  <!-- Slide 11: 报价 & 联系 -->
+  <!-- Slide 12: 待办清单 -->
   <section class="slide">
     <div class="slide-head">
-      <span class="mark">09</span>
+      <span class="mark">12</span>
+      <h2>待办清单</h2>
+      <span class="subtitle">现有能力 · 运营流程 · 鲲鹏 SP 对接</span>
+    </div>
+    <div class="slide-body">
+      <div class="cols-2">
+        <div class="col">
+          <h3>现有能力与需增加的能力/流程</h3>
+          <table class="tbl" style="margin-bottom:10px;font-size:11.5px">
+            <tr><th style="width:22%">类别</th><th style="width:40%">待确认/需增加</th><th style="width:18%">优先级</th></tr>
+            <tr><td><strong>主子账户</strong></td><td>确认 A 侧主子账户产品是否已开通；对接开户 API</td><td>高</td></tr>
+            <tr><td><strong>VA 收款</strong></td><td>收单行 VA 验证流程；同名充值接口（方式②必需）</td><td>高</td></tr>
+            <tr><td><strong>A2A 转账</strong></td><td>批量 A2A 接口；结算记录表上传导入</td><td>高</td></tr>
+            <tr><td><strong>换汇/结汇</strong></td><td>租户加价报价计费配置；WB 自有通道路由</td><td>中</td></tr>
+            <tr><td><strong>OnRamp</strong></td><td>同名提现/充值到 B 的接口串联；商户数币钱包开通</td><td>中</td></tr>
+            <tr><td><strong>返点分佣</strong></td><td>承兑返点比例配置界面；租户返点结算周期配置</td><td>低</td></tr>
+            <tr><td><strong>收单结算收费</strong></td><td>本期暂不支持</td><td>—</td></tr>
+            <tr><td><strong>租户加价/结汇收费</strong></td><td>租户对客户加 markup，结汇收费，走老 EX 是否能支持？待确认</td><td>中</td></tr>
+          </table>
+        </div>
+        <div class="col">
+          <h3>整体运营流程</h3>
+          <div class="feature"><div class="feature-icon">⚙️</div><div class="feature-body"><div class="feature-title">费率配置流程</div><div class="feature-desc">法币业务在老 EX（A）：A 侧 SP 批发汇率 → EX 配置点差 → 租户加价 → 商户报价。<br/>数币业务在新 EX（B）：B 侧承兑汇率 → 租户加价 → 商户报价；同时配置返点比例。</div></div></div>
+          <div class="feature"><div class="feature-icon">📝</div><div class="feature-body"><div class="feature-title">商户入网运营流程</div><div class="feature-desc">PF 收集 KYB → 调用 EX API 推送 → A 侧 KYC 审核 → 子账户开立。审核状态通过 Webhook 推送。</div></div></div>
+          <div class="feature"><div class="feature-icon">🔄</div><div class="feature-body"><div class="feature-title">结算运营流程</div><div class="feature-desc">PF 通过 API 或上传结算表发起 A2A → 系统执行 → 通知商户。A 侧提供主子账户流水供 PF 对账。</div></div></div>
+          <h3 style="margin-top:12px">鲲鹏 SP 对接</h3>
+          <div class="callout" style="margin-top:6px"><span class="ico">📌</span><div>① 鲲鹏角色：法币 SP（A2）/ 数币 SP（B2）/ 纯代理 TP？<br/>② 多 SP 路由：同一 PF 商户是否可开在鲲鹏？跨 SP A2A 是否支持？<br/>③ 优先级：一期先跑通单 SP（A 法币 + B 承兑）闭环，二期再评估鲲鹏接入。</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="brand-bar"><span class="brand-logo"><span class="xicon"></span>EurewaX</span><span class="page-num"></span></div>
+  </section>
+
+  <!-- Slide 13: 报价 & 联系 -->
+  <section class="slide">
+    <div class="slide-head">
+      <span class="mark">13</span>
       <h2>报价 <span class="dash">·</span> 联系我们</h2>
       <span class="subtitle">商务合作价以合同为准</span>
     </div>

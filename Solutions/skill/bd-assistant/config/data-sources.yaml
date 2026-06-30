@@ -1,0 +1,381 @@
+# ============================================================
+# FIBD 智能助手 — 数据源配置文件
+# 定义各采集源的认证方式、频率限制、采集策略
+# ============================================================
+
+# ---- 全局配置 ----
+global:
+  default_language: ["en", "zh"]
+  default_timeout_seconds: 30
+  retry_max: 3
+  retry_delay_seconds: 5
+  proxy_enabled: true
+  user_agent: "FIBD-MarketIntel/1.0 (Business Development Research)"
+
+# ---- 数据源定义 ----
+sources:
+
+  # ========== 新闻类（无需登录）==========
+  
+  newsapi:
+    enabled: true
+    type: rest_api
+    base_url: "https://newsapi.org/v2"
+    auth:
+      method: api_key_header
+      header_name: "X-Api-Key"
+      env_var: NEWSAPI_KEY
+    endpoints:
+      everything:
+        path: /everything
+        method: GET
+        params:
+          q: "{keywords}"
+          language: "{language}"
+          from: "{date_from}"
+          sortBy: relevancy
+          pageSize: 50
+      top_headlines:
+        path: /top-headlines
+        method: GET
+        params:
+          category: business
+          country: "{country_code}"
+    rate_limit:
+      requests_per_day: 100        # Free tier
+      requests_per_second: 1
+    schedule:
+      cron: "0 8 * * 1-5"         # 工作日 08:00 UTC
+    output_mapping:
+      title: "$.articles[*].title"
+      description: "$.articles[*].description"
+      url: "$.articles[*].url"
+      published_at: "$.articles[*].publishedAt"
+      source_name: "$.articles[*].source.name"
+
+  serpapi_google_news:
+    enabled: true
+    type: rest_api
+    base_url: "https://serpapi.com"
+    auth:
+      method: query_param
+      param_name: "api_key"
+      env_var: SERPAPI_KEY
+    endpoints:
+      search:
+        path: /search.json
+        method: GET
+        params:
+          engine: google_news
+          q: "{keywords}"
+          gl: "{country}"
+          hl: "{language}"
+    rate_limit:
+      requests_per_month: 100      # Free tier
+      requests_per_second: 1
+    schedule:
+      cron: "0 8 * * 1-5"
+
+  bing_news:
+    enabled: false                  # 按需开启
+    type: rest_api
+    base_url: "https://api.bing.microsoft.com/v7.0"
+    auth:
+      method: api_key_header
+      header_name: "Ocp-Apim-Subscription-Key"
+      env_var: BING_NEWS_API_KEY
+    endpoints:
+      search:
+        path: /news/search
+        method: GET
+        params:
+          q: "{keywords}"
+          mkt: "en-US"
+          count: 50
+    rate_limit:
+      requests_per_month: 1000
+      requests_per_second: 3
+
+  # ========== 行业资讯（RSS / 爬虫）==========
+
+  rss_feeds:
+    enabled: true
+    type: rss
+    auth:
+      method: none
+    feeds:
+      - name: Finextra
+        url: "https://www.finextra.com/rss/headlines.aspx"
+        category: fintech
+      - name: PaymentsJournal
+        url: "https://www.paymentsjournal.com/feed/"
+        category: payments
+      - name: CoinDesk
+        url: "https://www.coindesk.com/arc/outboundfeeds/rss/"
+        category: crypto
+      - name: TechCrunch Fintech
+        url: "https://techcrunch.com/category/fintech/feed/"
+        category: fintech
+      - name: The Paypers
+        url: "https://thepaypers.com/rss"
+        category: payments
+    rate_limit:
+      requests_per_hour: 60
+      request_interval_seconds: 10
+    schedule:
+      cron: "0 */4 * * *"          # 每4小时
+
+  web_scraper:
+    enabled: true
+    type: scraper
+    auth:
+      method: none                  # 公开页面
+    targets:
+      - name: "Target Company Press"
+        url_pattern: "https://{company_domain}/press"
+        selectors:
+          title: "h2.post-title, h3.news-title"
+          date: "time, .date"
+          link: "a.post-link"
+      - name: "Target Company Blog"
+        url_pattern: "https://{company_domain}/blog"
+        selectors:
+          title: "h2, h3.entry-title"
+          date: "time"
+          link: "a"
+    rate_limit:
+      requests_per_domain_per_hour: 30
+      request_interval_seconds: 5
+    proxy_required: true
+    respect_robots_txt: true
+
+  # ========== 社交媒体（需要认证）==========
+
+  twitter:
+    enabled: true
+    type: rest_api
+    base_url: "https://api.twitter.com/2"
+    auth:
+      method: bearer_token
+      env_var: TWITTER_BEARER_TOKEN
+    endpoints:
+      search_recent:
+        path: /tweets/search/recent
+        method: GET
+        params:
+          query: "{keywords} -is:retweet lang:en"
+          max_results: 50
+          "tweet.fields": "created_at,author_id,public_metrics,entities"
+          "user.fields": "name,username,description,verified"
+          expansions: "author_id"
+      user_tweets:
+        path: "/users/{user_id}/tweets"
+        method: GET
+        params:
+          max_results: 20
+          "tweet.fields": "created_at,public_metrics"
+    rate_limit:
+      tier: basic                   # basic=$100/mo, pro=$5000/mo
+      requests_per_15min: 60        # Basic tier
+      tweets_per_month: 10000       # Basic tier
+    schedule:
+      cron: "0 8,14 * * 1-5"       # 每日两次
+    keywords_config:
+      max_query_length: 512
+      operators_supported: ["OR", "AND", "-", "from:", "lang:", "#"]
+
+  linkedin:
+    enabled: true
+    type: third_party_api           # 通过 Proxycurl，不直接登录
+    provider: proxycurl
+    base_url: "https://nubela.co/proxycurl/api"
+    auth:
+      method: bearer_token
+      env_var: PROXYCURL_API_KEY
+    endpoints:
+      company_profile:
+        path: /linkedin/company
+        method: GET
+        params:
+          url: "{linkedin_company_url}"
+          use_cache: "if-present"
+        cost: 1                     # 1 credit per call
+      company_employees:
+        path: /linkedin/company/employees
+        method: GET
+        params:
+          url: "{linkedin_company_url}"
+          role_search: "{target_role}"
+          page_size: 10
+        cost: 3                     # 3 credits per call
+      person_profile:
+        path: /linkedin/person
+        method: GET
+        params:
+          url: "{linkedin_profile_url}"
+        cost: 1
+      person_email:
+        path: /linkedin/person/email
+        method: GET
+        params:
+          linkedin_profile_url: "{linkedin_profile_url}"
+        cost: 3
+    rate_limit:
+      requests_per_minute: 30
+      monthly_credits: 500          # $49/mo plan
+    schedule:
+      trigger: on_demand             # 不定时采集，按需调用
+    fallback:
+      provider: phantombuster
+      note: "仅在 Proxycurl 额度用尽时使用"
+
+  linkedin_official:
+    enabled: false                   # 需企业申请通过后开启
+    type: rest_api
+    base_url: "https://api.linkedin.com/v2"
+    auth:
+      method: oauth2
+      token_url: "https://www.linkedin.com/oauth/v2/accessToken"
+      env_vars:
+        client_id: LINKEDIN_CLIENT_ID
+        client_secret: LINKEDIN_CLIENT_SECRET
+        access_token: LINKEDIN_ACCESS_TOKEN
+        refresh_token: LINKEDIN_REFRESH_TOKEN
+      token_refresh:
+        enabled: true
+        refresh_before_expiry_days: 7
+        expiry_days: 60
+    endpoints:
+      organization:
+        path: "/organizations/{org_id}"
+        method: GET
+      organization_posts:
+        path: "/posts"
+        method: GET
+        params:
+          author: "urn:li:organization:{org_id}"
+          count: 20
+    rate_limit:
+      requests_per_day: 1000
+    scopes_required:
+      - "r_organization_social"
+      - "r_organization_admin"
+
+  # ========== 邮箱查找与验证 ==========
+
+  hunter:
+    enabled: true
+    type: rest_api
+    base_url: "https://api.hunter.io/v2"
+    auth:
+      method: query_param
+      param_name: "api_key"
+      env_var: HUNTER_API_KEY
+    endpoints:
+      domain_search:
+        path: /domain-search
+        method: GET
+        params:
+          domain: "{company_domain}"
+          type: "personal"
+          limit: 10
+      email_finder:
+        path: /email-finder
+        method: GET
+        params:
+          domain: "{company_domain}"
+          first_name: "{first_name}"
+          last_name: "{last_name}"
+      email_verifier:
+        path: /email-verifier
+        method: GET
+        params:
+          email: "{email}"
+    rate_limit:
+      searches_per_month: 500       # Starter plan
+      verifications_per_month: 1000
+    schedule:
+      trigger: on_demand
+
+  zerobounce:
+    enabled: true
+    type: rest_api
+    base_url: "https://api.zerobounce.net/v2"
+    auth:
+      method: query_param
+      param_name: "api_key"
+      env_var: ZEROBOUNCE_API_KEY
+    endpoints:
+      validate:
+        path: /validate
+        method: GET
+        params:
+          email: "{email}"
+      batch_validate:
+        path: /sendfile
+        method: POST
+        content_type: multipart/form-data
+    rate_limit:
+      requests_per_second: 10
+    schedule:
+      trigger: on_demand
+
+# ---- 监控告警配置 ----
+monitoring:
+  alert_channels:
+    - type: feishu_webhook
+      env_var: FEISHU_BOT_WEBHOOK_DAILY
+  
+  alerts:
+    - name: api_quota_warning
+      condition: "usage > 80% of monthly_limit"
+      severity: warning
+    
+    - name: api_quota_critical
+      condition: "usage > 95% of monthly_limit"
+      severity: critical
+    
+    - name: auth_token_expiring
+      condition: "token_expiry < 7 days"
+      severity: warning
+    
+    - name: source_unavailable
+      condition: "consecutive_failures > 3"
+      severity: critical
+
+# ---- 采集目标公司列表（可动态更新）----
+target_companies:
+  watch_list:
+    - name: "Stripe"
+      linkedin: "https://www.linkedin.com/company/stripe"
+      twitter: "@stripe"
+      domain: "stripe.com"
+      priority: high
+    
+    - name: "Wise"
+      linkedin: "https://www.linkedin.com/company/wiseaccount"
+      twitter: "@wise"
+      domain: "wise.com"
+      priority: high
+    
+    - name: "Airwallex"
+      linkedin: "https://www.linkedin.com/company/airwallex"
+      twitter: "@Airwallex"
+      domain: "airwallex.com"
+      priority: medium
+
+    # ... 更多目标公司通过 DB 动态管理
+  
+  discovery_keywords:
+    industries:
+      - "payment service provider"
+      - "money transfer operator"
+      - "crypto exchange"
+      - "neobank"
+      - "embedded finance"
+    events:
+      - "new market launch"
+      - "partnership announcement"
+      - "funding round"
+      - "license application"
+      - "API platform launch"

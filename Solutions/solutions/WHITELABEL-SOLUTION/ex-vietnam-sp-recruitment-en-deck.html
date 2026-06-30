@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EurewaX — Vietnam Service Provider Recruitment</title>
+<style>
+:root { --ink:#0a1840; --ink-700:#1a2a54; --ink-500:#4a5470; --ink-400:#6b7590; --ink-300:#8a95b0; --ink-200:#c3ccde; --ink-100:#e1e6f0; --ink-50:#eef1f8; --ink-20:#f6f8fd; --sky:#2563eb; --sky-600:#1d4ed8; --sky-100:#dbeafe; --sky-50:#eff6ff; --surface:#ffffff; --vn-red:#da251d; --vn-yellow:#ffcd00; }
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;background:var(--ink-20);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
+.deck{width:100vw;height:100vh;position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;display:none;background:radial-gradient(ellipse at 85% 8%,rgba(37,99,235,.06) 0%,transparent 55%),radial-gradient(ellipse at 12% 95%,rgba(37,99,235,.05) 0%,transparent 50%),linear-gradient(180deg,#fff 0%,var(--ink-20) 100%);padding:36px 64px 52px;animation:fadeIn .45s ease;overflow:hidden}
+.slide.active{display:flex;flex-direction:column}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.slide::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(10,24,64,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(10,24,64,.025) 1px,transparent 1px);background-size:48px 48px;pointer-events:none}
+.slide-head{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--ink-100);z-index:1}
+.slide-head .mark{width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;border:1.5px solid var(--sky);border-radius:7px;color:var(--sky);font-weight:800;font-size:14px;background:var(--sky-50)}
+.slide-head h2{font-size:26px;font-weight:800;color:var(--ink);letter-spacing:.3px}
+.slide-head h2 .dash{color:var(--sky);margin:0 10px;font-weight:400}
+.slide-head .subtitle{color:var(--ink-400);font-size:13.5px;margin-left:auto}
+.slide-body{flex:1;z-index:1;overflow-y:auto;overflow-x:hidden;padding-bottom:24px}
+.slide-body::-webkit-scrollbar{width:4px}
+.slide-body::-webkit-scrollbar-thumb{background:var(--ink-100);border-radius:4px}
+.brand-bar{position:absolute;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:10px 64px 14px;z-index:2;background:linear-gradient(to bottom,transparent,rgba(255,255,255,.85) 30%,#fff 60%)}
+.brand-logo{display:inline-flex;align-items:center;gap:6px;color:var(--ink-400);font-weight:700;font-size:13px;letter-spacing:.4px}
+.brand-logo .xicon{display:inline-block;width:18px;height:18px;position:relative}
+.brand-logo .xicon::before,.brand-logo .xicon::after{content:"";position:absolute;inset:0;background:var(--sky);border-radius:2px}
+.brand-logo .xicon::before{transform:rotate(45deg);width:3px;left:7.5px}
+.brand-logo .xicon::after{transform:rotate(-45deg);width:3px;left:7.5px}
+.page-num{color:var(--ink-400);font-size:12px;font-variant-numeric:tabular-nums}
+.nav{position:fixed;right:20px;bottom:20px;display:flex;gap:8px;z-index:10}
+.nav button{width:36px;height:36px;border-radius:50%;border:1px solid var(--ink-100);background:var(--surface);color:var(--ink);cursor:pointer;font-size:16px;box-shadow:0 2px 8px rgba(10,24,64,.08);transition:all .2s}
+.nav button:hover{background:var(--sky);border-color:var(--sky);color:#fff}
+.nav button:disabled{opacity:.3;cursor:not-allowed}
+.slide.cover,.slide.closing{background:radial-gradient(ellipse at 75% 20%,rgba(37,99,235,.22) 0%,transparent 55%),radial-gradient(ellipse at 20% 90%,rgba(37,99,235,.14) 0%,transparent 50%),linear-gradient(135deg,var(--ink) 0%,#142766 55%,#1e3a8a 100%)}
+.slide.cover::before,.slide.closing::before{background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px)}
+.slide.cover .brand-logo,.slide.closing .brand-logo{color:rgba(255,255,255,.7)}
+.slide.cover .brand-logo .xicon::before,.slide.cover .brand-logo .xicon::after,.slide.closing .brand-logo .xicon::before,.slide.closing .brand-logo .xicon::after{background:#fff}
+.slide.cover .page-num,.slide.closing .page-num{color:rgba(255,255,255,.55)}
+.slide.cover{padding:0}
+.cover-content{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 64px}
+.cover-logo{display:flex;align-items:center;gap:12px;font-size:28px;font-weight:800;color:#fff;margin-bottom:24px}
+.cover-logo .x-big{width:40px;height:40px;position:relative}
+.cover-logo .x-big::before,.cover-logo .x-big::after{content:"";position:absolute;inset:0;background:#fff;border-radius:3px}
+.cover-logo .x-big::before{transform:rotate(45deg);width:5px;left:17.5px}
+.cover-logo .x-big::after{transform:rotate(-45deg);width:5px;left:17.5px}
+.cover h1{font-size:54px;font-weight:800;letter-spacing:2px;color:#fff;margin-bottom:18px;line-height:1.15}
+.cover .cover-sub{font-size:20px;color:rgba(255,255,255,.78);margin-bottom:36px;letter-spacing:1px}
+.cover-flag{display:inline-flex;align-items:center;gap:12px;margin-bottom:32px;padding:10px 22px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.3);border-radius:30px;color:#fff;font-size:14px;font-weight:600;letter-spacing:.6px}
+.cover-flag .vn-flag{width:28px;height:20px;background:var(--vn-red);border-radius:3px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;color:var(--vn-yellow)}
+.cover-tags{display:flex;gap:14px;margin-bottom:40px}
+.cover-tag{padding:7px 18px;border:1px solid rgba(255,255,255,.45);border-radius:28px;font-size:13px;color:#fff;background:rgba(255,255,255,.08)}
+.cover-meta{color:rgba(255,255,255,.65);font-size:13px;display:flex;gap:24px;align-items:center}
+.cover-meta strong{color:rgba(255,255,255,.92)}
+.toc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.toc-item{background:var(--surface);border:1px solid var(--ink-100);border-left:3px solid var(--sky);border-radius:8px;padding:14px 18px;display:flex;align-items:center;gap:16px;transition:all .2s;cursor:pointer;box-shadow:0 1px 4px rgba(10,24,64,.04)}
+.toc-item:hover{background:var(--sky-50);transform:translateX(3px);box-shadow:0 4px 14px rgba(37,99,235,.1)}
+.toc-item .num{font-size:26px;font-weight:800;color:var(--sky);font-variant-numeric:tabular-nums;line-height:1;min-width:44px}
+.toc-item .title{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:3px}
+.toc-item .desc{font-size:12px;color:var(--ink-400)}
+.about-wrap{background:var(--surface);border:1px solid var(--ink-100);border-radius:12px;padding:26px 32px;box-shadow:0 1px 4px rgba(10,24,64,.04)}
+.about-wrap p{color:var(--ink-500);font-size:14px;line-height:1.85;margin-bottom:14px}
+.about-wrap .headline{color:var(--ink);font-weight:700;font-size:15px;margin-bottom:6px}
+.partner-row{display:flex;align-items:center;gap:16px;background:var(--ink-20);border:1px solid var(--ink-100);border-radius:8px;padding:14px 18px;margin-top:10px;font-size:13px}
+.partner-row .label{color:var(--sky);font-weight:700;padding-right:14px;border-right:1px solid var(--ink-100);white-space:nowrap}
+.partner-row .items{color:var(--ink-500);display:flex;gap:14px;flex-wrap:wrap}
+.stack{display:flex;flex-direction:column;gap:8px;max-width:920px;margin:0 auto}
+.stack-layer{display:grid;grid-template-columns:60px 200px 1fr;align-items:center;background:var(--surface);border:1px solid var(--ink-100);border-radius:10px;padding:14px 22px;box-shadow:0 1px 4px rgba(10,24,64,.04);transition:all .2s}
+.stack-layer:hover{transform:translateX(4px);box-shadow:0 4px 14px rgba(37,99,235,.1)}
+.stack-layer .lvl{font-size:22px;font-weight:800;color:var(--sky);font-variant-numeric:tabular-nums}
+.stack-layer .lname{font-size:15px;font-weight:800;color:var(--ink)}
+.stack-layer .ldesc{font-size:12.5px;color:var(--ink-500);line-height:1.6}
+.stack-layer.l1{border-left:4px solid var(--ink)}
+.stack-layer.l2{border-left:4px solid #b91c1c;background:linear-gradient(90deg,rgba(185,28,28,.04),transparent 30%)}
+.stack-layer.l3{border-left:4px solid var(--sky-600)}
+.stack-layer.l4{border-left:4px solid var(--sky)}
+.stack-layer.l5{border-left:4px solid #0891b2}
+.stack-callout{margin-top:16px;padding:12px 18px;background:var(--sky-50);border:1px solid var(--sky-100);border-left:3px solid var(--sky);border-radius:8px;font-size:13px;color:var(--ink-700);line-height:1.65}
+.stack-callout strong{color:var(--ink)}
+.prod-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.prod-card{background:var(--surface);border:1px solid var(--ink-100);border-top:3px solid var(--sky);border-radius:10px;padding:14px 16px;box-shadow:0 1px 4px rgba(10,24,64,.04);transition:all .2s}
+.prod-card:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(37,99,235,.1);border-top-color:var(--sky-600)}
+.prod-card .ico{display:inline-flex;width:36px;height:36px;align-items:center;justify-content:center;background:var(--sky-50);border:1px solid var(--sky-100);border-radius:8px;color:var(--sky);font-size:18px;margin-bottom:8px}
+.prod-card h5{color:var(--ink);font-size:14px;font-weight:800;margin-bottom:4px}
+.prod-card p{color:var(--ink-500);font-size:11.5px;line-height:1.55}
+.prod-note{margin-top:16px;padding:10px 16px;background:var(--sky-50);border-left:3px solid var(--sky);border-radius:6px;color:var(--ink-700);font-size:12.5px;line-height:1.65}
+.prod-note strong{color:var(--ink)}
+.market-diagram{display:flex;flex-direction:column;align-items:center;gap:18px;margin:10px auto 0;max-width:980px}
+.market-node{background:var(--surface);border:1.5px solid var(--ink-100);border-radius:12px;padding:16px 26px;text-align:center;min-width:380px;box-shadow:0 2px 10px rgba(10,24,64,.06);position:relative}
+.market-node.client{border-top:4px solid var(--sky-600)}
+.market-node.platform{border:2px solid var(--sky);background:linear-gradient(135deg,var(--sky-50),#fff)}
+.market-node.sp{border-bottom:4px solid var(--vn-red)}
+.market-node.sp.highlight{border:2px solid var(--vn-red);box-shadow:0 4px 18px rgba(218,37,29,.16)}
+.market-node h4{font-size:16px;font-weight:800;color:var(--ink);margin-bottom:6px}
+.market-node .desc{font-size:12px;color:var(--ink-500);line-height:1.55}
+.market-node .badge{display:inline-block;margin-bottom:6px;padding:3px 12px;background:var(--sky);color:#fff;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.3px}
+.market-node.sp.highlight .badge{background:var(--vn-red)}
+.market-node.platform .badge{background:var(--ink)}
+.market-arrow{width:2px;height:22px;background:linear-gradient(to bottom,var(--sky),var(--ink-200));position:relative}
+.market-arrow::before,.market-arrow::after{content:"";position:absolute;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent}
+.market-arrow::before{top:-1px;border-bottom:6px solid var(--sky)}
+.market-arrow::after{bottom:-1px;border-top:6px solid var(--ink-200)}
+.market-arrow .label{position:absolute;left:calc(100% + 10px);top:50%;transform:translateY(-50%);font-size:11.5px;color:var(--ink-500);white-space:nowrap;background:var(--ink-20);padding:2px 10px;border-radius:10px;border:1px dashed var(--ink-100)}
+.market-note{margin-top:18px;max-width:880px;text-align:center;color:var(--ink-500);font-size:12.5px;line-height:1.7}
+.scene-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.scene-card{background:var(--surface);border:1px solid var(--ink-100);border-top:3px solid var(--vn-red);border-radius:10px;padding:16px 18px;box-shadow:0 1px 4px rgba(10,24,64,.04)}
+.scene-card h5{color:var(--ink);font-size:14px;font-weight:800;margin-bottom:8px;padding-bottom:6px;border-bottom:1px dashed var(--ink-100);display:flex;align-items:center;gap:8px}
+.scene-card h5 .scn-tag{background:var(--vn-red);color:#fff;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:10px}
+.scene-card ul{list-style:none;padding:0}
+.scene-card li{color:var(--ink-500);font-size:12px;line-height:1.65;padding:3px 0 3px 14px;position:relative}
+.scene-card li::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--vn-red);position:absolute;left:2px;top:9px}
+.market-data{margin-top:16px;background:var(--surface);border:1px solid var(--ink-100);border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(10,24,64,.04)}
+.market-data table{width:100%;border-collapse:collapse;font-size:12.5px}
+.market-data th{background:var(--ink);color:#fff;padding:10px 16px;text-align:left;font-size:12px;font-weight:700}
+.market-data td{padding:10px 16px;border-bottom:1px solid var(--ink-100);color:var(--ink-500)}
+.market-data tr:last-child td{border-bottom:none}
+.market-data tr:nth-child(even) td{background:var(--ink-20)}
+.market-data strong{color:var(--ink)}
+.value-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.value-card{background:var(--surface);border:1px solid var(--ink-100);border-radius:10px;padding:14px;text-align:center;box-shadow:0 1px 4px rgba(10,24,64,.04);transition:all .2s;display:flex;flex-direction:column}
+.value-card:hover{transform:translateY(-3px);box-shadow:0 6px 18px rgba(37,99,235,.12);border-color:var(--sky-100)}
+.value-card .v-num{width:32px;height:32px;margin:0 auto 8px;background:var(--sky);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800}
+.value-card .v-ico{font-size:22px;color:var(--sky);margin-bottom:6px}
+.value-card h5{color:var(--ink);font-size:13.5px;font-weight:800;margin-bottom:6px}
+.value-card p{color:var(--ink-500);font-size:11.5px;line-height:1.55;flex:1}
+.returns-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:6px}
+.returns-card{background:var(--surface);border:1px solid var(--ink-100);border-left:3px solid var(--sky);border-radius:10px;padding:16px 20px;box-shadow:0 1px 4px rgba(10,24,64,.04);display:flex;gap:14px}
+.returns-card .ico{width:40px;height:40px;flex-shrink:0;background:var(--sky-50);border:1px solid var(--sky-100);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--sky)}
+.returns-card h5{color:var(--ink);font-size:14.5px;font-weight:800;margin-bottom:5px}
+.returns-card p{color:var(--ink-500);font-size:12.5px;line-height:1.65}
+.scn-wrap{background:var(--surface);border:1px solid var(--ink-100);border-radius:12px;padding:22px 28px;box-shadow:0 1px 4px rgba(10,24,64,.04);max-width:980px;margin:0 auto}
+.scn-lanes{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px}
+.scn-lane{background:var(--ink);color:#fff;text-align:center;padding:10px 8px;border-radius:8px;font-size:12.5px;font-weight:700;line-height:1.35}
+.scn-lane.vn{background:var(--vn-red)}
+.scn-lane small{display:block;font-size:10.5px;color:rgba(255,255,255,.7);font-weight:500;margin-top:2px}
+.scn-flow{display:flex;flex-direction:column;gap:8px}
+.scn-step{display:grid;grid-template-columns:28px 1fr;align-items:center;gap:10px}
+.scn-step .idx{width:26px;height:26px;background:var(--sky);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;font-variant-numeric:tabular-nums}
+.scn-bar{display:grid;grid-template-columns:repeat(4,1fr);align-items:center;min-height:32px;position:relative}
+.scn-line{grid-column:var(--from)/var(--to);height:2px;background:var(--sky);position:relative;margin:0 14px}
+.scn-line.fwd::after{content:"";position:absolute;right:-2px;top:50%;transform:translateY(-50%);border-left:8px solid var(--sky);border-top:5px solid transparent;border-bottom:5px solid transparent}
+.scn-line.back{background:repeating-linear-gradient(to right,var(--sky) 0 6px,transparent 6px 12px)}
+.scn-line.back::before{content:"";position:absolute;left:-2px;top:50%;transform:translateY(-50%);border-right:8px solid var(--sky);border-top:5px solid transparent;border-bottom:5px solid transparent}
+.scn-line.vn{background:var(--vn-red)}
+.scn-line.vn.fwd::after{border-left-color:var(--vn-red)}
+.scn-line.vn.back{background:repeating-linear-gradient(to right,var(--vn-red) 0 6px,transparent 6px 12px)}
+.scn-line.vn.back::before{border-right-color:var(--vn-red)}
+.scn-label{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#fff;border:1px solid var(--ink-100);border-radius:14px;padding:4px 14px;font-size:11.5px;color:var(--ink);font-weight:600;white-space:nowrap;z-index:2;box-shadow:0 1px 3px rgba(10,24,64,.06)}
+.scn-summary{margin-top:16px;padding:10px 16px;background:var(--sky-50);border-left:3px solid var(--sky);border-radius:6px;font-size:12.5px;color:var(--ink-700);line-height:1.7}
+.scn-summary strong{color:var(--ink)}
+.risk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.risk-card{background:var(--surface);border:1px solid var(--ink-100);border-radius:10px;padding:12px 16px;box-shadow:0 1px 4px rgba(10,24,64,.04)}
+.risk-card h5{color:var(--ink);font-size:13.5px;font-weight:800;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.risk-card h5 .dot{width:8px;height:8px;border-radius:50%;background:var(--sky)}
+.risk-card p{color:var(--ink-500);font-size:11.5px;line-height:1.6}
+.risk-flow{margin-top:16px;display:flex;align-items:center;gap:6px;padding:12px 18px;background:var(--surface);border:1px solid var(--ink-100);border-radius:10px}
+.risk-flow .step{flex:1;text-align:center;padding:8px 6px;background:var(--sky-50);border:1px solid var(--sky-100);border-radius:8px;font-size:12px;color:var(--ink);font-weight:700}
+.risk-flow .step small{display:block;font-size:10.5px;color:var(--ink-500);font-weight:500;margin-top:2px}
+.risk-flow .arr{color:var(--sky);font-size:14px;font-weight:700}
+.delivery-grid{margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.delivery-item{background:var(--surface);border:1px solid var(--ink-100);border-top:3px solid var(--sky);border-radius:8px;padding:12px 14px}
+.delivery-item h6{color:var(--ink);font-size:13px;font-weight:800;margin-bottom:4px}
+.delivery-item p{color:var(--ink-500);font-size:11.5px;line-height:1.6}
+table.summary-tbl{width:100%;border-collapse:collapse;font-size:12.5px;background:var(--surface);border:1px solid var(--ink-100);border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(10,24,64,.04)}
+.summary-tbl th{background:var(--ink);color:#fff;text-align:left;padding:11px 16px;font-weight:700}
+.summary-tbl td{padding:10px 16px;border-bottom:1px solid var(--ink-100);color:var(--ink-500);vertical-align:top;line-height:1.6}
+.summary-tbl tr:last-child td{border-bottom:none}
+.summary-tbl tr:nth-child(even) td{background:var(--ink-20)}
+.summary-tbl strong{color:var(--ink)}
+.summary-tbl .lvl-cell{color:var(--sky);font-weight:800;white-space:nowrap}
+.process-timeline{display:flex;align-items:stretch;gap:4px;margin-bottom:18px}
+.process-step{flex:1;background:var(--surface);border:1px solid var(--ink-100);border-top:3px solid var(--sky);border-radius:8px;padding:12px;text-align:center;box-shadow:0 1px 4px rgba(10,24,64,.04)}
+.process-step .idx{width:26px;height:26px;margin:0 auto 6px;background:var(--sky);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800}
+.process-step h6{color:var(--ink);font-size:13px;font-weight:800;margin-bottom:4px}
+.process-step .dur{color:var(--sky);font-size:11px;font-weight:700}
+.process-arr{display:flex;align-items:center;color:var(--sky);font-size:18px;font-weight:700}
+.contact-card{max-width:720px;margin:22px auto 0;background:var(--surface);border:1px solid var(--ink-100);border-top:4px solid var(--sky);border-radius:14px;padding:30px 40px;text-align:center;box-shadow:0 4px 24px rgba(10,24,64,.08)}
+.contact-card .big-ico{font-size:40px;margin-bottom:10px;color:var(--sky)}
+.contact-card h3{font-size:20px;color:var(--ink);font-weight:800;margin-bottom:8px}
+.contact-card p{color:var(--ink-500);font-size:13.5px;line-height:1.75;margin-bottom:14px}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0;text-align:left}
+.contact-grid div{background:var(--ink-20);border:1px solid var(--ink-100);border-radius:6px;padding:10px 14px;font-size:12.5px;color:var(--ink-500)}
+.contact-grid strong{color:var(--ink)}
+.contact-card .note{margin-top:14px;color:var(--ink-400);font-size:12px;font-style:italic}
+.closing-wrap{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.closing-wrap h1{font-size:60px;font-weight:800;letter-spacing:6px;color:#fff;margin-bottom:24px}
+.closing-wrap p{font-size:17px;color:rgba(255,255,255,.78);margin-bottom:36px}
+.closing-contact{display:flex;gap:36px;color:rgba(255,255,255,.78);font-size:14px}
+.closing-contact div strong{color:#fff;display:block;margin-bottom:4px}
+.progress{position:fixed;top:0;left:0;right:0;height:3px;background:var(--ink-100);z-index:20}
+.progress-fill{height:100%;background:var(--sky);width:0%;transition:width .3s ease}
+.export-btn{position:fixed;right:20px;top:20px;z-index:20;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid var(--ink-100);background:var(--surface);color:var(--ink);border-radius:20px;cursor:pointer;font-size:12px;font-weight:700;box-shadow:0 2px 10px rgba(10,24,64,.08);transition:all .2s}
+.export-btn:hover{background:var(--sky);border-color:var(--sky);color:#fff}
+.export-btn:hover .dot{background:#fff}
+.export-btn .dot{width:6px;height:6px;border-radius:50%;background:var(--sky)}
+.deck.print-mode{width:100%;height:auto;overflow:visible}
+.deck.print-mode .slide{display:flex!important;flex-direction:column;position:relative;inset:auto;width:100%;max-width:1280px;margin:0 auto 20px;padding:18px 36px 32px;height:auto;min-height:720px;aspect-ratio:16/9;animation:none;overflow:hidden}
+.deck.print-mode .slide-body{overflow:hidden}
+body.print-mode{overflow:auto}
+@page{size:297mm 167mm;margin:0}
+@media print{*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}html,body{width:297mm;height:auto;overflow:visible;background:#000}.deck,.deck.print-mode{width:297mm;max-width:none;height:auto;overflow:visible}.slide{display:flex!important;flex-direction:column;position:relative!important;inset:auto!important;width:297mm!important;height:167mm!important;min-height:167mm!important;max-width:none!important;margin:0!important;padding:18px 36px 32px!important;page-break-after:always;break-after:page;page-break-inside:avoid;break-inside:avoid;overflow:hidden!important;animation:none!important;aspect-ratio:auto!important}.slide:last-child{page-break-after:auto;break-after:auto}.slide.cover{padding:0!important}.nav,.progress,.export-btn{display:none!important}}
+</style>
+</head>
+<body>
+
+<div class="progress"><div class="progress-fill" id="progress"></div></div>
+
+<div class="deck" id="deck">
+
+  <!-- Slide 1: Cover -->
+  <section class="slide cover active">
+    <div class="cover-content">
+      <div class="cover-logo"><span class="x-big"></span><span>EurewaX</span></div>
+      <h1>Vietnam Service Provider Recruitment</h1>
+      <div class="cover-sub">EurewaX — Cross-Border Payment PPaaS Platform</div>
+      <div class="cover-flag"><span class="vn-flag">&#9733;</span><span>VIETNAM · Licensed PSP Recruitment Now Open</span></div>
+      <div class="cover-tags">
+        <span class="cover-tag">PPaaS</span>
+        <span class="cover-tag">VND Local Clearing</span>
+        <span class="cover-tag">Channel Synergy</span>
+        <span class="cover-tag">Compliance &amp; Risk Control</span>
+      </div>
+      <div class="cover-meta">
+        <span><strong>Submitted by</strong>: EurewaX Account Manager Team</span>
+        <span><strong>Version</strong>: v2.0</span>
+        <span><strong>Date</strong>: 2026-05-28</span>
+      </div>
+    </div>
+    <div class="brand-bar"><span class="brand-logo"><span class="xicon"></span>EurewaX</span><span class="page-num">01 / 16</span></div>
+  </section>
+
+  <!-- Slide 2: Agenda -->
+  <section class="slide">
+    <div class="slide-head">
+      <span class="mark">01</span>
+      <h2>Agenda</h2>
+      <span class="subtitle">From platform, market, value, and scenarios to onboarding and partnership</span>
+    </div>
+    <div class="slide-body">
+      <div class="toc-grid">
+        <div class="toc-item" data-go="3"><div class="num">02</div><div><div class="title">About EurewaX</div><div class="desc">Company Overview · Global Presence · Investment Background</div></div></div>
+        <div class="toc-item" data-go="4"><div class="num">03</div><div><div class="title">Platform Positioning — PPaaS</div><div class="desc">Payment Platform as a Service · Five Capability Layers</div></div></div>
+        <div class="toc-item" data-go="5"><div class="num">04</div><div><div class="title">Product Capabilities Overview</div><div class="desc">Collection / Payout / FX / Wallet / Acquiring / Card / Ramp / Risk</div></div></div>
+        <div class="toc-item" data-go="6"><div class="num">05</div><div><div class="title">Customer Structure · Two-Sided Platform</div><div class="desc">EX Clients &#x2194; EurewaX &#x2194; Service Providers</div></div></div>
+        <div class="toc-item" data-go="7"><div class="num">06</div><div><div class="title">Vietnam Market Opportunity</div><div class="desc">China-Vietnam Trade / Vietnam Exports to EU/US / Local E-Commerce</div></div></div>
+        <div class="toc-item" data-go="8"><div class="num">07</div><div><div class="title">Value Proposition for Vietnam SPs</div><div class="desc">Channel Reach / Zero-BD / Compliance / Automation / Risk Shield</div></div></div>
+        <div class="toc-item" data-go="9"><div class="num">08</div><div><div class="title">Commercial Return Model</div><div class="desc">Transaction Fees / FX Spread / Scale / Ecosystem Binding</div></div></div>
+        <div class="toc-item" data-go="10"><div class="num">09</div><div><div class="title">Cooperation Scenarios (3 Types)</div><div class="desc">CN&#8594;VN Collection / VN&#8594;EU/US Collection / Local E-Commerce</div></div></div>
+        <div class="toc-item" data-go="13"><div class="num">10</div><div><div class="title">AI Smart Risk Control</div><div class="desc">Six Capabilities · Full-Link Process · Flexible Delivery</div></div></div>
+        <div class="toc-item" data-go="14"><div class="num">11</div><div><div class="title">Summary + Onboarding + Contact</div><div class="desc">Five Layers Value · Business Process · Account Manager</div></div></div>
+      </div>
+    </div>
+    <div class="brand-bar"><span class="brand-logo"><span class="xicon"></span>EurewaX</span><span class="page-num">02 / 16</span></div>
+  </section>
+
+  <!-- Slide 3: About -->
+  <section class="slide">
+    <div class="slide-head">
+      <span class="mark">02</span>
+      <h2>About EurewaX</h2>
+      <span class="subtitle">Cross-Border Payment PPaaS Platform</span>
+    </div>
+    <div class="slide-body">
+      <div class="about-wrap">
+        <div class="headline">EurewaX — Global Cross-Border Payment Smart Cloud Platform</div>
+        <p>EurewaX focuses on global cross-border payment product innovation, dedicated to providing a global payment ecosystem for enterprises expanding their cross-border operations. With years of cross-border payment experience and industry insight, the founding team independently developed a highly adaptable cloud payment platform, integrating global compliance capabilities with end-to-end operational services.</p>
+        <div class="partner-row"><span class="label">Offices</span><span class="items"><span>Singapore (HQ)</span><span>&#183;</span><span>Hong Kong (Asia-Pacific Ops Center)</span><span>&#183;</span><span>Malaysia</span></span></div>
+        <div class="partner-row"><span class="label">Lead Investors</span><span class="items"><span>KAIROUS</span><span>RUIFENG Wealth Management</span><span>iPayLinks</span></span></div>
+        <div class="partner-row"><span class="label">Partners</span><span class="items"><span>Barclays</span><span>DBS</span><span>Standard Chartered</span><span>Bank of China</span><span>iPayLinks</span></span></div>
+        <p style="margin-top:14px;font-style:italic;color:var(--ink-400);font-size:12.5px">Backed by the iPayLinks ecosystem, with deep cross-border payment industry resources and compliance expertise.</p>
+      </div>
+    </div>
+    <div class="brand-bar"><span class="brand-logo"><span class="xicon"></span>EurewaX</span><span class="page-num">03 / 16</span></div>
+  </section>
+
+  <!-- Slide 4: PPaaS 5-layer -->
+  <section class="slide">
+    <div class="slide-head">
+      <span class="mark">03</span>
+      <h2>Platform Positioning · PPaaS Five Layers</h2>
+      <span class="subtitle">Payment Platform as a Service</span>
+    </div>
+    <div class="slide-body">
+      <div class="stack">
+        <div class="stack-layer l5"><div class="lvl">&#x2464;</div><div class="lname">Ecosystem Network</div><div class="ldesc">Two-sided marketplace &#183; Multi-channel synergy &#183; Amplifying business value through ecosystem collaboration</div></div>
+        <div class="stack-layer l4"><div class="lvl">&#x2463;</div><div class="lname">Merchant Operations</div><div class="ldesc">White-label merchant portal &#183; Merchant management backend &#183; Reports &amp; reconciliation &#183; API aggregation</div></div>
+        <div class="stack-layer l3"><div class="lvl">&#x2462;</div><div class="lname">Clearing &amp; Settlement</div><div class="ldesc">Fund aggregation &#183; Cross-account transfers &#183; Auto-reconciliation &#183; Exception handling</div></div>
+        <div class="stack-layer l2"><div class="lvl">&#x2461;</div><div class="lname">Compliance &amp; Risk Control</div><div class="ldesc">KYC/KYB &#183; AI risk control decisions &#183; AML monitoring &#183; Regulatory reporting</div></div>
+        <div class="stack-layer l1"><div class="lvl">&#x2460;</div><div class="lname">Business Products</div><div class="ldesc">Collection &#183; Payout &#183; FX &#183; Wallet &#183; Acquiring &#183; Card Issuance &#183; On-OffRamp</div></div>
+      </div>
+      <div class="stack-callout"><strong>Core Proposition</strong>: Business products are the foundation; compliance and risk control are the core. EurewaX overlays compliance, clearing &amp; settlement, merchant operations, and ecosystem network capabilities on top of business products to form a complete cross-border payment platform.</div>
+    </div>
+    <div class="brand-bar"><span class="brand-logo"><span class="xicon"></span>EurewaX</span><span class="page-num">04 / 16</span></div>
+  </section>
+
+  <!-- Slide 5: Product matrix -->
+  <section class="slide">
+    <div class="slide-head">
+      <span class="mark">04</span>
+      <h2>Product Capabilities Overview · Product Matrix</h2>
+      <span class="subtitle">Unified API + White-label Portal · Integrate Once, Reuse Everywhere</span>
+    </div>
+    <div class="slide-body">
+      <div class="prod-grid">
+        <div class="prod-card"><div class="ico">&#x1F4B0;</div><h5>Collection</h5><p>Multi-currency VA, global fiat collection, crypto collection</p></div>
+        <div class="prod-card"><div class="ico">&#x1F4B8;</div><h5>Payout</h5><p>Bulk fiat payouts, crypto transfers, POBO</p></div>
+        <div class="prod-card"><div class="ico">&#x1F501;</div><h5>FX</h5><p>Multi-currency fiat exchange, CNY settlement</p></div>
+        <div class="prod-card"><div class="ico">&#x1F45B;</div><h5>Wallet</h5><p>Fiat accounts + crypto wallets (USDT / BTC / ETH, etc.)</p></div>
+        <div class="prod-card"><div class="ico">&#x21C4;</div><h5>On / OffRamp</h5><p>Two-way fiat &#x2194; crypto exchange</p></div>
+        <div class="prod-card"><div class="ico">&#x1F6D2;</div><h5>Acquiring</h5><p>Fiat + crypto acquiring, Checkout / API / H5</p></div>
+        <div class="prod-card"><div class="ico">&#x1F4B3;</div><h5>Card Issuance</h5><p>Virtual Credit Card (VCC) issuance and management</p></div>
+        <div class="prod-card"><div class="ico">&#x1F6E1;&#xFE0F;</div><h5>AI Risk Control</h5><p>Compliance review, AML monitoring, transaction anti-fraud, on-chain risk control</p></div>
+      </div>
+      <div class="prod-note"><strong>Friendly to Vietnam Service Providers</strong>: The platform adopts unified signature encryption, unified Webhooks, and unified merchant onboarding processes. <strong>Service providers can choose product lines corresponding to their capabilities; full coverage is not required</strong> — you only need to provide single-point capabilities such as VND collection, payout, or local clearing to join.</div>
+    </div>
+    <div class="brand-bar"><span class="brand-logo"><span class="xicon"></span>EurewaX</span><span class="page-num">05 / 16</span></div>
+  </section>
+
+  <!-- Slide 6: Two-sided platform -->
+  <section class="slide">
+    <div class="slide-head">
+      <span class="mark">05</span>
+      <h2>Customer Structure · Two-Sided Platform</h2>
+      <span class="subtitle">EurewaX Connects Demand and Supply Sides</span>
+    </div>
+    <div class="slide-body">
+      <div class="market-diagram">
+        <div class="market-node client"><div class="badge">Demand Side</div><h4>EX Clients</h4><div class="desc">Institutions / Platforms / Banks &#8212; Obtain full cross-border payment capabilities via EX</div></div>
+        <div class="market-arrow"><span class="label">Unified API + White-label Portal + Compliance &amp; Risk Control</span></div>
+        <div class="market-node platform"><div class="badge">PPaaS Platform</div><h4>EurewaX</h4><div class="desc">Compliance &#183; Clearing &amp; Settlement &#183; Merchant Operations &#183; Risk Control</div></div>
+        <div class="market-arrow"><span class="label">Channel Synergy Integration</span></div>
+        <div class="market-node sp highlight"><div class="badge">&#x2B50; Now Recruiting</div><h4>Vietnam Service Providers</h4><div class="desc">Licensed PSPs &#183; Banks &#183; Web3 Institutions &#8212; Reach EX Clients and end merchants through EX</div></div>
+      </div>
+      <div class="market-note"><strong style="color:var(--ink)">Two-Sided Network Effects</strong>: The expansion of the EX Client base continuously attracts more service providers to join; the enrichment of service provider capabilities enhances the platform's service capabilities to clients.<br/>The earlier Vietnam service providers join, the more they can enjoy network compounding across China-Vietnam trade, Vietnam exports, and local e-commerce scenarios.</div>
+    </div>
+    <div class="brand-bar"><span class="brand-logo"><span class="xicon"></span>EurewaX</span><span class="page-num">06 / 16</span></div>
+  </section>
+
+  <!-- Slide 7: Vietnam market -->
+  <section class="slide">
+    <div class="slide-head">
+      <span class="mark">06</span>
+      <h2>Vietnam Market Opportunity · Market Opportunity</h2>
+      <span class="subtitle">Three Business Scenarios + Market Background</span>
+    </div>
+    <div class="slide-body">
+      <div class="scene-grid">
+        <div class="scene-card">
+          <h5><span class="scn-tag">A</span> China-Vietnam Trade</h5>
+          <ul>
+            <li>A large number of merchants under EX Clients export to Vietnam (raw materials, equipment, consumer goods)</li>
+            <li>Strong demand for local collection and VND settlement in Vietnam</li>
+            <li>Chinese merchants need Vietnam local VA + VND&#8594;USD/CNY FX</li>
+          </ul>
+        </div>
+        <div class="scene-card">
+          <h5><span class="scn-tag">B</span> Vietnam Exports to EU/US</h5>
+          <ul>
+            <li>Vietnam's manufacturing exports to Europe and the US continue to grow (textiles, electronics, furniture)</li>
+            <li>Vietnamese exporters need efficient, low-cost cross-border collection solutions</li>
+            <li>EX Clients can serve these Vietnamese exporters but currently lack local Vietnam SP capabilities</li>
+          </ul>
+        </div>
+        <div class="scene-card">
+          <h5><span class="scn-tag">C</span> Vietnam Local E-Commerce</h5>
+          <ul>
+            <li>Local Vietnamese e-commerce sellers need instant VND settlement</li>
+            <li>Cross-border platform collections need to be settled through local clearing</li>
+            <li>One of the most dynamic e-commerce markets in Southeast Asia, with sustained high growth</li>
+          </ul>
+        </div>
+      </div>
+      <div class="market-data">
+        <table>
+          <tr><th style="width:24%">Dimension</th><th>Market Overview</th></tr>
+          <tr><td><strong>Vietnam Cross-Border E-Commerce</strong></td><td>Sustained high growth; one of the most dynamic markets in Southeast Asia</td></tr>
+          <tr><td><strong>China-Vietnam Bilateral Trade</strong></td><td>Bilateral trade volume continues to rise; strong cross-border payment demand</td></tr>
+          <tr><td><strong>Vietnam Manufacturing Exports</strong></td><td>Large-scale exports to Europe/US; clear demand for cross-border settlement</td></tr>
+          <tr><td><strong>Local Service Provider Supply</strong></td><td>Scarce supply of quality licensed PSPs in Vietnam; insufficient channel availability</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="brand-bar"><span class="brand-logo"><span class="xicon"></span>EurewaX</span><span class="page-num">07 / 16</span></div>
+  </section>
+
+  <!-- Slide 8: Value proposition -->
+  <section class="slide">
+    <div class="slide-head">
+      <span class="mark">07</span>
+      <h2>Value Proposition for Vietnam SPs · Value Proposition</h2>
+      <span class="subtitle">Five Core Values</span>
+    </div>
+    <div class="slide-body">
+      <div class="value-grid">
+        <div class="value-card"><div class="v-num">1</div><div class="v-ico">&#x1F4E1;</div><h5>Channel Reach</h5><p>One-time integration to reach all EX Clients and their merchants; no need for individual business development</p></div>
+        <div class="value-card"><div class="v-num">2</div><div class="v-ico">&#x1F4C8;</div><h5>Zero-BD Customer Acquisition</h5><p>Merchants are brought in by EX Clients; service providers focus on capability delivery to gain stable traffic</p></div>
+        <div class="value-card"><div class="v-num">3</div><div class="v-ico">&#x2705;</div><h5>Compliance Synergy</h5><p>Merchant onboarding and KYC/KYB review are completed uniformly by the platform, reducing duplicate review pressure on service providers</p></div>
+        <div class="value-card"><div class="v-num">4</div><div class="v-ico">&#x2699;&#xFE0F;</div><h5>Operational Automation</h5><p>The platform provides unified reconciliation, fund transfer, and exception handling, reducing operational costs</p></div>
+        <div class="value-card"><div class="v-num">5</div><div class="v-ico">&#x1F6E1;&#xFE0F;</div><h5>Risk Control Shield</h5><p>AI-powered risk control reduces fraud and compliance incidents, protecting service provider licenses and brand reputation</p></div>
+      </div>
+      <div style="margin-top:22px;">
+        <h3 style="font-size:14px;color:var(--ink);font-weight:800;margin-bottom:10px;padding-left:10px;border-left:3px solid var(--sky)">Target Partner Profile</h3>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;font-size:12.5px;color:var(--ink-500)">
+          <div style="background:var(--surface);border:1px solid var(--ink-100);border-left:3px solid var(--vn-red);padding:10px 16px;border-radius:6px">Vietnam local licensed payment service providers (PSP)</div>
+          <div style="background:var(--surface);border:1px solid var(--ink-100);border-left:3px solid var(--vn-red);padding:10px 16px;border-radius:6px">Vietnam licensed commercial banks / EMI</div>
+          <div style="background:var(--surface);border:1px solid var(--ink-100);border-left:3px solid var(--vn-red);padding:10px 16px;border-radius:6px">Web3 payment institutions / VASP / stablecoin exchangers</div>
+          <div style="background:var(--surface);border:1px solid var(--ink-100);border-left:3px solid var(--vn-red);padding:10px 16px;border-radius:6px">Fund dispatchers with local clearing capabilities</div>
+        </div>
+      </div>
+    </div>
+    <div class="brand-bar"><span class="brand-logo"><span class="xicon"></span>EurewaX</span><span class="page-num">08 / 16</span></div>
+  </section>
+
+  <!-- Slide 9: Returns model -->
+  <section class="slide">
+    <div class="slide-head">
+      <span class="mark">08</span>
+      <h2>Commercial Return Model · Revenue Model</h2>
+      <span class="subtitle">Four Types of Revenue Streams for Service Providers</span>
+    </div>
+    <div class="slide-body">
+      <div class="returns-grid">
+        <div class="returns-card"><div class="ico">&#x1F4B5;</div><div><h5>Transaction Fee Income</h5><p>Fees charged based on transaction volume; <strong style="color:var(--ink)">service providers set their own pricing</strong>. Vietnam local clearing fees and cross-border payout service fees are all led by service providers.</p></div></div>
+        <div class="returns-card"><div class="ico">&#x1F501;</div><div><h5>FX Spread</h5><p>Participation in <strong style="color:var(--ink)">VND &#x2194; USD / CNY</strong> and other multi-currency exchange businesses, earning exchange rate spreads as a stable non-transactional revenue stream.</p></div></div>
+        <div class="returns-card"><div class="ico">&#x1F4CA;</div><div><h5>Scale Effect</h5><p>As EX Clients and merchant volumes grow, service provider transaction volumes naturally scale, <strong style="color:var(--ink)">without additional BD investment</strong>.</p></div></div>
+        <div class="returns-card"><div class="ico">&#x1F310;</div><div><h5>Ecosystem Binding</h5><p>EX Clients are distributed across multiple verticals (e-commerce / Web3 / foreign trade / card issuance), with <strong style="color:var(--ink)">diversified transaction types and strong risk resilience</strong>.</p></div></div>
+      </div>
+    </div>
+    <div class="brand-bar"><span class="brand-logo"><span class="xicon"></span>EurewaX</span><span class="page-num">09 / 16</span></div>
+  </section>
+
+  <!-- Slide 10: Scenario A -->
+  <section class="slide">
+    <div class="slide-head">
+      <span class="mark">09A</span>
+      <h2>Scenario A · Chinese Merchants Collecting from Vietnam</h2>
+      <span class="subtitle">China&#8594;Vietnam Trade: Merchant Export, Vietnamese Buyer Payment</span>
+    </div>
+    <div class="slide-body">
+      <div class="scn-wrap">
+        <div class="scn-lanes">
+          <div class="scn-lane">Chinese Exporter<small>EX Client Merchant</small></div>
+          <div class="scn-lane vn">Vietnamese Buyer<small>Payer</small></div>
+          <div class="scn-lane vn">Vietnam Service Provider<small>VA / FX</small></div>
+          <div class="scn-lane">EurewaX Platform<small>Fund Aggregation</small></div>
+        </div>
+        <div class="scn-flow">
+          <div class="scn-step"><div class="idx">1</div><div class="scn-bar"><div class="scn-line fwd" style="--from:1;--to:2;"><span class="scn-label">Goods exported to Vietnam</span></div></div></div>
+          <div class="scn-step"><div class="idx">2</div><div class="scn-bar"><div class="scn-line vn fwd" style="--from:2;--to:3;"><span class="scn-label">Payment to VA account (VND)</span></div></div></div>
+          <div class="scn-step"><div class="idx">3</div><div class="scn-bar"><div class="scn-line vn fwd" style="--from:3;--to:4;"><span class="scn-label">VND &#8594; USD FX</span></div></div></div>
+          <div class="scn-step"><div class="idx">4</div><div class="scn-bar"><div class="scn-line back" style="--from:1;--to:4;"><span class="scn-label">Funds aggregated to merchant EX account</span></div></div></div>
+          <div class="scn-step"><div class="idx">5</div><div class="scn-bar"><div class="scn-line fwd" style="--from:1;--to:4;"><span class="scn-label">Merchant self-manages FX / settlement / withdrawal</span></div></div></div>
+        </div>
+        <div class="scn-summary"><strong>Vietnam Service Provider Role</strong>: Provides <strong>VND local VA collection</strong> + <strong>VND &#8594; USD/CNY FX</strong>. In this scenario, transaction fees and FX spreads are the primary revenue streams.</div>
+      </div>
+    </div>
+    <div class="brand-bar"><span class="brand-logo"><span class="xicon"></span>EurewaX</span><span class="page-num">10 / 16</span></div>
+  </section>
+
+  <!-- Slide 11: Scenario B -->
+  <section class="slide">
+    <div class="slide-head">
+      <span class="mark">09B</span>
+      <h2>Scenario B · Vietnamese Exporters Receiving from Europe/US</h2>
+      <span class="subtitle">Vietnam&#8594;Europe/US: Vietnamese Merchant Export, EU/US Buyer Payment</span>
+    </div>
+    <div class="slide-body">
+      <div class="scn-wrap">
+        <div class="scn-lanes">
+          <div class="scn-lane vn">Vietnamese Exporter<small>EX Client Merchant</small></div>
+          <div class="scn-lane">Europe/US Buyer<small>Payer</small></div>
+          <div class="scn-lane">EX Fiat SP<small>USD VA</small></div>
+          <div class="scn-lane vn">Vietnam Service Provider<small>USD&#8594;VND Settlement</small></div>
+        </div>
+        <div class="scn-flow">
+          <div class="scn-step"><div class="idx">1</div><div class="scn-bar"><div class="scn-line vn fwd" style="--from:1;--to:2;"><span class="scn-label">Goods exported to Europe/US</span></div></div></div>
+          <div class="scn-step"><div class="idx">2</div><div class="scn-bar"><div class="scn-line fwd" style="--from:2;--to:3;"><span class="scn-label">Payment to USD VA</span></div></div></div>
+          <div class="scn-step"><div class="idx">3</div><div class="scn-bar"><div class="scn-line back" style="--from:1;--to:3;"><span class="scn-label">Funds credited to merchant EX account</span></div></div></div>
+          <div class="scn-step"><div class="idx">4</div><div class="scn-bar"><div class="scn-line vn fwd" style="--from:1;--to:4;"><span class="scn-label">USD &#8594; VND FX</span></div></div></div>
+          <div class="scn-step"><div class="idx">5</div><div class="scn-bar"><div class="scn-line vn back" style="--from:1;--to:4;"><span class="scn-label">VND settled to local Vietnam bank account</span></div></div></div>
+        </div>
+        <div class="scn-summary"><strong>Vietnam Service Provider Role</strong>: Provides <strong>USD &#8594; VND FX</strong> + <strong>Vietnam local bank settlement</strong>. In this scenario, Vietnam service providers earn from FX spreads and local clearing fees.</div>
+      </div>
+    </div>
+    <div class="brand-bar"><span class="brand-logo"><span class="xicon"></span>EurewaX</span><span class="page-num">11 / 16</span></div>
+  </section>
+
+  <!-- Slide 12: Scenario C -->
+  <section class="slide">
+    <div class="slide-head">
+      <span class="mark">09C</span>
+      <h2>Scenario C · Vietnam Local E-Commerce Collection</h2>
+      <span class="subtitle">Vietnam Domestic E-Commerce Payments and Local Clearing</span>
+    </div>
+    <div class="slide-body">
+      <div class="scn-wrap">
+        <div class="scn-lanes">
+          <div class="scn-lane vn">Vietnamese E-Commerce Seller<small>EX Client Merchant</small></div>
+          <div class="scn-lane vn">Vietnamese Buyer<small>Consumer</small></div>
+          <div class="scn-lane">EX Client Acquiring<small>Checkout / API</small></div>
+          <div class="scn-lane vn">Vietnam Service Provider<small>Local Clearing</small></div>
+        </div>
+        <div class="scn-flow">
+          <div class="scn-step"><div class="idx">1</div><div class="scn-bar"><div class="scn-line vn fwd" style="--from:1;--to:2;"><span class="scn-label">Product listing / marketing</span></div></div></div>
+          <div class="scn-step"><div class="idx">2</div><div class="scn-bar"><div class="scn-line vn fwd" style="--from:2;--to:3;"><span class="scn-label">Buyer pays via EX checkout</span></div></div></div>
+          <div class="scn-step"><div class="idx">3</div><div class="scn-bar"><div class="scn-line vn fwd" style="--from:3;--to:4;"><span class="scn-label">Funds routed to Vietnam Service Provider</span></div></div></div>
+          <div class="scn-step"><div class="idx">4</div><div class="scn-bar"><div class="scn-line vn back" style="--from:1;--to:4;"><span class="scn-label">VND instant settlement to seller's local account</span></div></div></div>
+        </div>
+        <div class="scn-summary"><strong>Vietnam Service Provider Role</strong>: Provides <strong>local VND clearing</strong> + <strong>instant settlement capability</strong>. In this scenario, Vietnam service providers earn from acquiring fee sharing and clearing fees, enjoying stable traffic from high-frequency, low-value transactions.</div>
+      </div>
+    </div>
+    <div class="brand-bar"><span class="brand-logo"><span class="xicon"></span>EurewaX</span><span class="page-num">12 / 16</span></div>
+  </section>
+
+  <!-- Slide 13: AI Risk -->
+  <section class="slide">
+    <div class="slide-head">
+      <span class="mark">10</span>
+      <h2>AI Smart Risk Control System · Risk Engine</h2>
+      <span class="subtitle">Six Capabilities · Full-Link Process · Flexible Delivery</span>
+    </div>
+    <div class="slide-body">
+      <div class="risk-grid">
+        <div class="risk-card"><h5><span class="dot"></span>Merchant Onboarding KYC/KYB</h5><p>AI-powered document recognition, UBO penetration, director/legal representative verification, adverse list screening</p></div>
+        <div class="risk-card"><h5><span class="dot"></span>Transaction Anti-Fraud</h5><p>Dual-layer decision-making via rule engine and model scoring; identifies abnormal transactions, device fingerprinting, IP risk, behavioral anomalies</p></div>
+        <div class="risk-card"><h5><span class="dot"></span>AML / CFT Monitoring</h5><p>Continuous transaction monitoring, affiliation analysis, automated Suspicious Transaction Report (STR) generation</p></div>
+        <div class="risk-card"><h5><span class="dot"></span>On-Chain Risk Control</h5><p>Stablecoin address profiling, on-chain traceability, mixer identification, sanctioned address screening</p></div>
+        <div class="risk-card"><h5><span class="dot"></span>Configurable Rules</h5><p>Risk control strategies support flexible configuration by client, product, region, and currency dimensions</p></div>
+        <div class="risk-card"><h5><span class="dot"></span>Regulatory Reporting</h5><p>Automated compliance report generation, regulatory audit trail, KYC/KYB document archiving</p></div>
+      </div>
+      <div class="risk-flow">
+        <div class="step">Onboarding Review<small>KYC/KYB</small></div><span class="arr">&#8250;</span>
+        <div class="step">Transaction Pre-check<small>Risk Scoring</small></div><span class="arr">&#8250;</span>
+        <div class="step">Real-time Monitoring<small>AML / Anti-Fraud</small></div><span class="arr">&#8250;</span>
+        <div class="step">Post-hoc Analysis<small>Affiliation / Suspicious</small></div><span class="arr">&#8250;</span>
+        <div class="step">Regulatory Reporting<small>Compliance Trail</small></div>
+      </div>
+      <div class="delivery-grid">
+        <div class="delivery-item"><h6>Single-Point Service</h6><p>On-demand invocation of a single risk control capability (e.g., KYB review only, AML list screening only, on-chain address verification only)</p></div>
+        <div class="delivery-item"><h6>Combined Service</h6><p>Invocation of multiple capabilities in combination (e.g., KYC + Anti-Fraud + AML), adapting to differentiated risk control needs across product lines</p></div>
+        <div class="delivery-item"><h6>Full-Link Unified Service</h6><p>One-stop access from merchant onboarding to transaction monitoring, post-hoc analysis to regulatory reporting</p></div>
+      </div>
+    </div>
+    <div class="brand-bar"><span class="brand-logo"><span class="xicon"></span>EurewaX</span><span class="page-num">13 / 16</span></div>
+  </section>
+
+  <!-- Slide 14: Summary -->
+  <section class="slide">
+    <div class="slide-head">
+      <span class="mark">11</span>
+      <h2>Summary · Core Reasons to Join EurewaX</h2>
+      <span class="subtitle">Five Capability Layers × Vietnam Service Provider Perspective</span>
+    </div>
+    <div class="slide-body">
+      <table class="summary-tbl">
+        <tr><th style="width:14%">Capability Layer</th><th style="width:36%">Core Capabilities</th><th>Value to Vietnam Service Providers</th></tr>
+        <tr><td class="lvl-cell">&#x2460; Business Products</td><td>Collection / Payout / FX / Wallet / Acquiring / Card Issuance / Ramp</td><td>Single capability enables onboarding; combined products are stitched together by the platform for external delivery — flexible adaptation</td></tr>
+        <tr><td class="lvl-cell">&#x2461; Compliance &amp; Risk Control</td><td>KYC/KYB · AI Risk Control · AML · Regulatory Reporting</td><td>Merchants are pre-screened, reducing duplicate review costs and <strong>protecting licenses and reputation</strong></td></tr>
+        <tr><td class="lvl-cell">&#x2462; Clearing &amp; Settlement</td><td>Multi-channel unified clearing · Fund transfers · Reconciliation · Exception handling</td><td>Automated clearing &amp; settlement, significantly reducing operational costs</td></tr>
+        <tr><td class="lvl-cell">&#x2463; Merchant Operations</td><td>White-label portal · Merchant backend · Reports · API aggregation</td><td>Merchants are self-managed by EX Clients; service providers do not need to face end customers directly</td></tr>
+        <tr><td class="lvl-cell">&#x2464; Ecosystem Network</td><td>Two-sided marketplace · Multi-channel synergy</td><td>One-time integration to reach all EX Clients and merchants; <strong>zero-BD organic growth</strong></td></tr>
+      </table>
+      <div class="stack-callout" style="margin-top:18px">
+        <strong>Value Proposition</strong>: One-time integration with EurewaX enables service across diverse Vietnam payment scenarios — cross-border exports, local e-commerce, and Europe/US trade — achieving scalable growth.<br/>
+        <strong>Eligibility</strong>: Vietnam-based licensed payment service providers are eligible. Specific qualification requirements will be confirmed one-on-one by the business team with each service provider.
+      </div>
+    </div>
+    <div class="brand-bar"><span class="brand-logo"><span class="xicon"></span>EurewaX</span><span class="page-num">14 / 16</span></div>
+  </section>
+
+  <!-- Slide 15: Process + Contact -->
+  <section class="slide">
+    <div class="slide-head">
+      <span class="mark">12</span>
+      <h2>Onboarding Process and Contact · Onboarding</h2>
+      <span class="subtitle">Full Process from Business Discussion to Go-Live Operations</span>
+    </div>
+    <div class="slide-body">
+      <div class="process-timeline">
+        <div class="process-step"><div class="idx">1</div><h6>Business Discussion</h6><div class="dur">1-2 weeks</div></div>
+        <div class="process-arr">&#8250;</div>
+        <div class="process-step"><div class="idx">2</div><h6>Solution Customization</h6><div class="dur">1-2 weeks</div></div>
+        <div class="process-arr">&#8250;</div>
+        <div class="process-step"><div class="idx">3</div><h6>Contract Signing</h6><div class="dur">1 week</div></div>
+        <div class="process-arr">&#8250;</div>
+        <div class="process-step"><div class="idx">4</div><h6>Technical Integration</h6><div class="dur">2-4 weeks</div></div>
+        <div class="process-arr">&#8250;</div>
+        <div class="process-step"><div class="idx">5</div><h6>Sandbox Testing</h6><div class="dur">1-2 weeks</div></div>
+        <div class="process-arr">&#8250;</div>
+        <div class="process-step"><div class="idx">6</div><h6>Go-Live Operations</h6><div class="dur">Ongoing support</div></div>
+      </div>
+      <div class="contact-card">
+        <div class="big-ico">&#x1F4DE;</div>
+        <h3>Contact Your EurewaX Account Manager</h3>
+        <p>A dedicated account manager will provide you with a customized cooperation plan tailored to Vietnam local business scenarios, including channel integration, platform revenue sharing, and value-added services.</p>
+        <div class="contact-grid">
+          <div>&#x1F310; <strong>Official Website</strong>: <a href="https://eurewax.com" style="color:var(--sky)">eurewax.com</a></div>
+          <div>&#x1F6E0;&#xFE0F; <strong>Open Platform</strong>: <a href="https://open.eurewax.com" style="color:var(--sky)">open.eurewax.com</a></div>
+          <div>&#x1F4BC; <strong>Business Email</strong>: Provided by your account manager</div>
+          <div>&#x1F464; <strong>Account Manager</strong>: EurewaX Account Manager Team</div>
+        </div>
+        <div class="note">&#8251; Business cooperation terms are subject to the signed contract &#183; Full support from EX technical engineers and account managers throughout the process</div>
+      </div>
+    </div>
+    <div class="brand-bar"><span class="brand-logo"><span class="xicon"></span>EurewaX</span><span class="page-num">15 / 16</span></div>
+  </section>
+
+  <!-- Slide 16: Closing -->
+  <section class="slide closing">
+    <div class="closing-wrap">
+      <h1>EUREWAX</h1>
+      <p>Cross-Border Payment PPaaS · Compliance First · One-Time Integration · Continuous Enablement</p>
+      <div class="closing-contact">
+        <div><strong>OFFICIAL</strong>eurewax.com</div>
+        <div><strong>OPEN PLATFORM</strong>open.eurewax.com</div>
+        <div><strong>CONTACT</strong>EurewaX Account Manager Team</div>
+      </div>
+    </div>
+    <div class="brand-bar"><span class="brand-logo"><span class="xicon"></span>EurewaX</span><span class="page-num">16 / 16</span></div>
+  </section>
+
+</div>
+
+<button class="export-btn" id="exportBtn" title="Export PDF: Expand all pages &#8594; Browser Print &#8594; Save as PDF">
+  <span class="dot"></span>
+  <span>Export PDF</span>
+</button>
+
+<div class="nav">
+  <button id="prev" title="Previous (&larr;)">&#x2039;</button>
+  <button id="next" title="Next (&rarr;)">&#x203A;</button>
+</div>
+
+<script>
+const slides=document.querySelectorAll('.slide');
+const total=slides.length;
+let current=0;
+const pad=(n)=>String(n).padStart(2,'0');
+slides.forEach((s,idx)=>{const pageEl=s.querySelector('.page-num');if(pageEl)pageEl.textContent=`${pad(idx+1)} / ${pad(total)}`;});
+function showSlide(i){current=Math.max(0,Math.min(total-1,i));slides.forEach((s,idx)=>s.classList.toggle('active',idx===current));document.getElementById('progress').style.width=((current+1)/total*100)+'%';document.getElementById('prev').disabled=current===0;document.getElementById('next').disabled=current===total-1;}
+document.getElementById('prev').onclick=()=>showSlide(current-1);
+document.getElementById('next').onclick=()=>showSlide(current+1);
+document.addEventListener('keydown',(e)=>{if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){e.preventDefault();showSlide(current+1);}if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();showSlide(current-1);}if(e.key==='Home')showSlide(0);if(e.key==='End')showSlide(total-1);});
+document.querySelectorAll('.toc-item[data-go]').forEach(el=>{el.addEventListener('click',()=>{const idx=parseInt(el.dataset.go,10)-1;if(!isNaN(idx))showSlide(idx);});});
+const deck=document.getElementById('deck');
+const exportBtn=document.getElementById('exportBtn');
+function enterPrintMode(){document.body.classList.add('print-mode');deck.classList.add('print-mode');slides.forEach(s=>s.classList.add('active'));}
+function exitPrintMode(){document.body.classList.remove('print-mode');deck.classList.remove('print-mode');slides.forEach((s,idx)=>s.classList.toggle('active',idx===current));}
+exportBtn.addEventListener('click',async()=>{exportBtn.textContent='Rendering...';enterPrintMode();await new Promise(r=>setTimeout(r,300));window.print();setTimeout(()=>{exitPrintMode();exportBtn.innerHTML='<span class="dot"></span><span>Export PDF</span>';},400);});
+window.addEventListener('afterprint',()=>{exitPrintMode();exportBtn.innerHTML='<span class="dot"></span><span>Export PDF</span>';});
+document.addEventListener('keydown',(e)=>{if((e.metaKey||e.ctrlKey)&&(e.key==='p'||e.key==='P')){e.preventDefault();exportBtn.click();}});
+showSlide(0);
+</script>
+
+</body>
+</html>
