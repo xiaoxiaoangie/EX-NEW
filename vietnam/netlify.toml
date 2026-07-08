@@ -1,0 +1,7 @@
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/"
+  to = "/fiat-crypto-platform-interactive.html"
+  status = 200
