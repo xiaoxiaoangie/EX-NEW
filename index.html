@@ -1,0 +1,2027 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>数法融合平台交互原型</title>
+  <style>
+    :root {
+      --bg: #f5f3ff;
+      --panel: #ffffff;
+      --panel-2: #f0f4f8;
+      --ink: #17202a;
+      --muted: #667085;
+      --line: #e1e5ee;
+      --blue: #246bfe;
+      --purple: #7c3aed;
+      --green: #12a87a;
+      --amber: #d9822b;
+      --red: #d64545;
+      --nav: #ffffff;
+      --nav-2: #f0edff;
+      --shadow: 0 18px 45px rgba(19, 34, 56, 0.12);
+      --radius: 8px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(120deg, rgba(36, 107, 254, 0.08), rgba(18, 168, 122, 0.05) 42%, rgba(217, 130, 43, 0.05)),
+        var(--bg);
+    }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .hidden { display: none !important; }
+
+    .shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: minmax(340px, 480px) 1fr;
+    }
+
+    .brand-panel {
+      padding: 42px;
+      color: #fff;
+      background:
+        linear-gradient(145deg, rgba(19, 34, 56, 0.98), rgba(25, 61, 97, 0.96)),
+        var(--nav);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 100vh;
+    }
+    .brand-mark {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 760;
+      letter-spacing: 0;
+      font-size: 20px;
+    }
+    .mark-box {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #4c8dff, #27c397);
+      color: #fff;
+      font-weight: 800;
+    }
+    .brand-copy h1 {
+      margin: 48px 0 18px;
+      font-size: 36px;
+      line-height: 1.16;
+      letter-spacing: 0;
+    }
+    .brand-copy p {
+      color: rgba(255,255,255,0.74);
+      line-height: 1.7;
+      margin: 0;
+      font-size: 15px;
+    }
+    .rail-card {
+      margin-top: 34px;
+      padding: 18px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.06);
+    }
+    .rail-row {
+      display: grid;
+      grid-template-columns: 36px 1fr auto;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .rail-row:last-child { border-bottom: 0; }
+    .rail-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: rgba(255,255,255,0.13);
+      font-weight: 760;
+      font-size: 13px;
+    }
+    .rail-title { font-weight: 700; }
+    .rail-sub { color: rgba(255,255,255,0.62); font-size: 12px; margin-top: 2px; }
+    .rail-tag {
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(39, 195, 151, 0.18);
+      color: #bdf6e4;
+    }
+    .brand-foot { color: rgba(255,255,255,0.58); font-size: 12px; }
+
+    .onboarding {
+      padding: 42px;
+      display: grid;
+      place-items: center;
+    }
+    .flow {
+      width: min(780px, 100%);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .stepbar {
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--line);
+      background: #fbfcfe;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    .step-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 680;
+    }
+    .step-dot {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: #e8eef5;
+      color: #516070;
+      font-size: 12px;
+      flex: 0 0 auto;
+    }
+    .step-pill.active { color: var(--blue); }
+    .step-pill.active .step-dot { background: var(--blue); color: #fff; }
+    .step-pill.done { color: var(--green); }
+    .step-pill.done .step-dot { background: var(--green); color: #fff; }
+
+    .step {
+      padding: 28px;
+    }
+    .step h2 {
+      margin: 0 0 8px;
+      font-size: 24px;
+      letter-spacing: 0;
+    }
+    .step-desc {
+      margin: 0 0 24px;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 14px;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .field { display: grid; gap: 7px; }
+    .field.full { grid-column: 1 / -1; }
+    label {
+      font-size: 13px;
+      color: #344054;
+      font-weight: 700;
+    }
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid #cfd8e3;
+      border-radius: var(--radius);
+      padding: 11px 12px;
+      min-height: 44px;
+      color: var(--ink);
+      background: #fff;
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(36, 107, 254, 0.12);
+    }
+    textarea { min-height: 82px; resize: vertical; }
+    .actions {
+      margin-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+    .btn {
+      border: 1px solid transparent;
+      border-radius: var(--radius);
+      min-height: 42px;
+      padding: 0 16px;
+      font-weight: 760;
+      background: #fff;
+      color: var(--ink);
+    }
+    .btn.primary { background: var(--blue); color: #fff; }
+    .btn.ghost { border-color: var(--line); color: #344054; }
+    .btn.success { background: var(--green); color: #fff; }
+    .btn:disabled { opacity: 0.48; cursor: not-allowed; }
+    .inline-note {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .ai-card {
+      margin-top: 16px;
+      border: 1px solid #b9d5ff;
+      border-radius: var(--radius);
+      background: #f4f8ff;
+      padding: 16px;
+    }
+    .ai-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      font-weight: 760;
+      color: #174ea6;
+      margin-bottom: 12px;
+    }
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .mini {
+      border: 1px solid #d6e5ff;
+      border-radius: var(--radius);
+      background: #fff;
+      padding: 10px;
+    }
+    .mini span { display: block; color: var(--muted); font-size: 11px; margin-bottom: 4px; }
+    .mini b { font-size: 13px; }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .chip-check {
+      position: relative;
+    }
+    .chip-check input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .chip-check span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      border: 1px solid #cfd8e3;
+      border-radius: var(--radius);
+      padding: 0 12px;
+      color: #344054;
+      background: #fff;
+      font-size: 14px;
+      font-weight: 680;
+    }
+    .chip-check input:checked + span {
+      border-color: var(--blue);
+      color: var(--blue);
+      background: #f2f6ff;
+    }
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .product-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+      background: #fff;
+    }
+    .product-card h3 {
+      margin: 0 0 10px;
+      font-size: 17px;
+    }
+    .product-card .muted { min-height: 36px; }
+    .upload-box {
+      border: 1px dashed var(--line);
+      border-radius: 12px;
+      padding: 18px;
+      background: #f8fafc;
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+    .upload-box strong {
+      display: block;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+    .exchange-widget {
+      max-width: 760px;
+      margin: 0;
+      display: grid;
+      gap: 14px;
+    }
+    .exchange-box {
+      background: #f8f7fb;
+      border: 1px solid #ece7f6;
+      border-radius: 12px;
+      padding: 16px 18px;
+      min-height: 112px;
+      display: grid;
+      gap: 18px;
+    }
+    .exchange-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      font-size: 13px;
+      color: #111827;
+      font-weight: 760;
+    }
+    .exchange-available {
+      color: #111827;
+      font-weight: 720;
+    }
+    .exchange-available u { text-underline-offset: 4px; }
+    .exchange-available button {
+      border: 0;
+      background: transparent;
+      color: #c57c00;
+      font: inherit;
+      font-weight: 780;
+      cursor: pointer;
+      padding: 0 0 0 10px;
+    }
+    .exchange-main {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+    .currency-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 17px;
+      font-weight: 820;
+    }
+    .flag-dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      font-size: 16px;
+      background: #fff;
+      box-shadow: inset 0 0 0 1px rgba(15,23,42,0.08);
+    }
+    .chev {
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 6px solid #8a8f98;
+      margin-top: 4px;
+    }
+    .exchange-input {
+      width: min(220px, 48%);
+      border: 0;
+      background: transparent;
+      color: #b6b7bb;
+      font-size: 24px;
+      font-weight: 800;
+      text-align: right;
+      outline: 0;
+    }
+    .exchange-rate-line {
+      min-height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #9aa1ad;
+      font-size: 13px;
+    }
+    .switch-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: #111827;
+      font-size: 18px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .review-btn {
+      border: 0;
+      border-radius: 10px;
+      min-height: 48px;
+      background: #f4f4f5;
+      color: #b8bac0;
+      font-size: 15px;
+      font-weight: 820;
+      cursor: pointer;
+    }
+    .section-label {
+      margin: 16px 0 8px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    .kyc-result {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: 16px;
+      align-items: center;
+      padding: 18px;
+      border-radius: var(--radius);
+      border: 1px solid #a9e7d2;
+      background: #f2fcf8;
+    }
+    .ok-badge {
+      width: 52px;
+      height: 52px;
+      border-radius: 999px;
+      background: var(--green);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      font-size: 22px;
+    }
+
+    .app {
+      height: 100vh;
+      display: grid;
+      grid-template-columns: 252px 1fr;
+      background: #f4f1fb;
+    }
+    .sidebar {
+      background: var(--nav);
+      color: #5f6b7a;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      border-right: 1px solid #e6e1f2;
+    }
+    .side-brand {
+      padding: 18px 16px;
+      border-bottom: 1px solid #eeeaf7;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 780;
+      color: #101828;
+    }
+    .side-brand .mark-box { width: 32px; height: 32px; font-size: 13px; }
+    .nav {
+      padding: 10px 8px;
+      overflow: auto;
+    }
+    .nav-btn {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: #627084;
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      border-radius: 8px;
+      padding: 0 10px;
+      font-weight: 740;
+      font-size: 13px;
+      text-align: left;
+      margin-bottom: 4px;
+    }
+    .nav-btn.active, .nav-btn:hover {
+      background: var(--nav-2);
+      color: var(--purple);
+    }
+    .nav-symbol {
+      width: 24px;
+      height: 24px;
+      border-radius: 7px;
+      display: grid;
+      place-items: center;
+      background: transparent;
+      color: #667085;
+      font-size: 11px;
+      flex: 0 0 auto;
+    }
+    .nav-btn.active .nav-symbol, .nav-btn:hover .nav-symbol {
+      background: #ede9fe;
+      color: var(--purple);
+    }
+    .submenu {
+      margin: 2px 0 10px 0;
+      padding-left: 34px;
+      display: none;
+    }
+    .submenu.open { display: block; }
+    .sub-btn {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: #667085;
+      min-height: 30px;
+      text-align: left;
+      padding: 0 10px;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 680;
+    }
+    .sub-btn.active, .sub-btn:hover {
+      color: var(--purple);
+      background: #eef0ff;
+    }
+    .side-foot {
+      margin-top: auto;
+      padding: 14px;
+      border-top: 1px solid #eeeaf7;
+      font-size: 12px;
+      color: #98a2b3;
+    }
+    .content {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    .topbar {
+      height: 64px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      border-bottom: 1px solid #ece7f6;
+      background: #fff;
+    }
+    .top-title {
+      min-width: 0;
+    }
+    .top-title h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+    .top-title p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: #ecfdf5;
+      color: #047857;
+      font-size: 12px;
+      font-weight: 760;
+      white-space: nowrap;
+    }
+    .main {
+      padding: 22px;
+      overflow: auto;
+      background: #f4f1fb;
+    }
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 8px 18px rgba(43, 36, 74, 0.04);
+    }
+    .card.pad { padding: 16px; }
+    .span-3 { grid-column: span 3; }
+    .span-4 { grid-column: span 4; }
+    .span-5 { grid-column: span 5; }
+    .span-6 { grid-column: span 6; }
+    .span-7 { grid-column: span 7; }
+    .span-8 { grid-column: span 8; }
+    .span-12 { grid-column: 1 / -1; }
+    .metric-label { color: var(--muted); font-size: 12px; font-weight: 720; }
+    .metric-value { margin-top: 8px; font-size: 24px; font-weight: 820; letter-spacing: 0; }
+    .metric-sub { margin-top: 6px; color: var(--muted); font-size: 12px; }
+    .asset-list-title {
+      margin: 0 0 22px;
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--ink);
+    }
+    .asset-section-title {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      color: #334155;
+      font-size: 16px;
+      font-weight: 880;
+    }
+    .asset-section-title::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--blue);
+    }
+    .asset-section-title.crypto::before { background: var(--green); }
+    .asset-card {
+      min-height: 240px;
+      padding: 22px;
+      display: grid;
+      gap: 18px;
+    }
+    .asset-card-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 18px;
+      font-weight: 900;
+    }
+    .asset-card-amount {
+      font-size: 34px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+    .asset-card-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .asset-card-actions .btn {
+      width: 100%;
+      min-height: 44px;
+    }
+    .asset-balance-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      color: #667085;
+      font-weight: 720;
+    }
+    .asset-balance-row b {
+      color: var(--ink);
+    }
+    .tabs {
+      display: flex;
+      gap: 6px;
+      border-bottom: 1px solid var(--line);
+      padding: 10px 12px 0;
+      background: #fbfcfe;
+    }
+    .tab {
+      border: 0;
+      background: transparent;
+      min-height: 36px;
+      padding: 0 12px;
+      border-radius: 7px 7px 0 0;
+      color: var(--muted);
+      font-weight: 760;
+    }
+    .tab.active {
+      background: #fff;
+      color: var(--blue);
+      border: 1px solid var(--line);
+      border-bottom-color: #fff;
+      transform: translateY(1px);
+    }
+    .panel-body { padding: 16px; }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .table th, .table td {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: middle;
+    }
+    .table th {
+      color: #475467;
+      background: #f7f9fc;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 0 8px;
+      border-radius: 999px;
+      background: #eef4ff;
+      color: #2350b8;
+      font-size: 12px;
+      font-weight: 760;
+    }
+    .pill.green { background: #ecfdf5; color: #047857; }
+    .pill.amber { background: #fff7ed; color: #b45309; }
+    .pill.gray { background: #f2f4f7; color: #475467; }
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .quick-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .empty {
+      padding: 36px 16px;
+      text-align: center;
+      color: var(--muted);
+      background: #fbfcfe;
+      border: 1px dashed #cfd8e3;
+      border-radius: var(--radius);
+    }
+    .asset-workspace {
+      display: grid;
+      grid-template-columns: minmax(520px, 1fr) 360px;
+      gap: 18px;
+      align-items: start;
+    }
+    .asset-form {
+      padding: 24px;
+    }
+    .asset-form h3, .notice-card h3 {
+      margin: 0 0 22px;
+      font-size: 18px;
+    }
+    .option-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 10px 0 22px;
+    }
+    .option-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 74px;
+      background: #fff;
+    }
+    .option-card.active {
+      border-color: #8b4dff;
+      background: #f7f1ff;
+      box-shadow: 0 0 0 1px rgba(139,77,255,0.18);
+    }
+    .coin-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      color: #fff;
+      font-weight: 850;
+    }
+    .coin-icon.purple { background: #7c3aed; }
+    .coin-icon.red { background: #ef4444; }
+    .coin-icon.green { background: #10b981; }
+    .coin-icon.blue { background: #0ea5e9; }
+    .option-title { font-weight: 820; }
+    .option-sub { margin-top: 3px; color: var(--muted); font-size: 12px; }
+    .asset-form h3,
+    .panel-body h3 {
+      font-size: 16px !important;
+      font-weight: 780 !important;
+      letter-spacing: 0;
+    }
+    .option-title,
+    .asset-card-head,
+    .currency-pill {
+      font-weight: 760;
+    }
+    .asset-card-amount {
+      font-size: 28px;
+      font-weight: 820;
+    }
+    .asset-list-title {
+      font-size: 22px;
+      font-weight: 820;
+    }
+    .asset-section-title {
+      font-size: 15px;
+      font-weight: 760;
+    }
+    .btn {
+      font-size: 13px;
+      font-weight: 720;
+    }
+    .notice-card {
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      box-shadow: 0 8px 24px rgba(19,34,56,0.05);
+    }
+    .notice-card h3 { color: var(--red); display: flex; align-items: center; gap: 8px; }
+    .notice-list {
+      margin: 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 14px;
+      color: #475467;
+      font-size: 13px;
+      line-height: 1.58;
+    }
+    .notice-list li::marker { color: #ff9da4; }
+    .summary-box {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #f8fafc;
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+      margin: 14px 0 18px;
+    }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: #667085;
+      font-size: 13px;
+    }
+    .summary-row b { color: #344054; }
+    .filter-card {
+      padding: 16px;
+      margin-bottom: 16px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+    .timeline {
+      display: grid;
+      gap: 12px;
+    }
+    .event {
+      display: grid;
+      grid-template-columns: 10px 1fr auto;
+      gap: 10px;
+      align-items: start;
+    }
+    .event-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--blue);
+      margin-top: 5px;
+    }
+    .event-title { font-weight: 760; font-size: 13px; }
+    .event-sub { color: var(--muted); font-size: 12px; margin-top: 3px; }
+    .chart-bars {
+      height: 140px;
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 8px;
+      align-items: end;
+      padding-top: 10px;
+    }
+    .bar {
+      background: linear-gradient(180deg, #4c8dff, #27c397);
+      border-radius: 5px 5px 0 0;
+      min-height: 18px;
+    }
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      background: #101828;
+      color: #fff;
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      box-shadow: var(--shadow);
+      font-size: 13px;
+      opacity: 0;
+      transform: translateY(8px);
+      pointer-events: none;
+      transition: 0.2s;
+      z-index: 50;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 1080px) {
+      .shell { grid-template-columns: 1fr; }
+      .brand-panel { min-height: auto; }
+      .brand-copy h1 { margin-top: 30px; font-size: 30px; }
+      .app { grid-template-columns: 86px 1fr; }
+      .side-brand span, .nav-text, .side-foot { display: none; }
+      .nav-btn { justify-content: center; padding: 0; }
+      .submenu { margin-left: 0; }
+      .sub-btn { text-align: center; font-size: 11px; padding: 0 4px; }
+      .span-3, .span-4, .span-5, .span-6, .span-7, .span-8 { grid-column: span 6; }
+    }
+    @media (max-width: 720px) {
+      .brand-panel, .onboarding, .main { padding: 18px; }
+      .flow { box-shadow: none; }
+      .stepbar { grid-template-columns: 1fr 1fr; }
+      .form-grid, .product-grid, .mini-grid, .form-row { grid-template-columns: 1fr; }
+      .app { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .topbar { height: auto; padding: 14px; align-items: flex-start; flex-direction: column; }
+      .span-3, .span-4, .span-5, .span-6, .span-7, .span-8 { grid-column: 1 / -1; }
+      .table { min-width: 660px; }
+      .card { overflow-x: auto; }
+      .asset-workspace, .option-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <section id="onboardingShell" class="shell">
+    <aside class="brand-panel">
+      <div>
+        <div class="brand-mark"><div class="mark-box">EX</div><span>EurewaX Fusion</span></div>
+        <div class="brand-copy">
+          <h1>一个账户，同时管理法币与数币业务</h1>
+          <p>为外贸、电商、承兑和支付机构设计的数法融合工作台。先完成身份识别与产品开通，再进入统一资产、收款、付款、卡业务与交易对手方管理。</p>
+        </div>
+        <div class="rail-card" aria-label="能力概览">
+          <div class="rail-row"><div class="rail-icon">VA</div><div><div class="rail-title">全球收款</div><div class="rail-sub">法币 VA + Crypto 收款地址</div></div><span class="rail-tag">Collection</span></div>
+          <div class="rail-row"><div class="rail-icon">PO</div><div><div class="rail-title">全球付款</div><div class="rail-sub">供应商、服务商、工资、链上付款</div></div><span class="rail-tag">Payout</span></div>
+          <div class="rail-row"><div class="rail-icon">FX</div><div><div class="rail-title">兑换</div><div class="rail-sub">实时兑换 + 委托挂单</div></div><span class="rail-tag">Exchange</span></div>
+          <div class="rail-row"><div class="rail-icon">VC</div><div><div class="rail-title">虚拟信用卡</div><div class="rail-sub">广告投流、货物采购、OTA 付款</div></div><span class="rail-tag">Cards</span></div>
+        </div>
+      </div>
+      <div class="brand-foot">Prototype · Phone login · AI KYB/KYC · Fiat + Crypto Operation Desk</div>
+    </aside>
+
+    <main class="onboarding">
+      <div class="flow">
+        <div class="stepbar">
+          <div class="step-pill active" data-step-pill="1"><span class="step-dot">1</span><span>登录</span></div>
+          <div class="step-pill" data-step-pill="2"><span class="step-dot">2</span><span>证件识别</span></div>
+          <div class="step-pill" data-step-pill="3"><span class="step-dot">3</span><span>产品场景</span></div>
+          <div class="step-pill" data-step-pill="4"><span class="step-dot">4</span><span>审核通过</span></div>
+        </div>
+
+        <section class="step" data-step="1">
+          <h2>手机号登录</h2>
+          <p class="step-desc">使用手机号和密码进入开户流程。这里是原型，已预填测试信息。</p>
+          <div class="form-grid">
+            <div class="field">
+              <label for="phone">手机号</label>
+              <input id="phone" value="+84 901 223 889" autocomplete="tel">
+            </div>
+            <div class="field">
+              <label for="password">密码</label>
+              <input id="password" type="password" value="12345678" autocomplete="current-password">
+            </div>
+          </div>
+          <div class="actions">
+            <span class="inline-note">支持企业和个人用户统一入口。</span>
+            <button class="btn primary" data-next>登录并继续</button>
+          </div>
+        </section>
+
+        <section class="step hidden" data-step="2">
+          <h2>AI 识别证件信息</h2>
+          <p class="step-desc">输入企业注册号或个人证件号后，系统自动识别主体类型、国家、证件信息，并预填主营行业。</p>
+          <div class="form-grid">
+            <div class="field full">
+              <label for="docNumber">企业 / 个人证件号码</label>
+              <input id="docNumber" value="VN-0312457890" placeholder="例如 VN-0312457890 / P123456789 / 91440300MA5...">
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn ghost" data-prev>返回</button>
+            <button id="aiDetectBtn" class="btn primary">AI 识别</button>
+          </div>
+          <div id="aiCard" class="ai-card hidden">
+            <div class="ai-head">
+              <span>AI 识别结果</span>
+              <span class="pill green">置信度 96%</span>
+            </div>
+            <div class="mini-grid">
+              <div class="mini"><span>主体类型</span><b id="aiType">企业</b></div>
+              <div class="mini"><span>所在国家</span><b id="aiCountry">Vietnam</b></div>
+              <div class="mini"><span>证件类型</span><b id="aiDocType">Business Registration</b></div>
+              <div class="mini"><span>主体名称</span><b id="aiName">Lotus Global Trade Co.</b></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="step hidden" data-step="3">
+          <h2>选择主营行业与产品</h2>
+          <p class="step-desc">主营行业默认带出营业执照识别到的前两个行业。系统会根据行业补充产品品类或贸易国家，产品支持法币和数币混合选择。</p>
+          <div class="field full">
+            <label>主营行业</label>
+            <div id="industryChips" class="chips">
+              <label class="chip-check"><input type="checkbox" checked value="跨境电商"><span>跨境电商</span></label>
+              <label class="chip-check"><input type="checkbox" checked value="外贸批发"><span>外贸批发</span></label>
+              <label class="chip-check"><input type="checkbox" value="物流货代"><span>物流货代</span></label>
+              <label class="chip-check"><input type="checkbox" value="广告代理"><span>广告代理</span></label>
+              <label class="chip-check"><input type="checkbox" value="旅游 OTA"><span>旅游 OTA</span></label>
+            </div>
+          </div>
+
+          <div id="categoryBlock" class="field full" style="margin-top:16px;">
+            <label>产品品类</label>
+            <div class="chips">
+              <label class="chip-check"><input type="checkbox" checked value="服装服饰"><span>服装服饰</span></label>
+              <label class="chip-check"><input type="checkbox" checked value="3C 电子"><span>3C 电子</span></label>
+              <label class="chip-check"><input type="checkbox" value="家居用品"><span>家居用品</span></label>
+              <label class="chip-check"><input type="checkbox" value="机械设备"><span>机械设备</span></label>
+              <label class="chip-check"><input type="checkbox" value="美妆个护"><span>美妆个护</span></label>
+              <label class="chip-check"><input type="checkbox" value="汽摩配件"><span>汽摩配件</span></label>
+            </div>
+          </div>
+
+          <div id="countryBlock" class="field full hidden" style="margin-top:16px;">
+            <label>贸易国家 / 地区</label>
+            <div class="chips">
+              <label class="chip-check"><input type="checkbox" checked value="中国"><span>中国</span></label>
+              <label class="chip-check"><input type="checkbox" checked value="越南"><span>越南</span></label>
+              <label class="chip-check"><input type="checkbox" value="美国"><span>美国</span></label>
+              <label class="chip-check"><input type="checkbox" value="欧盟"><span>欧盟</span></label>
+              <label class="chip-check"><input type="checkbox" value="新加坡"><span>新加坡</span></label>
+              <label class="chip-check"><input type="checkbox" value="泰国"><span>泰国</span></label>
+            </div>
+          </div>
+
+          <div class="product-grid" style="margin-top:18px;">
+            <div class="product-card">
+              <h3>全球收款</h3>
+              <p class="muted">开通多币种 VA 和数币收款地址，统一识别入账和对账。</p>
+              <div class="section-label">收款货币</div>
+              <label class="chip-check"><input type="checkbox" checked value="收法币"><span>收法币</span></label>
+              <label class="chip-check"><input type="checkbox" checked value="收数币"><span>收数币</span></label>
+            </div>
+            <div class="product-card">
+              <h3>全球付款</h3>
+              <p class="muted">开通供应商、服务商和员工等付款能力，支持法币付款或链上付款。</p>
+              <div class="section-label">付款货币</div>
+              <label class="chip-check"><input type="checkbox" checked value="付法币"><span>付法币</span></label>
+              <label class="chip-check"><input type="checkbox" checked value="付数币"><span>付数币</span></label>
+            </div>
+            <div class="product-card">
+              <h3>虚拟信用卡</h3>
+              <p class="muted">开通虚拟卡，用于广告投流、货物采购、OTA 付款与平台订阅。</p>
+              <div class="section-label">充值方式</div>
+              <label class="chip-check"><input type="checkbox" checked value="数币充值"><span>数币充值</span></label>
+              <label class="chip-check"><input type="checkbox" checked value="法币充值"><span>法币充值</span></label>
+            </div>
+          </div>
+          <div class="form-grid" style="margin-top:18px;">
+            <div class="field full">
+              <label for="website">公司 / 店铺网址</label>
+              <input id="website" placeholder="例如 https://store.example.com / https://company.com">
+            </div>
+            <div class="field full">
+              <label>贸易背景资料</label>
+              <label class="upload-box">
+                <span><strong>上传合同、发票、物流单或店铺截图</strong>支持 PDF、图片、Word、Excel，单个文件不超过 20MB</span>
+                <input type="file" multiple style="display:none;">
+                <span class="pill">选择附件</span>
+              </label>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn ghost" data-prev>返回</button>
+            <button class="btn primary" data-next>提交 KYC 审核</button>
+          </div>
+        </section>
+
+        <section class="step hidden" data-step="4">
+          <h2>KYC / KYB 审核通过</h2>
+          <p class="step-desc">产品能力已根据主体、行业、产品品类和贸易国家开通。进入平台后可管理资产、交易对手方、收款、付款和卡业务。</p>
+          <div class="kyc-result">
+            <div class="ok-badge">✓</div>
+            <div>
+              <strong>Lotus Global Trade Co. 已通过审核</strong>
+              <p class="step-desc" style="margin:6px 0 0;">已开通：全球收款、全球付款、虚拟信用卡、即时汇兑、数币承兑。</p>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn ghost" data-prev>返回</button>
+            <button id="enterApp" class="btn success">进入操作平台</button>
+          </div>
+        </section>
+      </div>
+    </main>
+  </section>
+
+  <section id="appShell" class="app hidden">
+    <aside class="sidebar">
+      <div class="side-brand"><div class="mark-box">EX</div><span>Fusion Platform</span></div>
+      <nav class="nav" aria-label="主菜单">
+        <button class="nav-btn active" data-page="assets"><span class="nav-symbol">A</span><span class="nav-text">资产</span></button>
+        <div class="submenu open" data-submenu="assets">
+          <button class="sub-btn active" data-page="assets" data-tab="myAssets">我的资产</button>
+          <button class="sub-btn" data-page="assets" data-tab="deposit">充值</button>
+          <button class="sub-btn" data-page="assets" data-tab="withdraw">提现</button>
+        </div>
+        <button class="nav-btn" data-page="exchange"><span class="nav-symbol">E</span><span class="nav-text">兑换</span></button>
+        <div class="submenu" data-submenu="exchange">
+          <button class="sub-btn" data-page="exchange" data-tab="realtime">实时兑换</button>
+          <button class="sub-btn" data-page="exchange" data-tab="orders">委托挂单</button>
+        </div>
+        <button class="nav-btn" data-page="directory"><span class="nav-symbol">D</span><span class="nav-text">交易对手方</span></button>
+        <div class="submenu" data-submenu="directory">
+          <button class="sub-btn" data-page="directory" data-tab="beneficiary">收款人</button>
+          <button class="sub-btn" data-page="directory" data-tab="remitter">汇款人</button>
+        </div>
+        <button class="nav-btn" data-page="collection"><span class="nav-symbol">C</span><span class="nav-text">收款</span></button>
+        <div class="submenu" data-submenu="collection">
+          <button class="sub-btn" data-page="collection" data-tab="tools">收款工具</button>
+          <button class="sub-btn" data-page="collection" data-tab="records">收款记录</button>
+          <button class="sub-btn" data-page="collection" data-tab="refunds">退款记录</button>
+        </div>
+        <button class="nav-btn" data-page="payout"><span class="nav-symbol">P</span><span class="nav-text">付款</span></button>
+        <div class="submenu" data-submenu="payout">
+          <button class="sub-btn" data-page="payout" data-tab="fiat">法币付款</button>
+          <button class="sub-btn" data-page="payout" data-tab="crypto">数币付款</button>
+          <button class="sub-btn" data-page="payout" data-tab="records">付款记录</button>
+        </div>
+        <button class="nav-btn" data-page="cards"><span class="nav-symbol">V</span><span class="nav-text">发卡</span></button>
+        <div class="submenu" data-submenu="cards">
+          <button class="sub-btn" data-page="cards" data-tab="mycards">卡片列表</button>
+          <button class="sub-btn" data-page="cards" data-tab="orders">卡订单</button>
+          <button class="sub-btn" data-page="cards" data-tab="billing">卡账单</button>
+        </div>
+        <button class="nav-btn" data-page="profile"><span class="nav-symbol">S</span><span class="nav-text">个人中心</span></button>
+        <div class="submenu" data-submenu="profile">
+          <button class="sub-btn" data-page="profile" data-tab="profile">个人信息</button>
+          <button class="sub-btn" data-page="profile" data-tab="security">安全设置</button>
+          <button class="sub-btn" data-page="profile" data-tab="roles">角色与权限</button>
+        </div>
+      </nav>
+      <div class="side-foot">KYC passed · Fiat + Crypto enabled</div>
+    </aside>
+    <div class="content">
+      <header class="topbar">
+        <div class="top-title">
+          <h2 id="pageTitle">资产管理</h2>
+          <p id="pageSubtitle">总余额、法币余额、数币余额、充值和提现。</p>
+        </div>
+        <div class="top-actions">
+          <span class="status">审核通过</span>
+          <button class="btn ghost" id="resetDemo">重新开户</button>
+        </div>
+      </header>
+      <main id="main" class="main"></main>
+    </div>
+  </section>
+
+  <div id="toast" class="toast">已提交</div>
+
+  <script>
+    const state = {
+      step: 1,
+      page: 'assets',
+      tab: 'overview',
+      detected: false,
+      profile: {
+        name: 'Lotus Global Trade Co.',
+        type: '企业',
+        country: 'Vietnam',
+        doc: 'VN-0312457890'
+      }
+    };
+
+    const stepEls = [...document.querySelectorAll('[data-step]')];
+    const pillEls = [...document.querySelectorAll('[data-step-pill]')];
+    const main = document.getElementById('main');
+    const pageTitle = document.getElementById('pageTitle');
+    const pageSubtitle = document.getElementById('pageSubtitle');
+
+    function setStep(step) {
+      state.step = Math.max(1, Math.min(4, step));
+      stepEls.forEach(el => el.classList.toggle('hidden', Number(el.dataset.step) !== state.step));
+      pillEls.forEach(el => {
+        const idx = Number(el.dataset.stepPill);
+        el.classList.toggle('active', idx === state.step);
+        el.classList.toggle('done', idx < state.step);
+      });
+    }
+
+    document.querySelectorAll('[data-next]').forEach(btn => btn.addEventListener('click', () => setStep(state.step + 1)));
+    document.querySelectorAll('[data-prev]').forEach(btn => btn.addEventListener('click', () => setStep(state.step - 1)));
+
+    function updateIndustryExtras() {
+      const selected = [...document.querySelectorAll('#industryChips input:checked')].map(input => input.value);
+      const showCategories = selected.includes('跨境电商') || selected.includes('外贸批发');
+      const showCountries = selected.includes('物流货代');
+      document.getElementById('categoryBlock').classList.toggle('hidden', !showCategories);
+      document.getElementById('countryBlock').classList.toggle('hidden', !showCountries);
+    }
+
+    document.querySelectorAll('#industryChips input').forEach(input => {
+      input.addEventListener('change', updateIndustryExtras);
+    });
+
+    document.getElementById('aiDetectBtn').addEventListener('click', () => {
+      const doc = document.getElementById('docNumber').value.trim();
+      const isPersonal = /^P|^\d{9,12}$/.test(doc);
+      const isChina = /^91/.test(doc);
+      state.profile = {
+        name: isPersonal ? 'Nguyen Minh An' : (isChina ? 'Shenzhen Cross-border Supply Chain Ltd.' : 'Lotus Global Trade Co.'),
+        type: isPersonal ? '个人' : '企业',
+        country: isChina ? 'China' : 'Vietnam',
+        doc: doc || 'VN-0312457890'
+      };
+      document.getElementById('aiType').textContent = state.profile.type;
+      document.getElementById('aiCountry').textContent = state.profile.country;
+      document.getElementById('aiDocType').textContent = isPersonal ? 'National ID / Passport' : 'Business Registration';
+      document.getElementById('aiName').textContent = state.profile.name;
+      document.getElementById('aiCard').classList.remove('hidden');
+      state.detected = true;
+      showToast('AI 已识别主体信息，并预填主营行业');
+      setTimeout(() => setStep(3), 650);
+    });
+
+    document.getElementById('enterApp').addEventListener('click', () => {
+      document.getElementById('onboardingShell').classList.add('hidden');
+      document.getElementById('appShell').classList.remove('hidden');
+      renderPage('assets', 'myAssets');
+    });
+
+    document.getElementById('resetDemo').addEventListener('click', () => {
+      document.getElementById('appShell').classList.add('hidden');
+      document.getElementById('onboardingShell').classList.remove('hidden');
+      setStep(1);
+    });
+
+    document.querySelectorAll('.nav-btn, .sub-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const page = btn.dataset.page;
+        const tab = btn.dataset.tab || defaultTab(page);
+        renderPage(page, tab);
+      });
+    });
+
+    function defaultTab(page) {
+      return {
+        assets: 'myAssets',
+        exchange: 'realtime',
+        directory: 'beneficiary',
+        collection: 'tools',
+        payout: 'fiat',
+        cards: 'mycards',
+        profile: 'profile'
+      }[page] || 'overview';
+    }
+
+    function renderPage(page, tab) {
+      state.page = page;
+      state.tab = tab;
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.page === page));
+      document.querySelectorAll('.submenu').forEach(sm => sm.classList.toggle('open', sm.dataset.submenu === page));
+      document.querySelectorAll('.sub-btn').forEach(btn => {
+        const activeTab = page === 'assets'
+          ? assetNavGroup(tab)
+          : (page === 'exchange' ? exchangeNavGroup(tab) : (page === 'collection' ? collectionNavGroup(tab) : tab));
+        btn.classList.toggle('active', btn.dataset.page === page && btn.dataset.tab === activeTab);
+      });
+      const meta = getPageMeta(page, tab);
+      pageTitle.textContent = meta.title;
+      pageSubtitle.textContent = meta.subtitle;
+      main.innerHTML = pages[page](tab);
+      bindDynamicActions();
+    }
+
+    const titles = {
+      assets: { title: '资产管理', subtitle: '总余额、法币余额、数币余额、充值和提现。' },
+      exchange: { title: '兑换', subtitle: '实时兑换、数法承兑和委托挂单。' },
+      directory: { title: '交易对手方', subtitle: '维护收款人、付款人、同名账户、第三方账户和链上地址。' },
+      collection: { title: '收款业务', subtitle: '三方收款工具、VA 收款、Crypto 收款地址、入金记录和退款。' },
+      payout: { title: '付款业务', subtitle: '法币付款、数币付款、出金记录和付款状态。' },
+      cards: { title: '卡业务', subtitle: '卡列表、开卡、充值、冻结、销卡、卡订单和账单。' },
+      profile: { title: '个人中心', subtitle: '主体信息、安全设置、角色和权限。' }
+    };
+
+    const assetTitles = {
+      myAssets: { title: '我的资产', subtitle: '总余额、法币余额、数币余额和各币种可用资产。' },
+      deposit: { title: '充值', subtitle: '数币充币、法币充值和充值记录。' },
+      withdraw: { title: '提现', subtitle: '数币提币、法币提现和提现记录。' }
+    };
+
+    function getPageMeta(page, tab) {
+      if (page === 'assets') return assetTitles[assetNavGroup(tab)] || assetTitles.myAssets;
+      return titles[page] || titles.assets;
+    }
+
+    const pages = {
+      assets(tab) {
+        return `
+          <div class="dashboard-grid">
+            ${assetBody(tab)}
+          </div>`;
+      },
+      exchange(tab) {
+        return `
+          <div class="dashboard-grid">
+            ${exchangeBody(tab)}
+          </div>`;
+      },
+      directory(tab) {
+        return `
+          <div class="dashboard-grid">
+            <div class="card span-12">
+              <div class="panel-body">
+                <div class="quick-actions" style="margin-top:0;margin-bottom:14px;">
+                  <button class="btn primary" data-action="add-counterparty">新增${tab === 'beneficiary' ? '收款人' : '汇款人'}</button>
+                  <button class="btn ghost" data-action="import">批量导入</button>
+                </div>
+                <table class="table">
+                  <thead><tr><th>名称</th><th>类型</th><th>用途</th><th>账户 / 地址</th><th>状态</th></tr></thead>
+                  <tbody>
+                    <tr><td>Shenzhen Supplier A</td><td>第三方账户</td><td>采购付款</td><td>BOC **** 8821</td><td><span class="pill green">可用</span></td></tr>
+                    <tr><td>Amazon Settlement</td><td>同名账户</td><td>平台收款</td><td>USD VA **** 1028</td><td><span class="pill green">可用</span></td></tr>
+                    <tr><td>USDT Treasury</td><td>Crypto 地址</td><td>链上收款</td><td>TRX...9Ab3</td><td><span class="pill amber">待复核</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>`;
+      },
+      collection(tab) {
+        return `
+          <div class="dashboard-grid">
+            <div class="card span-12">
+              <div class="panel-body">${collectionBody(tab)}</div>
+            </div>
+          </div>`;
+      },
+      payout(tab) {
+        return `
+          <div class="dashboard-grid">
+            <div class="card span-12">
+              <div class="panel-body">${payoutBody(tab)}</div>
+            </div>
+          </div>`;
+      },
+      cards(tab) {
+        return `
+          <div class="dashboard-grid">
+            <div class="card span-12">
+              <div class="panel-body">${cardBody(tab)}</div>
+            </div>
+          </div>`;
+      },
+      profile(tab) {
+        return `
+          <div class="dashboard-grid">
+            <div class="card span-12">
+              <div class="panel-body">${profileBody(tab)}</div>
+            </div>
+          </div>`;
+      }
+    };
+
+    function tabs(page, active, items) {
+      return `<div class="tabs">${items.map(([id, label]) => `<button class="tab ${active === id ? 'active' : ''}" data-page="${page}" data-tab="${id}">${label}</button>`).join('')}</div>`;
+    }
+
+    function assetNavGroup(tab) {
+      if (['myAssets', 'overview'].includes(tab)) return 'myAssets';
+      if (['deposit', 'cryptoDeposit', 'fiatDeposit', 'depositRecords'].includes(tab)) return 'deposit';
+      if (['withdraw', 'cryptoWithdraw', 'fiatWithdraw', 'withdrawRecords'].includes(tab)) return 'withdraw';
+      return 'myAssets';
+    }
+
+    function assetTabs(group, active) {
+      const groups = {
+        deposit: [['cryptoDeposit', '充币'], ['fiatDeposit', '充值'], ['depositRecords', '充值记录']],
+        withdraw: [['cryptoWithdraw', '提币'], ['fiatWithdraw', '提现'], ['withdrawRecords', '提现记录']]
+      };
+      return tabs('assets', active, groups[group] || groups.deposit);
+    }
+
+    function exchangeNavGroup(tab) {
+      if (['realtime', 'fxConversion', 'fiatCryptoAccept', 'conversionRecords'].includes(tab)) return 'realtime';
+      if (['orders', 'fxOrder', 'acceptOrder', 'orderRecords'].includes(tab)) return 'orders';
+      return 'realtime';
+    }
+
+    function exchangeTabs(group, active) {
+      const groups = {
+        realtime: [['fiatCryptoAccept', '数法承兑'], ['conversionRecords', '兑换记录']],
+        orders: [['fxOrder', '换汇挂单'], ['acceptOrder', '承兑挂单'], ['orderRecords', '挂单记录']]
+      };
+      return tabs('exchange', active, groups[group] || groups.realtime);
+    }
+
+    function collectionToolTabs(active) {
+      return tabs('collection', active, [['bankTools', '银行账户收款'], ['cryptoTools', '数币地址收款']]);
+    }
+
+    function collectionNavGroup(tab) {
+      if (['tools', 'bankTools', 'cryptoTools'].includes(tab)) return 'tools';
+      return tab;
+    }
+
+    function assetNotice(type) {
+      const notices = {
+        cryptoDeposit: [
+          '<b>网络要求：</b> 请务必通过对应网络发送所选加密资产。Ethereum 请用 ERC-20，TRON 请用 TRC-20，跨网络转账将导致资产永久丢失。',
+          '<b>地址确认：</b> 发送前请再次核对充值地址。地址错误或智能合约转账均不受理，并将造成资产永久损失。',
+          '<b>确认时间：</b> ERC-20 需 64 个确认（约 20-30 分钟），TRC-20 需 19 个确认（约 1-2 分钟）。',
+          '<b>联系支持：</b> 请联系您的客户经理或邮件联系 support@eurewax.example'
+        ],
+        fiatDeposit: [
+          '<b>银行转账要求：</b> 请确保您将确切金额转入平台提供的银行账户详情。在线账单中包含参考代码。',
+          '<b>处理时间：</b> 银行转账通常需要 1-3 个工作日处理。确认后您的账户将被记入。',
+          '<b>参考代码：</b> 请务必在银行转账中包含提供的参考代码，以确保资金正确入账。',
+          '<b>联系支持：</b> 请联系您的客户经理或邮件联系 support@eurewax.example'
+        ],
+        cryptoWithdraw: [
+          '<b>处理时间：</b> 提币处理时长约 4 小时。处理期间可能因网络拥堵延长。',
+          '<b>警告：</b> 请勿与受制裁实体进行交易。',
+          '<b>地址要求：</b> 首次使用地址需通过 KYT，风险地址会进入人工复核。',
+          '<b>联系支持：</b> 请联系您的客户经理或邮件联系 support@eurewax.example'
+        ],
+        fiatWithdraw: [
+          '<b>处理时间：</b> 银行转账通常需要 1-3 个工作日处理。',
+          '<b>汇率说明：</b> 实际到账金额以处理时汇率为准。',
+          '<b>KYC/AML：</b> 所有提现均需通过合规验证。',
+          '<b>联系支持：</b> 请联系您的客户经理或邮件联系 support@eurewax.example'
+        ]
+      };
+      return `
+        <aside class="notice-card">
+          <h3><span>!</span>重要提示</h3>
+          <ul class="notice-list">${(notices[type] || notices.cryptoDeposit).map(item => `<li>${item}</li>`).join('')}</ul>
+        </aside>`;
+    }
+
+    function exchangeBody(tab) {
+      if (tab === 'realtime') return exchangeBody('fiatCryptoAccept');
+      if (tab === 'orders') return exchangeBody('fxOrder');
+      if (tab === 'fxConversion') return `
+        <div class="span-12">${exchangeTabs('realtime', tab)}</div>
+        <div class="card asset-form span-12">
+          <h3>实时换汇</h3>
+          <div class="exchange-widget">
+            <div class="exchange-box">
+              <div class="exchange-head">
+                <span>Sell</span>
+                <span class="exchange-available">Available: <u>0.66 USD</u><button data-action="maximum">Maximum</button></span>
+              </div>
+              <div class="exchange-main">
+                <span class="currency-pill"><span class="flag-dot">🇺🇸</span>USD<span class="chev"></span></span>
+                <input class="exchange-input" value="0.00" inputmode="decimal">
+              </div>
+            </div>
+            <div class="exchange-rate-line">
+              <span>Delivers: 0.00 VND</span>
+              <button class="switch-btn" data-action="switch-conversion">⇅</button>
+            </div>
+            <div class="exchange-box">
+              <div class="exchange-head"><span>Buy</span></div>
+              <div class="exchange-main">
+                <span class="currency-pill"><span class="flag-dot">🇻🇳</span>VND<span class="chev"></span></span>
+                <input class="exchange-input" value="0" inputmode="decimal">
+              </div>
+            </div>
+            <button class="review-btn" data-action="convert">Review details</button>
+          </div>
+        </div>`;
+      if (tab === 'fiatCryptoAccept') return `
+        <div class="span-12">${exchangeTabs('realtime', tab)}</div>
+        <div class="card asset-form span-12">
+          <h3>数法承兑</h3>
+          <div class="exchange-widget">
+            <div class="exchange-box">
+              <div class="exchange-head">
+                <span>Sell</span>
+                <span class="exchange-available">Available: <u>132,440.24 USDT</u><button data-action="maximum">Maximum</button></span>
+              </div>
+              <div class="exchange-main">
+                <span class="currency-pill"><span class="coin-icon green">₮</span>USDT<span class="chev"></span></span>
+                <input class="exchange-input" value="0.000000" inputmode="decimal">
+              </div>
+            </div>
+            <div class="exchange-rate-line">
+              <span>Delivers: 0.00 VND · KYT 低风险</span>
+              <button class="switch-btn" data-action="switch-conversion">⇅</button>
+            </div>
+            <div class="exchange-box">
+              <div class="exchange-head"><span>Buy</span></div>
+              <div class="exchange-main">
+                <span class="currency-pill"><span class="flag-dot">🇻🇳</span>VND<span class="chev"></span></span>
+                <input class="exchange-input" value="0" inputmode="decimal">
+              </div>
+              <div class="quick-actions" style="margin:0;">
+                <button class="btn primary" data-action="select-currency">VND</button>
+                <button class="btn ghost" data-action="select-currency">HKD</button>
+                <button class="btn ghost" data-action="select-currency">USD</button>
+              </div>
+            </div>
+            <button class="review-btn" data-action="acceptance">Review details</button>
+          </div>
+        </div>`;
+      if (tab === 'conversionRecords') return `
+        <div class="span-12">${exchangeTabs('realtime', tab)}</div>
+        <div class="span-12">
+          <div class="filter-card">
+            <div class="form-row">
+              <div class="field"><label>交易 ID</label><input placeholder="按交易 ID 搜索"></div>
+              <div class="field"><label>类型</label><select><option>全部</option><option>实时换汇</option><option>数法承兑</option></select></div>
+              <div class="field"><label>开始日期</label><input placeholder="开始日期"></div>
+              <div class="field"><label>结束日期</label><input placeholder="结束日期"></div>
+            </div>
+            <div class="quick-actions" style="justify-content:flex-end;margin-top:0;"><button class="btn ghost" data-action="reset-filter">重置</button><button class="btn primary" data-action="query">查询</button></div>
+          </div>
+          <div class="card">
+            <table class="table"><thead><tr><th>交易 ID</th><th>类型</th><th>方向</th><th>卖出</th><th>获得</th><th>状态</th></tr></thead><tbody>
+              <tr><td>EXC-20260707-018</td><td>实时换汇</td><td>USD → VND</td><td>10,000 USD</td><td>254,600,000 VND</td><td><span class="pill green">完成</span></td></tr>
+              <tr><td>ACC-20260707-021</td><td>数法承兑</td><td>USDT → USD</td><td>25,000 USDT</td><td>24,950 USD</td><td><span class="pill amber">处理中</span></td></tr>
+            </tbody></table>
+          </div>
+        </div>`;
+      if (['fxOrder', 'acceptOrder', 'orderRecords'].includes(tab)) {
+        const labels = { fxOrder: '换汇挂单', acceptOrder: '承兑挂单', orderRecords: '挂单记录' };
+        return `
+          <div class="span-12">${exchangeTabs('orders', tab)}</div>
+          <div class="card span-12">
+            <div class="empty">${labels[tab]}<br><span style="font-size:12px;">页面内容待定。</span></div>
+          </div>`;
+      }
+      return exchangeBody('fxConversion');
+    }
+
+    function assetBody(tab) {
+      if (tab === 'deposit') return assetBody('cryptoDeposit');
+      if (tab === 'withdraw') return assetBody('cryptoWithdraw');
+      if (tab === 'conversion') return assetBody('fxConversion');
+      if (tab === 'cryptoDeposit') return `
+        <div class="span-12">${assetTabs('deposit', tab)}</div>
+        <div class="span-12 asset-workspace">
+          <div class="card asset-form">
+            <h3>充币</h3>
+            <label>网络</label>
+            <div class="option-grid">
+              <div class="option-card active"><div class="coin-icon purple">E</div><div><div class="option-title">Ethereum (ERC-20)</div><div class="option-sub">Ethereum Network</div></div></div>
+              <div class="option-card"><div class="coin-icon red">T</div><div><div class="option-title">Tron (TRC-20)</div><div class="option-sub">Tron Network</div></div></div>
+            </div>
+            <label>币种</label>
+            <div class="option-grid">
+              <div class="option-card active"><div class="coin-icon green">₮</div><div><div class="option-title">USDT</div><div class="option-sub">Tether USD</div></div></div>
+              <div class="option-card"><div class="coin-icon blue">$</div><div><div class="option-title">USDC</div><div class="option-sub">USD Coin</div></div></div>
+            </div>
+            <button class="btn primary" style="width:100%;" data-action="show-address">显示地址</button>
+          </div>
+          ${assetNotice('cryptoDeposit')}
+        </div>`;
+      if (tab === 'fiatDeposit') return `
+        <div class="span-12">${assetTabs('deposit', tab)}</div>
+        <div class="span-12 asset-workspace">
+          <div class="card asset-form">
+            <h3>充值</h3>
+            <label>币种</label>
+            <div class="option-grid" style="grid-template-columns: 240px;">
+              <div class="option-card active"><div><div class="option-title" style="color:#7c3aed;text-align:center;">USD</div></div></div>
+            </div>
+            <div class="field" style="margin-bottom:16px;"><label>充值金额</label><div style="display:grid;grid-template-columns:1fr 116px;"><input placeholder="请输入"><input value="USD" readonly style="border-left:0;border-radius:0 8px 8px 0;text-align:center;"></div></div>
+            <div class="field" style="margin-bottom:16px;"><label>银行账户</label><select><option>请选择收款银行账户</option><option>DBS USD Client Account **** 1028</option><option>BOC HK USD Account **** 7610</option></select></div>
+            <div class="summary-box">
+              <div class="summary-row"><span>币种:</span><b>--</b></div>
+              <div class="summary-row"><span>充值金额:</span><b>-- --</b></div>
+            </div>
+            <button class="btn primary" style="width:100%;" data-action="fiat-deposit">确认充值</button>
+          </div>
+          ${assetNotice('fiatDeposit')}
+        </div>`;
+      if (tab === 'depositRecords') return `
+        <div class="span-12">${assetTabs('deposit', tab)}</div>
+        <div class="span-12">
+          <div class="filter-card">
+            <div class="form-row">
+              <div class="field"><label>交易 ID</label><input placeholder="按交易 ID 搜索"></div>
+              <div class="field"><label>订单状态</label><select><option>全部</option><option>处理成功</option><option>处理中</option><option>失败</option></select></div>
+              <div class="field"><label>开始日期</label><input placeholder="开始日期"></div>
+              <div class="field"><label>结束日期</label><input placeholder="结束日期"></div>
+            </div>
+            <div class="quick-actions" style="justify-content:flex-end;margin-top:0;"><button class="btn ghost" data-action="reset-filter">重置</button><button class="btn primary" data-action="query">查询</button></div>
+          </div>
+          <div class="card">
+            <table class="table"><thead><tr><th>交易 ID</th><th>时间</th><th>类型</th><th>币种</th><th>金额</th><th>网络</th><th>手续费</th><th>状态</th><th>操作</th></tr></thead><tbody>
+              <tr><td>1002605211732336792760</td><td>2026-05-21 17:32:51</td><td><span class="pill">数币充值</span></td><td>USDT</td><td style="color:var(--green);font-weight:820;">0.35</td><td><span class="pill">ERC-20</span></td><td>--</td><td><span class="pill green">处理成功</span></td><td><button class="btn ghost" data-action="view">查看</button></td></tr>
+              <tr><td>FD202607070018</td><td>2026-07-07 09:10:24</td><td><span class="pill gray">法币充值</span></td><td>USD</td><td style="font-weight:820;">8,200.00</td><td>Bank Transfer</td><td>--</td><td><span class="pill amber">处理中</span></td><td><button class="btn ghost" data-action="view">查看</button></td></tr>
+            </tbody></table>
+          </div>
+        </div>`;
+      if (tab === 'cryptoWithdraw') return `
+        <div class="span-12">${assetTabs('withdraw', tab)}</div>
+        <div class="span-12 asset-workspace">
+          <div class="card asset-form">
+            <h3>提币</h3>
+            <label>提币网络</label>
+            <div class="option-grid">
+              <div class="option-card active"><div class="coin-icon purple">E</div><div><div class="option-title">Ethereum (ERC-20)</div><div class="option-sub">Ethereum Network</div></div></div>
+              <div class="option-card"><div class="coin-icon red">T</div><div><div class="option-title">Tron (TRC-20)</div><div class="option-sub">Tron Network</div></div></div>
+            </div>
+            <label>提币币种</label>
+            <div class="option-grid">
+              <div class="option-card active"><div class="coin-icon green">₮</div><div><div class="option-title">USDT</div><div class="option-sub">可用余额: 0.35</div></div></div>
+              <div class="option-card"><div class="coin-icon blue">$</div><div><div class="option-title">USDC</div><div class="option-sub">可用余额: 0.00</div></div></div>
+            </div>
+            <div class="field" style="margin-bottom:14px;"><label>提币金额 <span style="float:right;color:var(--muted);">可用余额: 0.35 USDT</span></label><div style="display:grid;grid-template-columns:1fr 84px;"><input placeholder="请输入提币金额"><input value="USDT" readonly style="border-left:0;border-radius:0 8px 8px 0;text-align:center;"></div></div>
+            <div class="field" style="margin-bottom:14px;"><label>提币地址 <a style="float:right;color:#7c3aed;text-decoration:none;" href="#">新增地址</a></label><select><option>选择地址</option><option>TRX9...2Abc</option><option>0x89...a21</option></select></div>
+            <div class="summary-box">
+              <div class="summary-row"><span>提币网络</span><b>Ethereum</b></div>
+              <div class="summary-row"><span>提币地址</span><b>-</b></div>
+              <div class="summary-row"><span>提币金额</span><b>- USDT</b></div>
+              <div class="summary-row"><span>手续费</span><b>- USDT</b></div>
+              <div class="summary-row"><span>实际到账</span><b style="color:#7c3aed;">- USDT</b></div>
+            </div>
+            <button class="btn primary" style="width:100%;" data-action="crypto-withdraw">提交</button>
+          </div>
+          ${assetNotice('cryptoWithdraw')}
+        </div>`;
+      if (tab === 'fiatWithdraw') return `
+        <div class="span-12">${assetTabs('withdraw', tab)}</div>
+        <div class="span-12 asset-workspace">
+          <div class="card asset-form">
+            <h3>法币提现</h3>
+            <label>您提现</label>
+            <div class="option-grid" style="grid-template-columns: 240px;">
+              <div class="option-card active"><div><div class="option-title" style="color:#7c3aed;text-align:center;">USD</div></div></div>
+            </div>
+            <div class="metric-sub" style="font-weight:800;margin:0 0 18px;">可用余额: 0 USD</div>
+            <div class="field" style="margin-bottom:14px;"><label>提现金额</label><div style="display:grid;grid-template-columns:1fr 84px;"><input placeholder="请输入金额"><input value="USD" readonly style="border-left:0;border-radius:0 8px 8px 0;text-align:center;"></div></div>
+            <div class="field" style="margin-bottom:14px;"><label>收款账户 <a style="float:right;color:#7c3aed;text-decoration:none;" href="#">添加收款人</a></label><select><option>请选择收款银行账户</option><option>Shenzhen Supplier A · BOC **** 8821</option></select></div>
+            <div class="field" style="margin-bottom:14px;"><label>费用承担方</label><select><option>请选择</option><option>付款方承担</option><option>收款方承担</option></select></div>
+            <div class="field" style="margin-bottom:14px;"><label>用途</label><select><option>请选择</option><option>货物采购</option><option>服务费</option><option>工资</option></select></div>
+            <div class="field" style="margin-bottom:14px;"><label>附言</label><input placeholder="请输入附言"><span class="metric-sub">仅支持大小写英文字母、数字、空格、.&</span></div>
+            <div class="summary-box">
+              <div class="summary-row"><span>手续费</span><b>-- --</b></div>
+              <div class="summary-row"><span>预计到账金额</span><b>-- --</b></div>
+            </div>
+            <button class="btn primary" style="width:100%;" data-action="fiat-withdraw">提交</button>
+          </div>
+          ${assetNotice('fiatWithdraw')}
+        </div>`;
+      if (tab === 'withdrawRecords') return `
+        <div class="span-12">${assetTabs('withdraw', tab)}</div>
+        <div class="span-12">
+          <div class="filter-card">
+            <div class="form-row">
+              <div class="field"><label>交易 ID</label><input placeholder="按交易 ID 搜索"></div>
+              <div class="field"><label>订单状态</label><select><option>全部</option><option>处理中</option><option>成功</option><option>失败</option></select></div>
+              <div class="field"><label>开始日期</label><input placeholder="开始日期"></div>
+              <div class="field"><label>结束日期</label><input placeholder="结束日期"></div>
+            </div>
+            <div class="quick-actions" style="justify-content:flex-end;margin-top:0;"><button class="btn ghost" data-action="reset-filter">重置</button><button class="btn primary" data-action="query">查询</button></div>
+          </div>
+          <div class="card">
+            <table class="table"><thead><tr><th>交易 ID</th><th>时间</th><th>类型</th><th>币种</th><th>金额</th><th>手续费</th><th>状态</th><th>操作</th></tr></thead><tbody>
+              <tr><td colspan="8"><div class="empty">暂无订单记录<br><span style="font-size:12px;">没有找到符合当前筛选条件的订单记录。</span></div></td></tr>
+            </tbody></table>
+          </div>
+        </div>`;
+      if (tab === 'fxConversion') return `
+        <div class="span-12">${assetTabs('conversion', tab)}</div>
+        <div class="card asset-form span-12">
+          <h3>实时换汇</h3>
+          <div class="exchange-widget">
+            <div class="exchange-box">
+              <div class="exchange-head">
+                <span>Sell</span>
+                <span class="exchange-available">Available: <u>0.66 USD</u><button data-action="maximum">Maximum</button></span>
+              </div>
+              <div class="exchange-main">
+                <span class="currency-pill"><span class="flag-dot">🇺🇸</span>USD<span class="chev"></span></span>
+                <input class="exchange-input" value="0.00" inputmode="decimal">
+              </div>
+            </div>
+            <div class="exchange-rate-line">
+              <span>Delivers: 0.00 VND</span>
+              <button class="switch-btn" data-action="switch-conversion">⇅</button>
+            </div>
+            <div class="exchange-box">
+              <div class="exchange-head"><span>Buy</span></div>
+              <div class="exchange-main">
+                <span class="currency-pill"><span class="flag-dot">🇻🇳</span>VND<span class="chev"></span></span>
+                <input class="exchange-input" value="0" inputmode="decimal">
+              </div>
+            </div>
+            <button class="review-btn" data-action="convert">Review details</button>
+          </div>
+        </div>`;
+      if (tab === 'fiatCryptoAccept') return `
+        <div class="span-12">${assetTabs('conversion', tab)}</div>
+        <div class="card asset-form span-12">
+          <h3>数法承兑</h3>
+          <div class="exchange-widget">
+            <div class="exchange-box">
+              <div class="exchange-head">
+                <span>Sell</span>
+                <span class="exchange-available">Available: <u>132,440.24 USDT</u><button data-action="maximum">Maximum</button></span>
+              </div>
+              <div class="exchange-main">
+                <span class="currency-pill"><span class="coin-icon green">₮</span>USDT<span class="chev"></span></span>
+                <input class="exchange-input" value="0.000000" inputmode="decimal">
+              </div>
+            </div>
+            <div class="exchange-rate-line">
+              <span>Delivers: 0.00 VND · KYT 低风险</span>
+              <button class="switch-btn" data-action="switch-conversion">⇅</button>
+            </div>
+            <div class="exchange-box">
+              <div class="exchange-head"><span>Buy</span></div>
+              <div class="exchange-main">
+                <span class="currency-pill"><span class="flag-dot">🇻🇳</span>VND<span class="chev"></span></span>
+                <input class="exchange-input" value="0" inputmode="decimal">
+              </div>
+              <div class="quick-actions" style="margin:0;">
+                <button class="btn primary" data-action="select-currency">VND</button>
+                <button class="btn ghost" data-action="select-currency">HKD</button>
+                <button class="btn ghost" data-action="select-currency">USD</button>
+              </div>
+            </div>
+            <button class="review-btn" data-action="acceptance">Review details</button>
+          </div>
+        </div>`;
+      if (tab === 'conversionRecords') return `
+        <div class="span-12">${assetTabs('conversion', tab)}</div>
+        <div class="span-12">
+          <div class="filter-card">
+            <div class="form-row">
+              <div class="field"><label>交易 ID</label><input placeholder="按交易 ID 搜索"></div>
+              <div class="field"><label>类型</label><select><option>全部</option><option>实时换汇</option><option>数法承兑</option></select></div>
+              <div class="field"><label>开始日期</label><input placeholder="开始日期"></div>
+              <div class="field"><label>结束日期</label><input placeholder="结束日期"></div>
+            </div>
+            <div class="quick-actions" style="justify-content:flex-end;margin-top:0;"><button class="btn ghost" data-action="reset-filter">重置</button><button class="btn primary" data-action="query">查询</button></div>
+          </div>
+          <div class="card">
+            <table class="table"><thead><tr><th>交易 ID</th><th>类型</th><th>方向</th><th>卖出</th><th>获得</th><th>状态</th></tr></thead><tbody>
+              <tr><td>EXC-20260707-018</td><td>实时换汇</td><td>USD → VND</td><td>10,000 USD</td><td>254,600,000 VND</td><td><span class="pill green">完成</span></td></tr>
+              <tr><td>ACC-20260707-021</td><td>数法承兑</td><td>USDT → USD</td><td>25,000 USDT</td><td>24,950 USD</td><td><span class="pill amber">处理中</span></td></tr>
+            </tbody></table>
+          </div>
+        </div>`;
+      const fiatAssets = [
+        { flag: '🇺🇸', code: 'USD', amount: '82,240.20', avail: '82,240.20', total: '82,240.20' },
+        { flag: '🇻🇳', code: 'VND', amount: '1,740,200,000', avail: '1,740,200,000', total: '1,740,200,000' },
+        { flag: '🇪🇺', code: 'EUR', amount: '12,600.00', avail: '12,600.00', total: '12,600.00' }
+      ];
+      const cryptoAssets = [
+        { icon: 'green', sym: '₮', code: 'USDT', amount: '132,440.24', avail: '132,440.24', total: '132,440.24' },
+        { icon: 'blue', sym: '$', code: 'USDC', amount: '0', avail: '0', total: '0' }
+      ];
+      const fiatCard = a => `
+        <div class="card asset-card span-6">
+          <div class="asset-card-head"><span class="flag-dot">${a.flag}</span><span>${a.code}</span></div>
+          <div class="asset-card-amount">${a.amount}</div>
+          <div class="asset-card-actions">
+            <button class="btn primary" data-action="fiat-deposit">充值</button>
+            <button class="btn ghost" data-action="fiat-withdraw">提现</button>
+          </div>
+          <div>
+            <div class="asset-balance-row"><span>可用余额:</span><b>${a.avail}</b></div>
+            <div class="asset-balance-row"><span>总可用余额:</span><span>${a.total}</span></div>
+          </div>
+        </div>`;
+      const cryptoCard = a => `
+        <div class="card asset-card span-6">
+          <div class="asset-card-head"><span class="coin-icon ${a.icon}">${a.sym}</span><span>${a.code}</span></div>
+          <div class="asset-card-amount">${a.amount}</div>
+          <div class="asset-card-actions">
+            <button class="btn primary" data-action="show-address">充币</button>
+            <button class="btn ghost" data-action="crypto-withdraw">提币</button>
+          </div>
+          <div>
+            <div class="asset-balance-row"><span>可用余额:</span><b>${a.avail}</b></div>
+            <div class="asset-balance-row"><span>总可用余额:</span><span>${a.total}</span></div>
+          </div>
+        </div>`;
+      return `
+        <div class="span-12"><h3 class="asset-list-title">资产列表</h3></div>
+        <div class="asset-section-title crypto">数币账户</div>
+        ${cryptoAssets.map(cryptoCard).join('')}
+        <div class="asset-section-title">法币账户</div>
+        ${fiatAssets.map(fiatCard).join('')}`;
+    }
+
+    function collectionBody(tab) {
+      if (tab === 'tools') return collectionBody('bankTools');
+      if (tab === 'bankTools') return `
+        ${collectionToolTabs(tab)}
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin:16px 0 14px;">
+          <h3 style="margin:0;">银行账户收款</h3>
+          <button class="btn primary" data-action="add-bank-account">新增收款账户</button>
+        </div>
+        <table class="table"><thead><tr><th>账户名称</th><th>币种</th><th>账号 / VA</th><th>开户行</th><th>状态</th></tr></thead><tbody>
+          <tr><td>USD Virtual Account</td><td>USD</td><td>VA **** 1028</td><td>DBS Bank</td><td><span class="pill green">可用</span></td></tr>
+          <tr><td>VND Virtual Account</td><td>VND</td><td>VA **** 7610</td><td>Vietcombank</td><td><span class="pill green">可用</span></td></tr>
+          <tr><td>EUR Virtual Account</td><td>EUR</td><td>VA **** 3390</td><td>ClearBank</td><td><span class="pill amber">开通中</span></td></tr>
+        </tbody></table>`;
+      if (tab === 'cryptoTools') return `
+        ${collectionToolTabs(tab)}
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin:16px 0 14px;">
+          <h3 style="margin:0;">数币地址收款</h3>
+          <button class="btn primary" data-action="add-crypto-address">新增收款地址</button>
+        </div>
+        <div class="section-label" style="margin-top:0;">USDT 收款地址</div>
+        <table class="table" style="margin-bottom:20px;"><thead><tr><th>网络</th><th>币种</th><th>收款地址</th><th>状态</th></tr></thead><tbody>
+          <tr><td><span class="pill">TRC-20</span></td><td>USDT</td><td>TRX...9Ab3</td><td><span class="pill green">已启用</span></td></tr>
+          <tr><td><span class="pill">ERC-20</span></td><td>USDT</td><td>0x89...a21</td><td><span class="pill green">已启用</span></td></tr>
+        </tbody></table>
+        <div class="section-label" style="margin-top:0;">USDC 收款地址</div>
+        <table class="table"><thead><tr><th>网络</th><th>币种</th><th>收款地址</th><th>状态</th></tr></thead><tbody>
+          <tr><td><span class="pill">TRC-20</span></td><td>USDC</td><td>TRX...5c7D</td><td><span class="pill green">已启用</span></td></tr>
+          <tr><td><span class="pill">ERC-20</span></td><td>USDC</td><td>0x2f...b90</td><td><span class="pill amber">待复核</span></td></tr>
+        </tbody></table>`;
+      if (tab === 'records') return `
+        <table class="table"><thead><tr><th>入金时间</th><th>来源</th><th>收款工具</th><th>币种</th><th>金额</th><th>状态</th></tr></thead><tbody>
+          <tr><td>Today 11:40</td><td>Amazon</td><td>USD VA</td><td>USD</td><td>12,884.10</td><td><span class="pill green">已入账</span></td></tr>
+          <tr><td>Today 09:18</td><td>Buyer TRX</td><td>TRC20 Address</td><td>USDT</td><td>6,200.00</td><td><span class="pill green">已确认</span></td></tr>
+        </tbody></table>`;
+      if (tab === 'refunds') return `
+        <div class="form-row"><div class="field"><label>原收款订单</label><input value="COL-20260707-1028"></div><div class="field"><label>退款金额</label><input value="500"></div><div class="field"><label>币种</label><select><option>USD</option><option>USDT</option></select></div><div class="field"><label>原因</label><input value="客户重复付款"></div></div>
+        <button class="btn primary" data-action="refund">发起退款</button>
+        <div class="empty" style="margin-top:16px;">暂无待处理退款</div>`;
+      return collectionBody('bankTools');
+    }
+
+    function payoutBody(tab) {
+      if (tab === 'crypto') return `
+        <div class="asset-workspace">
+          <div class="asset-form">
+            <h3>数币付款</h3>
+            <div class="field" style="margin-bottom:14px;"><label>选择收款人 <a style="float:right;color:#7c3aed;text-decoration:none;" href="#">新增银行账户</a></label><select><option>请选择收款人</option><option>USDT Supplier · BOC **** 8821</option><option>Ad Network · DBS **** 2910</option></select></div>
+            <label>选择付款账户</label>
+            <div class="option-grid">
+              <div class="option-card active"><div class="coin-icon green">₮</div><div><div class="option-title">USDT</div><div class="option-sub">可用余额: 132,440.24 USDT</div></div></div>
+              <div class="option-card"><div class="coin-icon blue">$</div><div><div class="option-title">USDC</div><div class="option-sub">可用余额: 0.00 USDC</div></div></div>
+            </div>
+            <div class="field" style="margin-bottom:14px;"><label>付款金额</label><div style="display:grid;grid-template-columns:1fr 96px;"><input placeholder="请输入金额"><input value="USDT" readonly style="border-left:0;border-radius:0 8px 8px 0;text-align:center;"></div></div>
+            <div class="field" style="margin-bottom:14px;"><label>费用承担方</label><select><option>请选择</option><option>付款方承担</option><option>收款方承担</option></select></div>
+            <div class="field" style="margin-bottom:14px;"><label>用途代码</label><select><option>请选择</option><option>货物采购</option><option>服务费用</option><option>广告投放</option></select></div>
+            <div class="field" style="margin-bottom:14px;"><label>附言</label><input placeholder="请输入附言"><span class="metric-sub">仅支持大小写英文字母、数字、空格、.&</span></div>
+            <div class="summary-box">
+              <div class="summary-row"><span>手续费</span><b>-- --</b></div>
+              <div class="summary-row"><span>预计到账金额</span><b>-- --</b></div>
+            </div>
+            <div class="quick-actions" style="margin-top:18px;"><button class="btn primary" data-action="crypto-payout">提交</button><button class="btn ghost" data-action="cancel">取消</button></div>
+          </div>
+          ${assetNotice('cryptoWithdraw')}
+        </div>
+        `;
+      if (tab === 'records') return `
+        <div class="filter-card">
+          <div class="form-row">
+            <div class="field"><label>付款单号 / TxID</label><input placeholder="搜索付款记录"></div>
+            <div class="field"><label>付款类型</label><select><option>全部</option><option>法币付款</option><option>数币付款</option></select></div>
+            <div class="field"><label>订单状态</label><select><option>全部</option><option>处理中</option><option>完成</option><option>失败</option></select></div>
+            <div class="field"><label>日期</label><input placeholder="选择日期"></div>
+          </div>
+          <div class="quick-actions" style="justify-content:flex-end;margin-top:0;"><button class="btn ghost" data-action="reset-filter">重置</button><button class="btn primary" data-action="query">查询</button></div>
+        </div>
+        <table class="table" style="margin-top:16px;"><thead><tr><th>单号</th><th>类型</th><th>收款人 / 银行账户</th><th>币种</th><th>金额</th><th>状态</th></tr></thead><tbody>
+          <tr><td>PAY-2407-018</td><td>法币付款</td><td>Shenzhen Supplier A</td><td>USD</td><td>6,200</td><td><span class="pill amber">处理中</span></td></tr>
+          <tr><td>CPAY-2407-021</td><td>数币付款</td><td>USDT Supplier · BOC **** 8821</td><td>USDT</td><td>1,280</td><td><span class="pill green">完成</span></td></tr>
+        </tbody></table>`;
+      return `
+        <div class="asset-workspace">
+          <div class="asset-form">
+            <h3>法币付款</h3>
+            <div class="field" style="margin-bottom:14px;"><label>选择收款人 <a style="float:right;color:#7c3aed;text-decoration:none;" href="#">新增银行账户</a></label><select><option>请选择收款人</option><option>Shenzhen Supplier A · BOC **** 8821</option><option>Logistics Partner · VCB **** 3028</option></select></div>
+            <label>选择付款账户</label>
+            <div class="option-grid">
+              <div class="option-card active"><div><div class="option-title" style="color:#7c3aed;">USD</div><div class="option-sub">可用余额: 82,240.20 USD</div></div></div>
+              <div class="option-card"><div><div class="option-title">VND</div><div class="option-sub">可用余额: 1,740,200,000 VND</div></div></div>
+            </div>
+            <div class="field" style="margin-bottom:14px;"><label>付款金额</label><div style="display:grid;grid-template-columns:1fr 96px;"><input placeholder="请输入金额"><input value="USD" readonly style="border-left:0;border-radius:0 8px 8px 0;text-align:center;"></div></div>
+            <div class="field" style="margin-bottom:14px;"><label>费用承担方</label><select><option>请选择</option><option>付款方承担</option><option>收款方承担</option></select></div>
+            <div class="field" style="margin-bottom:14px;"><label>用途代码</label><select><option>请选择</option><option>货物采购</option><option>服务费用</option><option>员工工资</option></select></div>
+            <div class="field" style="margin-bottom:14px;"><label>附言</label><input placeholder="请输入附言"><span class="metric-sub">仅支持大小写英文字母、数字、空格、.&</span></div>
+            <div class="summary-box">
+              <div class="summary-row"><span>手续费</span><b>-- --</b></div>
+              <div class="summary-row"><span>预计到账金额</span><b>-- --</b></div>
+            </div>
+            <div class="quick-actions" style="margin-top:18px;"><button class="btn primary" data-action="fiat-payout">提交</button><button class="btn ghost" data-action="cancel">取消</button></div>
+          </div>
+          ${assetNotice('fiatWithdraw')}
+        </div>
+        `;
+    }
+
+    function cardBody(tab) {
+      if (tab === 'orders') return `
+        <table class="table"><thead><tr><th>订单号</th><th>类型</th><th>金额</th><th>渠道</th><th>状态</th></tr></thead><tbody>
+          <tr><td>CARD-9081</td><td>消费</td><td>USD 480.20</td><td>Meta Ads</td><td><span class="pill green">成功</span></td></tr>
+          <tr><td>CARD-9082</td><td>退款</td><td>USD 28.00</td><td>Google Ads</td><td><span class="pill amber">待入账</span></td></tr>
+        </tbody></table>`;
+      if (tab === 'billing') return `
+        <table class="table"><thead><tr><th>账单周期</th><th>消费</th><th>退款</th><th>ATM</th><th>应付</th></tr></thead><tbody>
+          <tr><td>2026-07</td><td>12,840.10</td><td>320.00</td><td>0.00</td><td>12,520.10</td></tr>
+          <tr><td>2026-06</td><td>9,441.00</td><td>128.00</td><td>0.00</td><td>9,313.00</td></tr>
+        </tbody></table>`;
+      return `
+        <div class="quick-actions" style="margin-top:0;margin-bottom:14px;"><button class="btn primary" data-action="new-card">开卡</button><button class="btn ghost" data-action="topup-card">充值</button><button class="btn ghost" data-action="freeze-card">冻结</button><button class="btn ghost" data-action="cancel-card">销卡</button></div>
+        <table class="table"><thead><tr><th>卡号</th><th>用途</th><th>余额</th><th>限额</th><th>状态</th></tr></thead><tbody>
+          <tr><td>**** 4481</td><td>广告投流</td><td>USD 4,820.00</td><td>USD 10,000 / day</td><td><span class="pill green">可用</span></td></tr>
+          <tr><td>**** 9082</td><td>货物采购</td><td>USD 1,120.00</td><td>USD 5,000 / day</td><td><span class="pill gray">冻结</span></td></tr>
+        </tbody></table>`;
+    }
+
+    function profileBody(tab) {
+      if (tab === 'security') return `
+        <div class="timeline">
+          <div class="event"><span class="event-dot"></span><div><div class="event-title">登录密码</div><div class="event-sub">已设置，建议 90 天更新一次</div></div><button class="btn ghost" data-action="password">修改</button></div>
+          <div class="event"><span class="event-dot"></span><div><div class="event-title">支付 2FA</div><div class="event-sub">大额付款、出币、角色变更需二次验证</div></div><button class="btn ghost" data-action="2fa">管理</button></div>
+        </div>`;
+      if (tab === 'roles') return `
+        <table class="table"><thead><tr><th>角色</th><th>成员</th><th>权限</th><th>状态</th></tr></thead><tbody>
+          <tr><td>Admin</td><td>2</td><td>全部权限</td><td><span class="pill green">启用</span></td></tr>
+          <tr><td>Finance</td><td>4</td><td>付款、对账、报表</td><td><span class="pill green">启用</span></td></tr>
+          <tr><td>Operator</td><td>7</td><td>收款、订单、客户</td><td><span class="pill green">启用</span></td></tr>
+        </tbody></table>`;
+      return `
+        <div class="form-grid">
+          <div class="field"><label>主体名称</label><input value="${state.profile.name}"></div>
+          <div class="field"><label>主体类型</label><input value="${state.profile.type}"></div>
+          <div class="field"><label>所在国家</label><input value="${state.profile.country}"></div>
+          <div class="field"><label>证件号码</label><input value="${state.profile.doc}"></div>
+          <div class="field full"><label>已开通产品</label><textarea>全球收款、全球付款、虚拟信用卡、即时汇兑、数币承兑</textarea></div>
+        </div>`;
+    }
+
+    function bindDynamicActions() {
+      document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click', () => renderPage(btn.dataset.page, btn.dataset.tab)));
+      document.querySelectorAll('[data-action]').forEach(btn => btn.addEventListener('click', () => showToast(actionText(btn.dataset.action))));
+    }
+
+    function actionText(action) {
+      const map = {
+        deposit: '已生成充值账户 / 地址',
+        withdraw: '提现申请已提交',
+        'show-address': '已生成充币地址',
+        'fiat-deposit': '法币充值信息已提交',
+        'crypto-withdraw': '提币申请已提交，等待 KYT 与二次验证',
+        'fiat-withdraw': '法币提现申请已提交',
+        'reset-filter': '筛选条件已重置',
+        query: '查询完成',
+        view: '已打开订单详情',
+        convert: '兑换试算已提交',
+        acceptance: '承兑申请已提交',
+        maximum: '已填入最大可用余额',
+        'select-currency': '已切换买入币种',
+        'switch-conversion': '买卖方向已切换',
+        download: '报表已生成',
+        'add-counterparty': '已打开新增交易对手方',
+        import: '批量导入模板已准备',
+        'create-va': '收款工具创建中',
+        'add-bank-account': '已打开新增收款账户',
+        'add-crypto-address': '已打开新增收款地址',
+        refund: '退款申请已提交',
+        'crypto-payout': '数币付款已提交，等待 KYT',
+        'fiat-payout': '法币付款已提交',
+        cancel: '已取消当前操作',
+        'new-card': '开卡申请已提交',
+        'topup-card': '卡充值已提交',
+        'freeze-card': '卡冻结指令已发送',
+        'cancel-card': '销卡申请已提交',
+        password: '密码设置已打开',
+        '2fa': '2FA 设置已打开'
+      };
+      return map[action] || '操作已提交';
+    }
+
+    let toastTimer;
+    function showToast(text) {
+      const toast = document.getElementById('toast');
+      toast.textContent = text;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+    }
+
+    setStep(1);
+    updateIndustryExtras();
+  </script>
+</body>
+</html>
