@@ -967,7 +967,7 @@
         </div>
         <div class="rail-card" aria-label="能力概览">
           <div class="rail-row"><div class="rail-icon">VA</div><div><div class="rail-title">全球收款</div><div class="rail-sub">法币 VA + Crypto 收款地址</div></div><span class="rail-tag">Collection</span></div>
-          <div class="rail-row"><div class="rail-icon">PO</div><div><div class="rail-title">全球付款</div><div class="rail-sub">供应商、服务商、工资、链上付款</div></div><span class="rail-tag">Payout</span></div>
+          <div class="rail-row"><div class="rail-icon">PO</div><div><div class="rail-title">全球付款</div><div class="rail-sub">法币余额或数币余额付款</div></div><span class="rail-tag">Payout</span></div>
           <div class="rail-row"><div class="rail-icon">FX</div><div><div class="rail-title">兑换</div><div class="rail-sub">实时兑换 + 委托挂单</div></div><span class="rail-tag">Exchange</span></div>
           <div class="rail-row"><div class="rail-icon">VC</div><div><div class="rail-title">虚拟信用卡</div><div class="rail-sub">广告投流、货物采购、OTA 付款</div></div><span class="rail-tag">Cards</span></div>
         </div>
@@ -1078,7 +1078,7 @@
             </div>
             <div class="product-card">
               <h3>全球付款</h3>
-              <p class="muted">开通供应商、服务商和员工等付款能力，支持法币付款或链上付款。</p>
+              <p class="muted">开通供应商、服务商和员工等付款能力，支持从法币余额或数币余额发起付款。</p>
               <div class="section-label">付款货币</div>
               <label class="chip-check"><input type="checkbox" checked value="付法币"><span>付法币</span></label>
               <label class="chip-check"><input type="checkbox" checked value="付数币"><span>付数币</span></label>
@@ -1118,7 +1118,7 @@
             <div class="ok-badge">✓</div>
             <div>
               <strong>Lotus Global Trade Co. 已通过审核</strong>
-              <p class="step-desc" style="margin:6px 0 0;">已开通：全球收款、全球付款、虚拟信用卡、即时汇兑、数币承兑。</p>
+              <p class="step-desc" style="margin:6px 0 0;">已开通：全球收款、全球付款、虚拟信用卡、兑换、数法承兑。</p>
             </div>
           </div>
           <div class="actions">
@@ -1137,8 +1137,8 @@
         <button class="nav-btn active" data-page="assets"><span class="nav-symbol">A</span><span class="nav-text">资产</span></button>
         <div class="submenu open" data-submenu="assets">
           <button class="sub-btn active" data-page="assets" data-tab="myAssets">我的资产</button>
-          <button class="sub-btn" data-page="assets" data-tab="deposit">充值</button>
-          <button class="sub-btn" data-page="assets" data-tab="withdraw">提现</button>
+          <button class="sub-btn" data-page="assets" data-tab="deposit">充币/充值</button>
+          <button class="sub-btn" data-page="assets" data-tab="withdraw">提币/提现</button>
         </div>
         <button class="nav-btn" data-page="exchange"><span class="nav-symbol">E</span><span class="nav-text">兑换</span></button>
         <div class="submenu" data-submenu="exchange">
@@ -1153,14 +1153,15 @@
         <button class="nav-btn" data-page="collection"><span class="nav-symbol">C</span><span class="nav-text">收款</span></button>
         <div class="submenu" data-submenu="collection">
           <button class="sub-btn" data-page="collection" data-tab="tools">收款工具</button>
-          <button class="sub-btn" data-page="collection" data-tab="records">收款记录</button>
-          <button class="sub-btn" data-page="collection" data-tab="refunds">退款记录</button>
+          <button class="sub-btn" data-page="collection" data-tab="fiatRecords">法币收款</button>
+          <button class="sub-btn" data-page="collection" data-tab="cryptoRecords">数币收款</button>
+          <button class="sub-btn" data-page="collection" data-tab="refunds">收款退款</button>
         </div>
         <button class="nav-btn" data-page="payout"><span class="nav-symbol">P</span><span class="nav-text">付款</span></button>
         <div class="submenu" data-submenu="payout">
-          <button class="sub-btn" data-page="payout" data-tab="fiat">法币付款</button>
-          <button class="sub-btn" data-page="payout" data-tab="crypto">数币付款</button>
-          <button class="sub-btn" data-page="payout" data-tab="records">付款记录</button>
+          <button class="sub-btn" data-page="payout" data-tab="cryptoBalance">数币余额付款</button>
+          <button class="sub-btn" data-page="payout" data-tab="fiatBalance">法币余额付款</button>
+          <button class="sub-btn" data-page="payout" data-tab="records">余额付款记录</button>
         </div>
         <button class="nav-btn" data-page="cards"><span class="nav-symbol">V</span><span class="nav-text">发卡</span></button>
         <div class="submenu" data-submenu="cards">
@@ -1285,7 +1286,7 @@
         exchange: 'realtime',
         directory: 'beneficiary',
         collection: 'tools',
-        payout: 'fiat',
+        payout: 'fiatBalance',
         cards: 'mycards',
         profile: 'profile'
       }[page] || 'overview';
@@ -1299,7 +1300,7 @@
       document.querySelectorAll('.sub-btn').forEach(btn => {
         const activeTab = page === 'assets'
           ? assetNavGroup(tab)
-          : (page === 'exchange' ? exchangeNavGroup(tab) : (page === 'collection' ? collectionNavGroup(tab) : tab));
+          : (page === 'exchange' ? exchangeNavGroup(tab) : (page === 'collection' ? collectionNavGroup(tab) : (page === 'payout' ? payoutNavGroup(tab) : tab)));
         btn.classList.toggle('active', btn.dataset.page === page && btn.dataset.tab === activeTab);
       });
       const meta = getPageMeta(page, tab);
@@ -1314,19 +1315,25 @@
       exchange: { title: '兑换', subtitle: '实时兑换、数法承兑和委托挂单。' },
       directory: { title: '交易对手方', subtitle: '维护收款人、付款人、同名账户、第三方账户和链上地址。' },
       collection: { title: '收款业务', subtitle: '三方收款工具、VA 收款、Crypto 收款地址、入金记录和退款。' },
-      payout: { title: '付款业务', subtitle: '法币付款、数币付款、出金记录和付款状态。' },
+      payout: { title: '付款业务', subtitle: '从法币余额或数币余额发起付款，并统一管理付款记录。' },
       cards: { title: '卡业务', subtitle: '卡列表、开卡、充值、冻结、销卡、卡订单和账单。' },
       profile: { title: '个人中心', subtitle: '主体信息、安全设置、角色和权限。' }
     };
 
     const assetTitles = {
       myAssets: { title: '我的资产', subtitle: '总余额、法币余额、数币余额和各币种可用资产。' },
-      deposit: { title: '充值', subtitle: '数币充币、法币充值和充值记录。' },
-      withdraw: { title: '提现', subtitle: '数币提币、法币提现和提现记录。' }
+      deposit: { title: '充币/充值', subtitle: '数币充币、法币充值和充值记录。' },
+      withdraw: { title: '提币/提现', subtitle: '数币提币、法币提现和提现记录。' },
+      cryptoDeposit: { title: '充币', subtitle: '选择网络和币种，生成数币充值地址。' },
+      cryptoWithdraw: { title: '提币', subtitle: '选择网络、币种和地址，发起数币提币。' },
+      fiatDeposit: { title: '法币充值', subtitle: '选择法币币种和银行账户，提交充值信息。' },
+      fiatWithdraw: { title: '法币提现', subtitle: '选择法币币种和收款账户，发起提现。' },
+      depositRecords: { title: '充值记录', subtitle: '查询法币充值和数币充币记录。' },
+      withdrawRecords: { title: '提现记录', subtitle: '查询法币提现和数币提币记录。' }
     };
 
     function getPageMeta(page, tab) {
-      if (page === 'assets') return assetTitles[assetNavGroup(tab)] || assetTitles.myAssets;
+      if (page === 'assets') return assetTitles[tab] || assetTitles[assetNavGroup(tab)] || assetTitles.myAssets;
       return titles[page] || titles.assets;
     }
 
@@ -1432,11 +1439,18 @@
     }
 
     function collectionToolTabs(active) {
-      return tabs('collection', active, [['bankTools', '银行账户收款'], ['cryptoTools', '数币地址收款']]);
+      return tabs('collection', active, [['bankTools', '法币收款账户'], ['cryptoTools', '数币收款地址']]);
     }
 
     function collectionNavGroup(tab) {
       if (['tools', 'bankTools', 'cryptoTools'].includes(tab)) return 'tools';
+      if (tab === 'records') return 'fiatRecords';
+      return tab;
+    }
+
+    function payoutNavGroup(tab) {
+      if (['fiatBalance', 'fiatToBank', 'fiatToChain'].includes(tab)) return 'fiatBalance';
+      if (['cryptoBalance', 'cryptoToBank'].includes(tab)) return 'cryptoBalance';
       return tab;
     }
 
@@ -1553,9 +1567,9 @@
             <div class="quick-actions" style="justify-content:flex-end;margin-top:0;"><button class="btn ghost" data-action="reset-filter">重置</button><button class="btn primary" data-action="query">查询</button></div>
           </div>
           <div class="card">
-            <table class="table"><thead><tr><th>交易 ID</th><th>类型</th><th>方向</th><th>卖出</th><th>获得</th><th>状态</th></tr></thead><tbody>
-              <tr><td>EXC-20260707-018</td><td>实时换汇</td><td>USD → VND</td><td>10,000 USD</td><td>254,600,000 VND</td><td><span class="pill green">完成</span></td></tr>
-              <tr><td>ACC-20260707-021</td><td>数法承兑</td><td>USDT → USD</td><td>25,000 USDT</td><td>24,950 USD</td><td><span class="pill amber">处理中</span></td></tr>
+            <table class="table"><thead><tr><th>订单号</th><th>业务类型</th><th>扣账账户</th><th>到账账户</th><th>方向</th><th>卖出</th><th>获得</th><th>手续费</th><th>状态</th></tr></thead><tbody>
+              <tr><td>EXC-20260707-018</td><td>实时换汇</td><td>USD Account</td><td>VND Account</td><td>USD → VND</td><td>10,000 USD</td><td>254,600,000 VND</td><td>--</td><td><span class="pill green">完成</span></td></tr>
+              <tr><td>ACC-20260707-021</td><td>数法承兑</td><td>USDT Wallet</td><td>VND Account</td><td>USDT → VND</td><td>25,000 USDT</td><td>635,100,000 VND</td><td>25 USDT</td><td><span class="pill amber">处理中</span></td></tr>
             </tbody></table>
           </div>
         </div>`;
@@ -1625,9 +1639,9 @@
             <div class="quick-actions" style="justify-content:flex-end;margin-top:0;"><button class="btn ghost" data-action="reset-filter">重置</button><button class="btn primary" data-action="query">查询</button></div>
           </div>
           <div class="card">
-            <table class="table"><thead><tr><th>交易 ID</th><th>时间</th><th>类型</th><th>币种</th><th>金额</th><th>网络</th><th>手续费</th><th>状态</th><th>操作</th></tr></thead><tbody>
-              <tr><td>1002605211732336792760</td><td>2026-05-21 17:32:51</td><td><span class="pill">数币充值</span></td><td>USDT</td><td style="color:var(--green);font-weight:820;">0.35</td><td><span class="pill">ERC-20</span></td><td>--</td><td><span class="pill green">处理成功</span></td><td><button class="btn ghost" data-action="view">查看</button></td></tr>
-              <tr><td>FD202607070018</td><td>2026-07-07 09:10:24</td><td><span class="pill gray">法币充值</span></td><td>USD</td><td style="font-weight:820;">8,200.00</td><td>Bank Transfer</td><td>--</td><td><span class="pill amber">处理中</span></td><td><button class="btn ghost" data-action="view">查看</button></td></tr>
+            <table class="table"><thead><tr><th>订单号</th><th>业务类型</th><th>扣账账户</th><th>到账账户</th><th>币种</th><th>金额</th><th>手续费</th><th>状态</th><th>完成时间</th></tr></thead><tbody>
+              <tr><td>CD202605210001</td><td>数币充币</td><td>外部钱包 · ERC20</td><td>USDT Wallet</td><td>USDT</td><td style="color:var(--green);font-weight:820;">0.35</td><td>--</td><td><span class="pill green">处理成功</span></td><td>2026-05-21 17:32:51</td></tr>
+              <tr><td>FD202607070018</td><td>法币充值</td><td>客户银行账户</td><td>USD Account</td><td>USD</td><td style="font-weight:820;">8,200.00</td><td>--</td><td><span class="pill amber">处理中</span></td><td>--</td></tr>
             </tbody></table>
           </div>
         </div>`;
@@ -1695,8 +1709,9 @@
             <div class="quick-actions" style="justify-content:flex-end;margin-top:0;"><button class="btn ghost" data-action="reset-filter">重置</button><button class="btn primary" data-action="query">查询</button></div>
           </div>
           <div class="card">
-            <table class="table"><thead><tr><th>交易 ID</th><th>时间</th><th>类型</th><th>币种</th><th>金额</th><th>手续费</th><th>状态</th><th>操作</th></tr></thead><tbody>
-              <tr><td colspan="8"><div class="empty">暂无订单记录<br><span style="font-size:12px;">没有找到符合当前筛选条件的订单记录。</span></div></td></tr>
+            <table class="table"><thead><tr><th>订单号</th><th>业务类型</th><th>扣账账户</th><th>到账账户</th><th>币种</th><th>金额</th><th>手续费</th><th>状态</th><th>完成时间</th></tr></thead><tbody>
+              <tr><td>WD202607080006</td><td>法币提现</td><td>USD Account</td><td>Shenzhen Supplier A · BOC **** 8821</td><td>USD</td><td>3,200.00</td><td>8.00</td><td><span class="pill amber">处理中</span></td><td>--</td></tr>
+              <tr><td>CW202607070004</td><td>数币提币</td><td>USDT Wallet</td><td>TRX9...2Abc</td><td>USDT</td><td>560.00</td><td>1.00</td><td><span class="pill green">成功</span></td><td>2026-07-07 18:41:12</td></tr>
             </tbody></table>
           </div>
         </div>`;
@@ -1776,9 +1791,9 @@
             <div class="quick-actions" style="justify-content:flex-end;margin-top:0;"><button class="btn ghost" data-action="reset-filter">重置</button><button class="btn primary" data-action="query">查询</button></div>
           </div>
           <div class="card">
-            <table class="table"><thead><tr><th>交易 ID</th><th>类型</th><th>方向</th><th>卖出</th><th>获得</th><th>状态</th></tr></thead><tbody>
-              <tr><td>EXC-20260707-018</td><td>实时换汇</td><td>USD → VND</td><td>10,000 USD</td><td>254,600,000 VND</td><td><span class="pill green">完成</span></td></tr>
-              <tr><td>ACC-20260707-021</td><td>数法承兑</td><td>USDT → USD</td><td>25,000 USDT</td><td>24,950 USD</td><td><span class="pill amber">处理中</span></td></tr>
+            <table class="table"><thead><tr><th>订单号</th><th>业务类型</th><th>扣账账户</th><th>到账账户</th><th>方向</th><th>卖出</th><th>获得</th><th>手续费</th><th>状态</th></tr></thead><tbody>
+              <tr><td>EXC-20260707-018</td><td>实时换汇</td><td>USD Account</td><td>VND Account</td><td>USD → VND</td><td>10,000 USD</td><td>254,600,000 VND</td><td>--</td><td><span class="pill green">完成</span></td></tr>
+              <tr><td>ACC-20260707-021</td><td>数法承兑</td><td>USDT Wallet</td><td>VND Account</td><td>USDT → VND</td><td>25,000 USDT</td><td>635,100,000 VND</td><td>25 USDT</td><td><span class="pill amber">处理中</span></td></tr>
             </tbody></table>
           </div>
         </div>`;
@@ -1826,7 +1841,7 @@
     }
 
     function collectionBody(tab) {
-      if (tab === 'tools') return collectionBody('bankTools');
+      if (tab === 'tools') return collectionBody('cryptoTools');
       if (tab === 'bankTools') return `
         ${collectionToolTabs(tab)}
         <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin:16px 0 14px;">
@@ -1854,23 +1869,86 @@
           <tr><td><span class="pill">TRC-20</span></td><td>USDC</td><td>TRX...5c7D</td><td><span class="pill green">已启用</span></td></tr>
           <tr><td><span class="pill">ERC-20</span></td><td>USDC</td><td>0x2f...b90</td><td><span class="pill amber">待复核</span></td></tr>
         </tbody></table>`;
-      if (tab === 'records') return `
-        <table class="table"><thead><tr><th>入金时间</th><th>来源</th><th>收款工具</th><th>币种</th><th>金额</th><th>状态</th></tr></thead><tbody>
-          <tr><td>Today 11:40</td><td>Amazon</td><td>USD VA</td><td>USD</td><td>12,884.10</td><td><span class="pill green">已入账</span></td></tr>
-          <tr><td>Today 09:18</td><td>Buyer TRX</td><td>TRC20 Address</td><td>USDT</td><td>6,200.00</td><td><span class="pill green">已确认</span></td></tr>
+      if (['records', 'fiatRecords'].includes(tab)) return `
+        <div class="filter-card">
+          <div class="form-row">
+            <div class="field"><label>订单号</label><input placeholder="搜索法币收款记录"></div>
+            <div class="field"><label>收款账户</label><select><option>全部账户</option><option>USD VA **** 1028</option><option>VND VA **** 7610</option></select></div>
+            <div class="field"><label>状态</label><select><option>全部</option><option>已入账</option><option>处理中</option><option>退回</option></select></div>
+            <div class="field"><label>日期</label><input placeholder="选择日期"></div>
+          </div>
+          <div class="quick-actions" style="justify-content:flex-end;margin-top:0;"><button class="btn ghost" data-action="reset-filter">重置</button><button class="btn primary" data-action="query">查询</button></div>
+        </div>
+        <table class="table" style="margin-top:16px;"><thead><tr><th>订单号</th><th>收款来源</th><th>收款账户</th><th>到账账户</th><th>币种</th><th>金额</th><th>手续费</th><th>状态</th><th>完成时间</th></tr></thead><tbody>
+          <tr><td>COL-20260708-011</td><td>Amazon Settlement</td><td>USD VA **** 1028</td><td>USD Account</td><td>USD</td><td>12,884.10</td><td>--</td><td><span class="pill green">已入账</span></td><td>2026-07-08 11:40</td></tr>
+          <tr><td>COL-20260707-032</td><td>Trade Buyer VN</td><td>VND VA **** 7610</td><td>VND Account</td><td>VND</td><td>254,600,000</td><td>--</td><td><span class="pill amber">处理中</span></td><td>2026-07-07 17:22</td></tr>
+        </tbody></table>`;
+      if (tab === 'cryptoRecords') return `
+        <div class="filter-card">
+          <div class="form-row">
+            <div class="field"><label>订单号 / TxID</label><input placeholder="搜索数币收款记录"></div>
+            <div class="field"><label>网络</label><select><option>全部网络</option><option>TRC-20</option><option>ERC-20</option></select></div>
+            <div class="field"><label>币种</label><select><option>全部币种</option><option>USDT</option><option>USDC</option></select></div>
+            <div class="field"><label>日期</label><input placeholder="选择日期"></div>
+          </div>
+          <div class="quick-actions" style="justify-content:flex-end;margin-top:0;"><button class="btn ghost" data-action="reset-filter">重置</button><button class="btn primary" data-action="query">查询</button></div>
+        </div>
+        <table class="table" style="margin-top:16px;"><thead><tr><th>订单号</th><th>TxID</th><th>网络</th><th>收款地址</th><th>到账账户</th><th>币种</th><th>金额</th><th>确认数</th><th>状态</th><th>完成时间</th></tr></thead><tbody>
+          <tr><td>CCOL-20260708-009</td><td>9b3...fa21</td><td><span class="pill">TRC-20</span></td><td>TRX...9Ab3</td><td>USDT Wallet</td><td>USDT</td><td>6,200.00</td><td>19 / 19</td><td><span class="pill green">已确认</span></td><td>2026-07-08 09:18</td></tr>
+          <tr><td>CCOL-20260707-021</td><td>0x8a...91c2</td><td><span class="pill">ERC-20</span></td><td>0x89...a21</td><td>USDT Wallet</td><td>USDT</td><td>25,000.00</td><td>42 / 64</td><td><span class="pill amber">确认中</span></td><td>--</td></tr>
         </tbody></table>`;
       if (tab === 'refunds') return `
-        <div class="form-row"><div class="field"><label>原收款订单</label><input value="COL-20260707-1028"></div><div class="field"><label>退款金额</label><input value="500"></div><div class="field"><label>币种</label><select><option>USD</option><option>USDT</option></select></div><div class="field"><label>原因</label><input value="客户重复付款"></div></div>
-        <button class="btn primary" data-action="refund">发起退款</button>
-        <div class="empty" style="margin-top:16px;">暂无待处理退款</div>`;
+        <div class="quick-actions" style="margin-top:0;margin-bottom:14px;"><button class="btn primary" data-action="refund">发起退款</button></div>
+        <table class="table"><thead><tr><th>退款单号</th><th>原收款订单</th><th>扣账账户</th><th>退款到账账户</th><th>币种</th><th>金额</th><th>手续费</th><th>原因</th><th>状态</th></tr></thead><tbody>
+          <tr><td>RF-20260708-003</td><td>COL-20260708-011</td><td>USD Account</td><td>Amazon Settlement</td><td>USD</td><td>500.00</td><td>3.00</td><td>客户重复付款</td><td><span class="pill amber">待复核</span></td></tr>
+        </tbody></table>`;
       return collectionBody('bankTools');
     }
 
     function payoutBody(tab) {
-      if (tab === 'crypto') return `
+      if (['fiatBalance', 'fiatToBank', 'fiatToChain'].includes(tab)) return `
         <div class="asset-workspace">
           <div class="asset-form">
-            <h3>数币付款</h3>
+            <h3>法币余额付款</h3>
+            <p class="metric-sub" style="margin:0 0 14px;">使用法币余额发起付款，可按收款人类型付款到银行账户或链上地址。</p>
+            <div class="field" style="margin-bottom:14px;">
+              <label>选择收款人 <a style="float:right;color:#7c3aed;text-decoration:none;" href="#">新增收款人 / 地址</a></label>
+              <select>
+                <option>请选择收款人</option>
+                <option>银行账户 · Shenzhen Supplier A · BOC **** 8821</option>
+                <option>银行账户 · Logistics Partner · VCB **** 3028</option>
+                <option>链上地址 · USDT Supplier · TRX9...2Abc</option>
+                <option>链上地址 · Ad Network · 0x89...a21</option>
+              </select>
+            </div>
+            <label>选择付款账户</label>
+            <div class="option-grid">
+              <div class="option-card active"><div><div class="option-title" style="color:#7c3aed;">USD</div><div class="option-sub">可用余额: 82,240.20 USD</div></div></div>
+              <div class="option-card"><div><div class="option-title">VND</div><div class="option-sub">可用余额: 1,740,200,000 VND</div></div></div>
+            </div>
+            <div class="field" style="margin-bottom:14px;"><label>付款金额</label><div style="display:grid;grid-template-columns:1fr 96px;"><input placeholder="请输入金额"><input value="USD" readonly style="border-left:0;border-radius:0 8px 8px 0;text-align:center;"></div></div>
+            <div class="field" style="margin-bottom:14px;"><label>目标链与币种（链上地址时必填）</label><select><option>选择链上地址收款人后自动带出</option><option>TRC20 · USDT</option><option>ERC20 · USDT</option><option>ERC20 · USDC</option></select></div>
+            <div class="field" style="margin-bottom:14px;"><label>费用承担方</label><select><option>请选择</option><option>付款方承担</option><option>收款方承担</option></select></div>
+            <div class="field" style="margin-bottom:14px;"><label>用途代码</label><select><option>请选择</option><option>货物采购</option><option>服务费用</option><option>员工工资</option><option>广告投放</option></select></div>
+            <div class="field" style="margin-bottom:14px;"><label>附言</label><input placeholder="请输入附言"><span class="metric-sub">仅支持大小写英文字母、数字、空格、.&</span></div>
+            <div class="summary-box">
+              <div class="summary-row"><span>扣账账户</span><b>USD Account</b></div>
+              <div class="summary-row"><span>到账类型</span><b>根据收款人自动识别</b></div>
+              <div class="summary-row"><span>到账账户</span><b>银行账户 / 链上地址</b></div>
+              <div class="summary-row"><span>手续费</span><b>-- --</b></div>
+              <div class="summary-row"><span>预计到账金额</span><b>-- --</b></div>
+            </div>
+            <div class="quick-actions" style="margin-top:18px;"><button class="btn primary" data-action="fiat-payout">提交</button><button class="btn ghost" data-action="cancel">取消</button></div>
+          </div>
+          ${assetNotice('fiatWithdraw')}
+        </div>
+        `;
+      if (tab === 'cryptoBalance') return payoutBody('cryptoToBank');
+      if (tab === 'cryptoToBank') return `
+        <div class="asset-workspace">
+          <div class="asset-form">
+            <h3>数币余额付款</h3>
+            <p class="metric-sub" style="margin:0 0 14px;">使用数币余额发起付款，系统承兑后付款到收款人的银行账户。</p>
             <div class="field" style="margin-bottom:14px;"><label>选择收款人 <a style="float:right;color:#7c3aed;text-decoration:none;" href="#">新增银行账户</a></label><select><option>请选择收款人</option><option>USDT Supplier · BOC **** 8821</option><option>Ad Network · DBS **** 2910</option></select></div>
             <label>选择付款账户</label>
             <div class="option-grid">
@@ -1882,6 +1960,9 @@
             <div class="field" style="margin-bottom:14px;"><label>用途代码</label><select><option>请选择</option><option>货物采购</option><option>服务费用</option><option>广告投放</option></select></div>
             <div class="field" style="margin-bottom:14px;"><label>附言</label><input placeholder="请输入附言"><span class="metric-sub">仅支持大小写英文字母、数字、空格、.&</span></div>
             <div class="summary-box">
+              <div class="summary-row"><span>扣账账户</span><b>USDT Wallet</b></div>
+              <div class="summary-row"><span>到账账户</span><b>收款人银行账户</b></div>
+              <div class="summary-row"><span>承兑汇率</span><b>--</b></div>
               <div class="summary-row"><span>手续费</span><b>-- --</b></div>
               <div class="summary-row"><span>预计到账金额</span><b>-- --</b></div>
             </div>
@@ -1893,40 +1974,19 @@
       if (tab === 'records') return `
         <div class="filter-card">
           <div class="form-row">
-            <div class="field"><label>付款单号 / TxID</label><input placeholder="搜索付款记录"></div>
-            <div class="field"><label>付款类型</label><select><option>全部</option><option>法币付款</option><option>数币付款</option></select></div>
+            <div class="field"><label>订单号</label><input placeholder="搜索付款记录"></div>
+            <div class="field"><label>付款类型</label><select><option>全部</option><option>法币余额付款</option><option>数币余额付款</option></select></div>
             <div class="field"><label>订单状态</label><select><option>全部</option><option>处理中</option><option>完成</option><option>失败</option></select></div>
             <div class="field"><label>日期</label><input placeholder="选择日期"></div>
           </div>
           <div class="quick-actions" style="justify-content:flex-end;margin-top:0;"><button class="btn ghost" data-action="reset-filter">重置</button><button class="btn primary" data-action="query">查询</button></div>
         </div>
-        <table class="table" style="margin-top:16px;"><thead><tr><th>单号</th><th>类型</th><th>收款人 / 银行账户</th><th>币种</th><th>金额</th><th>状态</th></tr></thead><tbody>
-          <tr><td>PAY-2407-018</td><td>法币付款</td><td>Shenzhen Supplier A</td><td>USD</td><td>6,200</td><td><span class="pill amber">处理中</span></td></tr>
-          <tr><td>CPAY-2407-021</td><td>数币付款</td><td>USDT Supplier · BOC **** 8821</td><td>USDT</td><td>1,280</td><td><span class="pill green">完成</span></td></tr>
+        <table class="table" style="margin-top:16px;"><thead><tr><th>订单号</th><th>付款类型</th><th>扣账账户</th><th>到账账户</th><th>币种</th><th>金额</th><th>手续费</th><th>状态</th><th>创建时间</th></tr></thead><tbody>
+          <tr><td>PAY-2407-018</td><td>法币余额付款</td><td>USD Account</td><td>Shenzhen Supplier A · BOC **** 8821</td><td>USD</td><td>6,200</td><td>12.00</td><td><span class="pill amber">处理中</span></td><td>2026-07-08 10:24</td></tr>
+          <tr><td>CPAY-2407-021</td><td>数币余额付款</td><td>USDT Wallet</td><td>USDT Supplier · BOC **** 8821</td><td>USDT</td><td>1,280</td><td>8.00 USDT</td><td><span class="pill green">完成</span></td><td>2026-07-07 16:02</td></tr>
+          <tr><td>CHAIN-2407-026</td><td>法币余额付款</td><td>USD Account</td><td>TRC20 Address · TRX9...2Abc</td><td>USD</td><td>2,500</td><td>--</td><td><span class="pill green">完成</span></td><td>2026-07-06 14:18</td></tr>
         </tbody></table>`;
-      return `
-        <div class="asset-workspace">
-          <div class="asset-form">
-            <h3>法币付款</h3>
-            <div class="field" style="margin-bottom:14px;"><label>选择收款人 <a style="float:right;color:#7c3aed;text-decoration:none;" href="#">新增银行账户</a></label><select><option>请选择收款人</option><option>Shenzhen Supplier A · BOC **** 8821</option><option>Logistics Partner · VCB **** 3028</option></select></div>
-            <label>选择付款账户</label>
-            <div class="option-grid">
-              <div class="option-card active"><div><div class="option-title" style="color:#7c3aed;">USD</div><div class="option-sub">可用余额: 82,240.20 USD</div></div></div>
-              <div class="option-card"><div><div class="option-title">VND</div><div class="option-sub">可用余额: 1,740,200,000 VND</div></div></div>
-            </div>
-            <div class="field" style="margin-bottom:14px;"><label>付款金额</label><div style="display:grid;grid-template-columns:1fr 96px;"><input placeholder="请输入金额"><input value="USD" readonly style="border-left:0;border-radius:0 8px 8px 0;text-align:center;"></div></div>
-            <div class="field" style="margin-bottom:14px;"><label>费用承担方</label><select><option>请选择</option><option>付款方承担</option><option>收款方承担</option></select></div>
-            <div class="field" style="margin-bottom:14px;"><label>用途代码</label><select><option>请选择</option><option>货物采购</option><option>服务费用</option><option>员工工资</option></select></div>
-            <div class="field" style="margin-bottom:14px;"><label>附言</label><input placeholder="请输入附言"><span class="metric-sub">仅支持大小写英文字母、数字、空格、.&</span></div>
-            <div class="summary-box">
-              <div class="summary-row"><span>手续费</span><b>-- --</b></div>
-              <div class="summary-row"><span>预计到账金额</span><b>-- --</b></div>
-            </div>
-            <div class="quick-actions" style="margin-top:18px;"><button class="btn primary" data-action="fiat-payout">提交</button><button class="btn ghost" data-action="cancel">取消</button></div>
-          </div>
-          ${assetNotice('fiatWithdraw')}
-        </div>
-        `;
+      return payoutBody('fiatBalance');
     }
 
     function cardBody(tab) {
@@ -1966,7 +2026,7 @@
           <div class="field"><label>主体类型</label><input value="${state.profile.type}"></div>
           <div class="field"><label>所在国家</label><input value="${state.profile.country}"></div>
           <div class="field"><label>证件号码</label><input value="${state.profile.doc}"></div>
-          <div class="field full"><label>已开通产品</label><textarea>全球收款、全球付款、虚拟信用卡、即时汇兑、数币承兑</textarea></div>
+          <div class="field full"><label>已开通产品</label><textarea>全球收款、全球付款、虚拟信用卡、兑换、数法承兑</textarea></div>
         </div>`;
     }
 
@@ -1998,8 +2058,8 @@
         'add-bank-account': '已打开新增收款账户',
         'add-crypto-address': '已打开新增收款地址',
         refund: '退款申请已提交',
-        'crypto-payout': '数币付款已提交，等待 KYT',
-        'fiat-payout': '法币付款已提交',
+        'crypto-payout': '数币余额付款已提交，等待承兑与合规校验',
+        'fiat-payout': '法币余额付款已提交',
         cancel: '已取消当前操作',
         'new-card': '开卡申请已提交',
         'topup-card': '卡充值已提交',
