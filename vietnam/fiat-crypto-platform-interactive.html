@@ -3290,6 +3290,7 @@
 
     function bindDynamicActions() {
       document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click', () => renderPage(btn.dataset.page, btn.dataset.tab)));
+      bindCryptoDeposit();
       document.querySelectorAll('[data-nav-page]').forEach(btn => btn.addEventListener('click', event => {
         event.preventDefault();
         renderPage(btn.dataset.navPage, btn.dataset.navTab || defaultTab(btn.dataset.navPage));
@@ -3315,6 +3316,70 @@
         event.preventDefault();
         showToast(actionText(btn.dataset.action));
       }));
+    }
+
+    function bindCryptoDeposit() {
+      const root = document.querySelector('[data-crypto-deposit]');
+      if (!root) return;
+      const depositMeta = {
+        USDT: {
+          account: 'USDT 余额',
+          networks: {
+            'ERC-20': { address: '0x7F9C4A2b8E11F49A836B843d0A2C58f51C8AA81D', confirmations: '64 个确认', chain: 'ERC-20' },
+            'TRC-20': { address: 'TRX9Ab3Qh6n4kV2N8UQmR7c1p5LxT2Fd9H', confirmations: '19 个确认', chain: 'TRC-20' }
+          }
+        },
+        USDC: {
+          account: 'USDC 余额',
+          networks: {
+            'ERC-20': { address: '0x45B0E52c9F18A1c6A42C4774F2Bb8dC63B2C9950', confirmations: '64 个确认', chain: 'ERC-20' }
+          }
+        }
+      };
+      let selectedCurrency = root.querySelector('[data-crypto-currency].active')?.dataset.cryptoCurrency || 'USDT';
+      let selectedNetwork = root.querySelector('[data-crypto-network].active')?.dataset.cryptoNetwork || 'ERC-20';
+
+      const setText = (key, value) => {
+        const el = root.querySelector(`[data-crypto-summary="${key}"]`);
+        if (el) el.textContent = value;
+      };
+      const update = () => {
+        root.querySelectorAll('[data-crypto-network]').forEach(card => {
+          const supported = card.dataset.supportedCurrencies.split(',').includes(selectedCurrency);
+          card.classList.toggle('disabled', !supported);
+          if (!supported && card.classList.contains('active')) card.classList.remove('active');
+        });
+        if (!depositMeta[selectedCurrency].networks[selectedNetwork]) {
+          selectedNetwork = Object.keys(depositMeta[selectedCurrency].networks)[0];
+          root.querySelectorAll('[data-crypto-network]').forEach(card => {
+            card.classList.toggle('active', card.dataset.cryptoNetwork === selectedNetwork);
+          });
+        }
+        const details = depositMeta[selectedCurrency].networks[selectedNetwork];
+        setText('currency', selectedCurrency);
+        setText('network', selectedNetwork);
+        setText('account', depositMeta[selectedCurrency].account);
+        setText('confirmations', details.confirmations);
+        root.querySelector('[data-crypto-address]').textContent = details.address;
+        root.querySelector('[data-crypto-warning]').textContent = `请仅通过 ${details.chain} 网络充值 ${selectedCurrency}，跨网络转账可能导致资产永久丢失。`;
+      };
+
+      root.querySelectorAll('[data-crypto-currency]').forEach(card => {
+        card.addEventListener('click', () => {
+          selectedCurrency = card.dataset.cryptoCurrency;
+          root.querySelectorAll('[data-crypto-currency]').forEach(item => item.classList.toggle('active', item === card));
+          update();
+        });
+      });
+      root.querySelectorAll('[data-crypto-network]').forEach(card => {
+        card.addEventListener('click', () => {
+          if (card.classList.contains('disabled')) return;
+          selectedNetwork = card.dataset.cryptoNetwork;
+          root.querySelectorAll('[data-crypto-network]').forEach(item => item.classList.toggle('active', item === card));
+          update();
+        });
+      });
+      update();
     }
 
     function actionText(action) {
