@@ -325,26 +325,26 @@
       margin-bottom: 4px;
     }
     .exchange-widget {
-      max-width: 760px;
+      max-width: 860px;
       margin: 0;
       display: grid;
       gap: 14px;
     }
     .exchange-box {
-      background: #f8f7fb;
-      border: 1px solid #ece7f6;
+      background: #fff;
+      border: 1px solid var(--line);
       border-radius: 12px;
-      padding: 16px 18px;
-      min-height: 112px;
+      padding: 18px;
+      min-height: auto;
       display: grid;
-      gap: 18px;
+      gap: 14px;
     }
     .exchange-head {
       display: flex;
       justify-content: space-between;
       gap: 14px;
       font-size: 13px;
-      color: #111827;
+      color: #344054;
       font-weight: 760;
     }
     .exchange-available {
@@ -355,24 +355,40 @@
     .exchange-available button {
       border: 0;
       background: transparent;
-      color: #c57c00;
+      color: #7c3aed;
       font: inherit;
       font-weight: 780;
       cursor: pointer;
       padding: 0 0 0 10px;
     }
     .exchange-main {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 12px;
+      align-items: end;
     }
-    .currency-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 9px;
-      font-size: 17px;
-      font-weight: 820;
+    .exchange-field label {
+      display: block;
+      margin-bottom: 7px;
+      color: #667085;
+      font-size: 13px;
+      font-weight: 780;
+    }
+    .exchange-field select,
+    .exchange-field input {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid #d8dee8;
+      border-radius: 8px;
+      background: #fff;
+      color: #344054;
+      font-size: 14px;
+      font-weight: 720;
+      outline: 0;
+      padding: 0 12px;
+    }
+    .exchange-field input {
+      text-align: right;
     }
     .flag-dot {
       width: 28px;
@@ -392,43 +408,34 @@
       border-top: 6px solid #8a8f98;
       margin-top: 4px;
     }
-    .exchange-input {
-      width: min(220px, 48%);
-      border: 0;
-      background: transparent;
-      color: #b6b7bb;
-      font-size: 24px;
-      font-weight: 800;
-      text-align: right;
-      outline: 0;
-    }
     .exchange-rate-line {
       min-height: 36px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      color: #9aa1ad;
+      color: #667085;
       font-size: 13px;
+      font-weight: 720;
     }
     .switch-btn {
-      width: 42px;
-      height: 42px;
+      width: 38px;
+      height: 38px;
       border-radius: 10px;
       border: 1px solid var(--line);
       background: #fff;
-      color: #111827;
-      font-size: 18px;
+      color: #7c3aed;
+      font-size: 16px;
       font-weight: 900;
       cursor: pointer;
     }
     .review-btn {
-      border: 0;
-      border-radius: 10px;
-      min-height: 48px;
-      background: #f4f4f5;
-      color: #b8bac0;
-      font-size: 15px;
-      font-weight: 820;
+      border: 1px solid #7c22ff;
+      border-radius: 8px;
+      min-height: 42px;
+      background: #7c22ff;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 760;
       cursor: pointer;
     }
     .section-label {
@@ -475,75 +482,104 @@
       border-right: 1px solid #e6e1f2;
     }
     .side-brand {
-      padding: 18px 16px;
-      border-bottom: 1px solid #eeeaf7;
+      padding: 18px 22px 14px;
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-weight: 780;
+      gap: 8px;
+      font-weight: 900;
       color: #101828;
+      font-size: 25px;
+      letter-spacing: 0;
     }
-    .side-brand .mark-box { width: 32px; height: 32px; font-size: 13px; }
-    .nav {
-      padding: 10px 8px;
-      overflow: auto;
-    }
-    .nav-btn {
-      width: 100%;
-      border: 0;
-      background: transparent;
-      color: #627084;
-      min-height: 34px;
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      border-radius: 8px;
-      padding: 0 10px;
-      font-weight: 740;
-      font-size: 13px;
-      text-align: left;
-      margin-bottom: 4px;
-    }
-    .nav-btn.active, .nav-btn:hover {
-      background: var(--nav-2);
-      color: var(--purple);
-    }
-    .nav-symbol {
-      width: 24px;
-      height: 24px;
-      border-radius: 7px;
-      display: grid;
-      place-items: center;
-      background: transparent;
-      color: #667085;
-      font-size: 11px;
+    .brand-knot {
+      position: relative;
+      width: 28px;
+      height: 28px;
       flex: 0 0 auto;
     }
-    .nav-btn.active .nav-symbol, .nav-btn:hover .nav-symbol {
-      background: #ede9fe;
-      color: var(--purple);
+    .brand-knot::before,
+    .brand-knot::after {
+      content: '';
+      position: absolute;
+      left: 4px;
+      top: 12px;
+      width: 24px;
+      height: 5px;
+      border: 2px solid #7c3aed;
+      border-radius: 999px;
+      transform: rotate(45deg);
     }
-    .submenu {
-      margin: 2px 0 10px 0;
-      padding-left: 34px;
-      display: none;
+    .brand-knot::after {
+      transform: rotate(-45deg);
+      border-color: #2563eb;
     }
-    .submenu.open { display: block; }
-    .sub-btn {
+    .nav {
+      padding: 8px 8px 18px;
+      overflow: auto;
+    }
+    .menu-item {
       width: 100%;
       border: 0;
       background: transparent;
-      color: #667085;
-      min-height: 30px;
+      color: #475569;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      border-radius: 10px;
+      padding: 0 18px;
+      font-weight: 760;
+      font-size: 15px;
       text-align: left;
-      padding: 0 10px;
-      border-radius: 7px;
-      font-size: 13px;
-      font-weight: 680;
+      margin: 4px 0;
+      cursor: pointer;
     }
-    .sub-btn.active, .sub-btn:hover {
-      color: var(--purple);
+    .menu-item.active, .menu-item:hover {
       background: #eef0ff;
+      color: var(--purple);
+      box-shadow: 0 4px 10px rgba(76, 81, 191, 0.08);
+    }
+    .menu-icon {
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      color: #526174;
+      font-size: 16px;
+      line-height: 1;
+      flex: 0 0 auto;
+    }
+    .menu-item.active .menu-icon,
+    .menu-item:hover .menu-icon {
+      color: var(--purple);
+    }
+    .menu-section {
+      margin-top: 18px;
+    }
+    .menu-section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 22px 8px;
+      color: #475569;
+      font-size: 13px;
+      font-weight: 850;
+    }
+    .menu-section-title::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--green);
+    }
+    .menu-section-title.purple { color: #8b5cf6; }
+    .menu-section-title.purple::before { background: #8b5cf6; }
+    .menu-section-title.blue::before { background: #3b82f6; }
+    .menu-section-title.orange { color: #f97316; }
+    .menu-section-title.orange::before { background: #f97316; }
+    .menu-section-title.dark::before { background: #475569; }
+    .menu-spacer {
+      height: 8px;
     }
     .side-foot {
       margin-top: auto;
@@ -686,6 +722,67 @@
     .asset-balance-row b {
       color: var(--ink);
     }
+    .asset-list-page {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 22px 28px;
+      padding: 14px 24px 28px;
+    }
+    .asset-list-page .asset-list-title {
+      margin: 0 0 10px;
+      font-size: 24px;
+      font-weight: 900;
+      color: #111827;
+    }
+    .asset-list-page .asset-section-title {
+      margin: 16px 0 0;
+      font-size: 15px;
+      font-weight: 860;
+      color: #334155;
+    }
+    .asset-list-page .asset-card {
+      grid-column: span 4;
+      min-height: 300px;
+      padding: 30px 34px 26px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+      gap: 24px;
+    }
+    .asset-list-page .asset-card-head {
+      gap: 14px;
+      font-size: 18px;
+      font-weight: 860;
+    }
+    .asset-list-page .asset-card-amount {
+      font-size: 34px;
+      font-weight: 900;
+      line-height: 1;
+    }
+    .asset-list-page .asset-card-actions {
+      gap: 12px;
+    }
+    .asset-list-page .asset-card-actions .btn {
+      min-height: 42px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 800;
+    }
+    .asset-list-page .asset-card-actions .btn.primary {
+      border-color: #f0e9ff;
+      background: #f3edff;
+      color: #7c3aed;
+      box-shadow: none;
+    }
+    .asset-list-page .asset-card-actions .btn.ghost {
+      border-color: #d7dde7;
+      background: #fff;
+      color: #334155;
+    }
+    .asset-list-page .asset-balance-row {
+      font-size: 14px;
+      line-height: 1.9;
+    }
     .tabs {
       display: flex;
       gap: 6px;
@@ -795,6 +892,151 @@
       background: #f7f1ff;
       box-shadow: 0 0 0 1px rgba(139,77,255,0.18);
     }
+    .deposit-selector {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 240px));
+      gap: 12px;
+      margin: 6px 0 18px;
+    }
+    .account-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 14px;
+    }
+    .receiving-account-card {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      padding: 18px 18px 16px 52px;
+      box-shadow: 0 8px 22px rgba(19,34,56,0.04);
+    }
+    .receiving-account-card.active {
+      border-color: #2f8cff;
+      box-shadow: 0 0 0 1px rgba(47,140,255,0.2), 0 10px 28px rgba(47,140,255,0.08);
+    }
+    .account-radio {
+      position: absolute;
+      top: 24px;
+      left: 22px;
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      border: 2px solid #cbd5e1;
+    }
+    .receiving-account-card.active .account-radio {
+      border-color: #2f8cff;
+      box-shadow: inset 0 0 0 3px #fff;
+      background: #2f8cff;
+    }
+    .account-card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+    .account-card-title {
+      font-size: 16px;
+      font-weight: 820;
+      color: #1f2937;
+    }
+    .bank-logo {
+      font-size: 20px;
+      font-weight: 850;
+      color: #ef4444;
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+    .bank-logo.dbs { color: #111827; }
+    .account-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0 18px;
+    }
+    .account-tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      color: #2f8cff;
+      font-size: 12px;
+      font-weight: 720;
+    }
+    .account-tag.warning {
+      border-color: #fecaca;
+      background: #fff1f2;
+      color: #ef4444;
+    }
+    .account-detail-grid {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 12px 18px;
+      align-items: center;
+      font-size: 13px;
+      color: #475467;
+    }
+    .account-detail-grid .label {
+      color: #98a2b3;
+    }
+    .readonly-account {
+      padding: 10px 12px;
+      border: 1px solid #d9e0ea;
+      border-radius: 7px;
+      background: #f3f4f6;
+      color: #667085;
+    }
+    .currency-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .currency-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 9px;
+      border-radius: 6px;
+      border: 1px solid #d9e0ea;
+      background: #fff;
+      color: #475467;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .account-card-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 16px;
+    }
+    .view-switch {
+      display: inline-flex;
+      gap: 4px;
+      padding: 3px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f8fafc;
+    }
+    .view-btn {
+      min-height: 30px;
+      padding: 0 12px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: #667085;
+      font-size: 12px;
+      font-weight: 760;
+      cursor: pointer;
+    }
+    .view-btn.active {
+      background: #fff;
+      color: #7c3aed;
+      box-shadow: 0 1px 4px rgba(19,34,56,0.08);
+    }
     .coin-icon {
       width: 38px;
       height: 38px;
@@ -880,6 +1122,440 @@
       border: 1px solid var(--line);
       border-radius: var(--radius);
     }
+    .records-page {
+      grid-column: 1 / -1;
+      display: grid;
+      gap: 18px;
+    }
+    .records-page .tabs {
+      padding: 0 0 0 0;
+      background: transparent;
+      border-bottom: 2px solid #e6e9f1;
+      gap: 22px;
+    }
+    .records-page .tab {
+      min-height: 46px;
+      padding: 0 0;
+      border: 0;
+      border-radius: 0;
+      color: #1f2937;
+      background: transparent;
+      font-size: 15px;
+      font-weight: 840;
+    }
+    .records-page .tab.active {
+      color: #7c22ff;
+      border: 0;
+      border-bottom: 3px solid #7c22ff;
+      transform: none;
+      background: transparent;
+    }
+    .records-filter {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr auto auto;
+      gap: 18px;
+      align-items: end;
+      padding: 24px 24px 22px;
+      background: #fff;
+      border-radius: 10px;
+      border: 0;
+    }
+    .records-filter .field label {
+      margin-bottom: 10px;
+      color: #606b7a;
+      font-size: 14px;
+      font-weight: 800;
+    }
+    .records-filter input,
+    .records-filter select {
+      min-height: 36px;
+      border-color: #d8dee8;
+      border-radius: 4px;
+      color: #98a2b3;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .records-filter .btn {
+      min-width: 70px;
+      min-height: 36px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 820;
+    }
+    .records-filter .btn.ghost {
+      border-color: #7c22ff;
+      color: #7c22ff;
+      background: #fff;
+    }
+    .records-filter .btn.primary {
+      border-color: #7c22ff;
+      background: #7c22ff;
+      color: #fff;
+    }
+    .records-table-card {
+      background: #fff;
+      border: 0;
+      border-radius: 0;
+      overflow: hidden;
+    }
+    .records-table {
+      font-size: 14px;
+      color: #5f6b7a;
+    }
+    .records-table th,
+    .records-table td {
+      padding: 18px 20px;
+      border-bottom: 1px solid #e8ecf3;
+    }
+    .records-table th {
+      background: #fff;
+      color: #667085;
+      font-size: 14px;
+      font-weight: 860;
+    }
+    .records-table td {
+      min-height: 64px;
+      font-weight: 720;
+    }
+    .records-table .amount-green {
+      color: #16a34a;
+      font-weight: 900;
+    }
+    .records-table .record-type {
+      min-height: 24px;
+      border-radius: 5px;
+      padding: 3px 8px;
+      background: #f1dcff;
+      color: #8b22ff;
+      font-size: 12px;
+      font-weight: 820;
+    }
+    .records-table .network-tag {
+      min-height: 24px;
+      border-radius: 5px;
+      padding: 3px 8px;
+      background: #ead7ff;
+      color: #7c22ff;
+      font-size: 12px;
+      font-weight: 820;
+    }
+    .records-table .status-success {
+      border-radius: 5px;
+      padding: 5px 9px;
+      background: #dcfce7;
+      color: #15803d;
+      font-size: 12px;
+      font-weight: 850;
+    }
+    .records-table .status-processing {
+      border-radius: 5px;
+      padding: 5px 9px;
+      background: #dbeafe;
+      color: #2563eb;
+      font-size: 12px;
+      font-weight: 850;
+    }
+    .records-table a {
+      color: #8b22ff;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .records-pagination {
+      min-height: 66px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 22px;
+      padding: 0 24px;
+      color: #667085;
+      font-size: 14px;
+      font-weight: 760;
+    }
+    .records-pagination .page-select,
+    .records-pagination .page-input {
+      min-height: 34px;
+      border: 1px solid #d8dee8;
+      border-radius: 4px;
+      background: #fff;
+      padding: 0 14px;
+      color: #667085;
+    }
+    .records-pagination .current-page {
+      color: #7c22ff;
+      font-weight: 900;
+    }
+    .records-empty {
+      min-height: 300px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: #667085;
+      border-top: 1px solid #e8ecf3;
+    }
+    .records-empty-icon {
+      width: 42px;
+      height: 52px;
+      margin: 0 auto 16px;
+      border: 4px solid #9aa3af;
+      border-radius: 6px;
+      position: relative;
+    }
+    .records-empty-icon::before,
+    .records-empty-icon::after {
+      content: '';
+      position: absolute;
+      left: 10px;
+      right: 8px;
+      height: 4px;
+      border-radius: 999px;
+      background: #9aa3af;
+    }
+    .records-empty-icon::before { top: 17px; }
+    .records-empty-icon::after { top: 28px; }
+    .records-empty-title {
+      color: #111827;
+      font-size: 14px;
+      font-weight: 860;
+      margin-bottom: 8px;
+    }
+    .records-empty-sub {
+      color: #667085;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .directory-page {
+      grid-column: 1 / -1;
+      display: grid;
+      gap: 18px;
+    }
+    .directory-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+    }
+    .directory-head h3 {
+      margin: 0 0 8px;
+      color: #111827;
+      font-size: 18px;
+      font-weight: 900;
+    }
+    .directory-head p {
+      margin: 0;
+      color: #667085;
+      font-size: 13px;
+      font-weight: 760;
+    }
+    .directory-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .directory-actions .btn {
+      min-width: 130px;
+      min-height: 36px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 820;
+    }
+    .directory-actions .btn.ghost {
+      border-color: #7c22ff;
+      color: #7c22ff;
+      background: #fff;
+    }
+    .directory-actions .btn.primary {
+      border-color: #7c22ff;
+      background: #7c22ff;
+      color: #fff;
+    }
+    .directory-page .tabs {
+      padding: 0;
+      background: transparent;
+      border-bottom: 2px solid #e6e9f1;
+      gap: 34px;
+    }
+    .directory-page .tab {
+      min-height: 46px;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      color: #1f2937;
+      background: transparent;
+      font-size: 15px;
+      font-weight: 840;
+    }
+    .directory-page .tab.active {
+      color: #7c22ff;
+      border: 0;
+      border-bottom: 3px solid #7c22ff;
+      transform: none;
+      background: transparent;
+    }
+    .directory-filter {
+      grid-template-columns: 1fr 1fr 1fr 1fr auto auto;
+    }
+    .directory-filter.address {
+      grid-template-columns: 1fr 1fr 2fr 2fr auto auto;
+    }
+    .directory-filter.address .field:nth-child(3),
+    .directory-filter.address .field:nth-child(4) {
+      visibility: hidden;
+    }
+    .directory-table .token-tag,
+    .directory-table .yes-tag,
+    .directory-table .verified-tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      border-radius: 5px;
+      padding: 3px 8px;
+      font-size: 12px;
+      font-weight: 820;
+    }
+    .directory-table .token-tag { background: #ead7ff; color: #7c22ff; margin-right: 5px; }
+    .directory-table .yes-tag,
+    .directory-table .verified-tag { background: #d1fae5; color: #059669; }
+    .directory-table .danger-link { color: #ef4444; margin-left: 16px; }
+    .copy-mini { color: #8b22ff; margin-left: 8px; font-weight: 900; }
+    .collection-tools-page {
+      grid-column: 1 / -1;
+      display: grid;
+      gap: 18px;
+      padding: 20px 24px 28px;
+    }
+    .collection-tools-page h3 {
+      margin: 0;
+      color: #111827;
+      font-size: 18px;
+      font-weight: 900;
+    }
+    .collection-tool-card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 28px 28px 22px;
+      display: grid;
+      gap: 18px;
+    }
+    .collection-tool-card .tabs {
+      padding: 0;
+      background: transparent;
+      border-bottom: 2px solid #e6e9f1;
+      gap: 42px;
+    }
+    .collection-tool-card .tab {
+      min-height: 44px;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      color: #333;
+      background: transparent;
+      font-size: 14px;
+      font-weight: 850;
+    }
+    .collection-tool-card .tab.active {
+      color: #7c22ff;
+      border: 0;
+      border-bottom: 3px solid #7c22ff;
+      transform: none;
+      background: transparent;
+    }
+    .collection-tool-filter {
+      display: grid;
+      grid-template-columns: 110px 240px 110px 240px 1fr auto auto;
+      gap: 12px;
+      align-items: center;
+      padding: 18px 20px;
+      border: 1px solid #e6e9f1;
+      border-radius: 5px;
+      background: #fff;
+    }
+    .collection-tool-filter label {
+      justify-self: end;
+      color: #606b7a;
+      font-size: 14px;
+      font-weight: 850;
+    }
+    .collection-tool-filter select {
+      min-height: 36px;
+      border-color: #d8dee8;
+      border-radius: 4px;
+      color: #98a2b3;
+      font-size: 14px;
+      font-weight: 720;
+    }
+    .collection-tool-filter .btn {
+      min-width: 70px;
+      min-height: 36px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 820;
+    }
+    .collection-tool-filter .btn.ghost {
+      border-color: #7c22ff;
+      color: #7c22ff;
+      background: #fff;
+    }
+    .collection-tool-filter .btn.primary {
+      border-color: #7c22ff;
+      background: #7c22ff;
+      color: #fff;
+    }
+    .collection-tool-toolbar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+      margin-top: 2px;
+    }
+    .tool-icon-btn {
+      width: 36px;
+      height: 36px;
+      border: 0;
+      border-radius: 7px;
+      background: #f2f4f8;
+      color: #475569;
+      font-size: 17px;
+      font-weight: 850;
+      cursor: pointer;
+    }
+    .collection-tool-toolbar .btn {
+      min-height: 38px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 850;
+    }
+    .collection-tool-toolbar .btn.primary {
+      border-color: #7c22ff;
+      background: #7c22ff;
+      color: #fff;
+    }
+    .collection-tool-toolbar .btn.ghost {
+      border-color: #7c22ff;
+      color: #7c22ff;
+      background: #fff;
+    }
+    .collection-tool-table th,
+    .collection-tool-table td {
+      padding: 16px 18px;
+      font-size: 14px;
+      color: #667085;
+    }
+    .collection-tool-table th {
+      background: #fff;
+      font-weight: 860;
+    }
+    .collection-tool-table .token-tag,
+    .collection-tool-table .verified-tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      border-radius: 5px;
+      padding: 3px 8px;
+      font-size: 12px;
+      font-weight: 820;
+    }
+    .collection-tool-table .token-tag { background: #ead7ff; color: #7c22ff; }
+    .collection-tool-table .verified-tag { background: #d1fae5; color: #059669; }
     .timeline {
       display: grid;
       gap: 12px;
@@ -935,10 +1611,10 @@
       .brand-panel { min-height: auto; }
       .brand-copy h1 { margin-top: 30px; font-size: 30px; }
       .app { grid-template-columns: 86px 1fr; }
-      .side-brand span, .nav-text, .side-foot { display: none; }
-      .nav-btn { justify-content: center; padding: 0; }
-      .submenu { margin-left: 0; }
-      .sub-btn { text-align: center; font-size: 11px; padding: 0 4px; }
+      .side-brand span:first-child, .menu-item span:last-child, .menu-section-title, .side-foot { display: none; }
+      .side-brand { justify-content: center; padding-inline: 10px; }
+      .menu-item { justify-content: center; padding: 0; }
+      .menu-section { margin-top: 14px; }
       .span-3, .span-4, .span-5, .span-6, .span-7, .span-8 { grid-column: span 6; }
     }
     @media (max-width: 720px) {
@@ -968,7 +1644,7 @@
         <div class="rail-card" aria-label="能力概览">
           <div class="rail-row"><div class="rail-icon">VA</div><div><div class="rail-title">全球收款</div><div class="rail-sub">法币 VA + Crypto 收款地址</div></div><span class="rail-tag">Collection</span></div>
           <div class="rail-row"><div class="rail-icon">PO</div><div><div class="rail-title">全球付款</div><div class="rail-sub">法币余额或数币余额付款</div></div><span class="rail-tag">Payout</span></div>
-          <div class="rail-row"><div class="rail-icon">FX</div><div><div class="rail-title">兑换</div><div class="rail-sub">实时兑换 + 委托挂单</div></div><span class="rail-tag">Exchange</span></div>
+          <div class="rail-row"><div class="rail-icon">FX</div><div><div class="rail-title">兑换</div><div class="rail-sub">数法承兑 + 承兑记录</div></div><span class="rail-tag">Exchange</span></div>
           <div class="rail-row"><div class="rail-icon">VC</div><div><div class="rail-title">虚拟信用卡</div><div class="rail-sub">广告投流、货物采购、OTA 付款</div></div><span class="rail-tag">Cards</span></div>
         </div>
       </div>
@@ -1132,48 +1808,52 @@
 
   <section id="appShell" class="app hidden">
     <aside class="sidebar">
-      <div class="side-brand"><div class="mark-box">EX</div><span>Fusion Platform</span></div>
+      <div class="side-brand"><span>Eurewa</span><span class="brand-knot"></span></div>
       <nav class="nav" aria-label="主菜单">
-        <button class="nav-btn active" data-page="assets"><span class="nav-symbol">A</span><span class="nav-text">资产</span></button>
-        <div class="submenu open" data-submenu="assets">
-          <button class="sub-btn active" data-page="assets" data-tab="myAssets">我的资产</button>
-          <button class="sub-btn" data-page="assets" data-tab="deposit">充币/充值</button>
-          <button class="sub-btn" data-page="assets" data-tab="withdraw">提币/提现</button>
+        <button class="menu-item active" data-page="dashboard"><span class="menu-icon">▦</span><span>仪表盘</span></button>
+
+        <div class="menu-section">
+          <div class="menu-section-title">资产</div>
+          <button class="menu-item" data-page="assets" data-tab="myAssets"><span class="menu-icon">▣</span><span>资产列表（余额）</span></button>
+          <button class="menu-item" data-page="assets" data-tab="deposit"><span class="menu-icon">◎</span><span>充值</span></button>
+          <button class="menu-item" data-page="assets" data-tab="withdraw"><span class="menu-icon">↟</span><span>提现</span></button>
+          <button class="menu-item" data-page="exchange" data-tab="realtime"><span class="menu-icon">⇄</span><span>兑换</span></button>
+          <!-- 挂单入口暂时隐藏：<button class="menu-item" data-page="exchange" data-tab="orders"><span class="menu-icon">☷</span><span>委托挂单</span></button> -->
         </div>
-        <button class="nav-btn" data-page="exchange"><span class="nav-symbol">E</span><span class="nav-text">兑换</span></button>
-        <div class="submenu" data-submenu="exchange">
-          <button class="sub-btn" data-page="exchange" data-tab="realtime">实时兑换</button>
-          <button class="sub-btn" data-page="exchange" data-tab="orders">委托挂单</button>
+
+        <div class="menu-section">
+          <div class="menu-section-title purple">交易对手方</div>
+          <button class="menu-item" data-page="directory" data-tab="remitter"><span class="menu-icon">▥</span><span>汇款人</span></button>
+          <button class="menu-item" data-page="directory" data-tab="beneficiary"><span class="menu-icon">▤</span><span>收款人</span></button>
         </div>
-        <button class="nav-btn" data-page="directory"><span class="nav-symbol">D</span><span class="nav-text">交易对手方</span></button>
-        <div class="submenu" data-submenu="directory">
-          <button class="sub-btn" data-page="directory" data-tab="beneficiary">收款人</button>
-          <button class="sub-btn" data-page="directory" data-tab="remitter">汇款人</button>
+
+        <div class="menu-section">
+          <div class="menu-section-title blue">收款</div>
+          <button class="menu-item" data-page="collection" data-tab="tools"><span class="menu-icon">▥</span><span>收款工具</span></button>
+          <button class="menu-item" data-page="collection" data-tab="fiatRecords"><span class="menu-icon">▧</span><span>法币收款记录</span></button>
+          <button class="menu-item" data-page="collection" data-tab="cryptoRecords"><span class="menu-icon">◎</span><span>数币收款记录</span></button>
         </div>
-        <button class="nav-btn" data-page="collection"><span class="nav-symbol">C</span><span class="nav-text">收款</span></button>
-        <div class="submenu" data-submenu="collection">
-          <button class="sub-btn" data-page="collection" data-tab="tools">收款工具</button>
-          <button class="sub-btn" data-page="collection" data-tab="fiatRecords">法币收款</button>
-          <button class="sub-btn" data-page="collection" data-tab="cryptoRecords">数币收款</button>
-          <button class="sub-btn" data-page="collection" data-tab="refunds">收款退款</button>
+
+        <div class="menu-section">
+          <div class="menu-section-title orange">付款</div>
+          <button class="menu-item" data-page="payout" data-tab="fiatBalance"><span class="menu-icon">▭</span><span>法币付款</span></button>
+          <button class="menu-item" data-page="payout" data-tab="cryptoBalance"><span class="menu-icon">◎</span><span>数币付款</span></button>
+          <button class="menu-item" data-page="payout" data-tab="records"><span class="menu-icon">≡</span><span>付款记录</span></button>
         </div>
-        <button class="nav-btn" data-page="payout"><span class="nav-symbol">P</span><span class="nav-text">付款</span></button>
-        <div class="submenu" data-submenu="payout">
-          <button class="sub-btn" data-page="payout" data-tab="cryptoBalance">数币余额付款</button>
-          <button class="sub-btn" data-page="payout" data-tab="fiatBalance">法币余额付款</button>
-          <button class="sub-btn" data-page="payout" data-tab="records">余额付款记录</button>
+
+        <div class="menu-section">
+          <div class="menu-section-title purple">我的卡片</div>
+          <button class="menu-item" data-page="cards" data-tab="mycards"><span class="menu-icon">▭</span><span>卡片列表</span></button>
+          <button class="menu-item" data-page="cards" data-tab="orders"><span class="menu-icon">▣</span><span>卡订单</span></button>
+          <button class="menu-item" data-page="cards" data-tab="billing"><span class="menu-icon">☰</span><span>卡账单</span></button>
         </div>
-        <button class="nav-btn" data-page="cards"><span class="nav-symbol">V</span><span class="nav-text">发卡</span></button>
-        <div class="submenu" data-submenu="cards">
-          <button class="sub-btn" data-page="cards" data-tab="mycards">卡片列表</button>
-          <button class="sub-btn" data-page="cards" data-tab="orders">卡订单</button>
-          <button class="sub-btn" data-page="cards" data-tab="billing">卡账单</button>
-        </div>
-        <button class="nav-btn" data-page="profile"><span class="nav-symbol">S</span><span class="nav-text">个人中心</span></button>
-        <div class="submenu" data-submenu="profile">
-          <button class="sub-btn" data-page="profile" data-tab="profile">个人信息</button>
-          <button class="sub-btn" data-page="profile" data-tab="security">安全设置</button>
-          <button class="sub-btn" data-page="profile" data-tab="roles">角色与权限</button>
+
+        <div class="menu-section">
+          <div class="menu-section-title blue">设置中心</div>
+          <button class="menu-item" data-page="profile" data-tab="profile"><span class="menu-icon">☻</span><span>个人信息</span></button>
+          <button class="menu-item" data-page="profile" data-tab="api"><span class="menu-icon">&lt;/&gt;</span><span>API申请</span></button>
+          <button class="menu-item" data-page="profile" data-tab="security"><span class="menu-icon">▣</span><span>安全设置</span></button>
+          <button class="menu-item" data-page="profile" data-tab="roles"><span class="menu-icon">♢</span><span>角色与权限</span></button>
         </div>
       </nav>
       <div class="side-foot">KYC passed · Fiat + Crypto enabled</div>
@@ -1263,7 +1943,7 @@
     document.getElementById('enterApp').addEventListener('click', () => {
       document.getElementById('onboardingShell').classList.add('hidden');
       document.getElementById('appShell').classList.remove('hidden');
-      renderPage('assets', 'myAssets');
+      renderPage('dashboard', 'overview');
     });
 
     document.getElementById('resetDemo').addEventListener('click', () => {
@@ -1272,7 +1952,7 @@
       setStep(1);
     });
 
-    document.querySelectorAll('.nav-btn, .sub-btn').forEach(btn => {
+    document.querySelectorAll('.menu-item').forEach(btn => {
       btn.addEventListener('click', () => {
         const page = btn.dataset.page;
         const tab = btn.dataset.tab || defaultTab(page);
@@ -1282,9 +1962,10 @@
 
     function defaultTab(page) {
       return {
+        dashboard: 'overview',
         assets: 'myAssets',
         exchange: 'realtime',
-        directory: 'beneficiary',
+        directory: 'remitter',
         collection: 'tools',
         payout: 'fiatBalance',
         cards: 'mycards',
@@ -1295,33 +1976,33 @@
     function renderPage(page, tab) {
       state.page = page;
       state.tab = tab;
-      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.page === page));
-      document.querySelectorAll('.submenu').forEach(sm => sm.classList.toggle('open', sm.dataset.submenu === page));
-      document.querySelectorAll('.sub-btn').forEach(btn => {
+      document.querySelectorAll('.menu-item').forEach(btn => {
         const activeTab = page === 'assets'
           ? assetNavGroup(tab)
-          : (page === 'exchange' ? exchangeNavGroup(tab) : (page === 'collection' ? collectionNavGroup(tab) : (page === 'payout' ? payoutNavGroup(tab) : tab)));
-        btn.classList.toggle('active', btn.dataset.page === page && btn.dataset.tab === activeTab);
+          : (page === 'exchange' ? exchangeNavGroup(tab) : (page === 'directory' ? directoryNavGroup(tab) : (page === 'collection' ? collectionNavGroup(tab) : (page === 'payout' ? payoutNavGroup(tab) : tab))));
+        const itemTab = btn.dataset.tab || defaultTab(btn.dataset.page);
+        btn.classList.toggle('active', btn.dataset.page === page && itemTab === activeTab);
       });
       const meta = getPageMeta(page, tab);
       pageTitle.textContent = meta.title;
       pageSubtitle.textContent = meta.subtitle;
-      main.innerHTML = pages[page](tab);
+      main.innerHTML = (pages[page] || pages.dashboard)(tab);
       bindDynamicActions();
     }
 
     const titles = {
+      dashboard: { title: '仪表盘', subtitle: '查看资产、收款、付款和兑换的关键数据。' },
       assets: { title: '资产管理', subtitle: '总余额、法币余额、数币余额、充值和提现。' },
-      exchange: { title: '兑换', subtitle: '实时兑换、数法承兑和委托挂单。' },
-      directory: { title: '交易对手方', subtitle: '维护收款人、付款人、同名账户、第三方账户和链上地址。' },
-      collection: { title: '收款业务', subtitle: '三方收款工具、VA 收款、Crypto 收款地址、入金记录和退款。' },
-      payout: { title: '付款业务', subtitle: '从法币余额或数币余额发起付款，并统一管理付款记录。' },
-      cards: { title: '卡业务', subtitle: '卡列表、开卡、充值、冻结、销卡、卡订单和账单。' },
-      profile: { title: '个人中心', subtitle: '主体信息、安全设置、角色和权限。' }
+      exchange: { title: '兑换', subtitle: '数法承兑和承兑记录。' },
+      directory: { title: '交易对手方', subtitle: '维护汇款人、收款人的链上地址和银行账户。' },
+      collection: { title: '收款', subtitle: '管理收款工具、法币收款记录和数币收款记录。' },
+      payout: { title: '付款', subtitle: '从法币余额或数币余额发起付款，并统一管理付款记录。' },
+      cards: { title: '我的卡片', subtitle: '卡片列表、开卡、充值、冻结、销卡、卡订单和账单。' },
+      profile: { title: '设置中心', subtitle: '主体信息、安全设置、API 申请、角色和权限。' }
     };
 
     const assetTitles = {
-      myAssets: { title: '我的资产', subtitle: '总余额、法币余额、数币余额和各币种可用资产。' },
+      myAssets: { title: '资产 / 资产列表', subtitle: '查看法币账户和数币账户的可用资产。' },
       deposit: { title: '充币/充值', subtitle: '数币充币、法币充值和充值记录。' },
       withdraw: { title: '提币/提现', subtitle: '数币提币、法币提现和提现记录。' },
       cryptoDeposit: { title: '充币', subtitle: '选择网络和币种，生成数币充值地址。' },
@@ -1338,6 +2019,53 @@
     }
 
     const pages = {
+      dashboard() {
+        return `
+          <div class="dashboard-grid">
+            <div class="card pad span-3">
+              <div class="metric-label">总资产折合</div>
+              <div class="metric-value">USD 214,680.44</div>
+              <div class="metric-sub">法币 + 数币统一估值</div>
+            </div>
+            <div class="card pad span-3">
+              <div class="metric-label">今日入账</div>
+              <div class="metric-value">18</div>
+              <div class="metric-sub">法币收款 12 / 数币收款 6</div>
+            </div>
+            <div class="card pad span-3">
+              <div class="metric-label">待处理付款</div>
+              <div class="metric-value">7</div>
+              <div class="metric-sub">合规校验中 2 笔</div>
+            </div>
+            <div class="card pad span-3">
+              <div class="metric-label">实时承兑参考</div>
+              <div class="metric-value">1.0008</div>
+              <div class="metric-sub">USDT → USD</div>
+            </div>
+            <div class="card span-8">
+              <div class="panel-body">
+                <h3 style="margin:0 0 14px;">近期业务</h3>
+                <table class="table">
+                  <thead><tr><th>时间</th><th>业务</th><th>账户</th><th>币种</th><th>金额</th><th>状态</th></tr></thead>
+                  <tbody>
+                    <tr><td>11:40</td><td>法币收款</td><td>USD VA **** 1028</td><td>USD</td><td>12,884.10</td><td><span class="pill green">已入账</span></td></tr>
+                    <tr><td>10:24</td><td>法币余额付款</td><td>USD Account</td><td>USD</td><td>6,200.00</td><td><span class="pill amber">处理中</span></td></tr>
+                    <tr><td>09:18</td><td>数币收款</td><td>TRC20 Address</td><td>USDT</td><td>6,200.00</td><td><span class="pill green">已确认</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="card pad span-4">
+              <h3 style="margin:0 0 14px;">快捷入口</h3>
+              <div class="quick-actions" style="margin-top:0;">
+                <button class="btn primary" data-action="show-address">生成充币地址</button>
+                <button class="btn ghost" data-action="add-bank-account">新增收款账户</button>
+                <button class="btn ghost" data-action="fiat-payout">发起付款</button>
+                <button class="btn ghost" data-action="acceptance">数法承兑</button>
+              </div>
+            </div>
+          </div>`;
+      },
       assets(tab) {
         return `
           <div class="dashboard-grid">
@@ -1353,25 +2081,14 @@
       directory(tab) {
         return `
           <div class="dashboard-grid">
-            <div class="card span-12">
-              <div class="panel-body">
-                <div class="quick-actions" style="margin-top:0;margin-bottom:14px;">
-                  <button class="btn primary" data-action="add-counterparty">新增${tab === 'beneficiary' ? '收款人' : '汇款人'}</button>
-                  <button class="btn ghost" data-action="import">批量导入</button>
-                </div>
-                <table class="table">
-                  <thead><tr><th>名称</th><th>类型</th><th>用途</th><th>账户 / 地址</th><th>状态</th></tr></thead>
-                  <tbody>
-                    <tr><td>Shenzhen Supplier A</td><td>第三方账户</td><td>采购付款</td><td>BOC **** 8821</td><td><span class="pill green">可用</span></td></tr>
-                    <tr><td>Amazon Settlement</td><td>同名账户</td><td>平台收款</td><td>USD VA **** 1028</td><td><span class="pill green">可用</span></td></tr>
-                    <tr><td>USDT Treasury</td><td>Crypto 地址</td><td>链上收款</td><td>TRX...9Ab3</td><td><span class="pill amber">待复核</span></td></tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            ${directoryBody(tab)}
           </div>`;
       },
       collection(tab) {
+        if (['tools', 'bankTools', 'cryptoTools'].includes(tab)) return `
+          <div class="dashboard-grid">
+            ${collectionBody(tab)}
+          </div>`;
         return `
           <div class="dashboard-grid">
             <div class="card span-12">
@@ -1432,10 +2149,23 @@
 
     function exchangeTabs(group, active) {
       const groups = {
-        realtime: [['fiatCryptoAccept', '数法承兑'], ['conversionRecords', '兑换记录']],
+        realtime: [['fiatCryptoAccept', '数法承兑'], ['conversionRecords', '承兑记录']],
         orders: [['fxOrder', '换汇挂单'], ['acceptOrder', '承兑挂单'], ['orderRecords', '挂单记录']]
       };
       return tabs('exchange', active, groups[group] || groups.realtime);
+    }
+
+    function directoryNavGroup(tab) {
+      if (['beneficiary', 'beneficiaryAddress', 'beneficiaryAccount'].includes(tab)) return 'beneficiary';
+      if (['remitter', 'remitterAddress', 'remitterAccount'].includes(tab)) return 'remitter';
+      return 'beneficiary';
+    }
+
+    function directoryTabs(type, active) {
+      const labels = type === 'beneficiary'
+        ? [['beneficiaryAddress', '收款地址簿'], ['beneficiaryAccount', '收款银行账户']]
+        : [['remitterAddress', '汇款地址簿'], ['remitterAccount', '汇款银行账户']];
+      return tabs('directory', active, labels);
     }
 
     function collectionToolTabs(active) {
@@ -1498,26 +2228,26 @@
           <div class="exchange-widget">
             <div class="exchange-box">
               <div class="exchange-head">
-                <span>Sell</span>
-                <span class="exchange-available">Available: <u>0.66 USD</u><button data-action="maximum">Maximum</button></span>
+                <span>卖出</span>
+                <span class="exchange-available">可用余额：<u>0.66 USD</u><button data-action="maximum">全部</button></span>
               </div>
               <div class="exchange-main">
-                <span class="currency-pill"><span class="flag-dot">🇺🇸</span>USD<span class="chev"></span></span>
-                <input class="exchange-input" value="0.00" inputmode="decimal">
+                <div class="exchange-field"><label>卖出币种</label><select><option>USD</option><option>HKD</option><option>VND</option><option>EUR</option><option>SGD</option></select></div>
+                <div class="exchange-field"><label>卖出金额</label><input value="0.00" inputmode="decimal"></div>
               </div>
             </div>
             <div class="exchange-rate-line">
-              <span>Delivers: 0.00 VND</span>
+              <span>预计获得：0.00 VND</span>
               <button class="switch-btn" data-action="switch-conversion">⇅</button>
             </div>
             <div class="exchange-box">
-              <div class="exchange-head"><span>Buy</span></div>
+              <div class="exchange-head"><span>买入</span></div>
               <div class="exchange-main">
-                <span class="currency-pill"><span class="flag-dot">🇻🇳</span>VND<span class="chev"></span></span>
-                <input class="exchange-input" value="0" inputmode="decimal">
+                <div class="exchange-field"><label>买入币种</label><select><option>VND</option><option>HKD</option><option>USD</option><option>EUR</option><option>SGD</option></select></div>
+                <div class="exchange-field"><label>预计到账金额</label><input value="0" inputmode="decimal"></div>
               </div>
             </div>
-            <button class="review-btn" data-action="convert">Review details</button>
+            <button class="review-btn" data-action="convert">确认换汇</button>
           </div>
         </div>`;
       if (tab === 'fiatCryptoAccept') return `
@@ -1527,31 +2257,26 @@
           <div class="exchange-widget">
             <div class="exchange-box">
               <div class="exchange-head">
-                <span>Sell</span>
-                <span class="exchange-available">Available: <u>132,440.24 USDT</u><button data-action="maximum">Maximum</button></span>
+                <span>卖出</span>
+                <span class="exchange-available">可用余额：<u>132,440.24 USDT</u><button data-action="maximum">全部</button></span>
               </div>
               <div class="exchange-main">
-                <span class="currency-pill"><span class="coin-icon green">₮</span>USDT<span class="chev"></span></span>
-                <input class="exchange-input" value="0.000000" inputmode="decimal">
+                <div class="exchange-field"><label>卖出币种</label><select><option>USDT</option><option>USDC</option></select></div>
+                <div class="exchange-field"><label>卖出金额</label><input value="0.000000" inputmode="decimal"></div>
               </div>
             </div>
             <div class="exchange-rate-line">
-              <span>Delivers: 0.00 VND · KYT 低风险</span>
+              <span>预计获得：0.00 VND · KYT 低风险</span>
               <button class="switch-btn" data-action="switch-conversion">⇅</button>
             </div>
             <div class="exchange-box">
-              <div class="exchange-head"><span>Buy</span></div>
+              <div class="exchange-head"><span>买入</span></div>
               <div class="exchange-main">
-                <span class="currency-pill"><span class="flag-dot">🇻🇳</span>VND<span class="chev"></span></span>
-                <input class="exchange-input" value="0" inputmode="decimal">
-              </div>
-              <div class="quick-actions" style="margin:0;">
-                <button class="btn primary" data-action="select-currency">VND</button>
-                <button class="btn ghost" data-action="select-currency">HKD</button>
-                <button class="btn ghost" data-action="select-currency">USD</button>
+                <div class="exchange-field"><label>买入币种</label><select><option>VND</option><option>HKD</option><option>USD</option><option>SGD</option><option>EUR</option></select></div>
+                <div class="exchange-field"><label>预计到账金额</label><input value="0" inputmode="decimal"></div>
               </div>
             </div>
-            <button class="review-btn" data-action="acceptance">Review details</button>
+            <button class="review-btn" data-action="acceptance">确认承兑</button>
           </div>
         </div>`;
       if (tab === 'conversionRecords') return `
@@ -1584,6 +2309,107 @@
       return exchangeBody('fxConversion');
     }
 
+    function directoryBody(tab) {
+      const normalized = tab === 'beneficiary' ? 'beneficiaryAddress' : (tab === 'remitter' ? 'remitterAddress' : tab);
+      const isBeneficiary = normalized.startsWith('beneficiary');
+      const isAddress = normalized.endsWith('Address');
+      const type = isBeneficiary ? 'beneficiary' : 'remitter';
+      const title = isBeneficiary ? '收款人管理' : '汇款人管理';
+      const desc = isBeneficiary ? '管理您的收款地址和银行账户' : '管理付款方的汇款地址和银行账户';
+      const addressLabel = isBeneficiary ? '新增收款地址' : '新增汇款地址';
+      const accountLabel = isBeneficiary ? '新增银行账户' : '新增汇款银行账户';
+      const tabsMarkup = directoryTabs(type, normalized);
+      const actionButtons = `
+        <div class="directory-actions">
+          <button class="btn ghost" data-action="add-counterparty">＋ ${addressLabel}</button>
+          <button class="btn primary" data-action="add-bank-account">＋ ${accountLabel}</button>
+        </div>`;
+      const addressFilter = `
+        <div class="records-filter directory-filter address">
+          <div class="field"><label>别名</label><input placeholder="搜索别名"></div>
+          <div class="field"><label>状态</label><select><option>全部</option><option>已验证</option><option>待验证</option><option>已停用</option></select></div>
+          <div class="field"><label>&nbsp;</label><input></div>
+          <div class="field"><label>&nbsp;</label><input></div>
+          <button class="btn ghost" data-action="reset-filter">重置</button>
+          <button class="btn primary" data-action="query">查询</button>
+        </div>`;
+      const accountFilter = `
+        <div class="records-filter directory-filter">
+          <div class="field"><label>状态</label><select><option>全部</option><option>已激活</option><option>已停用</option></select></div>
+          <div class="field"><label>审核状态</label><select><option>全部</option><option>审核通过</option><option>审核中</option><option>审核失败</option></select></div>
+          <div class="field"><label>${isBeneficiary ? '收款人名称' : '汇款人名称'}</label><input placeholder="请输入${isBeneficiary ? '收款人' : '汇款人'}名称"></div>
+          <div class="field"><label>账户号</label><input placeholder="请输入账户号"></div>
+          <button class="btn ghost" data-action="reset-filter">重置</button>
+          <button class="btn primary" data-action="query">查询</button>
+        </div>`;
+      const addressRows = isBeneficiary ? `
+        <tr>
+          <td>Kevin Default</td>
+          <td><span class="token-tag">ERC-20</span></td>
+          <td><span class="yes-tag">是</span></td>
+          <td><span class="token-tag">USDT</span><span class="token-tag">USDC</span></td>
+          <td>0xC9Cd8e...457F2A <span class="copy-mini">⧉</span></td>
+          <td>2026-05-21 16:36:51</td>
+          <td><span class="verified-tag">已验证</span></td>
+          <td><a href="#" class="danger-link" data-action="delete">删除</a></td>
+        </tr>` : `
+        <tr>
+          <td>Buyer Treasury</td>
+          <td><span class="token-tag">TRC-20</span></td>
+          <td><span class="yes-tag">是</span></td>
+          <td><span class="token-tag">USDT</span></td>
+          <td>TRX9...8c21 <span class="copy-mini">⧉</span></td>
+          <td>2026-07-08 09:26:18</td>
+          <td><span class="verified-tag">已验证</span></td>
+          <td><a href="#" class="danger-link" data-action="delete">删除</a></td>
+        </tr>`;
+      const accountRows = isBeneficiary ? `
+        <tr>
+          <td>62818018665736</td>
+          <td>【Test】Mars</td>
+          <td>SWIFT</td>
+          <td>2026-05-21 16:42:18</td>
+          <td><span class="verified-tag">已激活</span></td>
+          <td><span class="verified-tag">审核通过</span></td>
+          <td><a href="#" data-action="view">详情</a><a href="#" class="danger-link" data-action="delete">删除</a></td>
+        </tr>` : `
+        <tr>
+          <td>HK-VA-8821001</td>
+          <td>Amazon Settlement</td>
+          <td>FPS</td>
+          <td>2026-07-05 14:20:11</td>
+          <td><span class="verified-tag">已激活</span></td>
+          <td><span class="verified-tag">审核通过</span></td>
+          <td><a href="#" data-action="view">详情</a><a href="#" class="danger-link" data-action="delete">删除</a></td>
+        </tr>`;
+      return `
+        <div class="directory-page">
+          <div class="directory-head">
+            <div><h3>${title}</h3><p>${desc}</p></div>
+            ${actionButtons}
+          </div>
+          ${tabsMarkup}
+          ${isAddress ? addressFilter : accountFilter}
+          <div class="records-table-card">
+            <table class="table records-table directory-table">
+              ${isAddress
+                ? `<thead><tr><th>别名</th><th>网络</th><th>通用地址</th><th>支持币种</th><th>地址</th><th>创建时间</th><th>状态</th><th>操作</th></tr></thead><tbody>${addressRows}</tbody>`
+                : `<thead><tr><th>账户号</th><th>${isBeneficiary ? '收款人名称' : '汇款人名称'}</th><th>银行 Swift/BIC 代码</th><th>更新时间</th><th>状态</th><th>审核状态</th><th>操作</th></tr></thead><tbody>${accountRows}</tbody>`}
+            </table>
+            <div class="records-pagination">
+              <span>共 ${isAddress ? 2 : 1} 条</span>
+              <span class="page-select">10条/页⌄</span>
+              <span>‹</span>
+              <span class="current-page">1</span>
+              <span>›</span>
+              <span>前往</span>
+              <span class="page-input">1</span>
+              <span>页</span>
+            </div>
+          </div>
+        </div>`;
+    }
+
     function assetBody(tab) {
       if (tab === 'deposit') return assetBody('cryptoDeposit');
       if (tab === 'withdraw') return assetBody('cryptoWithdraw');
@@ -1609,40 +2435,117 @@
         </div>`;
       if (tab === 'fiatDeposit') return `
         <div class="span-12">${assetTabs('deposit', tab)}</div>
-        <div class="span-12 asset-workspace">
-          <div class="card asset-form">
+        <div class="card asset-form span-12">
             <h3>充值</h3>
-            <label>币种</label>
-            <div class="option-grid" style="grid-template-columns: 240px;">
-              <div class="option-card active"><div><div class="option-title" style="color:#7c3aed;text-align:center;">USD</div></div></div>
+            <div class="deposit-selector">
+              <div class="field"><label>选择币种</label><select><option>USD</option><option>HKD</option><option>EUR</option><option>GBP</option><option>SGD</option></select></div>
+              <div class="field"><label>选择地区</label><select><option>中国香港</option><option>新加坡</option><option>欧洲</option><option>美国</option></select></div>
             </div>
-            <div class="field" style="margin-bottom:16px;"><label>充值金额</label><div style="display:grid;grid-template-columns:1fr 116px;"><input placeholder="请输入"><input value="USD" readonly style="border-left:0;border-radius:0 8px 8px 0;text-align:center;"></div></div>
-            <div class="field" style="margin-bottom:16px;"><label>银行账户</label><select><option>请选择收款银行账户</option><option>DBS USD Client Account **** 1028</option><option>BOC HK USD Account **** 7610</option></select></div>
-            <div class="summary-box">
-              <div class="summary-row"><span>币种:</span><b>--</b></div>
-              <div class="summary-row"><span>充值金额:</span><b>-- --</b></div>
+            <div class="account-list">
+              <div class="receiving-account-card active">
+                <span class="account-radio"></span>
+                <div class="account-card-head">
+                  <div class="account-card-title">中国香港 · 全球收款账户 | 华侨银行(香港)有限公司</div>
+                  <div class="bank-logo">OCBC</div>
+                </div>
+                <div class="account-tags">
+                  <span class="account-tag">多币种</span>
+                  <span class="account-tag warning">不支持 ATM，不支持支票，不支持现金存入</span>
+                </div>
+                <div class="account-detail-grid">
+                  <div class="label">收款账户名称</div>
+                  <div>
+                    <div class="readonly-account">Lotus Global Trade Co., Ltd.</div>
+                    <div class="metric-sub" style="margin-top:8px;color:#2f8cff;">账户名称必须使用您认证时的英文名称，有在途资金或有入账后不支持修改。如有任何问题，请联系您的客户经理。</div>
+                  </div>
+                  <div class="label">支持收款币种</div>
+                  <div class="currency-chips">
+                    <span class="currency-chip">🇪🇺 EUR</span><span class="currency-chip">🇨🇳 CNH</span><span class="currency-chip">🇭🇰 HKD</span><span class="currency-chip">🇺🇸 USD</span><span class="currency-chip">🇬🇧 GBP</span><span class="currency-chip">🇩🇰 DKK</span><span class="currency-chip">🇸🇬 SGD</span><span class="currency-chip">🇯🇵 JPY</span>
+                  </div>
+                  <div class="label">买家付款地区</div>
+                  <div>全球 <span style="color:#2f8cff;">支持收款国家或地区</span></div>
+                  <div class="label">支持收款方式</div>
+                  <div>SWIFT(电汇/TT) 和中国香港 CHATS / IFT / FPS 收款</div>
+                  <div class="label">账户开通时效</div>
+                  <div>实时开通</div>
+                </div>
+                <div class="account-card-actions"><button class="btn primary" data-action="add-deposit-account">添加</button></div>
+              </div>
+              <div class="receiving-account-card">
+                <span class="account-radio"></span>
+                <div class="account-card-head">
+                  <div class="account-card-title">中国香港 · 本地收款账户 | 星展银行(香港) DBSHK</div>
+                  <div class="bank-logo dbs">DBS</div>
+                </div>
+                <div class="account-tags">
+                  <span class="account-tag">多币种</span>
+                  <span class="account-tag warning">不支持 ATM，不支持支票，不支持现金存入</span>
+                </div>
+                <div class="account-detail-grid">
+                  <div class="label">收款账户名称</div>
+                  <div><div class="readonly-account">Lotus Global Trade Co., Ltd.</div></div>
+                  <div class="label">支持收款币种</div>
+                  <div class="currency-chips"><span class="currency-chip">🇭🇰 HKD</span><span class="currency-chip">🇺🇸 USD</span><span class="currency-chip">🇨🇳 CNH</span></div>
+                  <div class="label">买家付款地区</div>
+                  <div>中国香港本地</div>
+                  <div class="label">支持收款方式</div>
+                  <div>FPS / CHATS / 本地银行转账</div>
+                  <div class="label">账户开通时效</div>
+                  <div>实时开通</div>
+                </div>
+                <div class="account-card-actions"><button class="btn ghost" data-action="add-deposit-account">添加</button></div>
+              </div>
             </div>
-            <button class="btn primary" style="width:100%;" data-action="fiat-deposit">确认充值</button>
-          </div>
-          ${assetNotice('fiatDeposit')}
-        </div>`;
+          </div>`;
       if (tab === 'depositRecords') return `
-        <div class="span-12">${assetTabs('deposit', tab)}</div>
-        <div class="span-12">
-          <div class="filter-card">
-            <div class="form-row">
-              <div class="field"><label>交易 ID</label><input placeholder="按交易 ID 搜索"></div>
-              <div class="field"><label>订单状态</label><select><option>全部</option><option>处理成功</option><option>处理中</option><option>失败</option></select></div>
-              <div class="field"><label>开始日期</label><input placeholder="开始日期"></div>
-              <div class="field"><label>结束日期</label><input placeholder="结束日期"></div>
-            </div>
-            <div class="quick-actions" style="justify-content:flex-end;margin-top:0;"><button class="btn ghost" data-action="reset-filter">重置</button><button class="btn primary" data-action="query">查询</button></div>
+        <div class="records-page">
+          ${assetTabs('deposit', tab)}
+          <div class="records-filter">
+            <div class="field"><label>交易 ID</label><input placeholder="按交易 ID 搜索"></div>
+            <div class="field"><label>订单状态</label><select><option>全部</option><option>处理成功</option><option>处理中</option><option>失败</option></select></div>
+            <div class="field"><label>开始日期</label><input placeholder="▦  开始日期"></div>
+            <div class="field"><label>结束日期</label><input placeholder="▦  结束日期"></div>
+            <button class="btn ghost" data-action="reset-filter">重置</button>
+            <button class="btn primary" data-action="query">查询</button>
           </div>
-          <div class="card">
-            <table class="table"><thead><tr><th>订单号</th><th>业务类型</th><th>扣账账户</th><th>到账账户</th><th>币种</th><th>金额</th><th>手续费</th><th>状态</th><th>完成时间</th></tr></thead><tbody>
-              <tr><td>CD202605210001</td><td>数币充币</td><td>外部钱包 · ERC20</td><td>USDT Wallet</td><td>USDT</td><td style="color:var(--green);font-weight:820;">0.35</td><td>--</td><td><span class="pill green">处理成功</span></td><td>2026-05-21 17:32:51</td></tr>
-              <tr><td>FD202607070018</td><td>法币充值</td><td>客户银行账户</td><td>USD Account</td><td>USD</td><td style="font-weight:820;">8,200.00</td><td>--</td><td><span class="pill amber">处理中</span></td><td>--</td></tr>
-            </tbody></table>
+          <div class="records-table-card">
+            <table class="table records-table">
+              <thead><tr><th>交易 ID</th><th>时间</th><th>类型</th><th>币种</th><th>金额</th><th>网络</th><th>手续费</th><th>状态</th><th>操作</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td>10026052117323367<br>92760</td>
+                  <td>2026-05-21 17:32:51</td>
+                  <td><span class="record-type">数币充值</span></td>
+                  <td>USDT</td>
+                  <td><span class="amount-green">0.35</span></td>
+                  <td><span class="network-tag">ERC-20</span></td>
+                  <td>-</td>
+                  <td><span class="status-success">处理成功</span></td>
+                  <td><a href="#" data-action="view">查看</a></td>
+                </tr>
+                <tr>
+                  <td>DF-1783476084605-<br>3353</td>
+                  <td>2026-07-08 10:01:25</td>
+                  <td><span class="record-type">法币充值</span></td>
+                  <td>USD</td>
+                  <td><span class="amount-green">12345</span></td>
+                  <td>-</td>
+                  <td>法币充值处理费: 0 USD</td>
+                  <td><span class="status-processing">处理中</span></td>
+                  <td><a href="#" data-action="view">查看</a></td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="records-pagination">
+              <span>共 2 条</span>
+              <span class="page-select">10条/页⌄</span>
+              <span>‹</span>
+              <span class="current-page">1</span>
+              <span>›</span>
+              <span>前往</span>
+              <span class="page-input">1</span>
+              <span>页</span>
+            </div>
           </div>
         </div>`;
       if (tab === 'cryptoWithdraw') return `
@@ -1697,22 +2600,27 @@
           ${assetNotice('fiatWithdraw')}
         </div>`;
       if (tab === 'withdrawRecords') return `
-        <div class="span-12">${assetTabs('withdraw', tab)}</div>
-        <div class="span-12">
-          <div class="filter-card">
-            <div class="form-row">
-              <div class="field"><label>交易 ID</label><input placeholder="按交易 ID 搜索"></div>
-              <div class="field"><label>订单状态</label><select><option>全部</option><option>处理中</option><option>成功</option><option>失败</option></select></div>
-              <div class="field"><label>开始日期</label><input placeholder="开始日期"></div>
-              <div class="field"><label>结束日期</label><input placeholder="结束日期"></div>
-            </div>
-            <div class="quick-actions" style="justify-content:flex-end;margin-top:0;"><button class="btn ghost" data-action="reset-filter">重置</button><button class="btn primary" data-action="query">查询</button></div>
+        <div class="records-page">
+          ${assetTabs('withdraw', tab)}
+          <div class="records-filter">
+            <div class="field"><label>交易 ID</label><input placeholder="按交易 ID 搜索"></div>
+            <div class="field"><label>订单状态</label><select><option>全部</option><option>处理中</option><option>处理成功</option><option>失败</option></select></div>
+            <div class="field"><label>开始日期</label><input placeholder="▦  开始日期"></div>
+            <div class="field"><label>结束日期</label><input placeholder="▦  结束日期"></div>
+            <button class="btn ghost" data-action="reset-filter">重置</button>
+            <button class="btn primary" data-action="query">查询</button>
           </div>
-          <div class="card">
-            <table class="table"><thead><tr><th>订单号</th><th>业务类型</th><th>扣账账户</th><th>到账账户</th><th>币种</th><th>金额</th><th>手续费</th><th>状态</th><th>完成时间</th></tr></thead><tbody>
-              <tr><td>WD202607080006</td><td>法币提现</td><td>USD Account</td><td>Shenzhen Supplier A · BOC **** 8821</td><td>USD</td><td>3,200.00</td><td>8.00</td><td><span class="pill amber">处理中</span></td><td>--</td></tr>
-              <tr><td>CW202607070004</td><td>数币提币</td><td>USDT Wallet</td><td>TRX9...2Abc</td><td>USDT</td><td>560.00</td><td>1.00</td><td><span class="pill green">成功</span></td><td>2026-07-07 18:41:12</td></tr>
-            </tbody></table>
+          <div class="records-table-card">
+            <table class="table records-table">
+              <thead><tr><th>交易 ID</th><th>时间</th><th>类型</th><th>币种</th><th>金额</th><th>网络</th><th>手续费</th><th>状态</th><th>操作</th></tr></thead>
+            </table>
+            <div class="records-empty">
+              <div>
+                <div class="records-empty-icon"></div>
+                <div class="records-empty-title">暂无订单记录</div>
+                <div class="records-empty-sub">没有找到符合当前筛选条件的订单记录。</div>
+              </div>
+            </div>
           </div>
         </div>`;
       if (tab === 'fxConversion') return `
@@ -1722,26 +2630,26 @@
           <div class="exchange-widget">
             <div class="exchange-box">
               <div class="exchange-head">
-                <span>Sell</span>
-                <span class="exchange-available">Available: <u>0.66 USD</u><button data-action="maximum">Maximum</button></span>
+                <span>卖出</span>
+                <span class="exchange-available">可用余额：<u>0.66 USD</u><button data-action="maximum">全部</button></span>
               </div>
               <div class="exchange-main">
-                <span class="currency-pill"><span class="flag-dot">🇺🇸</span>USD<span class="chev"></span></span>
-                <input class="exchange-input" value="0.00" inputmode="decimal">
+                <div class="exchange-field"><label>卖出币种</label><select><option>USD</option><option>HKD</option><option>VND</option><option>EUR</option><option>SGD</option></select></div>
+                <div class="exchange-field"><label>卖出金额</label><input value="0.00" inputmode="decimal"></div>
               </div>
             </div>
             <div class="exchange-rate-line">
-              <span>Delivers: 0.00 VND</span>
+              <span>预计获得：0.00 VND</span>
               <button class="switch-btn" data-action="switch-conversion">⇅</button>
             </div>
             <div class="exchange-box">
-              <div class="exchange-head"><span>Buy</span></div>
+              <div class="exchange-head"><span>买入</span></div>
               <div class="exchange-main">
-                <span class="currency-pill"><span class="flag-dot">🇻🇳</span>VND<span class="chev"></span></span>
-                <input class="exchange-input" value="0" inputmode="decimal">
+                <div class="exchange-field"><label>买入币种</label><select><option>VND</option><option>HKD</option><option>USD</option><option>EUR</option><option>SGD</option></select></div>
+                <div class="exchange-field"><label>预计到账金额</label><input value="0" inputmode="decimal"></div>
               </div>
             </div>
-            <button class="review-btn" data-action="convert">Review details</button>
+            <button class="review-btn" data-action="convert">确认换汇</button>
           </div>
         </div>`;
       if (tab === 'fiatCryptoAccept') return `
@@ -1751,31 +2659,26 @@
           <div class="exchange-widget">
             <div class="exchange-box">
               <div class="exchange-head">
-                <span>Sell</span>
-                <span class="exchange-available">Available: <u>132,440.24 USDT</u><button data-action="maximum">Maximum</button></span>
+                <span>卖出</span>
+                <span class="exchange-available">可用余额：<u>132,440.24 USDT</u><button data-action="maximum">全部</button></span>
               </div>
               <div class="exchange-main">
-                <span class="currency-pill"><span class="coin-icon green">₮</span>USDT<span class="chev"></span></span>
-                <input class="exchange-input" value="0.000000" inputmode="decimal">
+                <div class="exchange-field"><label>卖出币种</label><select><option>USDT</option><option>USDC</option></select></div>
+                <div class="exchange-field"><label>卖出金额</label><input value="0.000000" inputmode="decimal"></div>
               </div>
             </div>
             <div class="exchange-rate-line">
-              <span>Delivers: 0.00 VND · KYT 低风险</span>
+              <span>预计获得：0.00 VND · KYT 低风险</span>
               <button class="switch-btn" data-action="switch-conversion">⇅</button>
             </div>
             <div class="exchange-box">
-              <div class="exchange-head"><span>Buy</span></div>
+              <div class="exchange-head"><span>买入</span></div>
               <div class="exchange-main">
-                <span class="currency-pill"><span class="flag-dot">🇻🇳</span>VND<span class="chev"></span></span>
-                <input class="exchange-input" value="0" inputmode="decimal">
-              </div>
-              <div class="quick-actions" style="margin:0;">
-                <button class="btn primary" data-action="select-currency">VND</button>
-                <button class="btn ghost" data-action="select-currency">HKD</button>
-                <button class="btn ghost" data-action="select-currency">USD</button>
+                <div class="exchange-field"><label>买入币种</label><select><option>VND</option><option>HKD</option><option>USD</option><option>SGD</option><option>EUR</option></select></div>
+                <div class="exchange-field"><label>预计到账金额</label><input value="0" inputmode="decimal"></div>
               </div>
             </div>
-            <button class="review-btn" data-action="acceptance">Review details</button>
+            <button class="review-btn" data-action="acceptance">确认承兑</button>
           </div>
         </div>`;
       if (tab === 'conversionRecords') return `
@@ -1798,16 +2701,14 @@
           </div>
         </div>`;
       const fiatAssets = [
-        { flag: '🇺🇸', code: 'USD', amount: '82,240.20', avail: '82,240.20', total: '82,240.20' },
-        { flag: '🇻🇳', code: 'VND', amount: '1,740,200,000', avail: '1,740,200,000', total: '1,740,200,000' },
-        { flag: '🇪🇺', code: 'EUR', amount: '12,600.00', avail: '12,600.00', total: '12,600.00' }
+        { flag: '🇺🇸', code: 'USD', amount: '0', avail: '0', total: '0' }
       ];
       const cryptoAssets = [
-        { icon: 'green', sym: '₮', code: 'USDT', amount: '132,440.24', avail: '132,440.24', total: '132,440.24' },
-        { icon: 'blue', sym: '$', code: 'USDC', amount: '0', avail: '0', total: '0' }
+        { icon: 'blue', sym: '$', code: 'USDC', amount: '0', avail: '0', total: '0' },
+        { icon: 'green', sym: '₮', code: 'USDT', amount: '0.35', avail: '0.35', total: '0.35' }
       ];
       const fiatCard = a => `
-        <div class="card asset-card span-6">
+        <div class="card asset-card">
           <div class="asset-card-head"><span class="flag-dot">${a.flag}</span><span>${a.code}</span></div>
           <div class="asset-card-amount">${a.amount}</div>
           <div class="asset-card-actions">
@@ -1820,7 +2721,7 @@
           </div>
         </div>`;
       const cryptoCard = a => `
-        <div class="card asset-card span-6">
+        <div class="card asset-card">
           <div class="asset-card-head"><span class="coin-icon ${a.icon}">${a.sym}</span><span>${a.code}</span></div>
           <div class="asset-card-amount">${a.amount}</div>
           <div class="asset-card-actions">
@@ -1833,42 +2734,113 @@
           </div>
         </div>`;
       return `
-        <div class="span-12"><h3 class="asset-list-title">资产列表</h3></div>
-        <div class="asset-section-title crypto">数币账户</div>
-        ${cryptoAssets.map(cryptoCard).join('')}
-        <div class="asset-section-title">法币账户</div>
-        ${fiatAssets.map(fiatCard).join('')}`;
+        <div class="asset-list-page">
+          <div class="span-12"><h3 class="asset-list-title">资产列表</h3></div>
+          <div class="asset-section-title">法币账户</div>
+          ${fiatAssets.map(fiatCard).join('')}
+          <div class="asset-section-title crypto">数币账户</div>
+          ${cryptoAssets.map(cryptoCard).join('')}
+        </div>`;
     }
 
     function collectionBody(tab) {
-      if (tab === 'tools') return collectionBody('cryptoTools');
+      if (tab === 'tools') return collectionBody('bankTools');
       if (tab === 'bankTools') return `
-        ${collectionToolTabs(tab)}
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin:16px 0 14px;">
-          <h3 style="margin:0;">银行账户收款</h3>
-          <button class="btn primary" data-action="add-bank-account">新增收款账户</button>
-        </div>
-        <table class="table"><thead><tr><th>账户名称</th><th>币种</th><th>账号 / VA</th><th>开户行</th><th>状态</th></tr></thead><tbody>
-          <tr><td>USD Virtual Account</td><td>USD</td><td>VA **** 1028</td><td>DBS Bank</td><td><span class="pill green">可用</span></td></tr>
-          <tr><td>VND Virtual Account</td><td>VND</td><td>VA **** 7610</td><td>Vietcombank</td><td><span class="pill green">可用</span></td></tr>
-          <tr><td>EUR Virtual Account</td><td>EUR</td><td>VA **** 3390</td><td>ClearBank</td><td><span class="pill amber">开通中</span></td></tr>
-        </tbody></table>`;
+        <div class="collection-tools-page">
+          <h3>收款工具</h3>
+          <div class="collection-tool-card">
+            ${collectionToolTabs(tab)}
+            <div class="collection-tool-filter">
+              <label>状态</label><select><option>请选择</option><option>可用</option><option>开通中</option></select>
+              <label>币种</label><select><option>请选择</option><option>USD</option><option>HKD</option><option>EUR</option><option>CNH</option></select>
+              <span></span>
+              <button class="btn ghost" data-action="reset-filter">重置</button>
+              <button class="btn primary" data-action="query">查询</button>
+            </div>
+            <div class="collection-tool-toolbar">
+              <button class="tool-icon-btn" data-action="refresh">⟳</button>
+              <div class="view-switch" data-view-switch="bank-tools">
+                <button class="view-btn active" data-view-target="list">☷</button>
+                <button class="view-btn" data-view-target="card">▦</button>
+              </div>
+              <button class="btn primary" data-action="add-bank-account">＋申请VA</button>
+              <button class="btn ghost" data-action="view">▣ 申请记录</button>
+            </div>
+            <div data-view-panel="bank-tools-list">
+              <table class="table collection-tool-table">
+                <thead><tr><th>账户号码</th><th>账户名称</th><th>银行名称</th><th>SWIFT代码</th><th>国家</th><th>币种</th><th>状态</th><th>操作</th></tr></thead>
+              </table>
+              <div class="records-empty">
+                <div>
+                  <div class="records-empty-icon"></div>
+                  <div class="records-empty-sub">暂无数据</div>
+                </div>
+              </div>
+              <div class="records-pagination">
+                <span>共 0 条</span><span>‹</span><span class="current-page">1</span><span>›</span><span class="page-select">10条/页⌄</span><span>前往</span><span class="page-input">1</span><span>页</span>
+              </div>
+            </div>
+            <div data-view-panel="bank-tools-card" class="account-list hidden">
+              <div class="receiving-account-card active">
+                <span class="account-radio"></span>
+                <div class="account-card-head"><div class="account-card-title">中国香港 · 全球收款账户 | 华侨银行(香港)有限公司</div><div class="bank-logo">OCBC</div></div>
+                <div class="account-tags"><span class="account-tag">多币种</span><span class="account-tag warning">不支持 ATM，不支持支票，不支持现金存入</span><span class="pill green">可用</span></div>
+                <div class="account-detail-grid">
+                  <div class="label">收款账户名称</div><div><div class="readonly-account">Lotus Global Trade Co., Ltd.</div></div>
+                  <div class="label">账号 / VA</div><div>VA **** 1028</div>
+                  <div class="label">支持收款币种</div><div class="currency-chips"><span class="currency-chip">🇪🇺 EUR</span><span class="currency-chip">🇨🇳 CNH</span><span class="currency-chip">🇭🇰 HKD</span><span class="currency-chip">🇺🇸 USD</span></div>
+                  <div class="label">支持收款方式</div><div>SWIFT(电汇/TT) 和中国香港 CHATS / IFT / FPS 收款</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>`;
       if (tab === 'cryptoTools') return `
-        ${collectionToolTabs(tab)}
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin:16px 0 14px;">
-          <h3 style="margin:0;">数币地址收款</h3>
-          <button class="btn primary" data-action="add-crypto-address">新增收款地址</button>
-        </div>
-        <div class="section-label" style="margin-top:0;">USDT 收款地址</div>
-        <table class="table" style="margin-bottom:20px;"><thead><tr><th>网络</th><th>币种</th><th>收款地址</th><th>状态</th></tr></thead><tbody>
-          <tr><td><span class="pill">TRC-20</span></td><td>USDT</td><td>TRX...9Ab3</td><td><span class="pill green">已启用</span></td></tr>
-          <tr><td><span class="pill">ERC-20</span></td><td>USDT</td><td>0x89...a21</td><td><span class="pill green">已启用</span></td></tr>
-        </tbody></table>
-        <div class="section-label" style="margin-top:0;">USDC 收款地址</div>
-        <table class="table"><thead><tr><th>网络</th><th>币种</th><th>收款地址</th><th>状态</th></tr></thead><tbody>
-          <tr><td><span class="pill">TRC-20</span></td><td>USDC</td><td>TRX...5c7D</td><td><span class="pill green">已启用</span></td></tr>
-          <tr><td><span class="pill">ERC-20</span></td><td>USDC</td><td>0x2f...b90</td><td><span class="pill amber">待复核</span></td></tr>
-        </tbody></table>`;
+        <div class="collection-tools-page">
+          <h3>收款工具</h3>
+          <div class="collection-tool-card">
+            ${collectionToolTabs(tab)}
+            <div class="collection-tool-filter">
+              <label>状态</label><select><option>请选择</option><option>已启用</option><option>待复核</option></select>
+              <label>币种</label><select><option>请选择</option><option>USDT</option><option>USDC</option></select>
+              <span></span>
+              <button class="btn ghost" data-action="reset-filter">重置</button>
+              <button class="btn primary" data-action="query">查询</button>
+            </div>
+            <div class="collection-tool-toolbar">
+              <button class="tool-icon-btn" data-action="refresh">⟳</button>
+              <div class="view-switch" data-view-switch="crypto-tools">
+                <button class="view-btn active" data-view-target="list">☷</button>
+                <button class="view-btn" data-view-target="card">▦</button>
+              </div>
+              <button class="btn primary" data-action="add-crypto-address">＋新增地址</button>
+              <button class="btn ghost" data-action="view">▣ 申请记录</button>
+            </div>
+            <div data-view-panel="crypto-tools-list">
+              <table class="table collection-tool-table">
+                <thead><tr><th>别名</th><th>网络</th><th>币种</th><th>收款地址</th><th>状态</th><th>操作</th></tr></thead>
+                <tbody>
+                  <tr><td>USDT Treasury</td><td><span class="token-tag">TRC-20</span></td><td>USDT</td><td>TRX...9Ab3</td><td><span class="verified-tag">已启用</span></td><td><a href="#" data-action="view">查看</a></td></tr>
+                </tbody>
+              </table>
+              <div class="records-pagination">
+                <span>共 1 条</span><span>‹</span><span class="current-page">1</span><span>›</span><span class="page-select">10条/页⌄</span><span>前往</span><span class="page-input">1</span><span>页</span>
+              </div>
+            </div>
+            <div data-view-panel="crypto-tools-card" class="account-list hidden">
+              <div class="receiving-account-card active">
+                <span class="account-radio"></span>
+                <div class="account-card-head"><div class="account-card-title">USDT Treasury · TRC-20</div><div class="bank-logo dbs">USDT</div></div>
+                <div class="account-tags"><span class="account-tag">USDT</span><span class="pill green">已启用</span></div>
+                <div class="account-detail-grid">
+                  <div class="label">收款地址</div><div>TRX...9Ab3 <span class="copy-mini">⧉</span></div>
+                  <div class="label">网络</div><div>TRC-20</div>
+                  <div class="label">用途</div><div>客户链上付款与数币收款</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>`;
       if (['records', 'fiatRecords'].includes(tab)) return `
         <div class="filter-card">
           <div class="form-row">
@@ -2020,6 +2992,12 @@
           <tr><td>Finance</td><td>4</td><td>付款、对账、报表</td><td><span class="pill green">启用</span></td></tr>
           <tr><td>Operator</td><td>7</td><td>收款、订单、客户</td><td><span class="pill green">启用</span></td></tr>
         </tbody></table>`;
+      if (tab === 'api') return `
+        <div class="quick-actions" style="margin-top:0;margin-bottom:14px;"><button class="btn primary" data-action="create-va">申请 API 权限</button><button class="btn ghost" data-action="download">下载 API 文档</button></div>
+        <table class="table"><thead><tr><th>能力</th><th>状态</th><th>回调地址</th><th>创建时间</th></tr></thead><tbody>
+          <tr><td>收款 API</td><td><span class="pill green">已开通</span></td><td>https://merchant.example.com/webhook</td><td>2026-07-01</td></tr>
+          <tr><td>付款 API</td><td><span class="pill amber">审核中</span></td><td>--</td><td>2026-07-08</td></tr>
+        </tbody></table>`;
       return `
         <div class="form-grid">
           <div class="field"><label>主体名称</label><input value="${state.profile.name}"></div>
@@ -2032,7 +3010,22 @@
 
     function bindDynamicActions() {
       document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click', () => renderPage(btn.dataset.page, btn.dataset.tab)));
-      document.querySelectorAll('[data-action]').forEach(btn => btn.addEventListener('click', () => showToast(actionText(btn.dataset.action))));
+      document.querySelectorAll('[data-view-switch]').forEach(group => {
+        group.querySelectorAll('[data-view-target]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const key = group.dataset.viewSwitch;
+            const target = btn.dataset.viewTarget;
+            group.querySelectorAll('[data-view-target]').forEach(item => item.classList.toggle('active', item === btn));
+            document.querySelectorAll(`[data-view-panel^="${key}-"]`).forEach(panel => {
+              panel.classList.toggle('hidden', panel.dataset.viewPanel !== `${key}-${target}`);
+            });
+          });
+        });
+      });
+      document.querySelectorAll('[data-action]').forEach(btn => btn.addEventListener('click', event => {
+        event.preventDefault();
+        showToast(actionText(btn.dataset.action));
+      }));
     }
 
     function actionText(action) {
@@ -2054,9 +3047,11 @@
         download: '报表已生成',
         'add-counterparty': '已打开新增交易对手方',
         import: '批量导入模板已准备',
+        delete: '删除操作已提交',
         'create-va': '收款工具创建中',
         'add-bank-account': '已打开新增收款账户',
         'add-crypto-address': '已打开新增收款地址',
+        'add-deposit-account': '已添加充值收款账户',
         refund: '退款申请已提交',
         'crypto-payout': '数币余额付款已提交，等待承兑与合规校验',
         'fiat-payout': '法币余额付款已提交',
