@@ -2310,6 +2310,31 @@
     }
     .network-compact-icon.eth { background: #8b5cf6; }
     .network-compact-icon.tron { background: #ef233c; }
+    .fee-bearer-options {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .fee-bearer-card {
+      min-height: 44px;
+      border: 1px solid #d8dee8;
+      border-radius: 8px;
+      background: #fff;
+      color: #344054;
+      padding: 8px 10px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 780;
+      line-height: 1.25;
+    }
+    .fee-bearer-card.active {
+      border-color: #7c3aed;
+      background: #f7f1ff;
+      color: #6d28d9;
+      box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.12);
+    }
     .payer-reference {
       width: 100%;
       border: 1px solid #d5dfed;
@@ -3985,7 +4010,11 @@
             </div>
             <div class="field ${isBankTarget ? '' : 'hidden'}" style="margin-bottom:14px;" data-fee-bearer>
               <label>费用承担方</label>
-              <select><option>付款方承担</option><option>收款方承担</option><option>双方共同承担</option></select>
+              <div class="fee-bearer-options">
+                <button type="button" class="fee-bearer-card" data-fee-bearer-option="SHA">双方共同承担费用（SHA）</button>
+                <button type="button" class="fee-bearer-card active" data-fee-bearer-option="OUR">您单方面承担费用（OUR）</button>
+                <button type="button" class="fee-bearer-card" data-fee-bearer-option="BEN">收款方承担费用（BEN）</button>
+              </div>
             </div>
             <div data-bank-fields class="${isBankTarget ? '' : 'hidden'}">
               <div class="field" style="margin-bottom:14px;">
@@ -4051,7 +4080,7 @@
             <button class="btn ghost" data-action="reset-filter">重置</button>
             <button class="btn primary" data-action="query">查询</button>
             <button class="btn ghost" data-action="download">导出</button>
-          // 
+          </div>
           <div class="records-table-card">
             <table class="table records-table">
               <thead><tr><th>订单编号</th><th>卖出金额</th><th>买入金额</th><th>交易汇率</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead>
@@ -5244,6 +5273,11 @@
         });
         root.querySelector('[data-payer-reference]')?.addEventListener('click', () => {
           root.querySelector('[data-payer-reference]')?.classList.toggle('selected');
+        });
+        root.querySelectorAll('[data-fee-bearer-option]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            root.querySelectorAll('[data-fee-bearer-option]').forEach(item => item.classList.toggle('active', item === btn));
+          });
         });
         updateRecipient();
         updateCurrency();
