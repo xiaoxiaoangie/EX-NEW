@@ -2066,6 +2066,56 @@
       color: #344054;
       background: #f8fafc;
     }
+    .network-compact {
+      display: grid;
+      gap: 8px;
+      margin: -4px 0 14px;
+    }
+    .network-compact label {
+      color: #344054;
+      font-size: 12px;
+      font-weight: 780;
+    }
+    .network-compact-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .network-compact-option {
+      min-height: 34px;
+      border: 1px solid #d8dee8;
+      border-radius: 8px;
+      background: #fff;
+      color: #344054;
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 760;
+    }
+    .network-compact-option.active {
+      border-color: #7c3aed;
+      background: #f7f1ff;
+      color: #6d28d9;
+    }
+    .network-compact-option.disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+      background: #f8fafc;
+    }
+    .network-compact-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      display: inline-grid;
+      place-items: center;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 900;
+    }
+    .network-compact-icon.eth { background: #8b5cf6; }
+    .network-compact-icon.tron { background: #ef233c; }
     .payer-reference {
       border: 1px solid #d5dfed;
       border-radius: 8px;
@@ -3624,7 +3674,10 @@
       const targetType = rail === 'crypto' ? 'address' : 'bank';
       const key = `${isWithdraw ? 'withdraw' : 'payment'}${rail === 'crypto' ? 'Crypto' : 'Fiat'}`;
       const recipients = transferCatalog.recipients[key].filter(item => item.type === targetType);
-      const currencies = transferCatalog.currencies;
+      const currencyPool = transferCatalog.currencies.filter(item => targetType === 'address'
+        ? ['USDT', 'USDC'].includes(item.code)
+        : ['USD', 'HKD', 'VND'].includes(item.code));
+      const currencies = currencyPool.filter((item, index, list) => list.findIndex(row => row.code === item.code) === index);
       const firstRecipient = recipients[0];
       const firstCurrency = currencies.find(item => item.code === (targetType === 'address' ? 'USDT' : 'USD'));
       const isBankTarget = targetType === 'bank';
@@ -3666,10 +3719,17 @@
               <div class="transfer-amount-row">
                 <input placeholder="请输入金额">
                 <select class="transfer-currency-select" data-transfer-currency-select>
-                  ${currencies.map(item => `<option value="${item.code}|${item.network || ''}" ${item === firstCurrency ? 'selected' : ''}>${transferCurrencyLabel(item)}</option>`).join('')}
+                  ${currencies.map(item => `<option value="${item.code}" ${item.code === firstCurrency.code ? 'selected' : ''}>${targetType === 'address' ? item.code : transferCurrencyLabel(item)}</option>`).join('')}
                 </select>
               </div>
               <span class="metric-sub" data-transfer-balance>可用余额：${firstCurrency.balance} ${firstCurrency.code}</span>
+            </div>
+            <div class="network-compact ${targetType === 'address' ? '' : 'hidden'}" data-network-compact>
+              <label>网络</label>
+              <div class="network-compact-options">
+                <button type="button" class="network-compact-option active" data-transfer-network="TRC-20"><span class="network-compact-icon tron">T</span>Tron (TRC20)</button>
+                <button type="button" class="network-compact-option" data-transfer-network="ERC-20"><span class="network-compact-icon eth">E</span>Ethereum (ERC20)</button>
+              </div>
             </div>
             <div class="field ${isBankTarget ? '' : 'hidden'}" style="margin-bottom:14px;" data-fee-bearer>
               <label>费用承担方</label>
@@ -3689,9 +3749,9 @@
             <div class="fee-summary">
               <div class="summary-row"><span>${isWithdraw ? '提现到' : '收款人'}</span><b data-transfer-summary="target">${firstRecipient.target}</b></div>
               <div class="summary-row"><span>出款币种</span><b data-transfer-summary="account">${firstCurrency.code}${firstCurrency.network ? ` · ${firstCurrency.network}` : ''}</b></div>
-              <div class="summary-row"><span>承兑手续费</span><b data-transfer-fee="acceptance">${firstCurrency.fees[0]}</b></div>
+              <div class="summary-row"><span>承兑手续费</span><b data-transfer-fee="acceptance">0 ${firstCurrency.code}</b></div>
               <div class="summary-row"><span>付款手续费</span><b data-transfer-fee="payment">${firstCurrency.fees[1]}</b></div>
-              <div class="summary-row"><span>POBO 手续费</span><b data-transfer-fee="pobo">${firstCurrency.fees[2]}</b></div>
+              <div class="summary-row ${isBankTarget ? '' : 'hidden'}" data-pobo-row><span>POBO 手续费</span><b data-transfer-fee="pobo">${firstCurrency.fees[2]}</b></div>
               <div class="summary-row"><span>预计到账</span><b style="color:#7c3aed;" data-transfer-received>-- ${firstCurrency.code}</b></div>
             </div>
             <div class="transfer-actions">
@@ -4832,8 +4892,11 @@
         const targetType = root.dataset.transferTarget;
         const key = `${mode === 'withdraw' ? 'withdraw' : 'payment'}${rail === 'crypto' ? 'Crypto' : 'Fiat'}`;
         const recipients = (transferCatalog.recipients[key] || []).filter(item => item.type === targetType);
-        const currencies = transferCatalog.currencies;
+        const currencies = transferCatalog.currencies.filter(item => targetType === 'address'
+          ? ['USDT', 'USDC'].includes(item.code)
+          : ['USD', 'HKD', 'VND'].includes(item.code));
         let recipientIndex = 0;
+        let selectedNetwork = root.querySelector('[data-transfer-network].active')?.dataset.transferNetwork || 'TRC-20';
         const select = root.querySelector('[data-transfer-select]');
         const selectButton = root.querySelector('[data-transfer-select-button]');
         const currencySelect = root.querySelector('[data-transfer-currency-select]');
@@ -4853,17 +4916,30 @@
         };
 
         const updateCurrency = () => {
-          const [code, network] = (currencySelect?.value || '').split('|');
-          const currency = currencies.find(item => item.code === code && (item.network || '') === (network || '')) || currencies[0];
+          const code = currencySelect?.value || '';
+          root.querySelectorAll('[data-transfer-network]').forEach(btn => {
+            const supported = code !== 'USDC' || btn.dataset.transferNetwork === 'ERC-20';
+            btn.classList.toggle('disabled', !supported);
+          });
+          if (code === 'USDC' && selectedNetwork !== 'ERC-20') {
+            selectedNetwork = 'ERC-20';
+            root.querySelectorAll('[data-transfer-network]').forEach(btn => {
+              btn.classList.toggle('active', btn.dataset.transferNetwork === selectedNetwork);
+            });
+          }
+          const currency = currencies.find(item => item.code === code && (targetType !== 'address' || item.network === selectedNetwork))
+            || currencies.find(item => item.code === code)
+            || currencies[0];
           if (!currency) return;
           const balance = root.querySelector('[data-transfer-balance]');
           if (balance) balance.textContent = `可用余额：${currency.balance} ${currency.code}`;
           const accountSummary = root.querySelector('[data-transfer-summary="account"]');
-          if (accountSummary) accountSummary.textContent = `${currency.code}${currency.network ? ` · ${currency.network}` : ''}`;
-          const [acceptanceFee, paymentFee, poboFee] = currency.fees;
-          root.querySelector('[data-transfer-fee="acceptance"]').textContent = acceptanceFee;
+          if (accountSummary) accountSummary.textContent = `${currency.code}${targetType === 'address' ? ` · ${selectedNetwork}` : ''}`;
+          const [, paymentFee, poboFee] = currency.fees;
+          root.querySelector('[data-transfer-fee="acceptance"]').textContent = `0 ${currency.code}`;
           root.querySelector('[data-transfer-fee="payment"]').textContent = paymentFee;
-          root.querySelector('[data-transfer-fee="pobo"]').textContent = poboFee;
+          const pobo = root.querySelector('[data-transfer-fee="pobo"]');
+          if (pobo) pobo.textContent = poboFee;
           const received = root.querySelector('[data-transfer-received]');
           if (received) received.textContent = `-- ${currency.code}`;
         };
@@ -4882,6 +4958,14 @@
           });
         });
         currencySelect?.addEventListener('change', updateCurrency);
+        root.querySelectorAll('[data-transfer-network]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            if (btn.classList.contains('disabled')) return;
+            selectedNetwork = btn.dataset.transferNetwork;
+            root.querySelectorAll('[data-transfer-network]').forEach(item => item.classList.toggle('active', item === btn));
+            updateCurrency();
+          });
+        });
         updateRecipient();
         updateCurrency();
       });
