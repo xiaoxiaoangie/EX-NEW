@@ -1593,6 +1593,216 @@
       font-weight: 720;
       white-space: nowrap;
     }
+    .fiat-deposit-workspace {
+      display: grid;
+      grid-template-columns: minmax(620px, 1fr) 320px;
+      gap: 18px;
+      align-items: start;
+    }
+    .fiat-deposit-currencies {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 8px 0 20px;
+    }
+    .fiat-currency-option {
+      min-height: 38px;
+      border: 1px solid #dbe3ef;
+      border-radius: 8px;
+      background: #fff;
+      padding: 0 14px;
+      color: #344054;
+      font-size: 13px;
+      font-weight: 820;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .fiat-currency-option.active {
+      border-color: #7c22ff;
+      background: #f7f1ff;
+      color: #6d28d9;
+      box-shadow: 0 0 0 1px rgba(124, 34, 255, 0.12);
+    }
+    .fiat-deposit-bank-list {
+      display: grid;
+      gap: 12px;
+      margin: 8px 0 18px;
+    }
+    .fiat-bank-option {
+      width: 100%;
+      min-height: 116px;
+      border: 1px solid #dbe3ef;
+      border-radius: 9px;
+      background: #fff;
+      padding: 18px 18px 16px 54px;
+      position: relative;
+      text-align: left;
+      display: grid;
+      gap: 8px;
+      transition: border-color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
+    }
+    .fiat-bank-option::before {
+      content: "";
+      position: absolute;
+      left: 18px;
+      top: 44px;
+      width: 16px;
+      height: 16px;
+      border: 1px solid #98a2b3;
+      border-radius: 999px;
+      background: #fff;
+    }
+    .fiat-bank-option.active {
+      border-color: #7c22ff;
+      background: #fbfaff;
+      box-shadow: 0 0 0 1px rgba(124, 34, 255, 0.12);
+    }
+    .fiat-bank-option.active::before {
+      border: 4px solid #7c22ff;
+      box-shadow: inset 0 0 0 5px #fff;
+      background: #7c22ff;
+    }
+    .fiat-bank-option.failed,
+    .fiat-bank-option.applying {
+      background: #fbfcff;
+    }
+    .fiat-bank-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .fiat-bank-main {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      color: #1f2937;
+      font-size: 15px;
+      font-weight: 850;
+    }
+    .fiat-account-badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 0 12px;
+      border-radius: 7px;
+      background: #f0e7ff;
+      color: #7c22ff;
+      font-size: 12px;
+      font-weight: 880;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .fiat-account-badge.cobo {
+      color: #2563eb;
+      background: #e8f2ff;
+    }
+    .fiat-bank-logo {
+      min-width: 68px;
+      text-align: right;
+      color: #1f2937;
+      font-size: 18px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    .fiat-bank-logo.dbs {
+      color: #111827;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 24px;
+      letter-spacing: -1px;
+    }
+    .fiat-bank-logo.dbs::before {
+      content: "";
+      display: inline-block;
+      width: 23px;
+      height: 23px;
+      margin-right: 6px;
+      vertical-align: -5px;
+      border-radius: 7px;
+      background:
+        radial-gradient(circle at 50% 50%, #fff 0 15%, transparent 16%),
+        conic-gradient(from 45deg, #f43f3f 0 25%, #fff 0 29%, #f43f3f 0 50%, #fff 0 54%, #f43f3f 0 75%, #fff 0 79%, #f43f3f 0);
+    }
+    .fiat-bank-logo.sgb { color: #2563eb; }
+    .fiat-bank-logo.circle {
+      font-size: 10px;
+      line-height: 1.05;
+      position: relative;
+      padding-left: 30px;
+      min-height: 26px;
+      display: inline-grid;
+      align-content: center;
+    }
+    .fiat-bank-logo.circle::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: repeating-conic-gradient(#111 0 10deg, transparent 10deg 20deg);
+    }
+    .fiat-bank-meta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      color: #667085;
+      font-size: 13px;
+      font-weight: 760;
+    }
+    .fiat-bank-time {
+      color: #2f8cff;
+      font-weight: 820;
+    }
+    .fiat-bank-number {
+      color: #344054;
+      font-size: 18px;
+      font-weight: 850;
+      letter-spacing: 1px;
+    }
+    .fiat-bank-status {
+      justify-self: start;
+      min-height: 26px;
+      border-radius: 6px;
+      padding: 4px 9px;
+      font-size: 12px;
+      font-weight: 820;
+      color: #ef4444;
+      background: #fff1f1;
+    }
+    .fiat-bank-status.applying {
+      color: #b45309;
+      background: #fff7ed;
+    }
+    .fiat-deposit-detail {
+      border: 1px solid #b8dcff;
+      border-radius: 10px;
+      background: #eef8ff;
+      padding: 16px;
+      display: grid;
+      gap: 14px;
+    }
+    .fiat-deposit-detail .account-detail-warning {
+      margin-bottom: 0;
+      font-size: 14px;
+      padding: 12px 14px;
+    }
+    .fiat-deposit-detail .account-detail-info {
+      margin-bottom: 0;
+      background: #fff;
+      gap: 16px;
+      padding: 20px;
+    }
+    .fiat-deposit-detail .account-detail-label {
+      font-size: 14px;
+    }
+    .fiat-deposit-detail .account-detail-value {
+      font-size: 15px;
+    }
     .deposit-bank-meta {
       display: grid;
       gap: 8px;
@@ -2882,7 +3092,7 @@
       .span-3, .span-4, .span-5, .span-6, .span-7, .span-8 { grid-column: 1 / -1; }
       .table { min-width: 660px; }
       .card { overflow-x: auto; }
-      .asset-workspace, .option-grid { grid-template-columns: 1fr; }
+      .asset-workspace, .option-grid, .fiat-deposit-workspace { grid-template-columns: 1fr; }
       .transfer-shell, .transfer-account-grid { grid-template-columns: 1fr; }
       .exchange-workspace { grid-template-columns: 1fr; }
       .recipient-option { grid-template-columns: 34px minmax(0, 1fr); }
@@ -3234,6 +3444,54 @@
         ]
       }
     };
+
+    const fiatDepositAccountCards = [
+      {
+        key: 'sgb',
+        type: 'reference',
+        label: 'REFERENCE ACCOUNT',
+        owner: 'BlancBlock Digital AG',
+        bank: 'SINGAPORE GULF BANK B.S.C. CLOSED',
+        currencies: ['USD'],
+        currencyText: 'USD',
+        accountMask: '**** **** **** 4122',
+        status: 'active',
+        statusText: '已激活',
+        logo: 'SGB',
+        logoClass: 'sgb',
+        processing: '1-3个工作日'
+      },
+      {
+        key: 'dbs',
+        type: 'cobo',
+        label: 'COBO ACCOUNT',
+        owner: 'BrightLink Tech Limited',
+        bank: 'DBS BANK LTD',
+        currencies: ['USD', 'SGD'],
+        currencyText: 'USD, SGD',
+        accountMask: '',
+        status: 'failed',
+        statusText: '申请失败',
+        logo: 'DBS',
+        logoClass: 'dbs',
+        processing: '1-3个工作日'
+      },
+      {
+        key: 'bankingcircle',
+        type: 'reference',
+        label: 'REFERENCE ACCOUNT',
+        owner: 'BrightLink Tech Limited',
+        bank: 'BANKING CIRCLE DENMARK',
+        currencies: ['EUR'],
+        currencyText: 'EUR',
+        accountMask: '',
+        status: 'applying',
+        statusText: '申请中',
+        logo: 'BANKING<br>CIRCLE',
+        logoClass: 'circle',
+        processing: '1-3个工作日'
+      }
+    ];
 
     const stepEls = [...document.querySelectorAll('[data-step]')];
     const pillEls = [...document.querySelectorAll('[data-step-pill]')];
@@ -3593,7 +3851,7 @@
           '<b>联系支持：</b> 请联系您的客户经理或邮件联系 support@eurewax.example'
         ],
         fiatDeposit: [
-          '<b>银行转账要求：</b> 请确保您将确切金额转入平台提供的银行账户详情。在线账单中包含参考代码。',
+          '<b>银行转账要求：</b> 请通过所选币种支持的银行账户转账，并在转账描述中包含参考代码。',
           '<b>处理时间：</b> 银行转账通常需要 1-3 个工作日处理。确认后您的账户将被记入。',
           '<b>参考代码：</b> 请务必在银行转账中包含提供的参考代码，以确保资金正确入账。',
           '<b>联系支持：</b> 请联系您的客户经理或邮件联系 support@eurewax.example'
@@ -3678,7 +3936,7 @@
 
     function transferCurrencyLabel(item) {
       const icons = { USDT: '₮', USDC: '$', USD: '🇺🇸', CNH: '🇨🇳', HKD: '🇭🇰', VND: '🇻🇳' };
-      return `${icons[item.code] || ''} ${item.code}${item.network ? ` · ${item.network}` : ''}`.trim();
+      return `${icons[item.code] || ''} ${item.code}`.trim();
     }
 
     function renderTransferForm(mode, rail, activeTab) {
@@ -4050,15 +4308,15 @@
         <div class="span-12 asset-workspace">
           <div class="card asset-form" data-crypto-deposit>
             <h3>充币</h3>
-            <label>网络</label>
-            <div class="option-grid">
-              <div class="option-card selectable active" data-crypto-network="ERC-20" data-supported-currencies="USDT,USDC"><div class="coin-icon purple">E</div><div><div class="option-title">Ethereum (ERC-20)</div><div class="option-sub">Ethereum Network</div></div></div>
-              <div class="option-card selectable" data-crypto-network="TRC-20" data-supported-currencies="USDT"><div class="coin-icon red">T</div><div><div class="option-title">Tron (TRC-20)</div><div class="option-sub">Tron Network</div></div></div>
-            </div>
             <label>币种</label>
             <div class="option-grid">
               <div class="option-card selectable active" data-crypto-currency="USDT"><div class="coin-icon green">₮</div><div><div class="option-title">USDT</div><div class="option-sub">Tether USD</div></div></div>
               <div class="option-card selectable" data-crypto-currency="USDC"><div class="coin-icon blue">$</div><div><div class="option-title">USDC</div><div class="option-sub">USD Coin</div></div></div>
+            </div>
+            <label>网络</label>
+            <div class="option-grid">
+              <div class="option-card selectable active" data-crypto-network="ERC-20" data-supported-currencies="USDT,USDC"><div class="coin-icon purple">E</div><div><div class="option-title">Ethereum (ERC-20)</div><div class="option-sub">Ethereum Network</div></div></div>
+              <div class="option-card selectable" data-crypto-network="TRC-20" data-supported-currencies="USDT"><div class="coin-icon red">T</div><div><div class="option-title">Tron (TRC-20)</div><div class="option-sub">Tron Network</div></div></div>
             </div>
             <div class="crypto-deposit-result">
               <div class="qr-box" aria-hidden="true"></div>
@@ -4085,50 +4343,26 @@
         </div>`;
       if (tab === 'fiatDeposit') return `
         <div class="span-12">${assetTabs('deposit', tab)}</div>
-        <div class="card asset-form span-12">
+        <div class="span-12 fiat-deposit-workspace" data-fiat-deposit>
+          <div class="card asset-form">
             <div class="deposit-account-head">
-              <h3>充值账户</h3>
+              <h3>充值</h3>
               <button class="btn primary" data-action="create-deposit-account">＋ 创建充值帐户</button>
             </div>
-            <div class="deposit-account-grid">
-              <button type="button" class="deposit-bank-card" data-deposit-account="sgb">
-                <div class="deposit-bank-card-head">
-                  <div class="deposit-bank-name">SGB</div>
-                  <div class="deposit-bank-logo sgb">SGB</div>
-                </div>
-                <div class="deposit-account-number">**** **** **** 1291 <span class="reference-account">(reference account)</span></div>
-                <div class="deposit-bank-meta">
-                  <div class="deposit-bank-meta-row">🌐 SG · 全球收款账户</div>
-                  <div class="deposit-bank-meta-row">✓ 货物贸易收款</div>
-                  <div class="deposit-bank-currencies"><span class="currency-chip">SGD</span><span class="currency-chip">USD</span></div>
-                </div>
-              </button>
-              <button type="button" class="deposit-bank-card inactive" data-deposit-account="dbs">
-                <div class="deposit-bank-card-head">
-                  <div class="deposit-bank-name">DBS BANK LTD</div>
-                  <div class="deposit-bank-logo dbs">DBS</div>
-                </div>
-                <div class="deposit-bank-status">激活失败</div>
-                <div class="deposit-bank-meta">
-                  <div class="deposit-bank-meta-row">🌐 SG · 全球收款账户</div>
-                  <div class="deposit-bank-meta-row">✓ 货物贸易收款</div>
-                  <div class="deposit-bank-currencies"><span class="currency-chip">SGD</span><span class="currency-chip">USD</span></div>
-                </div>
-              </button>
-              <button type="button" class="deposit-bank-card" data-deposit-account="bankingcircle">
-                <div class="deposit-bank-card-head">
-                  <div class="deposit-bank-name">BANKING CIRCLE DENMARK</div>
-                  <div class="deposit-bank-logo circle">BANKING<br>CIRCLE</div>
-                </div>
-                <div class="deposit-account-number">**** **** **** 1291</div>
-                <div class="deposit-bank-meta">
-                  <div class="deposit-bank-meta-row">🌐 EU · 全球收款账户</div>
-                  <div class="deposit-bank-meta-row">✓ 货物贸易收款</div>
-                  <div class="deposit-bank-currencies"><span class="currency-chip">EUR</span><span class="currency-chip">USD</span><span class="currency-chip">GBP</span><span class="currency-chip">JPY</span><span class="currency-chip">CAD</span></div>
-                </div>
-              </button>
+            <label>币种</label>
+            <div class="fiat-deposit-currencies">
+              <button type="button" class="fiat-currency-option active" data-fiat-deposit-currency="USD">🇺🇸 USD</button>
+              <button type="button" class="fiat-currency-option" data-fiat-deposit-currency="SGD">🇸🇬 SGD</button>
+              <button type="button" class="fiat-currency-option" data-fiat-deposit-currency="EUR">🇪🇺 EUR</button>
             </div>
-          </div>`;
+            <label>银行账户 <span style="color:#ef4444;">*</span></label>
+            <div class="fiat-deposit-bank-list" data-fiat-deposit-bank-list></div>
+            <div class="fiat-deposit-detail" data-fiat-deposit-detail></div>
+          </div>
+          <div class="side-card-stack">
+            ${assetNotice('fiatDeposit')}
+          </div>
+        </div>`;
       if (tab === 'depositRecords') return `
         <div class="records-page">
           ${assetTabs('deposit', tab)}
@@ -4837,6 +5071,7 @@
       bindCryptoWithdraw();
       bindUnifiedWithdraw();
       bindTransferForms();
+      bindFiatDeposit();
       bindDepositAccountCards();
       document.querySelectorAll('[data-nav-page]').forEach(btn => btn.addEventListener('click', event => {
         event.preventDefault();
@@ -4863,6 +5098,48 @@
         event.preventDefault();
         showToast(actionText(btn.dataset.action));
       }));
+    }
+
+    function bindFiatDeposit() {
+      const root = document.querySelector('[data-fiat-deposit]');
+      if (!root) return;
+      const detail = root.querySelector('[data-fiat-deposit-detail]');
+      const list = root.querySelector('[data-fiat-deposit-bank-list]');
+      const currencyButtons = [...root.querySelectorAll('[data-fiat-deposit-currency]')];
+      let currency = root.querySelector('[data-fiat-deposit-currency].active')?.dataset.fiatDepositCurrency || 'USD';
+      let accountKey = 'sgb';
+
+      const render = () => {
+        currencyButtons.forEach(button => button.classList.toggle('active', button.dataset.fiatDepositCurrency === currency));
+        const accounts = fiatDepositAccountCards.filter(account => account.currencies.includes(currency));
+        if (!accounts.some(account => account.key === accountKey)) {
+          accountKey = accounts.find(account => account.status === 'active')?.key || accounts[0]?.key || accountKey;
+        }
+        if (list) {
+          list.innerHTML = accounts.map(account => renderFiatDepositAccountCard(account, account.key === accountKey)).join('');
+          list.querySelectorAll('[data-fiat-deposit-account]').forEach(button => {
+            button.addEventListener('click', () => {
+              accountKey = button.dataset.fiatDepositAccount;
+              render();
+            });
+          });
+        }
+        const meta = accounts.find(account => account.key === accountKey) || fiatDepositAccountCards.find(account => account.key === accountKey);
+        const account = depositAccountDetails[accountKey];
+        if (!account || !detail) return;
+        detail.innerHTML = renderFiatDepositAccountDetail(account, currency, meta);
+        detail.querySelector('[data-copy-fiat-deposit-detail]')?.addEventListener('click', () => copyDepositAccountInfo({
+          rows: fiatDepositRows(account, currency)
+        }));
+      };
+
+      currencyButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          currency = button.dataset.fiatDepositCurrency;
+          render();
+        });
+      });
+      render();
     }
 
     function bindDepositAccountCards() {
@@ -4988,6 +5265,53 @@
       if (event.target.closest('[data-transfer-select]')) return;
       document.querySelectorAll('[data-transfer-select].open').forEach(item => item.classList.remove('open'));
     });
+
+    function fiatDepositRows(account, currency) {
+      return account.rows.map(([label, value]) => [label, label === '收款币种' ? currency : value]);
+    }
+
+    function renderFiatDepositAccountCard(account, selected) {
+      const statusClass = account.status === 'applying' ? 'applying' : '';
+      const accountLine = account.status === 'active'
+        ? `<div class="fiat-bank-number">收款账号 ${account.accountMask}</div>`
+        : `<div class="fiat-bank-status ${statusClass}">${account.statusText}</div>`;
+      return `
+        <button type="button" class="fiat-bank-option ${selected ? 'active' : ''} ${account.status}" data-fiat-deposit-account="${account.key}">
+          <div class="fiat-bank-head">
+            <div class="fiat-bank-main">
+              <span class="fiat-account-badge ${account.type === 'cobo' ? 'cobo' : ''}">${account.label}</span>
+              <span>${account.owner}</span>
+            </div>
+            <div class="fiat-bank-logo ${account.logoClass}">${account.logo}</div>
+          </div>
+          ${accountLine}
+          <div class="fiat-bank-meta"><span>▦ ${account.bank}</span><span>${account.currencyText}</span><span class="fiat-bank-time">◷ ${account.processing}</span></div>
+        </button>`;
+    }
+
+    function renderFiatDepositAccountDetail(account, currency, meta) {
+      if (meta && meta.status !== 'active') {
+        return `
+          <div class="account-detail-warning">!　${meta.statusText}的账户暂不展示收款账号，请等待审核完成后再使用。</div>
+          <div class="account-detail-info">
+            <div class="account-detail-row"><div class="account-detail-label">账户类型</div><div class="account-detail-value">${meta.label}</div></div>
+            <div class="account-detail-row"><div class="account-detail-label">收款人名称</div><div class="account-detail-value">${meta.owner}</div></div>
+            <div class="account-detail-row"><div class="account-detail-label">受益银行名称</div><div class="account-detail-value">${meta.bank}</div></div>
+            <div class="account-detail-row"><div class="account-detail-label">申请状态</div><div class="account-detail-value">${meta.statusText}</div></div>
+          </div>`;
+      }
+      const rows = fiatDepositRows(account, currency).map(([label, value]) => `
+        <div class="account-detail-row">
+          <div class="account-detail-label">${label}</div>
+          <div class="account-detail-value">${value}</div>
+        </div>
+      `).join('');
+      return `
+        <div class="account-detail-warning">!　${account.warning}</div>
+        <div class="account-detail-info">${rows}</div>
+        <button type="button" class="copy-account-button" data-copy-fiat-deposit-detail>▣　复制银行账户信息</button>
+      `;
+    }
 
     function renderDepositAccountDetail(account) {
       const rows = account.rows.map(([label, value]) => `
