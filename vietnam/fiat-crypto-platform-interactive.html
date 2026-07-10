@@ -1595,7 +1595,7 @@
     }
     .fiat-deposit-workspace {
       display: grid;
-      grid-template-columns: minmax(620px, 1fr) 320px;
+      grid-template-columns: minmax(520px, 1fr) 360px;
       gap: 18px;
       align-items: start;
     }
@@ -1635,33 +1635,17 @@
       border: 1px solid #dbe3ef;
       border-radius: 9px;
       background: #fff;
-      padding: 18px 18px 16px 54px;
+      padding: 18px;
       position: relative;
       text-align: left;
       display: grid;
       gap: 8px;
       transition: border-color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
     }
-    .fiat-bank-option::before {
-      content: "";
-      position: absolute;
-      left: 18px;
-      top: 44px;
-      width: 16px;
-      height: 16px;
-      border: 1px solid #98a2b3;
-      border-radius: 999px;
-      background: #fff;
-    }
     .fiat-bank-option.active {
       border-color: #7c22ff;
       background: #fbfaff;
       box-shadow: 0 0 0 1px rgba(124, 34, 255, 0.12);
-    }
-    .fiat-bank-option.active::before {
-      border: 4px solid #7c22ff;
-      box-shadow: inset 0 0 0 5px #fff;
-      background: #7c22ff;
     }
     .fiat-bank-option.failed,
     .fiat-bank-option.applying {
@@ -4347,7 +4331,6 @@
           <div class="card asset-form">
             <div class="deposit-account-head">
               <h3>充值</h3>
-              <button class="btn primary" data-action="create-deposit-account">＋ 创建充值帐户</button>
             </div>
             <label>币种</label>
             <div class="fiat-deposit-currencies">
@@ -4361,6 +4344,12 @@
           </div>
           <div class="side-card-stack">
             ${assetNotice('fiatDeposit')}
+            ${sideShortcut({
+              title: '充值/收款账户管理',
+              desc: '管理法币充值和收款账户，查看账户状态、支持币种和收款信息。',
+              button: '充值/收款账户管理',
+              tab: 'bankTools'
+            }).replace('data-nav-page="directory"', 'data-nav-page="collection"')}
           </div>
         </div>`;
       if (tab === 'depositRecords') return `
@@ -5273,7 +5262,7 @@
     function renderFiatDepositAccountCard(account, selected) {
       const statusClass = account.status === 'applying' ? 'applying' : '';
       const accountLine = account.status === 'active'
-        ? `<div class="fiat-bank-number">收款账号 ${account.accountMask}</div>`
+        ? `<div class="fiat-bank-number">${account.accountMask}</div>`
         : `<div class="fiat-bank-status ${statusClass}">${account.statusText}</div>`;
       return `
         <button type="button" class="fiat-bank-option ${selected ? 'active' : ''} ${account.status}" data-fiat-deposit-account="${account.key}">
