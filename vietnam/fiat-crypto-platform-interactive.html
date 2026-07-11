@@ -257,14 +257,14 @@
       border: 1px solid #d6e5ff;
       border-radius: var(--radius);
       background: #fff;
-      padding: 10px;
+      padding: 8px;
     }
     .mini span { display: block; color: var(--muted); font-size: 11px; margin-bottom: 4px; }
     .mini b { font-size: 13px; }
     .chips {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
     }
     .chip-check {
       position: relative;
@@ -481,14 +481,101 @@
       font-weight: 780;
     }
     .accept-amount-control {
+      position: relative;
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 190px;
+      grid-template-columns: 132px minmax(0, 1fr) 92px;
       min-height: 54px;
       border: 1px solid #d8dee8;
       border-radius: 8px;
-      overflow: hidden;
+      overflow: visible;
       background: #fff;
     }
+    .accept-currency-select {
+      position: relative;
+      border: 0;
+      border-right: 1px solid #d8dee8;
+      background: #f7f8fb;
+      color: #344054;
+      padding: 0 14px;
+      font-size: 16px;
+      font-weight: 860;
+      outline: 0;
+    }
+    .accept-currency-trigger {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font: inherit;
+      cursor: pointer;
+    }
+    .accept-currency-trigger::after {
+      content: "⌄";
+      color: #98a2b3;
+      font-size: 15px;
+      line-height: 1;
+      margin-left: 2px;
+    }
+    .accept-currency-select.open .accept-currency-trigger::after {
+      content: "⌃";
+      color: #7c22ff;
+    }
+    .accept-currency-menu {
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      top: calc(100% + 6px);
+      z-index: 50;
+      border: 1px solid #d8dee8;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 14px 28px rgba(15, 23, 42, 0.12);
+      padding: 6px;
+      display: none;
+    }
+    .accept-currency-select.open .accept-currency-menu {
+      display: grid;
+      gap: 4px;
+    }
+    .accept-currency-option {
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: #344054;
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 8px;
+      font-size: 13px;
+      font-weight: 820;
+      cursor: pointer;
+      text-align: left;
+    }
+    .accept-currency-option.active,
+    .accept-currency-option:hover {
+      background: #f6efff;
+      color: #6d28d9;
+    }
+    .accept-currency-logo {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      display: inline-grid;
+      place-items: center;
+      flex: 0 0 auto;
+      font-size: 13px;
+      font-weight: 900;
+      background: #eef4ff;
+    }
+    .accept-currency-logo.usdt { background: #10a876; color: #fff; }
+    .accept-currency-logo.usdc { background: #2085ff; color: #fff; }
+    .accept-currency-logo.flag { background: #fff; box-shadow: inset 0 0 0 1px rgba(15,23,42,0.08); }
     .accept-amount-control input {
       border: 0;
       min-height: 54px;
@@ -502,21 +589,16 @@
       color: #b5c1cf;
       font-weight: 680;
     }
-    .accept-currency-select {
+    .accept-currency-unit {
       border: 0;
       border-left: 1px solid #d8dee8;
       background: #f7f8fb;
-      color: #111827;
+      color: #344054;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 860;
-    }
-    .accept-currency-select .chev {
-      margin-top: 2px;
-      border-top-color: #a1aab8;
     }
     .accept-balance-line {
       display: flex;
@@ -596,6 +678,10 @@
       flex-wrap: wrap;
       align-items: center;
       gap: 22px;
+    }
+    .accept-rate-meta [data-accept-fee] {
+      color: #7b8492;
+      font-size: 13px;
     }
     .countdown-pill {
       width: 36px;
@@ -1225,12 +1311,12 @@
     .pill {
       display: inline-flex;
       align-items: center;
-      min-height: 24px;
-      padding: 0 8px;
+      min-height: 22px;
+      padding: 0 7px;
       border-radius: 999px;
       background: #eef4ff;
       color: #2350b8;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 760;
     }
     .pill.green { background: #ecfdf5; color: #047857; }
@@ -2100,18 +2186,83 @@
       top: calc(100% + 6px);
       left: 0;
       right: 0;
-      max-height: 276px;
+      max-height: 340px;
       overflow-y: auto;
       border: 1px solid #dbe3ef;
       border-radius: 8px;
       background: #fff;
       box-shadow: 0 16px 40px rgba(15, 23, 42, 0.14);
-      padding: 6px;
+      padding: 10px;
       display: none;
     }
     .transfer-select.open .transfer-dropdown {
       display: grid;
+      gap: 8px;
+    }
+    .transfer-dropdown-head {
+      display: grid;
+      gap: 8px;
+      position: sticky;
+      top: -10px;
+      z-index: 1;
+      background: #fff;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #eef2f7;
+    }
+    .transfer-search-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+    }
+    .transfer-search-row input {
+      min-height: 34px;
+      border: 1px solid #d8dee8;
+      border-radius: 6px;
+      padding: 0 10px;
+      color: #344054;
+      font-size: 13px;
+      font-weight: 700;
+      outline: 0;
+    }
+    .transfer-add-link {
+      color: #2085ff;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 780;
+      white-space: nowrap;
+    }
+    .transfer-filter-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .transfer-filter-chip {
+      border: 1px solid #d8dee8;
+      border-radius: 999px;
+      background: #fff;
+      color: #667085;
+      min-height: 26px;
+      padding: 0 10px;
+      font-size: 12px;
+      font-weight: 760;
+      cursor: pointer;
+    }
+    .transfer-filter-chip.active {
+      border-color: #7c22ff;
+      background: #f6efff;
+      color: #6d28d9;
+    }
+    .transfer-options-list {
+      display: grid;
       gap: 4px;
+    }
+    .transfer-empty {
+      padding: 18px;
+      text-align: center;
+      color: #98a2b3;
+      font-size: 13px;
+      font-weight: 720;
     }
     .recipient-option {
       width: 100%;
@@ -2650,9 +2801,11 @@
       background: #fff;
       border: 0;
       border-radius: 0;
-      overflow: hidden;
+      overflow-x: auto;
     }
     .records-table {
+      width: 100%;
+      min-width: 980px;
       font-size: 14px;
       color: #5f6b7a;
     }
@@ -2660,6 +2813,7 @@
     .records-table td {
       padding: 18px 20px;
       border-bottom: 1px solid #e8ecf3;
+      white-space: nowrap;
     }
     .records-table th {
       background: #fff;
@@ -3106,8 +3260,9 @@
       .exchange-workspace { grid-template-columns: 1fr; }
       .recipient-option { grid-template-columns: 34px minmax(0, 1fr); }
       .recipient-meta { grid-column: 2; justify-content: flex-start; }
-      .accept-amount-control { grid-template-columns: 1fr; }
-      .accept-currency-select { border-left: 0; border-top: 1px solid #d8dee8; min-height: 48px; }
+      .accept-amount-control { grid-template-columns: 104px minmax(0, 1fr) 68px; }
+      .accept-currency-select { padding: 0 8px; font-size: 14px; }
+      .accept-currency-unit { min-height: 48px; }
       .crypto-deposit-result { grid-template-columns: 1fr; }
       .deposit-account-grid { grid-template-columns: 1fr; }
       .deposit-account-head { align-items: flex-start; flex-direction: column; }
@@ -3618,14 +3773,14 @@
 
     const assetTitles = {
       myAssets: { title: '资产 / 我的资产', subtitle: '查看数币余额和法币余额的可用资产。' },
-      deposit: { title: '充币/充值', subtitle: '数币充币、法币充值和充值记录。' },
+      deposit: { title: '充币/充值法币', subtitle: '数币充币、充值法币和充值记录。' },
       withdraw: { title: '提现', subtitle: '提现是提给自己，可提到数币地址或法币账户。' },
       unifiedWithdraw: { title: '提现', subtitle: '选择提现到、金额币种和费用信息。' },
       cryptoDeposit: { title: '充币', subtitle: '先选择币种，再选择该币种支持的网络，生成数币充值地址。' },
       cryptoWithdraw: { title: '提到数币地址', subtitle: '提现是提给自己，提到自己的链上地址。' },
-      fiatDeposit: { title: '法币充值', subtitle: '选择法币币种和银行账户，提交充值信息。' },
+      fiatDeposit: { title: '充值法币', subtitle: '选择法币币种和银行账户，提交充值信息。' },
       fiatWithdraw: { title: '提到法币账户', subtitle: '提现是提给自己，提到自己的银行账户。' },
-      depositRecords: { title: '充值记录', subtitle: '查询法币充值和数币充币记录。' },
+      depositRecords: { title: '充值记录', subtitle: '查询充值法币和数币充币记录。' },
       withdrawRecords: { title: '提现记录', subtitle: '查询法币提现和数币提币记录。' }
     };
 
@@ -3789,7 +3944,7 @@
 
     function assetTabs(group, active) {
       const groups = {
-        deposit: [['cryptoDeposit', '充币'], ['fiatDeposit', '充值'], ['depositRecords', '充值记录']],
+        deposit: [['cryptoDeposit', '充币'], ['fiatDeposit', '充值法币'], ['depositRecords', '充值记录']],
         withdraw: [['cryptoWithdraw', '提到数币地址'], ['fiatWithdraw', '提到法币账户'], ['withdrawRecords', '提现记录']]
       };
       return tabs('assets', active, groups[group] || groups.deposit);
@@ -3979,7 +4134,16 @@
               <div class="transfer-select" data-transfer-select>
                 <button type="button" class="transfer-select-button" data-transfer-select-button>${renderRecipientOption(firstRecipient, 0, true, true)}</button>
                 <div class="transfer-dropdown">
-                  ${recipients.map((item, index) => renderRecipientOption(item, index, index === 0, false)).join('')}
+                  <div class="transfer-dropdown-head">
+                    <div class="transfer-search-row">
+                      <input placeholder="搜索昵称、币种、网络、银行或地址" data-transfer-search>
+                      <a class="transfer-add-link" href="#" data-nav-page="directory" data-nav-tab="beneficiary">+ ${linkLabel}</a>
+                    </div>
+                    <div class="transfer-filter-row" data-transfer-filter-row></div>
+                  </div>
+                  <div class="transfer-options-list" data-transfer-options>
+                    ${recipients.map((item, index) => renderRecipientOption(item, index, index === 0, false)).join('')}
+                  </div>
                 </div>
               </div>
             </div>
@@ -4000,13 +4164,6 @@
                 </select>
               </div>
               <span class="metric-sub" data-transfer-balance>可用余额：${firstCurrency.balance} ${firstCurrency.code}</span>
-            </div>
-            <div class="network-compact" data-network-compact>
-              <label>网络</label>
-              <div class="network-compact-options">
-                <button type="button" class="network-compact-option active" data-transfer-network="TRC-20"><span class="network-compact-icon tron">T</span>Tron (TRC20)</button>
-                <button type="button" class="network-compact-option" data-transfer-network="ERC-20"><span class="network-compact-icon eth">E</span>Ethereum (ERC20)</button>
-              </div>
             </div>
             <div class="field ${isBankTarget ? '' : 'hidden'}" style="margin-bottom:14px;" data-fee-bearer>
               <label>费用承担方</label>
@@ -4068,6 +4225,11 @@
         </${selectedOnly ? 'span' : 'button'}>`;
     }
 
+    function recipientFilterKey(item) {
+      if (item.type === 'address') return item.tags[1] || item.tags[0] || '地址';
+      return item.tags[1] || item.tags[0] || '账户';
+    }
+
     function conversionRecordList(tabsMarkup) {
       return `
         <div class="span-12">${tabsMarkup}</div>
@@ -4083,14 +4245,14 @@
           </div>
           <div class="records-table-card">
             <table class="table records-table">
-              <thead><tr><th>订单编号</th><th>卖出金额</th><th>买入金额</th><th>交易汇率</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead>
+              <thead><tr><th>订单编号</th><th>卖出金额</th><th>买入金额</th><th>交易汇率</th><th>手续费</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead>
               <tbody>
-                <tr><td>20260701154933</td><td>100 CNH</td><td>112.97 HKD</td><td>1.12973518</td><td><span class="status-success">换汇成功</span></td><td>2026-07-01 15:49:33</td><td><a href="#" data-action="view">查看</a></td></tr>
-                <tr><td>20260701154851</td><td>12 USD</td><td>81.33 CNH</td><td>6.77743</td><td><span class="status-success">换汇成功</span></td><td>2026-07-01 15:48:51</td><td><a href="#" data-action="view">查看</a></td></tr>
-                <tr><td>20260518181003</td><td>29.77 EUR</td><td>34.25 USD</td><td>1.15048395</td><td><span class="status-success">换汇成功</span></td><td>2026-05-18 18:10:03</td><td><a href="#" data-action="view">查看</a></td></tr>
-                <tr><td>20260305182147</td><td>90.43 CNH</td><td>10 CHF</td><td>0.1105809993</td><td><span class="status-success">换汇成功</span></td><td>2026-03-05 18:21:47</td><td><a href="#" data-action="view">查看</a></td></tr>
-                <tr><td>20260303181551</td><td>1,000 NGN</td><td>0.71 USD</td><td>0.0007147313</td><td><span class="status-success">换汇成功</span></td><td>2026-03-03 18:15:51</td><td><a href="#" data-action="view">查看</a></td></tr>
-                <tr><td>20260228104420</td><td>500 USDT</td><td>3,592.50 CNH</td><td>7.185</td><td><span class="status-failed">换汇失败</span></td><td>2026-02-28 10:44:20</td><td><a href="#" data-action="view">查看</a></td></tr>
+                <tr><td>20260701154933</td><td>100 CNH</td><td>112.97 HKD</td><td>1.12973518</td><td>0.20 CNH</td><td><span class="status-success">换汇成功</span></td><td>2026-07-01 15:49:33</td><td><a href="#" data-action="view">查看</a></td></tr>
+                <tr><td>20260701154851</td><td>12 USD</td><td>81.33 CNH</td><td>6.77743</td><td>0.03 USD</td><td><span class="status-success">换汇成功</span></td><td>2026-07-01 15:48:51</td><td><a href="#" data-action="view">查看</a></td></tr>
+                <tr><td>20260518181003</td><td>29.77 EUR</td><td>34.25 USD</td><td>1.15048395</td><td>0.06 EUR</td><td><span class="status-success">换汇成功</span></td><td>2026-05-18 18:10:03</td><td><a href="#" data-action="view">查看</a></td></tr>
+                <tr><td>20260305182147</td><td>90.43 CNH</td><td>10 CHF</td><td>0.1105809993</td><td>0.18 CNH</td><td><span class="status-success">换汇成功</span></td><td>2026-03-05 18:21:47</td><td><a href="#" data-action="view">查看</a></td></tr>
+                <tr><td>20260303181551</td><td>1,000 NGN</td><td>0.71 USD</td><td>0.0007147313</td><td>2 NGN</td><td><span class="status-success">换汇成功</span></td><td>2026-03-03 18:15:51</td><td><a href="#" data-action="view">查看</a></td></tr>
+                <tr><td>20260228104420</td><td>500 USDT</td><td>3,592.50 CNH</td><td>7.185</td><td>1 USDT</td><td><span class="status-failed">换汇失败</span></td><td>2026-02-28 10:44:20</td><td><a href="#" data-action="view">查看</a></td></tr>
               </tbody>
             </table>
             <div class="records-pagination">
@@ -4115,15 +4277,20 @@
             <p class="accept-exchange-note">您可以选择卖出币种和买入币种，并输入对应金额实时承兑，您将实时收到买入金额。</p>
             <h3>数法承兑</h3>
             <div class="accept-exchange-widget">
-              <div class="accept-row">
+              <div class="accept-row" data-accept-row="sell">
                 <div class="accept-label">卖出</div>
                 <div class="accept-amount-control">
+                  <div class="accept-currency-select" data-accept-currency-select data-value="USDT">
+                    <button class="accept-currency-trigger" type="button" data-accept-currency-trigger>
+                      <span class="accept-currency-logo usdt">₮</span><span data-accept-currency-label>USDT</span>
+                    </button>
+                    <div class="accept-currency-menu">
+                      <button class="accept-currency-option active" type="button" data-accept-currency-option="USDT"><span class="accept-currency-logo usdt">₮</span>USDT</button>
+                      <button class="accept-currency-option" type="button" data-accept-currency-option="USDC"><span class="accept-currency-logo usdc">$</span>USDC</button>
+                    </div>
+                  </div>
                   <input placeholder="请输入金额 最低10 最高3000000" inputmode="decimal">
-                  <button class="accept-currency-select" type="button">
-                    <span class="token-mark">₮</span>
-                    <span>USDT</span>
-                    <span class="chev"></span>
-                  </button>
+                  <span class="accept-currency-unit">USDT</span>
                 </div>
                 <div class="accept-balance-line">
                   <button data-action="maximum">全部卖出</button>
@@ -4134,21 +4301,25 @@
                 <button class="switch-btn" data-action="switch-conversion">⇆</button>
                 <div class="accept-rate-meta">
                   <span>参考汇率&nbsp;&nbsp;1 USDT = -- CNH</span>
+                  <span data-accept-fee>手续费&nbsp;&nbsp;0.20% · 约 0 USDT</span>
                   <span class="countdown-pill">0s</span>
                 </div>
               </div>
-              <div class="accept-row">
+              <div class="accept-row" data-accept-row="buy">
                 <div class="accept-label">买入</div>
                 <div class="accept-amount-control">
+                  <div class="accept-currency-select" data-accept-currency-select data-value="USD">
+                    <button class="accept-currency-trigger" type="button" data-accept-currency-trigger>
+                      <span class="accept-currency-logo flag">🇺🇸</span><span data-accept-currency-label>USD</span>
+                    </button>
+                    <div class="accept-currency-menu">
+                      <button class="accept-currency-option active" type="button" data-accept-currency-option="USD"><span class="accept-currency-logo flag">🇺🇸</span>USD</button>
+                      <button class="accept-currency-option" type="button" data-accept-currency-option="CNH"><span class="accept-currency-logo flag">🇨🇳</span>CNH</button>
+                      <button class="accept-currency-option" type="button" data-accept-currency-option="VND"><span class="accept-currency-logo flag">🇻🇳</span>VND</button>
+                    </div>
+                  </div>
                   <input placeholder="您可以输入金额" inputmode="decimal">
-                  <button class="accept-currency-select" type="button">
-                    <span class="fiat-mark">🇨🇳</span>
-                    <span>CNH</span>
-                    <span class="chev"></span>
-                  </button>
-                </div>
-                <div class="accept-balance-line">
-                  <span>可用余额&nbsp;&nbsp;<b>722.95 CNH</b></span>
+                  <span class="accept-currency-unit">USD</span>
                 </div>
               </div>
               <button class="review-btn" data-action="acceptance">确认承兑</button>
@@ -5090,6 +5261,7 @@
       bindUnifiedWithdraw();
       bindTransferForms();
       bindFiatDeposit();
+      bindAcceptExchange();
       bindDepositAccountCards();
       document.querySelectorAll('[data-nav-page]').forEach(btn => btn.addEventListener('click', event => {
         event.preventDefault();
@@ -5116,6 +5288,59 @@
         event.preventDefault();
         showToast(actionText(btn.dataset.action));
       }));
+    }
+
+    function bindAcceptExchange() {
+      const root = document.querySelector('.accept-exchange-widget');
+      if (!root) return;
+      if (!root.querySelector('[data-accept-row="sell"]') || !root.querySelector('[data-accept-row="buy"]')) return;
+      const balances = {
+        USDT: '132,440.24',
+        USDC: '0.00',
+        USD: '145.29',
+        CNH: '722.95',
+        VND: '18,500,000'
+      };
+      const getCurrency = side => root.querySelector(`[data-accept-row="${side}"] [data-accept-currency-select]`)?.dataset.value || (side === 'sell' ? 'USDT' : 'USD');
+      const update = () => {
+        const sell = getCurrency('sell');
+        const buy = getCurrency('buy');
+        const sellRow = root.querySelector('[data-accept-row="sell"]');
+        const buyRow = root.querySelector('[data-accept-row="buy"]');
+        sellRow.querySelector('.accept-currency-unit').textContent = sell;
+        buyRow.querySelector('.accept-currency-unit').textContent = buy;
+        sellRow.querySelector('.accept-balance-line b').textContent = `${balances[sell] || '0.00'} ${sell}`;
+        root.querySelector('.accept-rate-meta span:first-child').textContent = `参考汇率  1 ${sell} = -- ${buy}`;
+        root.querySelector('[data-accept-fee]').textContent = `手续费  0.20% · 约 0 ${sell}`;
+      };
+      root.querySelectorAll('[data-accept-currency-select]').forEach(select => {
+        const trigger = select.querySelector('[data-accept-currency-trigger]');
+        trigger?.addEventListener('click', event => {
+          event.stopPropagation();
+          root.querySelectorAll('[data-accept-currency-select]').forEach(item => {
+            if (item !== select) item.classList.remove('open');
+          });
+          select.classList.toggle('open');
+        });
+        select.querySelectorAll('[data-accept-currency-option]').forEach(option => {
+          option.addEventListener('click', event => {
+            event.stopPropagation();
+            select.dataset.value = option.dataset.acceptCurrencyOption;
+            select.querySelector('[data-accept-currency-label]').textContent = option.dataset.acceptCurrencyOption;
+            const logo = option.querySelector('.accept-currency-logo')?.cloneNode(true);
+            const triggerLogo = select.querySelector('.accept-currency-trigger .accept-currency-logo');
+            if (logo && triggerLogo) triggerLogo.replaceWith(logo);
+            select.querySelectorAll('[data-accept-currency-option]').forEach(item => item.classList.toggle('active', item === option));
+            select.classList.remove('open');
+            update();
+          });
+        });
+      });
+      document.addEventListener('click', () => {
+        if (!root.isConnected) return;
+        root.querySelectorAll('[data-accept-currency-select]').forEach(select => select.classList.remove('open'));
+      });
+      update();
     }
 
     function bindFiatDeposit() {
@@ -5202,6 +5427,39 @@
         const select = root.querySelector('[data-transfer-select]');
         const selectButton = root.querySelector('[data-transfer-select-button]');
         const currencySelect = root.querySelector('[data-transfer-currency-select]');
+        const searchInput = root.querySelector('[data-transfer-search]');
+        const filterRow = root.querySelector('[data-transfer-filter-row]');
+        const optionsList = root.querySelector('[data-transfer-options]');
+        let activeFilter = '全部';
+
+        const filters = ['全部', ...[...new Set(recipients.map(recipientFilterKey))]];
+        if (filterRow) {
+          filterRow.innerHTML = filters.map(label => `<button type="button" class="transfer-filter-chip ${label === activeFilter ? 'active' : ''}" data-transfer-filter="${label}">${label}</button>`).join('');
+        }
+        const bindRecipientButtons = () => {
+          root.querySelectorAll('[data-transfer-recipient]').forEach(btn => {
+            btn.addEventListener('click', () => {
+              recipientIndex = Number(btn.dataset.transferRecipient || 0);
+              select.classList.remove('open');
+              updateRecipient();
+            });
+          });
+        };
+        const renderRecipientList = () => {
+          if (!optionsList) return;
+          const query = (searchInput?.value || '').trim().toLowerCase();
+          const rows = recipients
+            .map((item, index) => ({ item, index }))
+            .filter(({ item }) => activeFilter === '全部' || recipientFilterKey(item) === activeFilter)
+            .filter(({ item }) => {
+              if (!query) return true;
+              return [item.name, item.entity, item.target, ...item.tags].filter(Boolean).join(' ').toLowerCase().includes(query);
+            });
+          optionsList.innerHTML = rows.length
+            ? rows.map(({ item, index }) => renderRecipientOption(item, index, index === recipientIndex, false)).join('')
+            : '<div class="transfer-empty">没有匹配的地址/账户</div>';
+          bindRecipientButtons();
+        };
 
         const updateRecipient = () => {
           const recipient = recipients[recipientIndex] || recipients[0];
@@ -5220,16 +5478,8 @@
         const updateCurrency = () => {
           const code = currencySelect?.value || '';
           const isCryptoCurrency = ['USDT', 'USDC'].includes(code);
-          root.querySelector('[data-network-compact]')?.classList.toggle('hidden', !isCryptoCurrency);
-          root.querySelectorAll('[data-transfer-network]').forEach(btn => {
-            const supported = isCryptoCurrency && (code !== 'USDC' || btn.dataset.transferNetwork === 'ERC-20');
-            btn.classList.toggle('disabled', !supported);
-          });
           if (code === 'USDC' && selectedNetwork !== 'ERC-20') {
             selectedNetwork = 'ERC-20';
-            root.querySelectorAll('[data-transfer-network]').forEach(btn => {
-              btn.classList.toggle('active', btn.dataset.transferNetwork === selectedNetwork);
-            });
           }
           const currency = currencies.find(item => item.code === code && (!isCryptoCurrency || item.network === selectedNetwork))
             || currencies.find(item => item.code === code)
@@ -5254,23 +5504,17 @@
             if (item !== select) item.classList.remove('open');
           });
           select.classList.toggle('open');
+          if (select.classList.contains('open')) searchInput?.focus();
         });
-        root.querySelectorAll('[data-transfer-recipient]').forEach(btn => {
+        searchInput?.addEventListener('input', renderRecipientList);
+        filterRow?.querySelectorAll('[data-transfer-filter]').forEach(btn => {
           btn.addEventListener('click', () => {
-            recipientIndex = Number(btn.dataset.transferRecipient || 0);
-            select.classList.remove('open');
-            updateRecipient();
+            activeFilter = btn.dataset.transferFilter;
+            filterRow.querySelectorAll('[data-transfer-filter]').forEach(item => item.classList.toggle('active', item === btn));
+            renderRecipientList();
           });
         });
         currencySelect?.addEventListener('change', updateCurrency);
-        root.querySelectorAll('[data-transfer-network]').forEach(btn => {
-          btn.addEventListener('click', () => {
-            if (btn.classList.contains('disabled')) return;
-            selectedNetwork = btn.dataset.transferNetwork;
-            root.querySelectorAll('[data-transfer-network]').forEach(item => item.classList.toggle('active', item === btn));
-            updateCurrency();
-          });
-        });
         root.querySelector('[data-payer-reference]')?.addEventListener('click', () => {
           root.querySelector('[data-payer-reference]')?.classList.toggle('selected');
         });
@@ -5280,6 +5524,7 @@
           });
         });
         updateRecipient();
+        renderRecipientList();
         updateCurrency();
       });
     }
