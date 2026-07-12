@@ -1,0 +1,4 @@
+interface:
+  display_name: "EX Admin UI"
+  short_description: "Build EX payment admin UI with approved visual patterns"
+  default_prompt: "Use $ex-admin-ui to design or implement an EX payment admin page."
