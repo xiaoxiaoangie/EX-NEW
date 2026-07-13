@@ -3288,12 +3288,12 @@
         <div class="brand-mark"><div class="mark-box">EX</div><span>EurewaX Fusion</span></div>
         <div class="brand-copy">
           <h1>一个账户，同时管理法币与数币业务</h1>
-          <p>为外贸、电商、承兑和支付机构设计的数法融合工作台。先完成身份识别与产品开通，再进入统一资产、收款、付款、卡业务与交易对手方管理。</p>
+          <p>为外贸、电商、兑换和支付机构设计的数法融合工作台。先完成身份识别与产品开通，再进入统一资产、收款、付款、卡业务与交易对手方管理。</p>
         </div>
         <div class="rail-card" aria-label="能力概览">
           <div class="rail-row"><div class="rail-icon">VA</div><div><div class="rail-title">全球收款</div><div class="rail-sub">法币 VA + Crypto 收款地址</div></div><span class="rail-tag">Collection</span></div>
           <div class="rail-row"><div class="rail-icon">PO</div><div><div class="rail-title">全球付款</div><div class="rail-sub">法币余额或数币余额付款</div></div><span class="rail-tag">Payout</span></div>
-          <div class="rail-row"><div class="rail-icon">FX</div><div><div class="rail-title">兑换</div><div class="rail-sub">数法承兑 + 承兑记录</div></div><span class="rail-tag">Exchange</span></div>
+          <div class="rail-row"><div class="rail-icon">FX</div><div><div class="rail-title">兑换</div><div class="rail-sub">数法兑换 + 兑换记录</div></div><span class="rail-tag">Exchange</span></div>
           <div class="rail-row"><div class="rail-icon">VC</div><div><div class="rail-title">虚拟信用卡</div><div class="rail-sub">广告投流、货物采购、OTA 付款</div></div><span class="rail-tag">Cards</span></div>
         </div>
       </div>
@@ -3443,7 +3443,7 @@
             <div class="ok-badge">✓</div>
             <div>
               <strong>Lotus Global Trade Co. 已通过审核</strong>
-              <p class="step-desc" style="margin:6px 0 0;">已开通：全球收款、全球付款、虚拟信用卡、兑换、数法承兑。</p>
+              <p class="step-desc" style="margin:6px 0 0;">已开通：全球收款、全球付款、虚拟信用卡、兑换、数法兑换。</p>
             </div>
           </div>
           <div class="actions">
@@ -3762,7 +3762,7 @@
     const titles = {
       dashboard: { title: '仪表盘', subtitle: '查看资产、收款、付款和兑换的关键数据。' },
       assets: { title: '资产管理', subtitle: '总余额、法币余额、数币余额、充值和提现。' },
-      exchange: { title: '兑换', subtitle: '数法承兑和承兑记录。' },
+      exchange: { title: '兑换', subtitle: '数法兑换和兑换记录。' },
       directory: { title: '交易对手方', subtitle: '维护汇款人、收款人的链上地址和银行账户。' },
       collection: { title: '收款', subtitle: '管理收款工具和统一收款记录。' },
       payout: { title: '余额付款', subtitle: '从法币余额或数币余额发起付款，并统一管理付款记录。' },
@@ -3958,8 +3958,8 @@
 
     function exchangeTabs(group, active) {
       const groups = {
-        realtime: [['fiatCryptoAccept', '数法承兑'], ['conversionRecords', '承兑记录']],
-        orders: [['fxOrder', '换汇挂单'], ['acceptOrder', '承兑挂单'], ['orderRecords', '挂单记录']]
+        realtime: [['fiatCryptoAccept', '数法兑换'], ['conversionRecords', '兑换记录']],
+        orders: [['fxOrder', '换汇挂单'], ['acceptOrder', '兑换挂单'], ['orderRecords', '挂单记录']]
       };
       return tabs('exchange', active, groups[group] || groups.realtime);
     }
@@ -4187,7 +4187,7 @@
             <div class="fee-summary">
               <div class="summary-row"><span>${isWithdraw ? '提现到' : '收款人'}</span><b data-transfer-summary="target">${firstRecipient.target}</b></div>
               <div class="summary-row"><span>出款币种</span><b data-transfer-summary="account">${firstCurrency.code}${firstCurrency.network ? ` · ${firstCurrency.network}` : ''}</b></div>
-              <div class="summary-row"><span>承兑手续费</span><b data-transfer-fee="acceptance">0 ${firstCurrency.code}</b></div>
+              <div class="summary-row"><span>兑换手续费</span><b data-transfer-fee="acceptance">0 ${firstCurrency.code}</b></div>
               <div class="summary-row"><span>付款手续费</span><b data-transfer-fee="payment">${firstCurrency.fees[1]}</b></div>
               <div class="summary-row ${isBankTarget ? '' : 'hidden'}" data-pobo-row><span>POBO 手续费</span><b data-transfer-fee="pobo">${firstCurrency.fees[2]}</b></div>
               <div class="summary-row"><span>预计到账</span><b style="color:#7c3aed;" data-transfer-received>-- ${firstCurrency.code}</b></div>
@@ -4274,8 +4274,8 @@
         <div class="span-12">${tabsMarkup}</div>
         <div class="exchange-workspace">
           <div class="card asset-form">
-            <p class="accept-exchange-note">您可以选择卖出币种和买入币种，并输入对应金额实时承兑，您将实时收到买入金额。</p>
-            <h3>数法承兑</h3>
+            <p class="accept-exchange-note">您可以选择卖出币种和买入币种，并输入对应金额实时兑换，您将实时收到买入金额。</p>
+            <h3>数法兑换</h3>
             <div class="accept-exchange-widget">
               <div class="accept-row" data-accept-row="sell">
                 <div class="accept-label">卖出</div>
@@ -4322,7 +4322,7 @@
                   <span class="accept-currency-unit">USD</span>
                 </div>
               </div>
-              <button class="review-btn" data-action="acceptance">确认承兑</button>
+              <button class="review-btn" data-action="acceptance">确认兑换</button>
             </div>
           </div>
           <aside class="exchange-help-card">
@@ -4371,7 +4371,7 @@
       if (tab === 'fiatCryptoAccept') return fiatCryptoAcceptForm(exchangeTabs('realtime', tab));
       if (tab === 'conversionRecords') return conversionRecordList(exchangeTabs('realtime', tab));
       if (['fxOrder', 'acceptOrder', 'orderRecords'].includes(tab)) {
-        const labels = { fxOrder: '换汇挂单', acceptOrder: '承兑挂单', orderRecords: '挂单记录' };
+        const labels = { fxOrder: '换汇挂单', acceptOrder: '兑换挂单', orderRecords: '挂单记录' };
         return `
           <div class="span-12">${exchangeTabs('orders', tab)}</div>
           <div class="card span-12">
@@ -5120,7 +5120,7 @@
         <div class="asset-workspace">
           <div class="asset-form">
             <h3>数币余额付款</h3>
-            <p class="metric-sub" style="margin:0 0 14px;">使用数币余额发起付款，系统承兑后付款到收款人的银行账户。</p>
+            <p class="metric-sub" style="margin:0 0 14px;">使用数币余额发起付款，系统兑换后付款到收款人的银行账户。</p>
             <div class="field" style="margin-bottom:14px;"><label>选择收款人 <a style="float:right;color:#7c3aed;text-decoration:none;" href="#">新增银行账户</a></label><select><option>请选择收款人</option><option>USDT Supplier · BOC **** 8821</option><option>Ad Network · DBS **** 2910</option></select></div>
             <label>选择付款账户</label>
             <div class="option-grid">
@@ -5134,7 +5134,7 @@
             <div class="summary-box">
               <div class="summary-row"><span>扣账账户</span><b>USDT Wallet</b></div>
               <div class="summary-row"><span>到账账户</span><b>收款人银行账户</b></div>
-              <div class="summary-row"><span>承兑汇率</span><b>--</b></div>
+              <div class="summary-row"><span>兑换汇率</span><b>--</b></div>
               <div class="summary-row"><span>手续费</span><b>-- --</b></div>
               <div class="summary-row"><span>预计到账金额</span><b>-- --</b></div>
             </div>
@@ -5250,7 +5250,7 @@
           <div class="field"><label>主体类型</label><input value="${state.profile.type}"></div>
           <div class="field"><label>所在国家</label><input value="${state.profile.country}"></div>
           <div class="field"><label>证件号码</label><input value="${state.profile.doc}"></div>
-          <div class="field full"><label>已开通产品</label><textarea>全球收款、全球付款、虚拟信用卡、兑换、数法承兑</textarea></div>
+          <div class="field full"><label>已开通产品</label><textarea>全球收款、全球付款、虚拟信用卡、兑换、数法兑换</textarea></div>
         </div>`;
     }
 
@@ -5713,7 +5713,7 @@
           destinations: [
             { type: 'address', label: '地址 · TRC-20 · TRX9...2Abc' },
             { type: 'address', label: '地址 · ERC-20 · 0x89...a21' },
-            { type: 'account', label: '账户 · 承兑到账账户 · USD Account' },
+            { type: 'account', label: '账户 · 兑换到账账户 · USD Account' },
             { type: 'wallet', label: '钱包 · USDT Treasury' },
             { type: 'wallet', label: '钱包 · USDC Reserve' }
           ]
@@ -5883,7 +5883,7 @@
         query: '查询完成',
         view: '已打开订单详情',
         convert: '兑换试算已提交',
-        acceptance: '承兑申请已提交',
+        acceptance: '兑换申请已提交',
         maximum: '已填入最大可用余额',
         'switch-conversion': '买卖方向已切换',
         download: '报表已生成',
@@ -5895,7 +5895,7 @@
         'add-crypto-address': '已打开新增收款地址',
         'add-deposit-account': '已添加充值收款账户',
         refund: '退款申请已提交',
-        'crypto-payout': '数币余额付款已提交，等待承兑与合规校验',
+        'crypto-payout': '数币余额付款已提交，等待兑换与合规校验',
         'fiat-payout': '法币余额付款已提交',
         cancel: '已取消当前操作',
         'new-card': '开卡申请已提交',
