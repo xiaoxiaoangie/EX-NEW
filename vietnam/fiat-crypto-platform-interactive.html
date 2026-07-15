@@ -2564,22 +2564,54 @@
       color: #6d28d9;
       box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.12);
     }
+    .payer-reference-group {
+      margin-bottom: 16px;
+    }
+    .payer-reference-label {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 8px;
+      color: #344054;
+      font-size: 13px;
+      font-weight: 760;
+    }
+    .payer-reference-label span {
+      color: #98a2b3;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .payer-reference-options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .payer-reference-option-wrap {
+      position: relative;
+      min-width: 0;
+    }
     .payer-reference {
       width: 100%;
       border: 1px solid #d5dfed;
-      border-radius: 8px;
-      background: #fbfdff;
-      padding: 10px;
+      border-radius: 10px;
+      background: #fff;
+      padding: 12px 14px;
       display: flex;
       align-items: center;
       gap: 12px;
       color: #344054;
-      margin-bottom: 16px;
       text-align: left;
+      min-height: 68px;
+      cursor: pointer;
+      transition: border-color .16s ease, background .16s ease, box-shadow .16s ease;
+    }
+    .payer-reference:hover {
+      border-color: #b9a0f7;
     }
     .payer-reference.selected {
-      border-color: #b8d5ff;
-      background: #fbfdff;
+      border-color: #7c3aed;
+      background: #faf7ff;
+      box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.1);
     }
     .payer-reference .radio-dot {
       width: 22px;
@@ -2590,9 +2622,9 @@
       flex: 0 0 auto;
     }
     .payer-reference.selected .radio-dot {
-      border-color: #2f8cff;
+      border-color: #7c3aed;
       box-shadow: inset 0 0 0 5px #fff;
-      background: #2f8cff;
+      background: #7c3aed;
     }
     .payer-reference-icon {
       width: 34px;
@@ -2612,6 +2644,63 @@
       color: #98a2b3;
       font-size: 12px;
       margin-top: 2px;
+    }
+    .payer-reference-option-wrap.has-help .payer-reference {
+      padding-right: 46px;
+    }
+    .payer-reference-help {
+      position: absolute;
+      top: 50%;
+      right: 14px;
+      z-index: 2;
+      width: 24px;
+      height: 24px;
+      transform: translateY(-50%);
+      border: 1px solid #b8c3d5;
+      border-radius: 999px;
+      background: #fff;
+      color: #667085;
+      display: grid;
+      place-items: center;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: help;
+    }
+    .payer-reference-help:hover,
+    .payer-reference-help:focus-visible,
+    .payer-reference-help.open {
+      border-color: #7c3aed;
+      color: #7c3aed;
+      outline: none;
+    }
+    .payer-reference-help-tip {
+      position: absolute;
+      right: -8px;
+      bottom: calc(100% + 10px);
+      width: 250px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: #2f2542;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.55;
+      box-shadow: 0 8px 24px rgba(31, 24, 46, 0.2);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(4px);
+      transition: opacity .16s ease, transform .16s ease, visibility .16s ease;
+      pointer-events: none;
+    }
+    .payer-reference-help:hover .payer-reference-help-tip,
+    .payer-reference-help:focus-visible .payer-reference-help-tip,
+    .payer-reference-help.open .payer-reference-help-tip {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    @media (max-width: 760px) {
+      .payer-reference-options { grid-template-columns: 1fr; }
     }
     .fee-summary {
       border: 1px solid #dbe3ef;
@@ -3533,7 +3622,7 @@
             <div class="product-card">
               <h3>全球付款</h3>
               <p class="muted">开通供应商、服务商和员工等付款能力，支持从法币余额或数币余额发起付款。</p>
-              <div class="section-label">付款货币</div>
+              <div class="section-label">付款钱包</div>
               <label class="chip-check"><input type="checkbox" checked value="付法币"><span>付法币</span></label>
               <label class="chip-check"><input type="checkbox" checked value="付数币"><span>付数币</span></label>
             </div>
@@ -4279,8 +4368,8 @@
       const isBankTarget = targetType === 'bank';
       const title = `${isWithdraw ? '提现' : '付款'}到${isBankTarget ? '法币账户' : '数币地址'}`;
       const desc = isWithdraw
-        ? `提现是提给自己，先选择${isBankTarget ? '自己的法币账户和出款货币' : '自己的数币地址，再选择提现货币'}，再输入金额。`
-        : `付款是付给其他人，先选择${isBankTarget ? '收款人的法币账户和付款货币' : '收款人，再选择付款货币'}，再输入金额。`;
+        ? `提现是提给自己，先选择提现钱包并输入金额，再选择${isBankTarget ? '自己的法币账户' : '自己的数币地址'}。`
+        : `付款是付给其他人，先选择付款钱包并输入金额，再选择收款人的法币账户。`;
       const selectLabel = isWithdraw ? '提现到' : '选择收款人';
       const linkLabel = isBankTarget ? '添加银行账户' : '添加地址';
       const linkTab = isBankTarget ? 'addBeneficiaryAccount' : 'addBeneficiaryAddress';
@@ -4291,6 +4380,38 @@
           <div class="card transfer-form" data-transfer-form data-transfer-mode="${mode}" data-transfer-rail="${rail}" data-transfer-target="${targetType}">
             <h3>${title}</h3>
             <p class="transfer-desc">${desc}</p>
+            ${!isBankTarget ? `
+            <div class="transfer-currency-chooser">
+              <label>${isWithdraw ? '提现钱包' : '付款钱包'}</label>
+              <div class="transfer-currency-chips" data-transfer-currency-chips>
+                ${['USDT','USDC'].map(code => `<button type="button" class="transfer-currency-chip ${code === firstCurrency.code ? 'active' : ''}" data-transfer-currency-chip="${code}" aria-label="选择 ${code}">${transferCurrencyChipLabel(code)}</button>`).join('')}
+              </div>
+              <select class="hidden" data-transfer-currency-select aria-label="${isWithdraw ? '提现钱包' : '付款钱包'}">
+                ${currencies.filter(item => ['USDT','USDC'].includes(item.code)).map(item => `<option value="${item.code}" ${item.code === firstCurrency.code ? 'selected' : ''}>${item.code}</option>`).join('')}
+              </select>
+              <span class="metric-sub">本期支持 USDT / USDC。</span>
+            </div>` : ''}
+            ${isBankTarget ? `
+            <div class="transfer-currency-chooser">
+              <label>${isWithdraw ? '提现钱包' : '付款钱包'}</label>
+              <div class="transfer-currency-chips" data-transfer-currency-chips>
+                ${['USDC','USDT','USD','VND','CNH'].map(code => `<button type="button" class="transfer-currency-chip ${code === firstCurrency.code ? 'active' : ''}" data-transfer-currency-chip="${code}" aria-label="选择 ${code}">${transferCurrencyChipLabel(code)}</button>`).join('')}
+                <input class="transfer-more-currency" data-transfer-more-currency list="transfer-more-currency-list" placeholder="＋ 更多货币">
+                <datalist id="transfer-more-currency-list">${currencies.filter(item => !['USDC','USDT','USD','VND','CNH'].includes(item.code)).map(item => `<option value="${item.code}"></option>`).join('')}</datalist>
+              </div>
+              <select class="hidden" data-transfer-currency-select>
+                ${currencies.map(item => `<option value="${item.code}" ${item.code === firstCurrency.code ? 'selected' : ''}>${item.code}</option>`).join('')}
+              </select>
+              ${isBankTarget ? '<span class="metric-sub">法币仅支持同币种付款。如当前没有对应币种的钱包，请先完成币种兑换。</span>' : ''}
+            </div>` : ''}
+            <div class="field" style="margin-bottom:14px;">
+              <label>${isWithdraw ? '提现金额' : '付款金额'}</label>
+              <div class="transfer-amount-row">
+                <input placeholder="请输入金额">
+                <span class="transfer-amount-unit" data-transfer-amount-unit>${firstCurrency.code}</span>
+              </div>
+              <span class="metric-sub" data-transfer-balance>可用余额：${firstCurrency.balance} ${firstCurrency.code}</span>
+            </div>
             <div class="transfer-section">
               <div class="transfer-label-line">
                 <span>${selectLabel}</span>
@@ -4312,45 +4433,33 @@
                 </div>
               </div>
             </div>
-            ${!isBankTarget ? `
-            <div class="transfer-currency-chooser">
-              <label>${isWithdraw ? '提现货币' : '付款货币'}</label>
-              <div class="transfer-currency-chips" data-transfer-currency-chips>
-                ${['USDT','USDC'].map(code => `<button type="button" class="transfer-currency-chip ${code === firstCurrency.code ? 'active' : ''}" data-transfer-currency-chip="${code}" aria-label="选择 ${code}">${transferCurrencyChipLabel(code)}</button>`).join('')}
+            <div class="payer-reference-group ${isBankTarget ? '' : 'hidden'}" data-payer-reference-group>
+              <div class="payer-reference-label">付款人名称 <span>请选择银行流水中展示的名称</span></div>
+              <div class="payer-reference-options" role="radiogroup" aria-label="付款人名称">
+                <div class="payer-reference-option-wrap">
+                  <button type="button" class="payer-reference selected" data-payer-reference-option="verified" role="radio" aria-checked="true">
+                    <div class="payer-reference-icon">✓</div>
+                    <span class="radio-dot"></span>
+                    <div>
+                      <div class="payer-reference-title">使用 ${isWithdraw ? 'BrightLink Tech Limited' : 'Shanghai Yye Network Technology Co, LTD'}</div>
+                      <div class="payer-reference-sub">使用实名认证的主体名称</div>
+                    </div>
+                  </button>
+                </div>
+                <div class="payer-reference-option-wrap has-help">
+                  <button type="button" class="payer-reference" data-payer-reference-option="partner" role="radio" aria-checked="false">
+                    <span class="radio-dot"></span>
+                    <div>
+                      <div class="payer-reference-title">使用 SP 名称 / 合作机构名称</div>
+                      <div class="payer-reference-sub">由实际提供出款服务的机构付款</div>
+                    </div>
+                  </button>
+                  <button type="button" class="payer-reference-help" data-payer-reference-help aria-label="了解 SP 名称或合作机构名称" aria-expanded="false">
+                    ?
+                    <span class="payer-reference-help-tip" role="tooltip">选择后，银行流水中的付款人可能显示实际提供出款服务的 SP 或合作机构名称，而非您的认证主体名称。</span>
+                  </button>
+                </div>
               </div>
-              <select class="hidden" data-transfer-currency-select aria-label="${isWithdraw ? '提现货币' : '付款货币'}">
-                ${currencies.filter(item => ['USDT','USDC'].includes(item.code)).map(item => `<option value="${item.code}" ${item.code === firstCurrency.code ? 'selected' : ''}>${item.code}</option>`).join('')}
-              </select>
-              <span class="metric-sub">本期支持 USDT / USDC。</span>
-            </div>` : ''}
-            <button type="button" class="payer-reference selected ${isBankTarget ? '' : 'hidden'}" data-payer-reference>
-              <div class="payer-reference-icon">✓</div>
-              <span class="radio-dot"></span>
-              <div>
-                <div class="payer-reference-title">使用 ${isWithdraw ? 'BrightLink Tech Limited' : 'Shanghai Yye Network Technology Co, LTD'} 作为付款人名称</div>
-                <div class="payer-reference-sub">使用实名认证的信息作为付款人名称</div>
-              </div>
-            </button>
-            ${isBankTarget ? `
-            <div class="transfer-currency-chooser">
-              <label>${isWithdraw ? '提现货币' : '付款货币'}</label>
-              <div class="transfer-currency-chips" data-transfer-currency-chips>
-                ${['USDC','USDT','USD','VND','CNH'].map(code => `<button type="button" class="transfer-currency-chip ${code === firstCurrency.code ? 'active' : ''}" data-transfer-currency-chip="${code}" aria-label="选择 ${code}">${transferCurrencyChipLabel(code)}</button>`).join('')}
-                <input class="transfer-more-currency" data-transfer-more-currency list="transfer-more-currency-list" placeholder="＋ 更多货币">
-                <datalist id="transfer-more-currency-list">${currencies.filter(item => !['USDC','USDT','USD','VND','CNH'].includes(item.code)).map(item => `<option value="${item.code}"></option>`).join('')}</datalist>
-              </div>
-              <select class="hidden" data-transfer-currency-select>
-                ${currencies.map(item => `<option value="${item.code}" ${item.code === firstCurrency.code ? 'selected' : ''}>${item.code}</option>`).join('')}
-              </select>
-              <span class="metric-sub">常用货币直接选择；货币增加后可通过“更多货币”搜索选择。</span>
-            </div>` : ''}
-            <div class="field" style="margin-bottom:14px;">
-              <label>${isWithdraw ? '提现金额' : '付款金额'}</label>
-              <div class="transfer-amount-row">
-                <input placeholder="请输入金额">
-                <span class="transfer-amount-unit" data-transfer-amount-unit>${firstCurrency.code}</span>
-              </div>
-              <span class="metric-sub" data-transfer-balance>可用余额：${firstCurrency.balance} ${firstCurrency.code}</span>
             </div>
             <div class="field ${isBankTarget ? '' : 'hidden'}" style="margin-bottom:14px;" data-fee-bearer>
               <label>费用承担方</label>
@@ -4914,7 +5023,7 @@
             <div class="field" style="margin-bottom:14px;"><label>提现金额 <span style="float:right;color:var(--muted);" data-unified-balance>可用余额: 0.35 USDT</span></label><div style="display:grid;grid-template-columns:1fr 84px;"><input placeholder="请输入提现金额"><input value="USDT" readonly data-unified-unit style="border-left:0;border-radius:0 8px 8px 0;text-align:center;"></div></div>
             <div class="summary-box">
               <div class="summary-row"><span>钱包类型</span><b data-unified-summary="wallet">数币钱包</b></div>
-              <div class="summary-row"><span>提现货币</span><b data-unified-summary="currency">USDT</b></div>
+              <div class="summary-row"><span>提现钱包</span><b data-unified-summary="currency">USDT</b></div>
               <div class="summary-row"><span>提现去向</span><b data-unified-summary="destination">地址</b></div>
               <div class="summary-row"><span>手续费</span><b data-unified-summary="fee">1 USDT</b></div>
               <div class="summary-row"><span>预计到账</span><b style="color:#7c3aed;" data-unified-summary="received">- USDT</b></div>
@@ -5775,7 +5884,7 @@
             btn.classList.toggle('active', Number(btn.dataset.transferRecipient) === recipientIndex);
           });
           root.querySelector('[data-bank-fields]')?.classList.toggle('hidden', recipient.type !== 'bank');
-          root.querySelector('[data-payer-reference]')?.classList.toggle('hidden', recipient.type !== 'bank');
+          root.querySelector('[data-payer-reference-group]')?.classList.toggle('hidden', recipient.type !== 'bank');
           root.querySelector('[data-fee-bearer]')?.classList.toggle('hidden', recipient.type !== 'bank');
           const target = root.querySelector('[data-transfer-summary="target"]');
           if (target) target.textContent = recipient.target;
@@ -5837,8 +5946,20 @@
           currencySelect.value = moreCurrency.value;
           updateCurrency();
         });
-        root.querySelector('[data-payer-reference]')?.addEventListener('click', () => {
-          root.querySelector('[data-payer-reference]')?.classList.toggle('selected');
+        root.querySelectorAll('[data-payer-reference-option]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            root.querySelectorAll('[data-payer-reference-option]').forEach(item => {
+              const selected = item === btn;
+              item.classList.toggle('selected', selected);
+              item.setAttribute('aria-checked', String(selected));
+            });
+          });
+        });
+        root.querySelector('[data-payer-reference-help]')?.addEventListener('click', event => {
+          event.stopPropagation();
+          const help = event.currentTarget;
+          const isOpen = help.classList.toggle('open');
+          help.setAttribute('aria-expanded', String(isOpen));
         });
         root.querySelectorAll('[data-fee-bearer-option]').forEach(btn => {
           btn.addEventListener('click', () => {
