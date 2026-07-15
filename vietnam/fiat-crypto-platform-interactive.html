@@ -2411,6 +2411,84 @@
       color: #344054;
       background: #f8fafc;
     }
+    .transfer-currency-chooser {
+      display: grid;
+      gap: 9px;
+      margin-bottom: 14px;
+    }
+    .transfer-currency-chooser > label {
+      color: #344054;
+      font-size: 13px;
+      font-weight: 780;
+    }
+    .transfer-currency-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 12px;
+      border: 1px solid #e0e5ee;
+      border-radius: 9px;
+      background: #fafbfc;
+    }
+    .transfer-currency-chip {
+      min-width: 74px;
+      min-height: 38px;
+      padding: 0 14px;
+      border: 1px solid #d7ddea;
+      border-radius: 8px;
+      background: #fff;
+      color: #475467;
+      font-weight: 820;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .transfer-currency-logo {
+      width: 22px;
+      height: 22px;
+      flex: 0 0 22px;
+      display: inline-grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 850;
+      line-height: 1;
+    }
+    .transfer-currency-logo.usdt { background: #26a17b; }
+    .transfer-currency-logo.usdc { background: #2775ca; }
+    .transfer-currency-logo.flag {
+      background: transparent;
+      font-size: 19px;
+    }
+    .transfer-currency-chip.active {
+      border-color: #7c3aed;
+      background: #f3edff;
+      color: #6d28d9;
+      box-shadow: 0 0 0 2px rgba(124,58,237,.08);
+    }
+    .transfer-more-currency {
+      width: 132px;
+      min-height: 38px;
+      border: 1px dashed #c9cfdb;
+      border-radius: 8px;
+      background: #fff;
+      color: #667085;
+      padding: 0 10px;
+      font-weight: 760;
+    }
+    .transfer-amount-unit {
+      min-width: 110px;
+      display: grid;
+      place-items: center;
+      border: 1px solid #d7dfea;
+      border-left: 0;
+      border-radius: 0 8px 8px 0;
+      background: #f8fafc;
+      color: #344054;
+      font-weight: 850;
+    }
     .network-compact {
       display: grid;
       gap: 8px;
@@ -3023,10 +3101,6 @@
     .directory-filter.address {
       grid-template-columns: 1fr 1fr 2fr 2fr auto auto;
     }
-    .directory-filter.address .field:nth-child(3),
-    .directory-filter.address .field:nth-child(4) {
-      visibility: hidden;
-    }
     .directory-table .token-tag,
     .directory-table .yes-tag,
     .directory-table .verified-tag {
@@ -3041,8 +3115,26 @@
     .directory-table .token-tag { background: #ead7ff; color: #7c22ff; margin-right: 5px; }
     .directory-table .yes-tag,
     .directory-table .verified-tag { background: #d1fae5; color: #059669; }
+    .directory-table .edit-link { margin-left: 16px; color: #7c22ff; }
     .directory-table .danger-link { color: #ef4444; margin-left: 16px; }
     .copy-mini { color: #8b22ff; margin-left: 8px; font-weight: 900; }
+    .directory-add-page {
+      grid-column: 1 / -1;
+      max-width: 860px;
+      display: grid;
+      gap: 16px;
+    }
+    .directory-add-card { padding: 24px; }
+    .directory-add-card h3 { margin: 0 0 6px; font-size: 18px; color: #1f2937; }
+    .directory-add-card > p { margin: 0 0 20px; color: #6b7280; font-size: 13px; }
+    .directory-add-note { margin: 18px 0; padding: 12px 14px; border: 1px solid #e5def8; border-radius: 8px; background: #faf8ff; color: #5f5675; font-size: 13px; line-height: 1.6; }
+    .directory-add-actions { display: flex; gap: 12px; justify-content: flex-end; }
+    .directory-success-page { grid-column: 1 / -1; display: grid; place-items: center; min-height: 440px; }
+    .directory-success-card { width: min(620px, 100%); padding: 42px 36px; text-align: center; }
+    .directory-success-icon { width: 58px; height: 58px; margin: 0 auto 18px; display: grid; place-items: center; border-radius: 50%; background: #eaf8f1; color: #168a5b; font-size: 28px; font-weight: 900; }
+    .directory-success-card h3 { margin: 0 0 10px; color: #1f2937; font-size: 20px; }
+    .directory-success-card p { margin: 0 auto 24px; max-width: 490px; color: #667085; font-size: 14px; line-height: 1.7; }
+    .directory-success-actions { display: flex; justify-content: center; gap: 12px; }
     .collection-tools-page {
       grid-column: 1 / -1;
       display: grid;
@@ -3095,6 +3187,43 @@
       border-radius: 5px;
       background: #fff;
     }
+    .bank-tool-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .bank-tool-card {
+      min-height: 190px;
+      border: 1px solid #e2e7ef;
+      border-radius: 10px;
+      padding: 20px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+    }
+    .bank-tool-card:hover {border-color:#cfc3ef;box-shadow:0 8px 20px rgba(31,41,55,.07);transform:translateY(-1px)}
+    .bank-tool-card:focus-visible {outline:3px solid rgba(122,29,237,.18);border-color:#7a1ded}
+    .bank-tool-card-head {display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .bank-tool-identity {min-width:0;display:flex;align-items:center;gap:12px}
+    .bank-tool-logo {width:38px;height:38px;flex:0 0 38px;display:grid;place-items:center;border-radius:9px;background:#f1efff;color:#6d28d9;font-size:12px;font-weight:900;letter-spacing:-.2px}
+    .bank-tool-logo.sgb {background:#fff0f0;color:#e62932;font-size:17px;text-transform:lowercase;font-style:italic}
+    .bank-tool-logo.dbs {background:#fff0f1;color:#e6293f;font-size:13px}
+    .bank-tool-logo.ocbc {background:#fff0f0;color:#d9272e;font-size:11px}
+    .bank-tool-name {min-width:0;font-size:15px;font-weight:850;color:#273142;line-height:1.35}
+    .bank-tool-account {display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:8px;background:#f8f9fb}
+    .bank-tool-account-label {flex:0 0 auto;color:#8a94a6;font-size:12px;font-weight:700}
+    .bank-tool-number {min-width:0;white-space:nowrap;font:800 17px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:1px;color:#273142}
+    .bank-tool-meta {display:flex;flex-wrap:wrap;gap:8px 16px;color:#667085;font-size:13px}
+    .bank-tool-meta-row {display:flex;align-items:center;gap:6px}
+    .bank-tool-meta-icon {color:#8b5cf6;font-weight:900}
+    .bank-tool-currencies {display:flex;flex-wrap:wrap;gap:7px;margin-top:auto}
+    .bank-tool-currency {padding:4px 9px;border:1px solid #e9e5f6;border-radius:5px;background:#faf9ff;color:#5d5574;font-size:12px;font-weight:800}
+    .bank-tool-status {flex:0 0 auto;padding:4px 8px;border-radius:5px;background:#eaf8f1;color:#168a5b;font-size:12px;font-weight:800}
+    .bank-tool-status.pending {background:#fff7e6;color:#b7791f}
+    @media(max-width:1100px){.bank-tool-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:720px){.bank-tool-grid{grid-template-columns:1fr}}
     .collection-tool-filter label {
       justify-self: end;
       color: #606b7a;
@@ -3288,7 +3417,7 @@
         <div class="brand-mark"><div class="mark-box">EX</div><span>EurewaX Fusion</span></div>
         <div class="brand-copy">
           <h1>一个账户，同时管理法币与数币业务</h1>
-          <p>为外贸、电商、兑换和支付机构设计的数法融合工作台。先完成身份识别与产品开通，再进入统一资产、收款、付款、卡业务与交易对手方管理。</p>
+          <p>为外贸、电商、兑换和支付机构设计的数法融合工作台。先完成身份识别与产品开通，再进入统一资产、收款人、收款、付款与卡业务管理。</p>
         </div>
         <div class="rail-card" aria-label="能力概览">
           <div class="rail-row"><div class="rail-icon">VA</div><div><div class="rail-title">全球收款</div><div class="rail-sub">法币 VA + Crypto 收款地址</div></div><span class="rail-tag">Collection</span></div>
@@ -3438,7 +3567,7 @@
 
         <section class="step hidden" data-step="4">
           <h2>KYC / KYB 审核通过</h2>
-          <p class="step-desc">产品能力已根据主体、行业、产品品类和贸易国家开通。进入平台后可管理资产、交易对手方、收款、付款和卡业务。</p>
+          <p class="step-desc">产品能力已根据主体、行业、产品品类和贸易国家开通。进入平台后可管理资产、收款人、收款、付款和卡业务。</p>
           <div class="kyc-result">
             <div class="ok-badge">✓</div>
             <div>
@@ -3463,17 +3592,21 @@
 
         <div class="menu-section">
           <div class="menu-section-title">资产</div>
-          <button class="menu-item" data-page="assets" data-tab="myAssets"><span class="menu-icon">▣</span><span>我的资产</span></button>
+          <button class="menu-item" data-page="assets" data-tab="myAssets"><span class="menu-icon">▣</span><span>资产</span></button>
           <button class="menu-item" data-page="assets" data-tab="deposit"><span class="menu-icon">◎</span><span>充值</span></button>
           <button class="menu-item" data-page="assets" data-tab="withdraw"><span class="menu-icon">↟</span><span>提现</span></button>
+        </div>
+
+        <div class="menu-section">
+          <div class="menu-section-title green">兑换</div>
           <button class="menu-item" data-page="exchange" data-tab="realtime"><span class="menu-icon">⇄</span><span>兑换</span></button>
           <!-- 挂单入口暂时隐藏：<button class="menu-item" data-page="exchange" data-tab="orders"><span class="menu-icon">☷</span><span>委托挂单</span></button> -->
         </div>
 
         <div class="menu-section">
           <div class="menu-section-title purple">交易对手方</div>
-          <button class="menu-item" data-page="directory" data-tab="remitter"><span class="menu-icon">▥</span><span>汇款人</span></button>
-          <button class="menu-item" data-page="directory" data-tab="beneficiary"><span class="menu-icon">▤</span><span>收款人</span></button>
+          <button class="menu-item" data-page="directory" data-tab="beneficiaryAddress"><span class="menu-icon">◇</span><span>对手方地址簿</span></button>
+          <button class="menu-item" data-page="directory" data-tab="beneficiaryAccount"><span class="menu-icon">▤</span><span>对手方账户</span></button>
         </div>
 
         <div class="menu-section">
@@ -3484,7 +3617,7 @@
 
         <div class="menu-section">
           <div class="menu-section-title orange">付款</div>
-          <button class="menu-item" data-page="payout" data-tab="balancePayment"><span class="menu-icon">▭</span><span>余额付款</span></button>
+          <button class="menu-item" data-page="payout" data-tab="balancePayment"><span class="menu-icon">▭</span><span>付款</span></button>
         </div>
 
         <div class="menu-section">
@@ -3496,7 +3629,7 @@
 
         <div class="menu-section">
           <div class="menu-section-title dark">报表中心</div>
-          <button class="menu-item" data-page="reports" data-tab="transactionRecords"><span class="menu-icon">≡</span><span>交易记录</span></button>
+          <button class="menu-item hidden" aria-hidden="true" tabindex="-1" data-page="reports" data-tab="transactionRecords"><span class="menu-icon">≡</span><span>交易记录</span></button>
           <button class="menu-item" data-page="reports" data-tab="balanceDetails"><span class="menu-icon">▤</span><span>余额明细</span></button>
         </div>
 
@@ -3603,6 +3736,25 @@
           ['受益银行名称', 'BANKING CIRCLE DENMARK'],
           ['受益银行地址', 'Amerika Plads 38, 2100 Copenhagen, Denmark'],
           ['受益银行 SWIFT 代码', 'BCIRDKKX'],
+          ['付款用途', '货物贸易收款'],
+          ['账户状态', '已激活']
+        ]
+      },
+      ocbc: {
+        badge: 'SAME NAME ACCOUNT',
+        owner: 'BrightLink Tech Limited',
+        bankLine: 'OCBC BANK (MALAYSIA) BERHAD MYR',
+        warning: '请仅使用与开户注册主体同名的银行账户汇款，并确保汇款币种与账户支持币种一致。',
+        copyLabel: '复制银行账户信息',
+        rows: [
+          ['收款币种', 'MYR'],
+          ['收款人名称', 'BrightLink Tech Limited'],
+          ['银行账号', '**** **** **** 6088'],
+          ['账户类型', '同名账户'],
+          ['收款国家/地区', 'Malaysia'],
+          ['受益银行名称', 'OCBC BANK (MALAYSIA) BERHAD'],
+          ['受益银行地址', 'Menara OCBC, 18 Jalan Tun Perak, Kuala Lumpur, Malaysia'],
+          ['受益银行 SWIFT 代码', 'OCBCMYKLXXX'],
           ['付款用途', '货物贸易收款'],
           ['账户状态', '已激活']
         ]
@@ -3733,11 +3885,11 @@
         dashboard: 'overview',
         assets: 'myAssets',
         exchange: 'fiatCryptoAccept',
-        directory: 'remitter',
+        directory: 'beneficiaryAddress',
         collection: 'tools',
         payout: 'balancePayment',
         cards: 'mycards',
-        reports: 'transactionRecords',
+        reports: 'balanceDetails',
         profile: 'profile'
       }[page] || 'overview';
     }
@@ -3762,17 +3914,17 @@
     const titles = {
       dashboard: { title: '仪表盘', subtitle: '查看资产、收款、付款和兑换的关键数据。' },
       assets: { title: '资产管理', subtitle: '总余额、法币余额、数币余额、充值和提现。' },
-      exchange: { title: '兑换', subtitle: '数法兑换和兑换记录。' },
-      directory: { title: '交易对手方', subtitle: '维护汇款人、收款人的链上地址和银行账户。' },
+      exchange: { title: '兑换', subtitle: '进行数法兑换、实时换汇并查询兑换记录。' },
+      directory: { title: '收款人', subtitle: '维护收款人的数币地址和银行账户。' },
       collection: { title: '收款', subtitle: '管理收款工具和统一收款记录。' },
-      payout: { title: '余额付款', subtitle: '从法币余额或数币余额发起付款，并统一管理付款记录。' },
+      payout: { title: '付款', subtitle: '从法币余额或数币余额发起付款，并统一管理付款记录。' },
       cards: { title: '我的卡片', subtitle: '卡片列表、开卡、充值、冻结、销卡、卡订单和账单。' },
-      reports: { title: '报表中心', subtitle: '查询账户交易记录、卡交易记录和余额明细。' },
+      reports: { title: '报表中心', subtitle: '查询账户余额明细。' },
       profile: { title: '设置中心', subtitle: '主体信息、安全设置、API 申请、角色和权限。' }
     };
 
     const assetTitles = {
-      myAssets: { title: '资产 / 我的资产', subtitle: '查看数币余额和法币余额的可用资产。' },
+      myAssets: { title: '资产 / 资产', subtitle: '查看数币余额和法币余额的可用资产。' },
       deposit: { title: '充币/充值法币', subtitle: '数币充币、充值法币和充值记录。' },
       withdraw: { title: '提现', subtitle: '提现是提给自己，可提到数币地址或法币账户。' },
       unifiedWithdraw: { title: '提现', subtitle: '选择提现到、金额币种和费用信息。' },
@@ -3801,7 +3953,7 @@
 
             <section class="card dashboard-section-card">
               <div class="dashboard-section-head">
-                <h3>我的资产</h3>
+                <h3>资产</h3>
                 <button class="dashboard-link" data-nav-page="assets" data-nav-tab="myAssets">查看全部 →</button>
               </div>
               <div class="dashboard-total-label">总资产</div>
@@ -3886,7 +4038,7 @@
           </div>`;
       },
       collection(tab) {
-        if (['tools', 'bankTools', 'cryptoTools'].includes(tab)) return `
+        if (['tools', 'bankTools', 'sameNameTools', 'referenceTools', 'cryptoTools'].includes(tab)) return `
           <div class="dashboard-grid">
             ${collectionBody(tab)}
           </div>`;
@@ -3958,31 +4110,27 @@
 
     function exchangeTabs(group, active) {
       const groups = {
-        realtime: [['fiatCryptoAccept', '数法兑换'], ['conversionRecords', '兑换记录']],
+        realtime: [['fiatCryptoAccept', '数法兑换'], ['fxConversion', '实时换汇'], ['conversionRecords', '兑换记录']],
         orders: [['fxOrder', '换汇挂单'], ['acceptOrder', '兑换挂单'], ['orderRecords', '挂单记录']]
       };
       return tabs('exchange', active, groups[group] || groups.realtime);
     }
 
     function directoryNavGroup(tab) {
-      if (['beneficiary', 'beneficiaryAddress', 'beneficiaryAccount'].includes(tab)) return 'beneficiary';
-      if (['remitter', 'remitterAddress', 'remitterAccount'].includes(tab)) return 'remitter';
-      return 'beneficiary';
-    }
-
-    function directoryTabs(type, active) {
-      const labels = type === 'beneficiary'
-        ? [['beneficiaryAddress', '收款地址簿'], ['beneficiaryAccount', '收款银行账户']]
-        : [['remitterAddress', '汇款地址簿'], ['remitterAccount', '汇款银行账户']];
-      return tabs('directory', active, labels);
+      if (['beneficiary', 'beneficiaryAddress', 'addBeneficiaryAddress', 'beneficiaryAddressSuccess'].includes(tab)) return 'beneficiaryAddress';
+      return 'beneficiaryAccount';
     }
 
     function collectionToolTabs(active) {
-      return tabs('collection', active, [['bankTools', '法币收款账户'], ['cryptoTools', '数币收款地址']]);
+      return `<div class="tabs">
+        <button class="tab ${active === 'sameNameTools' ? 'active' : ''}" data-page="collection" data-tab="sameNameTools">同名账户（SAME NAME ACCOUNT）</button>
+        <button class="tab ${active === 'referenceTools' ? 'active' : ''}" data-page="collection" data-tab="referenceTools">参考账户（REFERENCE ACCOUNT）</button>
+        <button class="tab hidden" aria-hidden="true" tabindex="-1" data-page="collection" data-tab="cryptoTools">数币收款地址</button>
+      </div>`;
     }
 
     function collectionNavGroup(tab) {
-      if (['tools', 'bankTools', 'cryptoTools'].includes(tab)) return 'tools';
+      if (['tools', 'bankTools', 'sameNameTools', 'referenceTools', 'cryptoTools'].includes(tab)) return 'tools';
       if (['records', 'fiatRecords', 'cryptoRecords', 'collectionRecords'].includes(tab)) return 'collectionRecords';
       return tab;
     }
@@ -3993,7 +4141,11 @@
     }
 
     function payoutTabs(active) {
-      return tabs('payout', active, [['cryptoBalance', '付到数币地址'], ['fiatBalance', '付到法币账户'], ['payoutRecords', '付款记录']]);
+      return `<div class="tabs">
+        <button class="tab hidden" aria-hidden="true" tabindex="-1" data-page="payout" data-tab="cryptoBalance">付到数币地址</button>
+        <button class="tab ${active === 'fiatBalance' ? 'active' : ''}" data-page="payout" data-tab="fiatBalance">付到法币账户</button>
+        <button class="tab ${active === 'payoutRecords' ? 'active' : ''}" data-page="payout" data-tab="payoutRecords">付款记录</button>
+      </div>`;
     }
 
     function reportNavGroup(tab) {
@@ -4103,22 +4255,35 @@
       return `${icons[item.code] || ''} ${item.code}`.trim();
     }
 
+    function transferCurrencyChipLabel(code) {
+      const logos = {
+        USDT: ['usdt', '₮'],
+        USDC: ['usdc', '$'],
+        USD: ['flag', '🇺🇸'],
+        VND: ['flag', '🇻🇳'],
+        CNH: ['flag', '🇨🇳']
+      };
+      const [kind, symbol] = logos[code] || ['flag', '¤'];
+      return `<span class="transfer-currency-logo ${kind}" aria-hidden="true">${symbol}</span><span>${code}</span>`;
+    }
+
     function renderTransferForm(mode, rail, activeTab) {
       const isWithdraw = mode === 'withdraw';
       const targetType = rail === 'crypto' ? 'address' : 'bank';
       const key = `${isWithdraw ? 'withdraw' : 'payment'}${rail === 'crypto' ? 'Crypto' : 'Fiat'}`;
       const recipients = transferCatalog.recipients[key].filter(item => item.type === targetType);
-      const currencyPool = transferCatalog.currencies.filter(item => ['USDT', 'USDC', 'USD', 'CNH', 'VND'].includes(item.code));
+      const currencyPool = transferCatalog.currencies;
       const currencies = currencyPool.filter((item, index, list) => list.findIndex(row => row.code === item.code) === index);
       const firstRecipient = recipients[0];
       const firstCurrency = currencies.find(item => item.code === (targetType === 'address' ? 'USDT' : 'USD'));
       const isBankTarget = targetType === 'bank';
       const title = `${isWithdraw ? '提现' : '付款'}到${isBankTarget ? '法币账户' : '数币地址'}`;
       const desc = isWithdraw
-        ? `提现是提给自己，先选择${isBankTarget ? '自己的法币账户' : '自己的数币地址'}，再输入金额；右侧下拉可切换出款币种。`
-        : `付款是付给其他人，先选择${isBankTarget ? '收款人的法币账户' : '收款人的数币地址'}，再输入金额；右侧下拉可切换出款币种。`;
+        ? `提现是提给自己，先选择${isBankTarget ? '自己的法币账户和出款货币' : '自己的数币地址，再选择提现货币'}，再输入金额。`
+        : `付款是付给其他人，先选择${isBankTarget ? '收款人的法币账户和付款货币' : '收款人，再选择付款货币'}，再输入金额。`;
       const selectLabel = isWithdraw ? '提现到' : '选择收款人';
-      const linkLabel = isWithdraw ? '添加提现地址/账户' : '添加收款人';
+      const linkLabel = isBankTarget ? '添加银行账户' : '添加地址';
+      const linkTab = isBankTarget ? 'addBeneficiaryAccount' : 'addBeneficiaryAddress';
       const action = isWithdraw ? (targetType === 'address' ? 'crypto-withdraw' : 'fiat-withdraw') : (targetType === 'address' ? 'crypto-payout' : 'fiat-payout');
       const tabsMarkup = isWithdraw ? `<div class="span-12">${assetTabs('withdraw', activeTab)}</div>` : payoutTabs(activeTab);
       const form = `
@@ -4129,15 +4294,15 @@
             <div class="transfer-section">
               <div class="transfer-label-line">
                 <span>${selectLabel}</span>
-                <a href="#" data-nav-page="directory" data-nav-tab="beneficiary">+ ${linkLabel}</a>
+                <a href="#" data-nav-page="directory" data-nav-tab="${linkTab}">+ ${linkLabel}</a>
               </div>
               <div class="transfer-select" data-transfer-select>
                 <button type="button" class="transfer-select-button" data-transfer-select-button>${renderRecipientOption(firstRecipient, 0, true, true)}</button>
                 <div class="transfer-dropdown">
                   <div class="transfer-dropdown-head">
                     <div class="transfer-search-row">
-                      <input placeholder="搜索昵称、币种、网络、银行或地址" data-transfer-search>
-                      <a class="transfer-add-link" href="#" data-nav-page="directory" data-nav-tab="beneficiary">+ ${linkLabel}</a>
+                      <input placeholder="${isBankTarget ? '请输入收款人昵称筛选' : '搜索昵称、币种、网络或地址'}" data-transfer-search>
+                      <a class="transfer-add-link" href="#" data-nav-page="directory" data-nav-tab="${linkTab}">+ ${linkLabel}</a>
                     </div>
                     <div class="transfer-filter-row" data-transfer-filter-row></div>
                   </div>
@@ -4147,6 +4312,17 @@
                 </div>
               </div>
             </div>
+            ${!isBankTarget ? `
+            <div class="transfer-currency-chooser">
+              <label>${isWithdraw ? '提现货币' : '付款货币'}</label>
+              <div class="transfer-currency-chips" data-transfer-currency-chips>
+                ${['USDT','USDC'].map(code => `<button type="button" class="transfer-currency-chip ${code === firstCurrency.code ? 'active' : ''}" data-transfer-currency-chip="${code}" aria-label="选择 ${code}">${transferCurrencyChipLabel(code)}</button>`).join('')}
+              </div>
+              <select class="hidden" data-transfer-currency-select aria-label="${isWithdraw ? '提现货币' : '付款货币'}">
+                ${currencies.filter(item => ['USDT','USDC'].includes(item.code)).map(item => `<option value="${item.code}" ${item.code === firstCurrency.code ? 'selected' : ''}>${item.code}</option>`).join('')}
+              </select>
+              <span class="metric-sub">本期支持 USDT / USDC。</span>
+            </div>` : ''}
             <button type="button" class="payer-reference selected ${isBankTarget ? '' : 'hidden'}" data-payer-reference>
               <div class="payer-reference-icon">✓</div>
               <span class="radio-dot"></span>
@@ -4155,13 +4331,24 @@
                 <div class="payer-reference-sub">使用实名认证的信息作为付款人名称</div>
               </div>
             </button>
+            ${isBankTarget ? `
+            <div class="transfer-currency-chooser">
+              <label>${isWithdraw ? '提现货币' : '付款货币'}</label>
+              <div class="transfer-currency-chips" data-transfer-currency-chips>
+                ${['USDC','USDT','USD','VND','CNH'].map(code => `<button type="button" class="transfer-currency-chip ${code === firstCurrency.code ? 'active' : ''}" data-transfer-currency-chip="${code}" aria-label="选择 ${code}">${transferCurrencyChipLabel(code)}</button>`).join('')}
+                <input class="transfer-more-currency" data-transfer-more-currency list="transfer-more-currency-list" placeholder="＋ 更多货币">
+                <datalist id="transfer-more-currency-list">${currencies.filter(item => !['USDC','USDT','USD','VND','CNH'].includes(item.code)).map(item => `<option value="${item.code}"></option>`).join('')}</datalist>
+              </div>
+              <select class="hidden" data-transfer-currency-select>
+                ${currencies.map(item => `<option value="${item.code}" ${item.code === firstCurrency.code ? 'selected' : ''}>${item.code}</option>`).join('')}
+              </select>
+              <span class="metric-sub">常用货币直接选择；货币增加后可通过“更多货币”搜索选择。</span>
+            </div>` : ''}
             <div class="field" style="margin-bottom:14px;">
               <label>${isWithdraw ? '提现金额' : '付款金额'}</label>
               <div class="transfer-amount-row">
                 <input placeholder="请输入金额">
-                <select class="transfer-currency-select" data-transfer-currency-select>
-                  ${currencies.map(item => `<option value="${item.code}" ${item.code === firstCurrency.code ? 'selected' : ''}>${transferCurrencyLabel(item)}</option>`).join('')}
-                </select>
+                <span class="transfer-amount-unit" data-transfer-amount-unit>${firstCurrency.code}</span>
               </div>
               <span class="metric-sub" data-transfer-balance>可用余额：${firstCurrency.balance} ${firstCurrency.code}</span>
             </div>
@@ -4200,10 +4387,10 @@
           <div class="side-card-stack">
             ${assetNotice(targetType === 'address' ? 'cryptoWithdraw' : 'fiatWithdraw')}
             ${sideShortcut({
-              title: isWithdraw ? '地址/账户管理' : '收款人管理',
-              desc: isWithdraw ? '维护自己的提现地址和银行账户，提现时可直接选择已验证信息。' : '维护收款人的链上地址和银行账户，付款时可直接选择已验证收款人。',
-              button: isWithdraw ? '地址/账户管理' : '收款人管理',
-              tab: 'beneficiary'
+              title: isBankTarget ? '收款人账户' : '地址簿',
+              desc: isBankTarget ? '维护收款人的银行账户，法币提现或付款时可直接选择已验证账户。' : '维护已验证的数币地址，提币时可直接选择。',
+              button: isBankTarget ? '收款人账户' : '地址簿',
+              tab: isBankTarget ? 'beneficiaryAccount' : 'beneficiaryAddress'
             })}
           </div>
         </div>`;
@@ -4247,11 +4434,11 @@
             <table class="table records-table">
               <thead><tr><th>订单编号</th><th>卖出金额</th><th>买入金额</th><th>交易汇率</th><th>手续费</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead>
               <tbody>
-                <tr><td>20260701154933</td><td>100 CNH</td><td>112.97 HKD</td><td>1.12973518</td><td>0.20 CNH</td><td><span class="status-success">换汇成功</span></td><td>2026-07-01 15:49:33</td><td><a href="#" data-action="view">查看</a></td></tr>
-                <tr><td>20260701154851</td><td>12 USD</td><td>81.33 CNH</td><td>6.77743</td><td>0.03 USD</td><td><span class="status-success">换汇成功</span></td><td>2026-07-01 15:48:51</td><td><a href="#" data-action="view">查看</a></td></tr>
-                <tr><td>20260518181003</td><td>29.77 EUR</td><td>34.25 USD</td><td>1.15048395</td><td>0.06 EUR</td><td><span class="status-success">换汇成功</span></td><td>2026-05-18 18:10:03</td><td><a href="#" data-action="view">查看</a></td></tr>
-                <tr><td>20260305182147</td><td>90.43 CNH</td><td>10 CHF</td><td>0.1105809993</td><td>0.18 CNH</td><td><span class="status-success">换汇成功</span></td><td>2026-03-05 18:21:47</td><td><a href="#" data-action="view">查看</a></td></tr>
-                <tr><td>20260303181551</td><td>1,000 NGN</td><td>0.71 USD</td><td>0.0007147313</td><td>2 NGN</td><td><span class="status-success">换汇成功</span></td><td>2026-03-03 18:15:51</td><td><a href="#" data-action="view">查看</a></td></tr>
+                <tr><td>20260701154933</td><td>100 CNH</td><td>112.97 HKD</td><td>1.12973518</td><td>0.20 CNH</td><td><span class="status-success"></span></td><td>2026-07-01 15:49:33</td><td><a href="#" data-action="view">查看</a></td></tr>
+                <tr><td>20260701154851</td><td>12 USD</td><td>81.33 CNH</td><td>6.77743</td><td>0.03 USD</td><td><span class="status-success"></span></td><td>2026-07-01 15:48:51</td><td><a href="#" data-action="view">查看</a></td></tr>
+                <tr><td>20260518181003</td><td>29.77 EUR</td><td>34.25 USD</td><td>1.15048395</td><td>0.06 EUR</td><td><span class="status-success"></span></td><td>2026-05-18 18:10:03</td><td><a href="#" data-action="view">查看</a></td></tr>
+                <tr><td>20260305182147</td><td>90.43 CNH</td><td>10 CHF</td><td>0.1105809993</td><td>0.18 CNH</td><td><span class="status-success"></span></td><td>2026-03-05 18:21:47</td><td><a href="#" data-action="view">查看</a></td></tr>
+                <tr><td>20260303181551</td><td>1,000 NGN</td><td>0.71 USD</td><td>0.0007147313</td><td>2 NGN</td><td><span class="status-success"></span></td><td>2026-03-03 18:15:51</td><td><a href="#" data-action="view">查看</a></td></tr>
                 <tr><td>20260228104420</td><td>500 USDT</td><td>3,592.50 CNH</td><td>7.185</td><td>1 USDT</td><td><span class="status-failed">换汇失败</span></td><td>2026-02-28 10:44:20</td><td><a href="#" data-action="view">查看</a></td></tr>
               </tbody>
             </table>
@@ -4298,7 +4485,7 @@
                 </div>
               </div>
               <div class="accept-rate-line">
-                <button class="switch-btn" data-action="switch-conversion">⇆</button>
+                <button class="switch-btn" data-action="switch-conversion">⇅</button>
                 <div class="accept-rate-meta">
                   <span>参考汇率&nbsp;&nbsp;1 USDT = -- CNH</span>
                   <span data-accept-fee>手续费&nbsp;&nbsp;0.20% · 约 0 USDT</span>
@@ -4336,38 +4523,56 @@
         </div>`;
     }
 
+    function realtimeFxForm(tabsMarkup) {
+      const fiatOptions = [
+        ['USD','🇺🇸'],['CNH','🇨🇳'],['VND','🇻🇳'],['HKD','🇭🇰'],['EUR','🇪🇺'],['SGD','🇸🇬']
+      ];
+      const currencyMenu = active => fiatOptions.map(([code, icon]) => `<button class="accept-currency-option ${code === active ? 'active' : ''}" type="button" data-accept-currency-option="${code}"><span class="accept-currency-logo flag">${icon}</span>${code}</button>`).join('');
+      return `
+        <div class="span-12">${tabsMarkup}</div>
+        <div class="exchange-workspace">
+          <div class="card asset-form">
+            <p class="accept-exchange-note">选择卖出和买入法币，输入任一侧金额即可实时试算；报价会随市场变化并在倒计时结束后刷新。</p>
+            <h3>实时换汇</h3>
+            <div class="accept-exchange-widget">
+              <div class="accept-row" data-accept-row="sell">
+                <div class="accept-label">卖出</div>
+                <div class="accept-amount-control">
+                  <div class="accept-currency-select" data-accept-currency-select data-value="USD">
+                    <button class="accept-currency-trigger" type="button" data-accept-currency-trigger><span class="accept-currency-logo flag">🇺🇸</span><span data-accept-currency-label>USD</span></button>
+                    <div class="accept-currency-menu">${currencyMenu('USD')}</div>
+                  </div>
+                  <input placeholder="请输入卖出金额" inputmode="decimal">
+                  <span class="accept-currency-unit">USD</span>
+                </div>
+                <div class="accept-balance-line"><button data-action="maximum">全部卖出</button><span>可用余额&nbsp;&nbsp;<b>145.29 USD</b></span></div>
+              </div>
+              <div class="accept-rate-line">
+                <button class="switch-btn" data-action="switch-conversion">⇅</button>
+                <div class="accept-rate-meta"><span>参考汇率&nbsp;&nbsp;1 USD = -- CNH</span><span data-accept-fee>手续费&nbsp;&nbsp;0.20% · 约 0 USD</span><span class="countdown-pill">0s</span></div>
+              </div>
+              <div class="accept-row" data-accept-row="buy">
+                <div class="accept-label">买入</div>
+                <div class="accept-amount-control">
+                  <div class="accept-currency-select" data-accept-currency-select data-value="CNH">
+                    <button class="accept-currency-trigger" type="button" data-accept-currency-trigger><span class="accept-currency-logo flag">🇨🇳</span><span data-accept-currency-label>CNH</span></button>
+                    <div class="accept-currency-menu">${currencyMenu('CNH')}</div>
+                  </div>
+                  <input placeholder="您可以输入买入金额" inputmode="decimal">
+                  <span class="accept-currency-unit">CNH</span>
+                </div>
+              </div>
+              <button class="review-btn" data-action="convert">确认换汇</button>
+            </div>
+          </div>
+          <aside class="exchange-help-card"><h3>实时换汇</h3><ul><li>支持已开通法币账户之间的实时换汇。</li><li>汇率随市场条件变化，以确认时锁定报价为准。</li><li>手续费从卖出货币中扣除，预计买入金额实时更新。</li></ul></aside>
+        </div>`;
+    }
+
     function exchangeBody(tab) {
       if (tab === 'realtime') return exchangeBody('fiatCryptoAccept');
       if (tab === 'orders') return exchangeBody('fxOrder');
-      if (tab === 'fxConversion') return `
-        <div class="span-12">${exchangeTabs('realtime', tab)}</div>
-        <div class="card asset-form span-12">
-          <h3>实时换汇</h3>
-          <div class="exchange-widget">
-            <div class="exchange-box">
-              <div class="exchange-head">
-                <span>卖出</span>
-                <span class="exchange-available">可用余额：<u>132,440.24 USDT</u><button data-action="maximum">全部</button></span>
-              </div>
-              <div class="exchange-main">
-                <div class="exchange-field"><label>卖出币种</label><select><option>USDT</option><option>USDC</option><option>USD</option><option>HKD</option><option>VND</option><option>EUR</option><option>SGD</option></select></div>
-                <div class="exchange-field"><label>卖出金额</label><input value="0.000000" inputmode="decimal"></div>
-              </div>
-            </div>
-            <div class="exchange-rate-line">
-              <span>参考汇率：1 USDT = -- CNH</span>
-              <button class="switch-btn" data-action="switch-conversion">⇅</button>
-            </div>
-            <div class="exchange-box">
-              <div class="exchange-head"><span>买入</span></div>
-              <div class="exchange-main">
-                <div class="exchange-field"><label>买入币种</label><select><option>CNH</option><option>VND</option><option>HKD</option><option>USD</option><option>EUR</option><option>SGD</option></select></div>
-                <div class="exchange-field"><label>预计到账金额</label><input value="0" inputmode="decimal"></div>
-              </div>
-            </div>
-            <button class="review-btn" data-action="convert">确认换汇</button>
-          </div>
-        </div>`;
+      if (tab === 'fxConversion') return realtimeFxForm(exchangeTabs('realtime', tab));
       if (tab === 'fiatCryptoAccept') return fiatCryptoAcceptForm(exchangeTabs('realtime', tab));
       if (tab === 'conversionRecords') return conversionRecordList(exchangeTabs('realtime', tab));
       if (['fxOrder', 'acceptOrder', 'orderRecords'].includes(tab)) {
@@ -4383,26 +4588,72 @@
     }
 
     function directoryBody(tab) {
-      const normalized = tab === 'beneficiary' ? 'beneficiaryAddress' : (tab === 'remitter' ? 'remitterAddress' : tab);
-      const isBeneficiary = normalized.startsWith('beneficiary');
+      const normalized = tab === 'beneficiary' ? 'beneficiaryAddress' : tab;
+      const isAddAddress = normalized === 'addBeneficiaryAddress';
+      const isAddAccount = normalized === 'addBeneficiaryAccount';
+      const isAddressSuccess = normalized === 'beneficiaryAddressSuccess';
+      const isAccountSuccess = normalized === 'beneficiaryAccountSuccess';
+      if (isAddressSuccess || isAccountSuccess) {
+        const listTab = isAddressSuccess ? 'beneficiaryAddress' : 'beneficiaryAccount';
+        const addTab = isAddressSuccess ? 'addBeneficiaryAddress' : 'addBeneficiaryAccount';
+        return `
+          <div class="directory-success-page">
+            <div class="card directory-success-card">
+              <div class="directory-success-icon">✓</div>
+              <h3>添加申请已提交</h3>
+              <p>添加成功，请到列表查看添加状态。添加成功后可正常提现/付款。</p>
+              <div class="directory-success-actions">
+                <button class="btn primary" data-nav-page="directory" data-nav-tab="${listTab}">查看列表</button>
+                <button class="btn ghost" data-nav-page="directory" data-nav-tab="${addTab}">继续新增</button>
+              </div>
+            </div>
+          </div>`;
+      }
+      if (isAddAddress || isAddAccount) {
+        const listTab = isAddAddress ? 'beneficiaryAddress' : 'beneficiaryAccount';
+        const successTab = isAddAddress ? 'beneficiaryAddressSuccess' : 'beneficiaryAccountSuccess';
+        return `
+          <div class="directory-add-page">
+            <div class="card directory-add-card">
+              <h3>${isAddAddress ? '新增对手方地址' : '新增对手方账户'}</h3>
+              <p>${isAddAddress ? '填写收款地址信息，提交后系统将进行地址验证。' : '填写收款银行账户信息，提交后系统将进行账户审核。'}</p>
+              <div class="form-grid">
+                ${isAddAddress ? `
+                  <div class="field"><label>地址别名</label><input placeholder="请输入便于识别的名称"></div>
+                  <div class="field"><label>网络</label><select><option value="">请选择网络</option><option>ERC-20</option><option>TRC-20</option></select></div>
+                  <div class="field"><label>币种</label><select><option value="">请选择币种</option><option>USDT</option><option>USDC</option></select></div>
+                  <div class="field"><label>通用地址</label><select><option>是</option><option>否</option></select></div>
+                  <div class="field full"><label>地址</label><input placeholder="请输入完整链上地址"></div>
+                ` : `
+                  <div class="field"><label>收款人姓名</label><input placeholder="请输入银行账户持有人姓名"></div>
+                  <div class="field"><label>国家/地区</label><select><option value="">请选择国家/地区</option><option>United States</option><option>Singapore</option><option>Hong Kong SAR</option></select></div>
+                  <div class="field"><label>银行名称</label><input placeholder="请输入银行名称"></div>
+                  <div class="field"><label>SWIFT/BIC 编码</label><input placeholder="请输入 SWIFT/BIC 编码"></div>
+                  <div class="field"><label>账号编号</label><input placeholder="请输入银行账号"></div>
+                  <div class="field"><label>账户币种</label><select><option value="">请选择币种</option><option>USD</option><option>EUR</option><option>SGD</option><option>HKD</option></select></div>
+                `}
+              </div>
+              <div class="directory-add-note">提交后请到列表查看验证或审核状态。状态通过后，该地址或账户才可用于正常提现/付款。</div>
+              <div class="directory-add-actions">
+                <button class="btn ghost" data-nav-page="directory" data-nav-tab="${listTab}">取消</button>
+                <button class="btn primary" data-nav-page="directory" data-nav-tab="${successTab}">提交</button>
+              </div>
+            </div>
+          </div>`;
+      }
       const isAddress = normalized.endsWith('Address');
-      const type = isBeneficiary ? 'beneficiary' : 'remitter';
-      const title = isBeneficiary ? '收款人管理' : '汇款人管理';
-      const desc = isBeneficiary ? '管理您的收款地址和银行账户' : '管理付款方的汇款地址和银行账户';
-      const addressLabel = isBeneficiary ? '新增收款地址' : '新增汇款地址';
-      const accountLabel = isBeneficiary ? '新增银行账户' : '新增汇款银行账户';
-      const tabsMarkup = directoryTabs(type, normalized);
+      const title = isAddress ? '地址簿' : '银行账户';
+      const desc = isAddress ? '管理收款人的数币地址、网络与验证状态' : '管理收款人的银行账户与审核状态';
       const actionButtons = `
         <div class="directory-actions">
-          <button class="btn ghost" data-action="add-counterparty">＋ ${addressLabel}</button>
-          <button class="btn primary" data-action="add-bank-account">＋ ${accountLabel}</button>
+          <button class="btn primary" data-nav-page="directory" data-nav-tab="${isAddress ? 'addBeneficiaryAddress' : 'addBeneficiaryAccount'}">＋ 新增</button>
         </div>`;
       const addressFilter = `
         <div class="records-filter directory-filter address">
-          <div class="field"><label>别名</label><input placeholder="搜索别名"></div>
+          <div class="field"><label>币种</label><select><option>全部</option><option>USDT</option><option>USDC</option></select></div>
+          <div class="field"><label>网络</label><select><option>全部</option><option>ERC-20</option><option>TRC-20</option></select></div>
           <div class="field"><label>状态</label><select><option>全部</option><option>已验证</option><option>待验证</option><option>已停用</option></select></div>
-          <div class="field"><label>&nbsp;</label><input></div>
-          <div class="field"><label>&nbsp;</label><input></div>
+          <div class="field"><label>别名 / 地址</label><input placeholder="请输入别名或地址"></div>
           <button class="btn ghost" data-action="reset-filter">重置</button>
           <button class="btn primary" data-action="query">查询</button>
         </div>`;
@@ -4410,50 +4661,60 @@
         <div class="records-filter directory-filter">
           <div class="field"><label>状态</label><select><option>全部</option><option>已激活</option><option>已停用</option></select></div>
           <div class="field"><label>审核状态</label><select><option>全部</option><option>审核通过</option><option>审核中</option><option>审核失败</option></select></div>
-          <div class="field"><label>${isBeneficiary ? '收款人名称' : '汇款人名称'}</label><input placeholder="请输入${isBeneficiary ? '收款人' : '汇款人'}名称"></div>
+          <div class="field"><label>收款人姓名</label><input placeholder="请输入收款人姓名"></div>
           <div class="field"><label>账户号</label><input placeholder="请输入账户号"></div>
           <button class="btn ghost" data-action="reset-filter">重置</button>
           <button class="btn primary" data-action="query">查询</button>
         </div>`;
-      const addressRows = isBeneficiary ? `
+      const addressRows = `
         <tr>
-          <td>Kevin Default</td>
+          <td>Kevin Metamask</td>
           <td><span class="token-tag">ERC-20</span></td>
           <td><span class="yes-tag">是</span></td>
-          <td><span class="token-tag">USDT</span><span class="token-tag">USDC</span></td>
-          <td>0xC9Cd8e...457F2A <span class="copy-mini">⧉</span></td>
-          <td>2026-05-21 16:36:51</td>
+          <td>--</td>
+          <td>0x9f00...DF3A <span class="copy-mini">⧉</span></td>
+          <td>2025-12-24 17:37:26</td>
           <td><span class="verified-tag">已验证</span></td>
-          <td><a href="#" class="danger-link" data-action="delete">删除</a></td>
-        </tr>` : `
+          <td><a href="#" data-action="edit">编辑</a><a href="#" class="danger-link" data-action="delete">删除</a></td>
+        </tr>
         <tr>
-          <td>Buyer Treasury</td>
+          <td>ETH 无效地址验证</td>
+          <td><span class="token-tag">ERC-20</span></td>
+          <td><span class="status-failed">否</span></td>
+          <td><span class="token-tag">USDT</span></td>
+          <td>0x0d1d...7dcf1 <span class="copy-mini">⧉</span></td>
+          <td>2025-12-23 19:21:50</td>
+          <td><span class="status-failed">已拒绝</span></td>
+          <td><a href="#" data-action="edit">编辑</a><a href="#" class="danger-link" data-action="delete">删除</a></td>
+        </tr>
+        <tr>
+          <td>USDT Treasury</td>
           <td><span class="token-tag">TRC-20</span></td>
           <td><span class="yes-tag">是</span></td>
           <td><span class="token-tag">USDT</span></td>
           <td>TRX9...8c21 <span class="copy-mini">⧉</span></td>
           <td>2026-07-08 09:26:18</td>
           <td><span class="verified-tag">已验证</span></td>
-          <td><a href="#" class="danger-link" data-action="delete">删除</a></td>
+          <td><a href="#" data-action="edit">编辑</a><a href="#" class="danger-link" data-action="delete">删除</a></td>
         </tr>`;
-      const accountRows = isBeneficiary ? `
+      const accountRows = `
         <tr>
           <td>62818018665736</td>
-          <td>【Test】Mars</td>
-          <td>SWIFT</td>
-          <td>2026-05-21 16:42:18</td>
-          <td><span class="verified-tag">已激活</span></td>
+          <td>Kevin Xiong</td>
+          <td>🇺🇸 IPLK8888</td>
+          <td>2025-06-12 20:59:56</td>
+          <td><span class="verified-tag">已验证</span></td>
           <td><span class="verified-tag">审核通过</span></td>
-          <td><a href="#" data-action="view">详情</a><a href="#" class="danger-link" data-action="delete">删除</a></td>
-        </tr>` : `
+          <td><a href="#" data-action="view">详情</a><a href="#" class="edit-link" data-action="edit">编辑</a></td>
+        </tr>
         <tr>
-          <td>HK-VA-8821001</td>
-          <td>Amazon Settlement</td>
-          <td>FPS</td>
-          <td>2026-07-05 14:20:11</td>
-          <td><span class="verified-tag">已激活</span></td>
-          <td><span class="verified-tag">审核通过</span></td>
-          <td><a href="#" data-action="view">详情</a><a href="#" class="danger-link" data-action="delete">删除</a></td>
+          <td>0276002910</td>
+          <td>Logistics Partner</td>
+          <td>🇸🇬 DBSSSGSG</td>
+          <td>2026-07-08 11:20:31</td>
+          <td><span class="verified-tag">已验证</span></td>
+          <td><span class="status-warning">审核中</span></td>
+          <td><a href="#" data-action="view">详情</a><a href="#" class="edit-link" data-action="edit">编辑</a></td>
         </tr>`;
       return `
         <div class="directory-page">
@@ -4461,16 +4722,15 @@
             <div><h3>${title}</h3><p>${desc}</p></div>
             ${actionButtons}
           </div>
-          ${tabsMarkup}
           ${isAddress ? addressFilter : accountFilter}
           <div class="records-table-card">
             <table class="table records-table directory-table">
               ${isAddress
-                ? `<thead><tr><th>别名</th><th>网络</th><th>通用地址</th><th>支持币种</th><th>地址</th><th>创建时间</th><th>状态</th><th>操作</th></tr></thead><tbody>${addressRows}</tbody>`
-                : `<thead><tr><th>账户号</th><th>${isBeneficiary ? '收款人名称' : '汇款人名称'}</th><th>银行 Swift/BIC 代码</th><th>更新时间</th><th>状态</th><th>审核状态</th><th>操作</th></tr></thead><tbody>${accountRows}</tbody>`}
+                ? `<thead><tr><th>别名</th><th>网络</th><th>通用地址</th><th>币种</th><th>地址</th><th>添加时间</th><th>状态</th><th>操作</th></tr></thead><tbody>${addressRows}</tbody>`
+                : `<thead><tr><th>账号编号</th><th>收款人姓名</th><th>银行 SWIFT/BIC 编码</th><th>更新时间</th><th>状态</th><th>审核状态</th><th>操作</th></tr></thead><tbody>${accountRows}</tbody>`}
             </table>
             <div class="records-pagination">
-              <span>共 ${isAddress ? 2 : 1} 条</span>
+              <span>共 ${isAddress ? 3 : 2} 条</span>
               <span class="page-select">10条/页⌄</span>
               <span>‹</span>
               <span class="current-page">1</span>
@@ -4517,12 +4777,12 @@
           </div>
           <div class="side-card-stack">
             ${assetNotice('cryptoDeposit')}
-            ${sideShortcut({
+            <div class="hidden" aria-hidden="true">${sideShortcut({
               title: '地址管理',
               desc: '管理已验证的汇款人地址，充值前可先完成地址登记与验证。',
               button: '地址管理',
               tab: 'remitter'
-            })}
+            })}</div>
           </div>
         </div>`;
       if (tab === 'fiatDeposit') return `
@@ -4545,9 +4805,9 @@
           <div class="side-card-stack">
             ${assetNotice('fiatDeposit')}
             ${sideShortcut({
-              title: '充值/收款账户管理',
+              title: '收款工具管理',
               desc: '管理法币充值和收款账户，查看账户状态、支持币种和收款信息。',
-              button: '充值/收款账户管理',
+              button: '收款工具管理',
               tab: 'bankTools'
             }).replace('data-nav-page="directory"', 'data-nav-page="collection"')}
           </div>
@@ -4557,7 +4817,7 @@
           ${assetTabs('deposit', tab)}
           <div class="records-filter">
             <div class="field"><label>交易 ID</label><input placeholder="按交易 ID 搜索"></div>
-            <div class="field"><label>订单状态</label><select><option>全部</option><option>处理成功</option><option>处理中</option><option>失败</option></select></div>
+            <div class="field"><label>订单状态</label><select><option>全部</option><option>成功</option><option>处理中</option><option>失败</option></select></div>
             <div class="field"><label>开始日期</label><input placeholder="▦  开始日期"></div>
             <div class="field"><label>结束日期</label><input placeholder="▦  结束日期"></div>
             <button class="btn ghost" data-action="reset-filter">重置</button>
@@ -4575,7 +4835,7 @@
                   <td><span class="asset-network-stack"><span class="currency-main">USDT</span><span class="network-tag">TRC-20</span></span></td>
                   <td><span class="amount-green">2,850.000000</span></td>
                   <td>-</td>
-                  <td><span class="status-success">处理成功</span></td>
+                  <td><span class="status-success">成功</span></td>
                   <td><a href="#" data-action="view">查看</a></td>
                 </tr>
                 <tr>
@@ -4595,7 +4855,7 @@
                   <td><span class="asset-network-stack"><span class="currency-main">USDT</span><span class="network-tag">ERC-20</span></span></td>
                   <td><span class="amount-green">0.35</span></td>
                   <td>-</td>
-                  <td><span class="status-success">处理成功</span></td>
+                  <td><span class="status-success">成功</span></td>
                   <td><a href="#" data-action="view">查看</a></td>
                 </tr>
                 <tr>
@@ -4746,7 +5006,7 @@
           ${assetTabs('withdraw', tab)}
           <div class="records-filter">
             <div class="field"><label>交易 ID</label><input placeholder="按交易 ID 搜索"></div>
-            <div class="field"><label>订单状态</label><select><option>全部</option><option>处理中</option><option>处理成功</option><option>失败</option></select></div>
+            <div class="field"><label>订单状态</label><select><option>全部</option><option>处理中</option><option>成功</option><option>失败</option></select></div>
             <div class="field"><label>开始日期</label><input placeholder="▦  开始日期"></div>
             <div class="field"><label>结束日期</label><input placeholder="▦  结束日期"></div>
             <button class="btn ghost" data-action="reset-filter">重置</button>
@@ -4774,7 +5034,7 @@
                   <td>USD</td>
                   <td><span class="amount-green">6,200.00</span></td>
                   <td>12 USD</td>
-                  <td><span class="status-success">处理成功</span></td>
+                  <td><span class="status-success">成功</span></td>
                   <td><a href="#" data-action="view">查看</a></td>
                 </tr>
                 <tr>
@@ -4784,7 +5044,7 @@
                   <td><span class="asset-network-stack"><span class="currency-main">USDC</span><span class="network-tag">ERC-20</span></span></td>
                   <td><span class="amount-green">350.000000</span></td>
                   <td>0.8 USDC</td>
-                  <td><span class="status-success">处理成功</span></td>
+                  <td><span class="status-success">成功</span></td>
                   <td><a href="#" data-action="view">查看</a></td>
                 </tr>
                 <tr>
@@ -4804,7 +5064,7 @@
                   <td><span class="asset-network-stack"><span class="currency-main">USDT</span><span class="network-tag">ERC-20</span></span></td>
                   <td><span class="amount-green">0.350000</span></td>
                   <td>12 USDT</td>
-                  <td><span class="status-success">处理成功</span></td>
+                  <td><span class="status-success">成功</span></td>
                   <td><a href="#" data-action="view">查看</a></td>
                 </tr>
               </tbody>
@@ -4887,7 +5147,7 @@
         </div>`;
       return `
         <div class="asset-list-page">
-          <div class="span-12"><h3 class="asset-list-title">我的资产</h3></div>
+          <div class="span-12"><h3 class="asset-list-title">资产</h3></div>
           <div class="asset-section-title crypto">数币余额</div>
           ${cryptoAssets.map(cryptoCard).join('')}
           <div class="asset-section-title">法币余额</div>
@@ -4896,29 +5156,17 @@
     }
 
     function collectionBody(tab) {
-      if (tab === 'tools') return collectionBody('bankTools');
-      if (tab === 'bankTools') return `
+      if (tab === 'tools' || tab === 'bankTools') return collectionBody('sameNameTools');
+      if (tab === 'sameNameTools' || tab === 'referenceTools') return `
         <div class="collection-tools-page">
           <h3>收款工具</h3>
           <div class="collection-tool-card">
             ${collectionToolTabs(tab)}
-            <div class="collection-tool-filter">
-              <label>状态</label><select><option>请选择</option><option>可用</option><option>开通中</option></select>
-              <label>币种</label><select><option>请选择</option><option>USD</option><option>HKD</option><option>EUR</option><option>CNH</option></select>
-              <span></span>
-              <button class="btn ghost" data-action="reset-filter">重置</button>
-              <button class="btn primary" data-action="query">查询</button>
-            </div>
+            ${tab === 'sameNameTools' ? `
             <div class="collection-tool-toolbar">
-              <button class="tool-icon-btn" data-action="refresh">⟳</button>
-              <div class="view-switch" data-view-switch="bank-tools">
-                <button class="view-btn active" data-view-target="list">☷</button>
-                <button class="view-btn" data-view-target="card">▦</button>
-              </div>
-              <button class="btn primary" data-action="add-bank-account">＋申请VA</button>
-              <button class="btn ghost" data-action="view">▣ 申请记录</button>
-            </div>
-            <div data-view-panel="bank-tools-list">
+              <button class="btn primary" data-action="apply-same-name">＋申请同名账户</button>
+            </div>` : ''}
+            <div data-view-panel="bank-tools-list" class="hidden" aria-hidden="true">
               <table class="table collection-tool-table">
                 <thead><tr><th>账户号码</th><th>账户名称</th><th>银行名称</th><th>SWIFT代码</th><th>国家</th><th>币种</th><th>状态</th><th>操作</th></tr></thead>
               </table>
@@ -4932,18 +5180,29 @@
                 <span>共 0 条</span><span>‹</span><span class="current-page">1</span><span>›</span><span class="page-select">10条/页⌄</span><span>前往</span><span class="page-input">1</span><span>页</span>
               </div>
             </div>
-            <div data-view-panel="bank-tools-card" class="account-list hidden">
-              <div class="receiving-account-card active">
-                <span class="account-radio"></span>
-                <div class="account-card-head"><div class="account-card-title">中国香港 · 全球收款账户 | 华侨银行(香港)有限公司</div><div class="bank-logo">OCBC</div></div>
-                <div class="account-tags"><span class="account-tag">多币种</span><span class="account-tag warning">不支持 ATM，不支持支票，不支持现金存入</span><span class="pill green">可用</span></div>
-                <div class="account-detail-grid">
-                  <div class="label">收款账户名称</div><div><div class="readonly-account">Lotus Global Trade Co., Ltd.</div></div>
-                  <div class="label">账号 / VA</div><div>VA **** 1028</div>
-                  <div class="label">支持收款币种</div><div class="currency-chips"><span class="currency-chip">🇪🇺 EUR</span><span class="currency-chip">🇨🇳 CNH</span><span class="currency-chip">🇭🇰 HKD</span><span class="currency-chip">🇺🇸 USD</span></div>
-                  <div class="label">支持收款方式</div><div>SWIFT(电汇/TT) 和中国香港 CHATS / IFT / FPS 收款</div>
-                </div>
-              </div>
+            <div data-view-panel="bank-tools-card" class="bank-tool-grid">
+              <article class="bank-tool-card ${tab === 'referenceTools' ? '' : 'hidden'}" role="button" tabindex="0" data-deposit-account="bankingcircle" aria-label="查看 Banking Circle 账户详情">
+                <div class="bank-tool-card-head"><div class="bank-tool-identity"><div class="bank-tool-logo">BC</div><div class="bank-tool-name">BANKING CIRCLE DENMARK</div></div><span class="bank-tool-status">可用</span></div>
+                <div class="bank-tool-account"><span class="bank-tool-account-label">账号</span><span class="bank-tool-number">**** **** **** 1291</span></div>
+                <div class="bank-tool-meta"><div class="bank-tool-meta-row"><span class="bank-tool-meta-icon">●</span>EU · 全球收款账户</div><div class="bank-tool-meta-row"><span class="bank-tool-meta-icon">✓</span>货物贸易收款 · T+1–T+0</div></div>
+                <div class="bank-tool-currencies"><span class="bank-tool-currency">EUR</span><span class="bank-tool-currency">USD</span><span class="bank-tool-currency">GBP</span><span class="bank-tool-currency">JPY</span><span class="bank-tool-currency">CAD</span></div>
+              </article>
+              <article class="bank-tool-card ${tab === 'referenceTools' ? '' : 'hidden'}" role="button" tabindex="0" data-deposit-account="sgb" aria-label="查看 SGB 账户详情">
+                <div class="bank-tool-card-head"><div class="bank-tool-identity"><div class="bank-tool-logo sgb">sgb</div><div class="bank-tool-name">SGB · SAIGON BANK</div></div><span class="bank-tool-status">可用</span></div>
+                <div class="bank-tool-account"><span class="bank-tool-account-label">账号</span><span class="bank-tool-number">**** **** **** 8319</span></div>
+                <div class="bank-tool-meta"><div class="bank-tool-meta-row"><span class="bank-tool-meta-icon">●</span>VN · 本地收款账户</div><div class="bank-tool-meta-row"><span class="bank-tool-meta-icon">✓</span>货物贸易收款 · T+1–T+0</div></div>
+                <div class="bank-tool-currencies"><span class="bank-tool-currency">VND</span><span class="bank-tool-currency">USD</span></div>
+              </article>
+              <article class="bank-tool-card ${tab === 'sameNameTools' ? '' : 'hidden'}" role="button" tabindex="0" data-deposit-account="dbs" aria-label="查看 DBS 账户详情">
+                <div class="bank-tool-card-head"><div class="bank-tool-identity"><div class="bank-tool-logo dbs">DBS</div><div class="bank-tool-name">DBS BANK LTD</div></div><span class="bank-tool-status pending">开通中</span></div>
+                <div class="bank-tool-meta"><div class="bank-tool-meta-row"><span class="bank-tool-meta-icon">●</span>SG · 全球收款账户</div><div class="bank-tool-meta-row"><span class="bank-tool-meta-icon">✓</span>货物贸易收款 · T+1–T+0</div></div>
+                <div class="bank-tool-currencies"><span class="bank-tool-currency">SGD</span><span class="bank-tool-currency">USD</span></div>
+              </article>
+              <article class="bank-tool-card ${tab === 'sameNameTools' ? '' : 'hidden'}" role="button" tabindex="0" data-deposit-account="ocbc" aria-label="查看 OCBC 账户详情">
+                <div class="bank-tool-card-head"><div class="bank-tool-identity"><div class="bank-tool-logo ocbc">OCBC</div><div class="bank-tool-name">OCBC BANK (MALAYSIA) BERHAD</div></div><span class="bank-tool-status pending">开通中</span></div>
+                <div class="bank-tool-meta"><div class="bank-tool-meta-row"><span class="bank-tool-meta-icon">●</span>MY · 本地收款账户</div><div class="bank-tool-meta-row"><span class="bank-tool-meta-icon">✓</span>货物贸易收款 · T+1–T+0</div></div>
+                <div class="bank-tool-currencies"><span class="bank-tool-currency">MYR</span></div>
+              </article>
             </div>
           </div>
         </div>`;
@@ -5046,7 +5305,7 @@
     }
 
     function payoutBody(tab) {
-      if (tab === 'balancePayment') return payoutBody('cryptoBalance');
+      if (tab === 'balancePayment') return payoutBody('fiatBalance');
       if (tab === 'cryptoBalance') return renderTransferForm('payment', 'crypto', tab);
       if (tab === 'fiatBalance') return renderTransferForm('payment', 'fiat', tab);
       if (tab === 'payoutCreate') return `
@@ -5299,9 +5558,24 @@
         USDC: '0.00',
         USD: '145.29',
         CNH: '722.95',
-        VND: '18,500,000'
+        VND: '18,500,000',
+        HKD: '120,600.00',
+        EUR: '8,420.55',
+        SGD: '12,680.20'
       };
+      const rates = { 'USD/CNH': 7.18, 'USD/VND': 26150, 'USD/HKD': 7.82, 'USD/EUR': .86, 'USD/SGD': 1.28, 'USDT/USD': 1, 'USDC/USD': 1 };
       const getCurrency = side => root.querySelector(`[data-accept-row="${side}"] [data-accept-currency-select]`)?.dataset.value || (side === 'sell' ? 'USDT' : 'USD');
+      const getRate = (sell, buy) => rates[`${sell}/${buy}`] || (rates[`${buy}/${sell}`] ? 1 / rates[`${buy}/${sell}`] : 1);
+      const setCurrency = (select, code) => {
+        const option = select?.querySelector(`[data-accept-currency-option="${code}"]`);
+        if (!select || !option) return;
+        select.dataset.value = code;
+        select.querySelector('[data-accept-currency-label]').textContent = code;
+        const logo = option.querySelector('.accept-currency-logo')?.cloneNode(true);
+        const triggerLogo = select.querySelector('.accept-currency-trigger .accept-currency-logo');
+        if (logo && triggerLogo) triggerLogo.replaceWith(logo);
+        select.querySelectorAll('[data-accept-currency-option]').forEach(item => item.classList.toggle('active', item === option));
+      };
       const update = () => {
         const sell = getCurrency('sell');
         const buy = getCurrency('buy');
@@ -5310,7 +5584,7 @@
         sellRow.querySelector('.accept-currency-unit').textContent = sell;
         buyRow.querySelector('.accept-currency-unit').textContent = buy;
         sellRow.querySelector('.accept-balance-line b').textContent = `${balances[sell] || '0.00'} ${sell}`;
-        root.querySelector('.accept-rate-meta span:first-child').textContent = `参考汇率  1 ${sell} = -- ${buy}`;
+        root.querySelector('.accept-rate-meta span:first-child').textContent = `参考汇率  1 ${sell} = ${getRate(sell,buy).toLocaleString('en-US',{maximumFractionDigits:8})} ${buy}`;
         root.querySelector('[data-accept-fee]').textContent = `手续费  0.20% · 约 0 ${sell}`;
       };
       root.querySelectorAll('[data-accept-currency-select]').forEach(select => {
@@ -5333,12 +5607,31 @@
             select.querySelectorAll('[data-accept-currency-option]').forEach(item => item.classList.toggle('active', item === option));
             select.classList.remove('open');
             update();
+            calculate(select.closest('[data-accept-row]')?.dataset.acceptRow === 'buy' ? 'buy' : 'sell');
           });
         });
       });
       document.addEventListener('click', () => {
         if (!root.isConnected) return;
         root.querySelectorAll('[data-accept-currency-select]').forEach(select => select.classList.remove('open'));
+      });
+      const sellInput = root.querySelector('[data-accept-row="sell"] input');
+      const buyInput = root.querySelector('[data-accept-row="buy"] input');
+      const calculate = source => {
+        const sell=getCurrency('sell'),buy=getCurrency('buy'),rate=getRate(sell,buy);
+        if(source==='buy') sellInput.value=((+buyInput.value||0)/rate).toFixed(2);
+        else buyInput.value=((+sellInput.value||0)*rate*.998).toFixed(2);
+        root.querySelector('[data-accept-fee]').textContent=`手续费  0.20% · 约 ${((+sellInput.value||0)*.002).toFixed(2)} ${sell}`;
+      };
+      sellInput?.addEventListener('input',()=>calculate('sell'));
+      buyInput?.addEventListener('input',()=>calculate('buy'));
+      root.querySelector('[data-action="switch-conversion"]')?.addEventListener('click',event=>{
+        event.preventDefault();
+        const sellSelect=root.querySelector('[data-accept-row="sell"] [data-accept-currency-select]'),buySelect=root.querySelector('[data-accept-row="buy"] [data-accept-currency-select]');
+        const sell=getCurrency('sell'),buy=getCurrency('buy');
+        setCurrency(sellSelect,buy);setCurrency(buySelect,sell);
+        const old=sellInput.value;sellInput.value=buyInput.value;buyInput.value=old;
+        update();calculate('sell');
       });
       update();
     }
@@ -5354,12 +5647,14 @@
 
       const render = () => {
         currencyButtons.forEach(button => button.classList.toggle('active', button.dataset.fiatDepositCurrency === currency));
-        const accounts = fiatDepositAccountCards.filter(account => account.currencies.includes(currency));
+        const accounts = fiatDepositAccountCards.filter(account => account.status === 'active' && account.currencies.includes(currency));
         if (!accounts.some(account => account.key === accountKey)) {
-          accountKey = accounts.find(account => account.status === 'active')?.key || accounts[0]?.key || accountKey;
+          accountKey = accounts[0]?.key || '';
         }
         if (list) {
-          list.innerHTML = accounts.map(account => renderFiatDepositAccountCard(account, account.key === accountKey)).join('');
+          list.innerHTML = accounts.length
+            ? accounts.map(account => renderFiatDepositAccountCard(account, account.key === accountKey)).join('')
+            : '<div class="empty">当前币种暂无已激活的充值账户</div>';
           list.querySelectorAll('[data-fiat-deposit-account]').forEach(button => {
             button.addEventListener('click', () => {
               accountKey = button.dataset.fiatDepositAccount;
@@ -5367,9 +5662,13 @@
             });
           });
         }
-        const meta = accounts.find(account => account.key === accountKey) || fiatDepositAccountCards.find(account => account.key === accountKey);
+        const meta = accounts.find(account => account.key === accountKey);
         const account = depositAccountDetails[accountKey];
-        if (!account || !detail) return;
+        if (!detail) return;
+        if (!account || !meta) {
+          detail.innerHTML = '<div class="empty">请选择其他币种，或等待充值账户激活后再使用。</div>';
+          return;
+        }
         detail.innerHTML = renderFiatDepositAccountDetail(account, currency, meta);
         detail.querySelector('[data-copy-fiat-deposit-detail]')?.addEventListener('click', () => copyDepositAccountInfo({
           rows: fiatDepositRows(account, currency)
@@ -5391,7 +5690,7 @@
       if (!overlay || !content) return;
 
       document.querySelectorAll('[data-deposit-account]').forEach(card => {
-        card.addEventListener('click', () => {
+        const openAccountDetail = () => {
           const account = depositAccountDetails[card.dataset.depositAccount];
           if (!account) return;
           content.innerHTML = renderDepositAccountDetail(account);
@@ -5401,6 +5700,12 @@
           if (copyButton) {
             copyButton.addEventListener('click', () => copyDepositAccountInfo(account));
           }
+        };
+        card.addEventListener('click', openAccountDetail);
+        card.addEventListener('keydown', event => {
+          if (event.key !== 'Enter' && event.key !== ' ') return;
+          event.preventDefault();
+          openAccountDetail();
         });
       });
 
@@ -5421,12 +5726,13 @@
         const targetType = root.dataset.transferTarget;
         const key = `${mode === 'withdraw' ? 'withdraw' : 'payment'}${rail === 'crypto' ? 'Crypto' : 'Fiat'}`;
         const recipients = (transferCatalog.recipients[key] || []).filter(item => item.type === targetType);
-        const currencies = transferCatalog.currencies.filter(item => ['USDT', 'USDC', 'USD', 'CNH', 'VND'].includes(item.code));
+        const currencies = transferCatalog.currencies;
         let recipientIndex = 0;
         let selectedNetwork = root.querySelector('[data-transfer-network].active')?.dataset.transferNetwork || 'TRC-20';
         const select = root.querySelector('[data-transfer-select]');
         const selectButton = root.querySelector('[data-transfer-select-button]');
         const currencySelect = root.querySelector('[data-transfer-currency-select]');
+        const moreCurrency = root.querySelector('[data-transfer-more-currency]');
         const searchInput = root.querySelector('[data-transfer-search]');
         const filterRow = root.querySelector('[data-transfer-filter-row]');
         const optionsList = root.querySelector('[data-transfer-options]');
@@ -5497,6 +5803,9 @@
           if (pobo) pobo.textContent = poboFee;
           const received = root.querySelector('[data-transfer-received]');
           if (received) received.textContent = `-- ${currency.code}`;
+          const amountUnit = root.querySelector('[data-transfer-amount-unit]');
+          if (amountUnit) amountUnit.textContent = currency.code;
+          root.querySelectorAll('[data-transfer-currency-chip]').forEach(btn => btn.classList.toggle('active', btn.dataset.transferCurrencyChip === currency.code));
         };
 
         selectButton?.addEventListener('click', () => {
@@ -5515,6 +5824,19 @@
           });
         });
         currencySelect?.addEventListener('change', updateCurrency);
+        root.querySelectorAll('[data-transfer-currency-chip]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            currencySelect.value = btn.dataset.transferCurrencyChip;
+            if (moreCurrency) moreCurrency.value = '';
+            updateCurrency();
+          });
+        });
+        moreCurrency?.addEventListener('change', () => {
+          if (!moreCurrency.value || !currencies.some(item => item.code === moreCurrency.value.toUpperCase())) return;
+          moreCurrency.value = moreCurrency.value.toUpperCase();
+          currencySelect.value = moreCurrency.value;
+          updateCurrency();
+        });
         root.querySelector('[data-payer-reference]')?.addEventListener('click', () => {
           root.querySelector('[data-payer-reference]')?.classList.toggle('selected');
         });
@@ -5876,18 +6198,19 @@
         'show-address': '已生成充币地址',
         'copy-address': '充币地址已复制',
         'fiat-deposit': '法币充值信息已提交',
+        'apply-same-name': '已打开同名账户申请',
         'create-deposit-account': '已打开创建充值帐户',
         'crypto-withdraw': '提币申请已提交，等待 KYT 与二次验证',
         'fiat-withdraw': '法币提现申请已提交',
         'reset-filter': '筛选条件已重置',
         query: '查询完成',
         view: '已打开订单详情',
+        edit: '已打开编辑页面',
         convert: '兑换试算已提交',
         acceptance: '兑换申请已提交',
         maximum: '已填入最大可用余额',
         'switch-conversion': '买卖方向已切换',
         download: '报表已生成',
-        'add-counterparty': '已打开新增交易对手方',
         import: '批量导入模板已准备',
         delete: '删除操作已提交',
         'create-va': '收款工具创建中',

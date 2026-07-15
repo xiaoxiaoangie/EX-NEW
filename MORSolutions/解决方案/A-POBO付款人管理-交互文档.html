@@ -1,0 +1,1287 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>A POBO 付款人管理交互文档</title>
+<style>:root{color-scheme:light dark;background:light-dark(rgb(255 255 255), rgb(24 24 24))}html,body{margin:0}body{box-sizing:border-box;padding:1rem;background:inherit}iframe{display:block;width:100%;max-width:1440px;height:calc(100vh - 2rem);margin:0 auto;border:0}</style>
+</head>
+<body>
+<iframe sandbox="allow-scripts" referrerpolicy="no-referrer" title="A Pobo Payer Flow" srcdoc="&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+&lt;meta name=&quot;referrer&quot; content=&quot;no-referrer&quot;&gt;
+&lt;meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src &#x27;none&#x27;; script-src &#x27;unsafe-inline&#x27; &#x27;unsafe-eval&#x27; &#x27;wasm-unsafe-eval&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src &#x27;unsafe-inline&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;none&#x27;&quot;&gt;
+&lt;title&gt;A Pobo Payer Flow&lt;/title&gt;
+&lt;style&gt;:root {
+  color-scheme: light dark;
+  background-color: var(--background) !important;
+
+  /* Agent-facing contract; keep in sync with SKILL.md. */
+  --background: light-dark(rgb(255 255 255), rgb(24 24 24));
+  --foreground: light-dark(rgb(26 28 31), rgb(255 255 255));
+  --card: color-mix(in oklab, var(--foreground) 5%, transparent);
+  --card-foreground: var(--foreground);
+  --popover: light-dark(rgb(255 255 255), rgb(45 45 45));
+  --popover-foreground: var(--foreground);
+  --primary: light-dark(rgb(51 156 255), rgb(131 195 255));
+  --primary-foreground: light-dark(rgb(255 255 255), rgb(13 13 13));
+  --secondary: light-dark(rgb(255 255 255 / 96%), rgb(54 54 54 / 96%));
+  --secondary-foreground: var(--foreground);
+  --muted: color-mix(in srgb, var(--foreground) 10%, transparent);
+  --muted-foreground: light-dark(
+    rgb(26 28 31 / 49.4%),
+    rgb(255 255 255 / 49.8%)
+  );
+  --accent: light-dark(rgb(229 242 255), rgb(13 39 63));
+  --accent-foreground: var(--primary);
+  --destructive: light-dark(rgb(226 85 7), rgb(255 133 73));
+  --border: light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%));
+  --input: light-dark(
+    rgb(26 28 31 / 11.8%),
+    color-mix(in oklab, rgb(0 0 0) 10%, transparent)
+  );
+  --ring: light-dark(rgb(51 156 255), rgb(131 195 255 / 76%));
+  --font-size-base: 14px;
+  --viz-series-1: var(--primary);
+  --viz-series-2: light-dark(rgb(243 136 59), rgb(245 154 86));
+  --viz-series-3: light-dark(rgb(93 201 119), rgb(116 213 139));
+  --viz-series-4: light-dark(rgb(235 119 177), rgb(240 143 192));
+  --viz-series-5: light-dark(rgb(155 121 236), rgb(170 145 239));
+  --viz-series-6: light-dark(rgb(58 185 177), rgb(90 203 194));
+
+  /* Internal implementation variables; not part of the agent contract. */
+  --font-sans: -apple-system, system-ui, &quot;Segoe UI&quot;, sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, &quot;SF Mono&quot;, Menlo, Consolas, &quot;Liberation Mono&quot;,
+    monospace;
+  --font-size-normal: max(11px, var(--font-size-base));
+  --font-size-tooltip: calc(var(--font-size-base) - 1px);
+  --font-size-small: max(11px, calc(var(--font-size-base) - 2px));
+  --font-size-h1: calc(var(--font-size-normal) * 1.7142857143);
+  --font-size-h2: calc(var(--font-size-normal) * 1.4285714286);
+  --font-size-h3: calc(var(--font-size-normal) * 1.2857142857);
+  --font-weight-normal: 430;
+  --font-weight-medium: 500;
+  --line-height-normal: calc(var(--font-size-normal) * 1.5);
+  --line-height-tooltip: calc(var(--font-size-tooltip) * 1.4285714286);
+  --line-height-small: calc(var(--font-size-small) + 4px);
+  --radius: 12.5px;
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-2xl: calc(var(--radius) * 1.6);
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 2px -1px rgb(0 0 0 / 8%);
+  --checkmark-image: url(&quot;data:image/svg+xml,%3Csvg xmlns=&#x27;http://www.w3.org/2000/svg&#x27; viewBox=&#x27;0 0 17 17&#x27;%3E%3Cpath d=&#x27;M12.8961 3.64101C13.1297 3.41418 13.4984 3.37523 13.7779 3.56581C14.0571 3.75635 14.1554 4.11331 14.0299 4.41347L13.9615 4.53847L7.71151 13.7045C7.59411 13.8767 7.4063 13.9877 7.19881 14.0072C6.99136 14.0267 6.78564 13.9533 6.63826 13.806L2.88826 10.056L2.79842 9.9457C2.6192 9.67407 2.64927 9.30496 2.88826 9.06581C3.12738 8.82669 3.49647 8.79676 3.76815 8.97597L3.8785 9.06581L7.03084 12.2182L12.8053 3.74941L12.8961 3.64101Z&#x27;/%3E%3C/svg%3E&quot;);
+
+  /* Legacy aliases; not part of the current agent contract. */
+  --viz-bg: transparent;
+  --viz-panel: var(--card);
+  --viz-border: var(--border);
+  --viz-text: var(--foreground);
+  --viz-muted: var(--muted-foreground);
+  --viz-accent: var(--primary);
+  --viz-accent-text: var(--primary-foreground);
+  --viz-accent-bg: var(--accent);
+  --viz-font-size: var(--font-size-base);
+  --viz-warning: var(--destructive);
+  --color-background-primary: var(--background);
+  --color-text-primary: var(--foreground);
+  --color-border-secondary: var(--border);
+}
+
+:root[data-theme=&quot;light&quot;] {
+  color-scheme: light;
+}
+
+:root[data-theme=&quot;dark&quot;] {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html &gt; body {
+  margin: 0;
+  padding: 5px;
+  color: var(--foreground);
+  background: transparent !important;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-normal);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+}
+
+a {
+  color: color-mix(in srgb, var(--viz-accent) 80%, var(--viz-text) 20%);
+  cursor: pointer;
+  font-weight: var(--viz-font-weight-medium);
+  text-decoration: none;
+  text-underline-offset: 2px;
+}
+
+a:is(:hover, :focus-visible) {
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 0.5px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin-block: 0;
+}
+
+h1 {
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h2 {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h3,
+h4,
+h5,
+h6 {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.3;
+}
+
+b,
+strong,
+th {
+  font-weight: var(--font-weight-medium);
+}
+
+code:not(pre code) {
+  display: inline;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  corner-shape: superellipse(1.5);
+  background: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  overflow-wrap: anywhere;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  word-break: break-word;
+}
+
+#widget {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 0;
+  background: transparent !important;
+}
+
+.card {
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  border-radius: var(--radius-2xl);
+  corner-shape: superellipse(1.5);
+  color: var(--card-foreground);
+  background: var(--card);
+}
+
+#widget &gt; :not(.card) {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 50;
+  top: 0;
+  left: 0;
+  width: max-content;
+  max-width: min(
+    20rem,
+    var(--tooltip-available-width, calc(100vw - 10px)),
+    calc(100vw - 10px)
+  );
+  max-height: min(
+    var(--tooltip-available-height, calc(100vh - 10px)),
+    calc(100vh - 10px)
+  );
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--popover-foreground);
+  background: var(--popover);
+  box-shadow: none;
+  font-size: var(--font-size-tooltip);
+  line-height: var(--line-height-tooltip);
+  overflow-wrap: break-word;
+  white-space: normal;
+  pointer-events: none;
+  user-select: none;
+}
+
+.viz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(max(180px, 24%), 1fr));
+  gap: 10px;
+}
+
+.viz-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.viz-stat-value {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+.viz-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.viz-badge {
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  color: var(--accent-foreground);
+  background: var(--accent);
+  font-weight: var(--font-weight-medium);
+}
+
+small,
+.text-small,
+.viz-badge {
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+}
+
+.text-muted {
+  color: var(--muted-foreground);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.viz-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.viz-controls &gt; .form-label {
+  display: grid;
+  min-width: min(100%, 260px);
+  flex: 1 1 280px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 2px 12px;
+  margin-bottom: 0;
+}
+
+.viz-controls &gt; .form-label &gt; :is(.form-control, .form-range, .form-select) {
+  grid-column: 1 / -1;
+}
+
+.btn,
+.form-check-input,
+.form-control,
+.form-range,
+.form-select {
+  font: inherit;
+}
+
+.btn {
+  appearance: button;
+  display: inline-flex;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0 8px;
+  -webkit-app-region: no-drag;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: var(--cursor-interaction, pointer);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.btn:is(.btn-block, .viz-tile) {
+  inline-size: 100%;
+}
+
+.btn.viz-tile {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+a.btn {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn-primary {
+  border-color: transparent;
+  color: var(--primary-foreground);
+  background: var(--foreground);
+  background-clip: padding-box;
+}
+
+.btn-primary .text-muted {
+  color: color-mix(in srgb, var(--primary-foreground) 50%, transparent);
+}
+
+.btn-primary:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 80%, transparent);
+  background-clip: padding-box;
+}
+
+.btn-ghost {
+  border-color: transparent;
+  color: var(--muted-foreground);
+  background: transparent;
+}
+
+.btn-ghost:not(:disabled):hover {
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+[data-lucide] {
+  stroke-width: 1.6;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--foreground);
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  padding: 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--foreground);
+  background: var(--secondary);
+}
+
+.form-control::placeholder {
+  color: var(--muted-foreground);
+}
+
+.form-control[type=&quot;file&quot;] {
+  padding: 0;
+  overflow: hidden;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control[type=&quot;file&quot;]::file-selector-button {
+  min-height: 26px;
+  margin-right: 8px;
+  padding: 0 8px;
+  border: 0;
+  border-right: 1px solid var(--input);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: inherit;
+  font: inherit;
+}
+
+.form-control[type=&quot;file&quot;]:not(:disabled):hover::file-selector-button {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-control-color[type=&quot;color&quot;] {
+  width: 40px;
+  height: 28px;
+  padding: 3px;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control-color[type=&quot;color&quot;]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.form-control-color[type=&quot;color&quot;]::-webkit-color-swatch {
+  border: 0;
+  border-radius: calc(var(--radius-lg) - 4px);
+  corner-shape: superellipse(1.5);
+}
+
+textarea.form-control {
+  height: auto;
+  min-height: 72px;
+  padding: 8px 10px;
+  resize: vertical;
+}
+
+.form-control:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-control:disabled,
+.form-select:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.form-select {
+  appearance: none;
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  margin: 0;
+  padding: 0 32px 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--foreground);
+  background-color: var(--secondary);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted-foreground) 50%),
+    linear-gradient(135deg, var(--muted-foreground) 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) 50%,
+    calc(100% - 10px) 50%;
+  background-repeat: no-repeat;
+  background-size: 4px 4px;
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-select:not(:disabled):hover {
+  background-color: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-select:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-check {
+  display: flex;
+  min-height: 20px;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-check-input {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  margin: 0;
+  border: 1px solid var(--input);
+  color: var(--primary-foreground);
+  background-color: transparent;
+  cursor: var(--cursor-interaction, default);
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    box-shadow 150ms;
+}
+
+.form-check:not(.form-switch) .form-check-input[type=&quot;checkbox&quot;] {
+  border-color: var(--input);
+  border-radius: var(--radius-sm);
+  corner-shape: superellipse(1.5);
+  background-color: var(--secondary);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input:not(:disabled):not(:checked):hover {
+  background-color: var(--card);
+}
+
+.form-check:not(.form-switch) .form-check-input[type=&quot;checkbox&quot;]:checked {
+  border-color: var(--primary);
+  background-color: var(--primary);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input[type=&quot;checkbox&quot;]:checked::before {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--primary-foreground);
+  content: &quot;&quot;;
+  mask: var(--checkmark-image) center / 12px 12px no-repeat;
+}
+
+.form-check-input[type=&quot;radio&quot;] {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+}
+
+.form-check-input[type=&quot;radio&quot;]:checked {
+  border: 2px solid var(--primary);
+  background:
+    radial-gradient(circle, var(--primary-foreground) 0 2.5px, transparent 3px),
+    var(--primary);
+}
+
+.form-check:not(.form-switch) .form-check-input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+}
+
+.form-switch .form-check-input:disabled,
+.form-switch .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.form-check-label {
+  color: var(--foreground);
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-switch .form-check-input {
+  position: relative;
+  width: 32px;
+  height: 20px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--muted);
+  box-shadow: none;
+  transition: background-color 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+  border: 1px solid light-dark(var(--primary-foreground), var(--foreground));
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+  box-shadow: var(--shadow-sm);
+  content: &quot;&quot;;
+  transform: translate(2px, -50%);
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input:checked {
+  background: var(--primary);
+}
+
+.form-switch .form-check-input:checked::before {
+  transform: translate(14px, -50%);
+}
+
+.form-switch .form-check-input:focus-visible {
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+.form-range {
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 28px;
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  border: 0;
+  accent-color: var(--primary);
+  background: linear-gradient(
+      color-mix(in srgb, var(--foreground) 7%, transparent),
+      color-mix(in srgb, var(--foreground) 7%, transparent)
+    )
+    center / 100% 2px no-repeat;
+}
+
+.form-range::-webkit-slider-runnable-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-webkit-slider-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range::-moz-range-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-moz-range-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.btn:not(.btn-primary, .viz-tile):is(
+    [aria-pressed=&quot;true&quot;],
+    [aria-selected=&quot;true&quot;],
+    .is-selected
+  ) {
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+  background: var(--primary);
+}
+
+.btn.viz-tile:is([aria-pressed=&quot;true&quot;], [aria-selected=&quot;true&quot;], .is-selected) {
+  border-color: var(--primary);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+#widget &gt; svg {
+  width: 100%;
+}
+
+.text-warning,
+.text-destructive {
+  color: var(--destructive);
+}
+
+html&gt;body{padding:0}&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;a-pobo-prototype&quot;&gt;
+  &lt;style&gt;
+    #a-pobo-prototype { color: var(--foreground); }
+    #a-pobo-prototype * { box-sizing: border-box; }
+    #a-pobo-prototype .shell { display: grid; grid-template-columns: 168px minmax(0, 1fr); gap: 20px; align-items: start; }
+    #a-pobo-prototype .side { display: grid; gap: 6px; }
+    #a-pobo-prototype .side .btn { justify-content: flex-start; width: 100%; }
+    #a-pobo-prototype .main { min-width: 0; display: grid; gap: 16px; }
+    #a-pobo-prototype .head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    #a-pobo-prototype .head-copy { display: grid; gap: 4px; }
+    #a-pobo-prototype .toolbar { display: grid; grid-template-columns: minmax(150px, 1fr) 150px 150px auto; gap: 8px; align-items: end; }
+    #a-pobo-prototype .table-wrap { width: 100%; overflow-x: auto; }
+    #a-pobo-prototype table { width: 100%; border-collapse: collapse; min-width: 760px; }
+    #a-pobo-prototype th, #a-pobo-prototype td { padding: 10px 8px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    #a-pobo-prototype th { color: var(--muted-foreground); font-weight: 500; }
+    #a-pobo-prototype .actions { display: flex; gap: 6px; flex-wrap: wrap; }
+    #a-pobo-prototype .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    #a-pobo-prototype .full { grid-column: 1 / -1; }
+    #a-pobo-prototype .radio-row { display: flex; gap: 14px; flex-wrap: wrap; }
+    #a-pobo-prototype .stepper { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    #a-pobo-prototype .step { padding: 9px 10px; border-bottom: 2px solid var(--border); color: var(--muted-foreground); }
+    #a-pobo-prototype .step.active { border-color: var(--primary); color: var(--foreground); font-weight: 500; }
+    #a-pobo-prototype .flow { display: grid; grid-template-columns: repeat(5, minmax(100px, 1fr)); gap: 8px; align-items: center; }
+    #a-pobo-prototype .flow-node { padding: 10px; background: color-mix(in srgb, var(--viz-series-1) 12%, transparent); text-align: center; min-height: 60px; display: grid; place-items: center; border-radius: 8px; }
+    #a-pobo-prototype .flow-arrow { display: none; }
+    #a-pobo-prototype .review-layout { display: grid; grid-template-columns: minmax(0, 1fr) 240px; gap: 16px; }
+    #a-pobo-prototype .facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 18px; }
+    #a-pobo-prototype .fact { display: grid; gap: 3px; }
+    #a-pobo-prototype .upload { padding: 16px; border: 1px dashed var(--border); display: grid; gap: 8px; justify-items: start; }
+    #a-pobo-prototype .notice { padding: 10px 12px; background: color-mix(in srgb, var(--viz-series-2) 13%, transparent); border-left: 3px solid var(--viz-series-2); }
+    #a-pobo-prototype .hidden { display: none !important; }
+    #a-pobo-prototype .empty { padding: 28px 8px; text-align: center; color: var(--muted-foreground); }
+    @media (max-width: 760px) {
+      #a-pobo-prototype .shell { grid-template-columns: 1fr; }
+      #a-pobo-prototype .side { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      #a-pobo-prototype .toolbar, #a-pobo-prototype .form-grid, #a-pobo-prototype .review-layout { grid-template-columns: 1fr; }
+      #a-pobo-prototype .flow { grid-template-columns: 1fr; }
+      #a-pobo-prototype .facts { grid-template-columns: 1fr; }
+    }
+  &lt;/style&gt;
+
+  &lt;div class=&quot;shell&quot;&gt;
+    &lt;nav class=&quot;side&quot; aria-label=&quot;A POBO 功能导航&quot;&gt;
+      &lt;button type=&quot;button&quot; class=&quot;btn btn-primary&quot; data-view=&quot;list&quot;&gt;&lt;i data-lucide=&quot;users&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;付款人管理&lt;/button&gt;
+      &lt;button type=&quot;button&quot; class=&quot;btn btn-ghost&quot; data-view=&quot;review&quot;&gt;&lt;i data-lucide=&quot;shield-check&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;A 风控审核&lt;/button&gt;
+      &lt;button type=&quot;button&quot; class=&quot;btn btn-ghost&quot; data-view=&quot;payment&quot;&gt;&lt;i data-lucide=&quot;send&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;发起付款&lt;/button&gt;
+    &lt;/nav&gt;
+
+    &lt;main class=&quot;main&quot;&gt;
+      &lt;section id=&quot;view-list&quot;&gt;
+        &lt;div class=&quot;head&quot;&gt;
+          &lt;div class=&quot;head-copy&quot;&gt;
+            &lt;h2&gt;POBO 付款人管理&lt;/h2&gt;
+            &lt;span class=&quot;text-small text-muted&quot;&gt;付款人仅在 A 建档、审核和使用&lt;/span&gt;
+          &lt;/div&gt;
+          &lt;button type=&quot;button&quot; class=&quot;btn btn-primary&quot; id=&quot;add-payer&quot;&gt;&lt;i data-lucide=&quot;plus&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;新增付款人&lt;/button&gt;
+        &lt;/div&gt;
+
+        &lt;div class=&quot;toolbar&quot;&gt;
+          &lt;label class=&quot;form-label&quot;&gt;付款人名称&lt;input id=&quot;search-name&quot; class=&quot;form-control&quot; placeholder=&quot;输入名称查询&quot;&gt;&lt;/label&gt;
+          &lt;label class=&quot;form-label&quot;&gt;付款人类型&lt;select id=&quot;filter-type&quot; class=&quot;form-select&quot;&gt;&lt;option value=&quot;&quot;&gt;全部&lt;/option&gt;&lt;option&gt;境内企业&lt;/option&gt;&lt;option&gt;非境内企业&lt;/option&gt;&lt;option&gt;个人&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;
+          &lt;label class=&quot;form-label&quot;&gt;审核状态&lt;select id=&quot;filter-status&quot; class=&quot;form-select&quot;&gt;&lt;option value=&quot;&quot;&gt;全部&lt;/option&gt;&lt;option&gt;审核中&lt;/option&gt;&lt;option&gt;待补件&lt;/option&gt;&lt;option&gt;审核通过&lt;/option&gt;&lt;option&gt;审核拒绝&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;
+          &lt;button type=&quot;button&quot; class=&quot;btn&quot; id=&quot;query-btn&quot;&gt;&lt;i data-lucide=&quot;search&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;查询&lt;/button&gt;
+        &lt;/div&gt;
+
+        &lt;div class=&quot;table-wrap&quot;&gt;
+          &lt;table aria-label=&quot;POBO 付款人列表&quot;&gt;
+            &lt;thead&gt;&lt;tr&gt;&lt;th&gt;类型&lt;/th&gt;&lt;th&gt;付款人名称&lt;/th&gt;&lt;th&gt;英文名&lt;/th&gt;&lt;th&gt;国家/地区&lt;/th&gt;&lt;th&gt;审核状态&lt;/th&gt;&lt;th&gt;使用状态&lt;/th&gt;&lt;th&gt;操作&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+            &lt;tbody id=&quot;payer-rows&quot;&gt;&lt;/tbody&gt;
+          &lt;/table&gt;
+          &lt;div id=&quot;list-empty&quot; class=&quot;empty hidden&quot;&gt;没有符合条件的付款人&lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/section&gt;
+
+      &lt;section id=&quot;view-form&quot; class=&quot;hidden&quot;&gt;
+        &lt;div class=&quot;head&quot;&gt;
+          &lt;div class=&quot;head-copy&quot;&gt;&lt;h2&gt;新增 POBO 付款人&lt;/h2&gt;&lt;span class=&quot;text-small text-muted&quot;&gt;资料提交后进入 A 风控审核&lt;/span&gt;&lt;/div&gt;
+          &lt;button type=&quot;button&quot; class=&quot;btn btn-ghost&quot; id=&quot;back-list&quot;&gt;&lt;i data-lucide=&quot;arrow-left&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;返回列表&lt;/button&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;stepper&quot; aria-label=&quot;新增步骤&quot;&gt;
+          &lt;div class=&quot;step active&quot; data-step-label=&quot;1&quot;&gt;1 基本信息&lt;/div&gt;
+          &lt;div class=&quot;step&quot; data-step-label=&quot;2&quot;&gt;2 关系与材料&lt;/div&gt;
+          &lt;div class=&quot;step&quot; data-step-label=&quot;3&quot;&gt;3 确认提交&lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;form id=&quot;payer-form&quot; class=&quot;card&quot;&gt;
+          &lt;div id=&quot;form-step-1&quot; class=&quot;form-grid&quot;&gt;
+            &lt;fieldset class=&quot;full&quot;&gt;
+              &lt;legend class=&quot;form-label&quot;&gt;付款人类型 *&lt;/legend&gt;
+              &lt;div class=&quot;radio-row&quot;&gt;
+                &lt;label class=&quot;form-check&quot;&gt;&lt;input class=&quot;form-check-input&quot; type=&quot;radio&quot; name=&quot;payerType&quot; value=&quot;非境内企业&quot; checked&gt;&lt;span class=&quot;form-check-label&quot;&gt;非境内企业&lt;/span&gt;&lt;/label&gt;
+                &lt;label class=&quot;form-check&quot;&gt;&lt;input class=&quot;form-check-input&quot; type=&quot;radio&quot; name=&quot;payerType&quot; value=&quot;境内企业&quot;&gt;&lt;span class=&quot;form-check-label&quot;&gt;境内企业&lt;/span&gt;&lt;/label&gt;
+                &lt;label class=&quot;form-check&quot;&gt;&lt;input class=&quot;form-check-input&quot; type=&quot;radio&quot; name=&quot;payerType&quot; value=&quot;个人&quot;&gt;&lt;span class=&quot;form-check-label&quot;&gt;个人&lt;/span&gt;&lt;/label&gt;
+              &lt;/div&gt;
+            &lt;/fieldset&gt;
+            &lt;label class=&quot;form-label&quot;&gt;国家/地区 *&lt;select id=&quot;payer-country&quot; class=&quot;form-select&quot; required&gt;&lt;option value=&quot;&quot;&gt;请选择&lt;/option&gt;&lt;option value=&quot;HKG&quot;&gt;HKG-中国香港&lt;/option&gt;&lt;option value=&quot;CHN&quot;&gt;CHN-中国&lt;/option&gt;&lt;option value=&quot;SGP&quot;&gt;SGP-新加坡&lt;/option&gt;&lt;option value=&quot;USA&quot;&gt;USA-美国&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;
+            &lt;label class=&quot;form-label&quot;&gt;付款人名称 *&lt;input id=&quot;payer-name&quot; class=&quot;form-control&quot; required placeholder=&quot;请输入证件上的完整名称&quot;&gt;&lt;/label&gt;
+            &lt;label class=&quot;form-label&quot;&gt;付款人英文名 *&lt;input id=&quot;payer-en&quot; class=&quot;form-control&quot; required placeholder=&quot;请输入官方英文名称&quot;&gt;&lt;/label&gt;
+            &lt;label class=&quot;form-label&quot;&gt;证件/注册号码 *&lt;input id=&quot;payer-id&quot; class=&quot;form-control&quot; required placeholder=&quot;请输入号码&quot;&gt;&lt;/label&gt;
+            &lt;label class=&quot;form-label&quot;&gt;证件类型&lt;select id=&quot;doc-type&quot; class=&quot;form-select&quot;&gt;&lt;option&gt;企业注册证书&lt;/option&gt;&lt;option&gt;营业执照&lt;/option&gt;&lt;option&gt;护照&lt;/option&gt;&lt;option&gt;身份证&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;
+            &lt;label class=&quot;form-label&quot;&gt;证件有效期&lt;input class=&quot;form-control&quot; type=&quot;date&quot;&gt;&lt;/label&gt;
+            &lt;label class=&quot;form-label full&quot;&gt;注册地址 *&lt;input class=&quot;form-control&quot; required placeholder=&quot;请输入完整注册地址&quot;&gt;&lt;/label&gt;
+            &lt;div class=&quot;full actions&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-primary&quot; data-next=&quot;2&quot;&gt;下一步&lt;/button&gt;&lt;/div&gt;
+          &lt;/div&gt;
+
+          &lt;div id=&quot;form-step-2&quot; class=&quot;form-grid hidden&quot;&gt;
+            &lt;label class=&quot;form-label&quot;&gt;与申请主体关系 *&lt;select id=&quot;payer-relation&quot; class=&quot;form-select&quot; required&gt;&lt;option value=&quot;&quot;&gt;请选择&lt;/option&gt;&lt;option&gt;客户/买方&lt;/option&gt;&lt;option&gt;关联公司&lt;/option&gt;&lt;option&gt;平台商户&lt;/option&gt;&lt;option&gt;委托方&lt;/option&gt;&lt;option&gt;其他&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;
+            &lt;label class=&quot;form-label&quot;&gt;使用场景 *&lt;select id=&quot;payer-scene&quot; class=&quot;form-select&quot; required&gt;&lt;option value=&quot;&quot;&gt;请选择&lt;/option&gt;&lt;option&gt;出口货款&lt;/option&gt;&lt;option&gt;采购货款&lt;/option&gt;&lt;option&gt;服务费&lt;/option&gt;&lt;option&gt;物流仓储&lt;/option&gt;&lt;option&gt;广告费&lt;/option&gt;&lt;option&gt;集团代付&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;
+            &lt;label class=&quot;form-label&quot;&gt;预计付款币种 *&lt;select class=&quot;form-select&quot; required&gt;&lt;option&gt;USD&lt;/option&gt;&lt;option&gt;CNH&lt;/option&gt;&lt;option&gt;EUR&lt;/option&gt;&lt;option&gt;GBP&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;
+            &lt;label class=&quot;form-label&quot;&gt;预计月金额 *&lt;input class=&quot;form-control&quot; type=&quot;number&quot; min=&quot;1&quot; value=&quot;100000&quot; required&gt;&lt;/label&gt;
+            &lt;label class=&quot;form-label full&quot;&gt;最终受益人/实际控制人&lt;input class=&quot;form-control&quot; placeholder=&quot;企业付款人请填写；个人可不填&quot;&gt;&lt;/label&gt;
+            &lt;div class=&quot;upload full&quot;&gt;
+              &lt;span&gt;合作关系证明材料 *&lt;/span&gt;
+              &lt;span class=&quot;text-small text-muted&quot;&gt;合同、订单、Invoice、付款授权书；PDF/JPG/PNG，单文件不超过 20MB&lt;/span&gt;
+              &lt;input id=&quot;payer-files&quot; class=&quot;form-control&quot; type=&quot;file&quot; multiple accept=&quot;.pdf,.jpg,.jpeg,.png&quot;&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;full actions&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;btn&quot; data-prev=&quot;1&quot;&gt;上一步&lt;/button&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-primary&quot; data-next=&quot;3&quot;&gt;下一步&lt;/button&gt;&lt;/div&gt;
+          &lt;/div&gt;
+
+          &lt;div id=&quot;form-step-3&quot; class=&quot;hidden&quot;&gt;
+            &lt;div class=&quot;notice&quot;&gt;提交后付款人状态将变为“审核中”。审核通过前，不能用于 A 的 POBO 付款。&lt;/div&gt;
+            &lt;div class=&quot;facts&quot; id=&quot;confirm-facts&quot;&gt;&lt;/div&gt;
+            &lt;div class=&quot;actions&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;btn&quot; data-prev=&quot;2&quot;&gt;上一步&lt;/button&gt;&lt;button type=&quot;submit&quot; class=&quot;btn btn-primary&quot;&gt;&lt;i data-lucide=&quot;send&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;确认提交 A 风控&lt;/button&gt;&lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/form&gt;
+      &lt;/section&gt;
+
+      &lt;section id=&quot;view-review&quot; class=&quot;hidden&quot;&gt;
+        &lt;div class=&quot;head&quot;&gt;&lt;div class=&quot;head-copy&quot;&gt;&lt;h2&gt;A 风控审核&lt;/h2&gt;&lt;span class=&quot;text-small text-muted&quot;&gt;选择审核中的付款人处理&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+        &lt;div class=&quot;review-layout&quot;&gt;
+          &lt;div class=&quot;table-wrap&quot;&gt;
+            &lt;table aria-label=&quot;风控审核队列&quot;&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;付款人&lt;/th&gt;&lt;th&gt;类型&lt;/th&gt;&lt;th&gt;场景&lt;/th&gt;&lt;th&gt;状态&lt;/th&gt;&lt;th&gt;操作&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody id=&quot;review-rows&quot;&gt;&lt;/tbody&gt;&lt;/table&gt;
+            &lt;div id=&quot;review-empty&quot; class=&quot;empty hidden&quot;&gt;暂无待处理审核&lt;/div&gt;
+          &lt;/div&gt;
+          &lt;aside class=&quot;card&quot; id=&quot;review-panel&quot;&gt;
+            &lt;h3&gt;审核处理&lt;/h3&gt;
+            &lt;p class=&quot;text-small text-muted&quot; id=&quot;review-selected&quot;&gt;请先选择一条申请&lt;/p&gt;
+            &lt;label class=&quot;form-label&quot;&gt;审核意见&lt;textarea id=&quot;review-note&quot; class=&quot;form-control&quot; rows=&quot;4&quot; placeholder=&quot;填写内部审核意见&quot;&gt;&lt;/textarea&gt;&lt;/label&gt;
+            &lt;div class=&quot;actions&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;btn&quot; id=&quot;need-more&quot; disabled&gt;要求补件&lt;/button&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-primary&quot; id=&quot;approve&quot; disabled&gt;审核通过&lt;/button&gt;&lt;/div&gt;
+          &lt;/aside&gt;
+        &lt;/div&gt;
+      &lt;/section&gt;
+
+      &lt;section id=&quot;view-payment&quot; class=&quot;hidden&quot;&gt;
+        &lt;div class=&quot;head&quot;&gt;&lt;div class=&quot;head-copy&quot;&gt;&lt;h2&gt;发起 A POBO 付款&lt;/h2&gt;&lt;span class=&quot;text-small text-muted&quot;&gt;仅可选择审核通过且状态正常的付款人&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+        &lt;form id=&quot;payment-form&quot; class=&quot;card form-grid&quot;&gt;
+          &lt;label class=&quot;form-label&quot;&gt;POBO 付款人 *&lt;select id=&quot;payment-payer&quot; class=&quot;form-select&quot; required&gt;&lt;/select&gt;&lt;/label&gt;
+          &lt;label class=&quot;form-label&quot;&gt;收款国家/地区 *&lt;select class=&quot;form-select&quot;&gt;&lt;option&gt;CHN-中国&lt;/option&gt;&lt;option&gt;HKG-中国香港&lt;/option&gt;&lt;option&gt;SGP-新加坡&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;
+          &lt;label class=&quot;form-label&quot;&gt;币种 *&lt;select class=&quot;form-select&quot;&gt;&lt;option&gt;USD&lt;/option&gt;&lt;option&gt;CNH&lt;/option&gt;&lt;option&gt;EUR&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;
+          &lt;label class=&quot;form-label&quot;&gt;付款金额 *&lt;input class=&quot;form-control&quot; type=&quot;number&quot; value=&quot;12000&quot; min=&quot;1&quot;&gt;&lt;/label&gt;
+          &lt;label class=&quot;form-label full&quot;&gt;付款用途 *&lt;input class=&quot;form-control&quot; value=&quot;B2B 货款&quot; required&gt;&lt;/label&gt;
+          &lt;div class=&quot;full flow&quot; aria-label=&quot;付款流程&quot;&gt;
+            &lt;div class=&quot;flow-node&quot;&gt;选择已审核付款人&lt;/div&gt;&lt;div class=&quot;flow-node&quot;&gt;A 交易级风控&lt;/div&gt;&lt;div class=&quot;flow-node&quot;&gt;锁定付款人快照&lt;/div&gt;&lt;div class=&quot;flow-node&quot;&gt;发送银行通道&lt;/div&gt;&lt;div class=&quot;flow-node&quot;&gt;返回付款结果&lt;/div&gt;
+          &lt;/div&gt;
+          &lt;div class=&quot;full actions&quot;&gt;&lt;button type=&quot;submit&quot; class=&quot;btn btn-primary&quot;&gt;提交付款&lt;/button&gt;&lt;/div&gt;
+          &lt;div id=&quot;payment-result&quot; class=&quot;full notice hidden&quot;&gt;&lt;/div&gt;
+        &lt;/form&gt;
+      &lt;/section&gt;
+    &lt;/main&gt;
+  &lt;/div&gt;
+
+  &lt;script&gt;
+    (() =&gt; {
+      const root = document.getElementById(&#x27;a-pobo-prototype&#x27;);
+      const payers = [
+        { id: 1, type: &#x27;非境内企业&#x27;, name: &#x27;Porsin Limited&#x27;, en: &#x27;PORSIN LIMITED&#x27;, country: &#x27;HKG&#x27;, status: &#x27;审核通过&#x27;, use: &#x27;正常&#x27;, scene: &#x27;出口货款&#x27; },
+        { id: 2, type: &#x27;境内企业&#x27;, name: &#x27;上海示例贸易有限公司&#x27;, en: &#x27;SHANGHAI SAMPLE TRADING CO., LTD.&#x27;, country: &#x27;CHN&#x27;, status: &#x27;待补件&#x27;, use: &#x27;不可用&#x27;, scene: &#x27;采购货款&#x27; },
+        { id: 3, type: &#x27;非境内企业&#x27;, name: &#x27;Northstar Commerce Pte. Ltd.&#x27;, en: &#x27;NORTHSTAR COMMERCE PTE. LTD.&#x27;, country: &#x27;SGP&#x27;, status: &#x27;审核中&#x27;, use: &#x27;不可用&#x27;, scene: &#x27;服务费&#x27; }
+      ];
+      let selectedReviewId = null;
+
+      const views = [&#x27;list&#x27;, &#x27;form&#x27;, &#x27;review&#x27;, &#x27;payment&#x27;];
+      const showView = (name) =&gt; {
+        views.forEach(v =&gt; root.querySelector(&#x27;#view-&#x27; + v).classList.toggle(&#x27;hidden&#x27;, v !== name));
+        root.querySelectorAll(&#x27;[data-view]&#x27;).forEach(btn =&gt; {
+          const active = btn.dataset.view === name || (name === &#x27;form&#x27; &amp;&amp; btn.dataset.view === &#x27;list&#x27;);
+          btn.classList.toggle(&#x27;btn-primary&#x27;, active);
+          btn.classList.toggle(&#x27;btn-ghost&#x27;, !active);
+        });
+        if (name === &#x27;review&#x27;) renderReview();
+        if (name === &#x27;payment&#x27;) renderPaymentOptions();
+      };
+
+      const statusBadge = (status) =&gt; `&lt;span class=&quot;viz-badge&quot;&gt;${status}&lt;/span&gt;`;
+      const renderList = () =&gt; {
+        const q = root.querySelector(&#x27;#search-name&#x27;).value.trim().toLowerCase();
+        const type = root.querySelector(&#x27;#filter-type&#x27;).value;
+        const status = root.querySelector(&#x27;#filter-status&#x27;).value;
+        const filtered = payers.filter(p =&gt; (!q || (p.name + p.en).toLowerCase().includes(q)) &amp;&amp; (!type || p.type === type) &amp;&amp; (!status || p.status === status));
+        const tbody = root.querySelector(&#x27;#payer-rows&#x27;);
+        tbody.innerHTML = filtered.map(p =&gt; `&lt;tr&gt;&lt;td&gt;${p.type}&lt;/td&gt;&lt;td&gt;${p.name}&lt;/td&gt;&lt;td&gt;${p.en}&lt;/td&gt;&lt;td&gt;${p.country}&lt;/td&gt;&lt;td&gt;${statusBadge(p.status)}&lt;/td&gt;&lt;td&gt;${p.use}&lt;/td&gt;&lt;td&gt;&lt;div class=&quot;actions&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-ghost&quot; data-detail=&quot;${p.id}&quot;&gt;详情&lt;/button&gt;${p.status === &#x27;审核中&#x27; ? `&lt;button type=&quot;button&quot; class=&quot;btn btn-ghost&quot; data-go-review=&quot;${p.id}&quot;&gt;去审核&lt;/button&gt;` : &#x27;&#x27;}&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;`).join(&#x27;&#x27;);
+        root.querySelector(&#x27;#list-empty&#x27;).classList.toggle(&#x27;hidden&#x27;, filtered.length &gt; 0);
+        tbody.querySelectorAll(&#x27;[data-go-review]&#x27;).forEach(btn =&gt; btn.addEventListener(&#x27;click&#x27;, () =&gt; { selectedReviewId = Number(btn.dataset.goReview); showView(&#x27;review&#x27;); }));
+        tbody.querySelectorAll(&#x27;[data-detail]&#x27;).forEach(btn =&gt; btn.addEventListener(&#x27;click&#x27;, () =&gt; {
+          const p = payers.find(x =&gt; x.id === Number(btn.dataset.detail));
+          alert(`${p.name}\n类型：${p.type}\n国家/地区：${p.country}\n审核状态：${p.status}\n使用状态：${p.use}`);
+        }));
+      };
+
+      const setStep = (step) =&gt; {
+        [1, 2, 3].forEach(n =&gt; root.querySelector(&#x27;#form-step-&#x27; + n).classList.toggle(&#x27;hidden&#x27;, n !== step));
+        root.querySelectorAll(&#x27;[data-step-label]&#x27;).forEach(el =&gt; el.classList.toggle(&#x27;active&#x27;, Number(el.dataset.stepLabel) === step));
+        if (step === 3) {
+          const type = root.querySelector(&#x27;input[name=&quot;payerType&quot;]:checked&#x27;).value;
+          const facts = [
+            [&#x27;付款人类型&#x27;, type], [&#x27;国家/地区&#x27;, root.querySelector(&#x27;#payer-country&#x27;).value],
+            [&#x27;付款人名称&#x27;, root.querySelector(&#x27;#payer-name&#x27;).value], [&#x27;英文名&#x27;, root.querySelector(&#x27;#payer-en&#x27;).value],
+            [&#x27;关系&#x27;, root.querySelector(&#x27;#payer-relation&#x27;).value], [&#x27;使用场景&#x27;, root.querySelector(&#x27;#payer-scene&#x27;).value]
+          ];
+          root.querySelector(&#x27;#confirm-facts&#x27;).innerHTML = facts.map(([k, v]) =&gt; `&lt;div class=&quot;fact&quot;&gt;&lt;span class=&quot;text-small text-muted&quot;&gt;${k}&lt;/span&gt;&lt;span&gt;${v || &#x27;未填写&#x27;}&lt;/span&gt;&lt;/div&gt;`).join(&#x27;&#x27;);
+        }
+      };
+
+      const renderReview = () =&gt; {
+        const queue = payers.filter(p =&gt; [&#x27;审核中&#x27;, &#x27;待补件&#x27;].includes(p.status));
+        const tbody = root.querySelector(&#x27;#review-rows&#x27;);
+        tbody.innerHTML = queue.map(p =&gt; `&lt;tr&gt;&lt;td&gt;${p.name}&lt;/td&gt;&lt;td&gt;${p.type}&lt;/td&gt;&lt;td&gt;${p.scene}&lt;/td&gt;&lt;td&gt;${statusBadge(p.status)}&lt;/td&gt;&lt;td&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-ghost&quot; data-review-id=&quot;${p.id}&quot;&gt;选择&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;`).join(&#x27;&#x27;);
+        root.querySelector(&#x27;#review-empty&#x27;).classList.toggle(&#x27;hidden&#x27;, queue.length &gt; 0);
+        tbody.querySelectorAll(&#x27;[data-review-id]&#x27;).forEach(btn =&gt; btn.addEventListener(&#x27;click&#x27;, () =&gt; selectReview(Number(btn.dataset.reviewId))));
+        if (selectedReviewId &amp;&amp; queue.some(p =&gt; p.id === selectedReviewId)) selectReview(selectedReviewId);
+      };
+
+      const selectReview = (id) =&gt; {
+        selectedReviewId = id;
+        const p = payers.find(x =&gt; x.id === id);
+        root.querySelector(&#x27;#review-selected&#x27;).textContent = `${p.name} · ${p.type} · ${p.country} · ${p.scene}`;
+        root.querySelector(&#x27;#need-more&#x27;).disabled = false;
+        root.querySelector(&#x27;#approve&#x27;).disabled = false;
+      };
+
+      const decideReview = (decision) =&gt; {
+        const p = payers.find(x =&gt; x.id === selectedReviewId);
+        if (!p) return;
+        p.status = decision;
+        p.use = decision === &#x27;审核通过&#x27; ? &#x27;正常&#x27; : &#x27;不可用&#x27;;
+        selectedReviewId = null;
+        root.querySelector(&#x27;#review-selected&#x27;).textContent = `已处理：${p.name} → ${decision}`;
+        root.querySelector(&#x27;#need-more&#x27;).disabled = true;
+        root.querySelector(&#x27;#approve&#x27;).disabled = true;
+        renderReview();
+        renderList();
+      };
+
+      const renderPaymentOptions = () =&gt; {
+        const approved = payers.filter(p =&gt; p.status === &#x27;审核通过&#x27; &amp;&amp; p.use === &#x27;正常&#x27;);
+        const select = root.querySelector(&#x27;#payment-payer&#x27;);
+        select.innerHTML = approved.length ? approved.map(p =&gt; `&lt;option value=&quot;${p.id}&quot;&gt;${p.name} · ${p.country}&lt;/option&gt;`).join(&#x27;&#x27;) : &#x27;&lt;option value=&quot;&quot;&gt;暂无可用付款人&lt;/option&gt;&#x27;;
+      };
+
+      root.querySelectorAll(&#x27;[data-view]&#x27;).forEach(btn =&gt; btn.addEventListener(&#x27;click&#x27;, () =&gt; showView(btn.dataset.view)));
+      root.querySelector(&#x27;#add-payer&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; { root.querySelector(&#x27;#payer-form&#x27;).reset(); setStep(1); showView(&#x27;form&#x27;); });
+      root.querySelector(&#x27;#back-list&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; showView(&#x27;list&#x27;));
+      root.querySelector(&#x27;#query-btn&#x27;).addEventListener(&#x27;click&#x27;, renderList);
+      root.querySelector(&#x27;#search-name&#x27;).addEventListener(&#x27;input&#x27;, renderList);
+      root.querySelectorAll(&#x27;[data-next]&#x27;).forEach(btn =&gt; btn.addEventListener(&#x27;click&#x27;, () =&gt; {
+        const step = Number(btn.dataset.next);
+        if (step === 2 &amp;&amp; (!root.querySelector(&#x27;#payer-country&#x27;).value || !root.querySelector(&#x27;#payer-name&#x27;).value || !root.querySelector(&#x27;#payer-en&#x27;).value || !root.querySelector(&#x27;#payer-id&#x27;).value)) {
+          root.querySelector(&#x27;#payer-form&#x27;).reportValidity(); return;
+        }
+        if (step === 3 &amp;&amp; (!root.querySelector(&#x27;#payer-relation&#x27;).value || !root.querySelector(&#x27;#payer-scene&#x27;).value)) {
+          root.querySelector(&#x27;#payer-form&#x27;).reportValidity(); return;
+        }
+        setStep(step);
+      }));
+      root.querySelectorAll(&#x27;[data-prev]&#x27;).forEach(btn =&gt; btn.addEventListener(&#x27;click&#x27;, () =&gt; setStep(Number(btn.dataset.prev))));
+      root.querySelector(&#x27;#payer-form&#x27;).addEventListener(&#x27;submit&#x27;, (event) =&gt; {
+        event.preventDefault();
+        const type = root.querySelector(&#x27;input[name=&quot;payerType&quot;]:checked&#x27;).value;
+        payers.unshift({ id: Date.now(), type, name: root.querySelector(&#x27;#payer-name&#x27;).value, en: root.querySelector(&#x27;#payer-en&#x27;).value, country: root.querySelector(&#x27;#payer-country&#x27;).value, status: &#x27;审核中&#x27;, use: &#x27;不可用&#x27;, scene: root.querySelector(&#x27;#payer-scene&#x27;).value });
+        renderList();
+        showView(&#x27;list&#x27;);
+      });
+      root.querySelector(&#x27;#need-more&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; decideReview(&#x27;待补件&#x27;));
+      root.querySelector(&#x27;#approve&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; decideReview(&#x27;审核通过&#x27;));
+      root.querySelector(&#x27;#payment-form&#x27;).addEventListener(&#x27;submit&#x27;, event =&gt; {
+        event.preventDefault();
+        const payerId = Number(root.querySelector(&#x27;#payment-payer&#x27;).value);
+        const payer = payers.find(p =&gt; p.id === payerId);
+        const result = root.querySelector(&#x27;#payment-result&#x27;);
+        result.classList.remove(&#x27;hidden&#x27;);
+        result.textContent = payer ? `交易级风控通过，已锁定付款人快照：${payer.name}。付款指令已提交至 A 的银行通道。` : &#x27;没有可用的 POBO 付款人，无法提交。&#x27;;
+      });
+      root.querySelectorAll(&#x27;input[name=&quot;payerType&quot;]&#x27;).forEach(radio =&gt; radio.addEventListener(&#x27;change&#x27;, event =&gt; {
+        const type = event.target.value;
+        root.querySelector(&#x27;#doc-type&#x27;).value = type === &#x27;境内企业&#x27; ? &#x27;营业执照&#x27; : type === &#x27;个人&#x27; ? &#x27;护照&#x27; : &#x27;企业注册证书&#x27;;
+      }));
+
+      renderList();
+      if (window.lucide) window.lucide.createIcons({ attrs: { width: 16, height: 16 } });
+    })();
+  &lt;/script&gt;
+&lt;/div&gt;
+
+&lt;script src=&quot;https://unpkg.com/@floating-ui/core@1.7.3/dist/floating-ui.core.umd.min.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;https://unpkg.com/@floating-ui/dom@1.7.4/dist/floating-ui.dom.umd.min.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(() =&gt; {
+  if (window.FloatingUIDOM == null) {
+    return;
+  }
+  const { autoUpdate, computePosition, flip, offset, shift, size } =
+    window.FloatingUIDOM;
+  const tooltipPlacements = new Set([&quot;top&quot;, &quot;right&quot;, &quot;bottom&quot;, &quot;left&quot;]);
+  const tooltipId = `codex-visualization-tooltip-${
+    window.crypto?.randomUUID?.() ?? Date.now().toString(36)
+  }`;
+  const tooltipGap = 5;
+  const hoverDelay = 700;
+  const skipDelay = 300;
+  let activeTrigger = null;
+  let pendingTrigger = null;
+  let tooltip = null;
+  let openTimeout = null;
+  let autoUpdateCleanup = null;
+  let positionRequest = 0;
+  let skipDelayUntil = 0;
+
+  const getTrigger = (target) =&gt;
+    target?.nodeType === Node.ELEMENT_NODE
+      ? target.closest(&quot;[data-tooltip]&quot;)
+      : null;
+  const containsTarget = (trigger, target) =&gt;
+    target?.nodeType != null &amp;&amp; trigger.contains(target);
+  const getContent = (trigger) =&gt;
+    trigger.getAttribute(&quot;data-tooltip&quot;)?.trim() ?? &quot;&quot;;
+  const getPlacement = (trigger) =&gt; {
+    const placement = trigger.getAttribute(&quot;data-tooltip-placement&quot;);
+    return tooltipPlacements.has(placement) ? placement : &quot;top&quot;;
+  };
+  const getTooltip = () =&gt; {
+    if (tooltip == null) {
+      tooltip = document.createElement(&quot;div&quot;);
+      tooltip.id = tooltipId;
+      tooltip.className = &quot;tooltip&quot;;
+      tooltip.setAttribute(&quot;role&quot;, &quot;tooltip&quot;);
+    }
+    return tooltip;
+  };
+  const setDescribedBy = (trigger, described) =&gt; {
+    const ids = new Set(
+      (trigger.getAttribute(&quot;aria-describedby&quot;) ?? &quot;&quot;)
+        .split(/\s+/)
+        .filter(Boolean),
+    );
+    if (described) {
+      ids.add(tooltipId);
+    } else {
+      ids.delete(tooltipId);
+    }
+    if (ids.size === 0) {
+      trigger.removeAttribute(&quot;aria-describedby&quot;);
+    } else {
+      trigger.setAttribute(&quot;aria-describedby&quot;, [...ids].join(&quot; &quot;));
+    }
+  };
+  const clearOpenTimeout = () =&gt; {
+    if (openTimeout != null) {
+      window.clearTimeout(openTimeout);
+      openTimeout = null;
+    }
+    pendingTrigger = null;
+  };
+  const closeTooltip = (activateSkipDelay = true) =&gt; {
+    clearOpenTimeout();
+    positionRequest += 1;
+    autoUpdateCleanup?.();
+    autoUpdateCleanup = null;
+    if (activeTrigger == null) {
+      return;
+    }
+    setDescribedBy(activeTrigger, false);
+    activeTrigger = null;
+    tooltip?.remove();
+    if (activateSkipDelay) {
+      skipDelayUntil = Date.now() + skipDelay;
+    }
+  };
+  const updatePosition = (trigger, floating) =&gt; {
+    const request = ++positionRequest;
+    void computePosition(trigger, floating, {
+      middleware: [
+        offset(tooltipGap),
+        flip({ padding: tooltipGap }),
+        shift({ padding: tooltipGap }),
+        size({
+          padding: tooltipGap,
+          apply({ availableHeight, availableWidth, elements }) {
+            elements.floating.style.setProperty(
+              &quot;--tooltip-available-width&quot;,
+              `${Math.max(0, availableWidth)}px`,
+            );
+            elements.floating.style.setProperty(
+              &quot;--tooltip-available-height&quot;,
+              `${Math.max(0, availableHeight)}px`,
+            );
+          },
+        }),
+      ],
+      placement: getPlacement(trigger),
+      strategy: &quot;fixed&quot;,
+    })
+      .then(({ x, y }) =&gt; {
+        if (activeTrigger !== trigger || request !== positionRequest) {
+          return;
+        }
+        const scale = window.devicePixelRatio || 1;
+        floating.style.transform = `translate(${Math.round(x * scale) / scale}px, ${Math.round(y * scale) / scale}px)`;
+        floating.style.visibility = &quot;visible&quot;;
+      })
+      .catch(() =&gt; {
+        if (activeTrigger === trigger &amp;&amp; request === positionRequest) {
+          closeTooltip(false);
+        }
+      });
+  };
+  const openTooltip = (trigger) =&gt; {
+    const content = getContent(trigger);
+    if (!trigger.isConnected || content.length === 0) {
+      return;
+    }
+    clearOpenTimeout();
+    if (activeTrigger === trigger) {
+      return;
+    }
+    closeTooltip();
+    const floating = getTooltip();
+    floating.textContent = content;
+    floating.style.visibility = &quot;hidden&quot;;
+    floating.style.transform = &quot;translate(0, 0)&quot;;
+    document.body.appendChild(floating);
+    activeTrigger = trigger;
+    setDescribedBy(trigger, true);
+    autoUpdateCleanup = autoUpdate(trigger, floating, () =&gt; {
+      updatePosition(trigger, floating);
+    });
+  };
+  const requestOpen = (trigger, immediate = false) =&gt; {
+    if (
+      getContent(trigger).length === 0 ||
+      activeTrigger === trigger ||
+      pendingTrigger === trigger
+    ) {
+      return;
+    }
+    clearOpenTimeout();
+    pendingTrigger = trigger;
+    const delay =
+      immediate || activeTrigger != null || Date.now() &lt; skipDelayUntil
+        ? 0
+        : hoverDelay;
+    if (delay === 0) {
+      openTooltip(trigger);
+      return;
+    }
+    openTimeout = window.setTimeout(() =&gt; {
+      openTimeout = null;
+      pendingTrigger = null;
+      openTooltip(trigger);
+    }, delay);
+  };
+  const handlePointerOpen = (event) =&gt; {
+    if (event.pointerType === &quot;touch&quot;) {
+      return;
+    }
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    requestOpen(trigger);
+  };
+  const handleLeave = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const handleFocusIn = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (trigger?.matches(&quot;:focus-visible&quot;)) {
+      requestOpen(trigger, true);
+    }
+  };
+  const handleKeyDown = (event) =&gt; {
+    if (event.key === &quot;Escape&quot;) {
+      closeTooltip();
+    }
+  };
+  const handleContextMenu = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const destroy = () =&gt; {
+    closeTooltip(false);
+    document.removeEventListener(&quot;pointerover&quot;, handlePointerOpen);
+    document.removeEventListener(&quot;pointerout&quot;, handleLeave);
+    document.removeEventListener(&quot;focusin&quot;, handleFocusIn);
+    document.removeEventListener(&quot;focusout&quot;, handleLeave);
+    document.removeEventListener(&quot;keydown&quot;, handleKeyDown);
+    document.removeEventListener(&quot;contextmenu&quot;, handleContextMenu);
+    tooltip = null;
+  };
+
+  document.addEventListener(&quot;pointerover&quot;, handlePointerOpen);
+  document.addEventListener(&quot;pointerout&quot;, handleLeave);
+  document.addEventListener(&quot;focusin&quot;, handleFocusIn);
+  document.addEventListener(&quot;focusout&quot;, handleLeave);
+  document.addEventListener(&quot;keydown&quot;, handleKeyDown);
+  document.addEventListener(&quot;contextmenu&quot;, handleContextMenu);
+  window.addEventListener(&quot;pagehide&quot;, destroy, { once: true });
+})();
+&lt;/script&gt;
+&lt;script id=&quot;codex-visualization-lucide&quot; async src=&quot;https://unpkg.com/lucide@1.17.0/dist/umd/lucide.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(() =&gt; {
+  const initialize = () =&gt; {
+    globalThis.lucide?.createIcons({ attrs: { width: 16, height: 16 } });
+  };
+  if (globalThis.lucide != null) {
+    initialize();
+    return;
+  }
+  document
+    .getElementById(&quot;codex-visualization-lucide&quot;)
+    ?.addEventListener(&quot;load&quot;, initialize, { once: true });
+})();
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+"></iframe>
+</body>
+</html>
