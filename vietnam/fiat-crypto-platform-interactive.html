@@ -1556,6 +1556,24 @@
     .deposit-account-head h3 {
       margin: 0;
     }
+    .inline-action-link {
+      color: #7c3aed;
+      font-size: 13px;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .inline-action-link:hover { text-decoration: underline; }
+    .fiat-deposit-eligibility-note {
+      margin: -4px 0 18px;
+      padding: 10px 12px;
+      border: 1px solid #e8ddfb;
+      border-radius: 8px;
+      background: #faf8ff;
+      color: #655978;
+      font-size: 12px;
+      line-height: 1.55;
+    }
     .deposit-account-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1911,6 +1929,64 @@
       padding: 24px;
       position: relative;
     }
+    .account-application-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(15, 23, 42, 0.42);
+    }
+    .account-application-overlay.show { display: flex; }
+    .account-application-modal {
+      position: relative;
+      width: min(720px, 100%);
+      max-height: calc(100vh - 48px);
+      overflow-y: auto;
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 28px 80px rgba(15, 23, 42, 0.24);
+      padding: 28px;
+    }
+    .account-application-modal h3 { margin: 0 36px 6px 0; color: #2f2542; font-size: 20px; }
+    .account-application-desc { margin: 0 0 24px; color: #667085; font-size: 13px; }
+    .account-application-section { padding: 18px 0; border-top: 1px solid #eaecf0; }
+    .account-application-section:first-of-type { padding-top: 0; border-top: 0; }
+    .account-application-label { margin-bottom: 10px; color: #475467; font-size: 13px; font-weight: 760; }
+    .account-application-options { display: flex; flex-wrap: wrap; gap: 10px; }
+    .account-application-chip {
+      min-width: 104px;
+      min-height: 42px;
+      padding: 9px 14px;
+      border: 1px solid #d9e0eb;
+      border-radius: 9px;
+      background: #fff;
+      color: #344054;
+      text-align: left;
+      cursor: pointer;
+    }
+    .account-application-chip.active {
+      border-color: #7c3aed;
+      background: #faf7ff;
+      color: #6d28d9;
+      box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.1);
+    }
+    .account-application-bank-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .account-application-bank {
+      padding: 15px;
+      border: 1px solid #d9e0eb;
+      border-radius: 10px;
+      background: #fff;
+      color: #344054;
+      text-align: left;
+      cursor: pointer;
+    }
+    .account-application-bank.active { border-color: #7c3aed; background: #faf7ff; box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.1); }
+    .account-application-bank-name { font-size: 14px; font-weight: 820; }
+    .account-application-bank-meta { margin-top: 8px; display: grid; gap: 4px; color: #667085; font-size: 12px; }
+    .account-application-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; }
     .account-detail-close {
       position: absolute;
       top: 18px;
@@ -3048,6 +3124,18 @@
       font-size: 12px;
       font-weight: 850;
     }
+    .status-returned {
+      display: inline-flex;
+      align-items: center;
+      margin-left: 6px;
+      border-radius: 5px;
+      padding: 5px 9px;
+      background: #fff1e7;
+      color: #c2410c;
+      font-size: 12px;
+      font-weight: 850;
+      white-space: nowrap;
+    }
     .records-table a {
       color: #8b22ff;
       font-weight: 800;
@@ -3233,6 +3321,21 @@
       color: #8a5a12;
       font-size: 13px;
       line-height: 1.55;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+    .crypto-address-verification-note a {
+      flex: 0 0 auto;
+      color: #7c3aed;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .crypto-address-verification-note a:hover { text-decoration: underline; }
+    @media (max-width: 640px) {
+      .crypto-address-verification-note { align-items: flex-start; flex-direction: column; gap: 6px; }
     }
     .collection-tools-page {
       grid-column: 1 / -1;
@@ -3494,6 +3597,8 @@
       .crypto-deposit-result { grid-template-columns: 1fr; }
       .deposit-account-grid { grid-template-columns: 1fr; }
       .deposit-account-head { align-items: flex-start; flex-direction: column; }
+      .account-application-modal { padding: 22px 18px; }
+      .account-application-bank-grid { grid-template-columns: 1fr; }
       .account-detail-modal { padding: 18px; }
       .account-detail-selected { padding: 20px 18px 20px 58px; }
       .account-detail-selected::before { left: 18px; top: 24px; }
@@ -3764,6 +3869,47 @@
     </div>
   </div>
 
+  <div id="accountApplicationOverlay" class="account-application-overlay" aria-hidden="true">
+    <div class="account-application-modal" role="dialog" aria-modal="true" aria-labelledby="accountApplicationTitle">
+      <button type="button" class="account-detail-close" data-close-account-application aria-label="关闭">×</button>
+      <h3 id="accountApplicationTitle">申请同名账户</h3>
+      <p class="account-application-desc">选择币种、国家或地区及开户银行，提交后可在收款工具中查看申请状态。</p>
+      <div class="account-application-section">
+        <div class="account-application-label">币种</div>
+        <div class="account-application-options" role="radiogroup" aria-label="币种">
+          <button type="button" class="account-application-chip active" data-account-application-option="currency" aria-pressed="true">USD</button>
+          <button type="button" class="account-application-chip" data-account-application-option="currency" aria-pressed="false">CNH</button>
+          <button type="button" class="account-application-chip" data-account-application-option="currency" aria-pressed="false">HKD</button>
+        </div>
+      </div>
+      <div class="account-application-section">
+        <div class="account-application-label">国家 / 地区</div>
+        <div class="account-application-options" role="radiogroup" aria-label="国家或地区">
+          <button type="button" class="account-application-chip active" data-account-application-option="region" aria-pressed="true">SG（新加坡）</button>
+          <button type="button" class="account-application-chip" data-account-application-option="region" aria-pressed="false">HK（中国香港）</button>
+          <button type="button" class="account-application-chip" data-account-application-option="region" aria-pressed="false">VN（越南）</button>
+        </div>
+      </div>
+      <div class="account-application-section">
+        <div class="account-application-label">银行</div>
+        <div class="account-application-bank-grid" role="radiogroup" aria-label="银行">
+          <button type="button" class="account-application-bank active" data-account-application-option="bank" aria-pressed="true">
+            <div class="account-application-bank-name">SGB</div>
+            <div class="account-application-bank-meta"><span>地区：SG</span><span>币种：USD</span><span>到账时效：T+1–T+0</span></div>
+          </button>
+          <button type="button" class="account-application-bank" data-account-application-option="bank" aria-pressed="false">
+            <div class="account-application-bank-name">DBS BANK LTD</div>
+            <div class="account-application-bank-meta"><span>地区：SG</span><span>币种：USD / SGD</span><span>到账时效：T+1–T+0</span></div>
+          </button>
+        </div>
+      </div>
+      <div class="account-application-actions">
+        <button type="button" class="btn ghost" data-close-account-application>取消</button>
+        <button type="button" class="btn primary" data-submit-account-application>提交申请</button>
+      </div>
+    </div>
+  </div>
+
   <div id="toast" class="toast">已提交</div>
 
   <script>
@@ -3789,7 +3935,9 @@
         warning: '您的银行备注中必须包含两个代码。例如： 参考代码 F15CE453 用途 CBP',
         copyLabel: '复制银行账户信息',
         rows: [
+          ['地区', 'VN'],
           ['收款币种', 'USD'],
+          ['到账时效', 'T+1–T+0'],
           ['收款人名称', 'BlancBlock Digital AG'],
           ['银行账号', '20301000034122'],
           ['IBAN', 'BH64SGBD20301000034122'],
@@ -3803,7 +3951,7 @@
         ]
       },
       dbs: {
-        badge: 'GLOBAL COLLECTION ACCOUNT',
+        badge: 'SAME NAME ACCOUNT',
         owner: 'BrightLink Tech Limited',
         bankLine: 'DBS BANK LTD SGD / USD',
         warning: '请使用已登记的公司银行账户付款，并在汇款备注中填写平台生成的充值用途信息。',
@@ -3812,17 +3960,16 @@
           ['收款币种', 'SGD, USD'],
           ['收款人名称', 'BrightLink Tech Limited'],
           ['银行账号', '**** **** **** 0276'],
-          ['账户类型', '全球收款账户'],
           ['收款国家/地区', 'Singapore'],
+          ['到账时效', 'T+1–T+0'],
           ['受益银行名称', 'DBS BANK LTD'],
           ['受益银行地址', '12 Marina Boulevard, DBS Asia Central, Singapore'],
           ['受益银行 SWIFT 代码', 'DBSSSGSGXXX'],
-          ['付款用途', '货物贸易收款'],
           ['账户状态', '激活失败']
         ]
       },
       bankingcircle: {
-        badge: 'GLOBAL COLLECTION ACCOUNT',
+        badge: 'REFERENCE ACCOUNT',
         owner: 'BrightLink Tech Limited',
         bankLine: 'BANKING CIRCLE DENMARK EUR / USD / GBP / JPY / CAD',
         warning: '请确保汇款币种与该账户支持币种一致，跨币种汇款可能导致退款或入账延迟。',
@@ -3831,12 +3978,11 @@
           ['收款币种', 'EUR, USD, GBP, JPY, CAD'],
           ['收款人名称', 'BrightLink Tech Limited'],
           ['银行账号', '**** **** **** 1291'],
-          ['账户类型', '全球收款账户'],
           ['收款国家/地区', 'EU'],
+          ['到账时效', 'T+1–T+0'],
           ['受益银行名称', 'BANKING CIRCLE DENMARK'],
           ['受益银行地址', 'Amerika Plads 38, 2100 Copenhagen, Denmark'],
           ['受益银行 SWIFT 代码', 'BCIRDKKX'],
-          ['付款用途', '货物贸易收款'],
           ['账户状态', '已激活']
         ]
       },
@@ -3850,12 +3996,11 @@
           ['收款币种', 'MYR'],
           ['收款人名称', 'BrightLink Tech Limited'],
           ['银行账号', '**** **** **** 6088'],
-          ['账户类型', '同名账户'],
           ['收款国家/地区', 'Malaysia'],
+          ['到账时效', 'T+1–T+0'],
           ['受益银行名称', 'OCBC BANK (MALAYSIA) BERHAD'],
           ['受益银行地址', 'Menara OCBC, 18 Jalan Tun Perak, Kuala Lumpur, Malaysia'],
           ['受益银行 SWIFT 代码', 'OCBCMYKLXXX'],
-          ['付款用途', '货物贸易收款'],
           ['账户状态', '已激活']
         ]
       }
@@ -4877,7 +5022,10 @@
         <div class="span-12 asset-workspace">
           <div class="card asset-form" data-crypto-deposit>
             <h3>充币</h3>
-            <div class="crypto-address-verification-note">为确保充值顺利入账，请在转账前完成汇款地址验证。未验证或地址信息异常，可能导致入账延迟或无法入账。</div>
+            <div class="crypto-address-verification-note">
+              <span>为确保充值顺利入账，请在转账前完成汇款地址验证。未验证或地址信息异常，可能导致入账延迟或无法入账。</span>
+              <a href="#" data-nav-page="directory" data-nav-tab="addBeneficiaryAddress" data-return-page="assets" data-return-tab="cryptoDeposit" data-return-label="充币">添加地址</a>
+            </div>
             <label>币种</label>
             <div class="option-grid">
               <div class="option-card selectable active" data-crypto-currency="USDT"><div class="coin-icon green">₮</div><div><div class="option-title">USDT</div><div class="option-sub">Tether USD</div></div></div>
@@ -4917,7 +5065,9 @@
           <div class="card asset-form">
             <div class="deposit-account-head">
               <h3>充值</h3>
+              <a class="inline-action-link" href="#" data-action="open-account-application">＋ 申请账户</a>
             </div>
+            <div class="fiat-deposit-eligibility-note">充值页面仅展示审核通过且当前可用的 VA／大账户；申请中或审核未通过的账户不会展示。</div>
             <label>币种</label>
             <div class="fiat-deposit-currencies">
               <button type="button" class="fiat-currency-option active" data-fiat-deposit-currency="USD">🇺🇸 USD</button>
@@ -5133,6 +5283,7 @@
           <div class="records-filter">
             <div class="field"><label>交易 ID</label><input placeholder="按交易 ID 搜索"></div>
             <div class="field"><label>订单状态</label><select><option>全部</option><option>处理中</option><option>成功</option><option>失败</option></select></div>
+            <div class="field"><label>退票状态</label><select><option>全部</option><option>有退票</option><option>无退票</option></select></div>
             <div class="field"><label>开始日期</label><input placeholder="▦  开始日期"></div>
             <div class="field"><label>结束日期</label><input placeholder="▦  结束日期"></div>
             <button class="btn ghost" data-action="reset-filter">重置</button>
@@ -5160,7 +5311,7 @@
                   <td>USD</td>
                   <td><span class="amount-green">6,200.00</span></td>
                   <td>12 USD</td>
-                  <td><span class="status-success">成功</span></td>
+                  <td><span class="status-success">成功</span><span class="status-returned">有退票</span></td>
                   <td><a href="#" data-action="view">查看</a></td>
                 </tr>
                 <tr>
@@ -5290,7 +5441,7 @@
             ${collectionToolTabs(tab)}
             ${tab === 'sameNameTools' ? `
             <div class="collection-tool-toolbar">
-              <button class="btn primary" data-action="apply-same-name">＋申请同名账户</button>
+              <a class="inline-action-link" href="#" data-action="open-account-application">＋ 申请同名账户</a>
             </div>` : ''}
             <div data-view-panel="bank-tools-list" class="hidden" aria-hidden="true">
               <table class="table collection-tool-table">
@@ -5310,23 +5461,23 @@
               <article class="bank-tool-card ${tab === 'referenceTools' ? '' : 'hidden'}" role="button" tabindex="0" data-deposit-account="bankingcircle" aria-label="查看 Banking Circle 账户详情">
                 <div class="bank-tool-card-head"><div class="bank-tool-identity"><div class="bank-tool-logo">BC</div><div class="bank-tool-name">BANKING CIRCLE DENMARK</div></div><span class="bank-tool-status">可用</span></div>
                 <div class="bank-tool-account"><span class="bank-tool-account-label">账号</span><span class="bank-tool-number">**** **** **** 1291</span></div>
-                <div class="bank-tool-meta"><div class="bank-tool-meta-row"><span class="bank-tool-meta-icon">●</span>EU · 全球收款账户</div><div class="bank-tool-meta-row"><span class="bank-tool-meta-icon">✓</span>货物贸易收款 · T+1–T+0</div></div>
+                <div class="bank-tool-meta"><div class="bank-tool-meta-row"><span class="bank-tool-meta-icon">●</span>地区：EU</div><div class="bank-tool-meta-row"><span class="bank-tool-meta-icon">◷</span>到账时效：T+1–T+0</div></div>
                 <div class="bank-tool-currencies"><span class="bank-tool-currency">EUR</span><span class="bank-tool-currency">USD</span><span class="bank-tool-currency">GBP</span><span class="bank-tool-currency">JPY</span><span class="bank-tool-currency">CAD</span></div>
               </article>
               <article class="bank-tool-card ${tab === 'referenceTools' ? '' : 'hidden'}" role="button" tabindex="0" data-deposit-account="sgb" aria-label="查看 SGB 账户详情">
                 <div class="bank-tool-card-head"><div class="bank-tool-identity"><div class="bank-tool-logo sgb">sgb</div><div class="bank-tool-name">SGB · SAIGON BANK</div></div><span class="bank-tool-status">可用</span></div>
                 <div class="bank-tool-account"><span class="bank-tool-account-label">账号</span><span class="bank-tool-number">**** **** **** 8319</span></div>
-                <div class="bank-tool-meta"><div class="bank-tool-meta-row"><span class="bank-tool-meta-icon">●</span>VN · 本地收款账户</div><div class="bank-tool-meta-row"><span class="bank-tool-meta-icon">✓</span>货物贸易收款 · T+1–T+0</div></div>
+                <div class="bank-tool-meta"><div class="bank-tool-meta-row"><span class="bank-tool-meta-icon">●</span>地区：VN</div><div class="bank-tool-meta-row"><span class="bank-tool-meta-icon">◷</span>到账时效：T+1–T+0</div></div>
                 <div class="bank-tool-currencies"><span class="bank-tool-currency">VND</span><span class="bank-tool-currency">USD</span></div>
               </article>
               <article class="bank-tool-card ${tab === 'sameNameTools' ? '' : 'hidden'}" role="button" tabindex="0" data-deposit-account="dbs" aria-label="查看 DBS 账户详情">
                 <div class="bank-tool-card-head"><div class="bank-tool-identity"><div class="bank-tool-logo dbs">DBS</div><div class="bank-tool-name">DBS BANK LTD</div></div><span class="bank-tool-status pending">开通中</span></div>
-                <div class="bank-tool-meta"><div class="bank-tool-meta-row"><span class="bank-tool-meta-icon">●</span>SG · 全球收款账户</div><div class="bank-tool-meta-row"><span class="bank-tool-meta-icon">✓</span>货物贸易收款 · T+1–T+0</div></div>
+                <div class="bank-tool-meta"><div class="bank-tool-meta-row"><span class="bank-tool-meta-icon">●</span>地区：SG</div><div class="bank-tool-meta-row"><span class="bank-tool-meta-icon">◷</span>到账时效：T+1–T+0</div></div>
                 <div class="bank-tool-currencies"><span class="bank-tool-currency">SGD</span><span class="bank-tool-currency">USD</span></div>
               </article>
               <article class="bank-tool-card ${tab === 'sameNameTools' ? '' : 'hidden'}" role="button" tabindex="0" data-deposit-account="ocbc" aria-label="查看 OCBC 账户详情">
                 <div class="bank-tool-card-head"><div class="bank-tool-identity"><div class="bank-tool-logo ocbc">OCBC</div><div class="bank-tool-name">OCBC BANK (MALAYSIA) BERHAD</div></div><span class="bank-tool-status pending">开通中</span></div>
-                <div class="bank-tool-meta"><div class="bank-tool-meta-row"><span class="bank-tool-meta-icon">●</span>MY · 本地收款账户</div><div class="bank-tool-meta-row"><span class="bank-tool-meta-icon">✓</span>货物贸易收款 · T+1–T+0</div></div>
+                <div class="bank-tool-meta"><div class="bank-tool-meta-row"><span class="bank-tool-meta-icon">●</span>地区：MY</div><div class="bank-tool-meta-row"><span class="bank-tool-meta-icon">◷</span>到账时效：T+1–T+0</div></div>
                 <div class="bank-tool-currencies"><span class="bank-tool-currency">MYR</span></div>
               </article>
             </div>
@@ -5444,12 +5595,13 @@
             <div class="field"><label>订单号</label><input placeholder="搜索付款记录"></div>
             <div class="field"><label>付款类型</label><select><option>全部</option><option>法币余额付款</option><option>数币余额付款</option></select></div>
             <div class="field"><label>订单状态</label><select><option>全部</option><option>处理中</option><option>完成</option><option>失败</option></select></div>
+            <div class="field"><label>退票状态</label><select><option>全部</option><option>有退票</option><option>无退票</option></select></div>
             <div class="field"><label>日期</label><input placeholder="选择日期"></div>
           </div>
           <div class="quick-actions" style="justify-content:flex-end;margin-top:0;"><button class="btn ghost" data-action="reset-filter">重置</button><button class="btn primary" data-action="query">查询</button><button class="btn ghost" data-action="download">导出</button></div>
         </div>
         <table class="table" style="margin-top:16px;"><thead><tr><th>订单号</th><th>付款类型</th><th>扣账账户</th><th>到账账户</th><th>币种</th><th>金额</th><th>手续费</th><th>状态</th><th>创建时间</th></tr></thead><tbody>
-          <tr><td>PAY-2407-018</td><td>法币余额付款</td><td>USD Account</td><td>Shenzhen Supplier A · BOC **** 8821</td><td>USD</td><td>6,200</td><td>12.00</td><td><span class="pill amber">处理中</span></td><td>2026-07-08 10:24</td></tr>
+          <tr><td>PAY-2407-018</td><td>法币余额付款</td><td>USD Account</td><td>Shenzhen Supplier A · BOC **** 8821</td><td>USD</td><td>6,200</td><td>12.00</td><td><span class="pill green">完成</span><span class="status-returned">有退票</span></td><td>2026-07-08 10:24</td></tr>
           <tr><td>CPAY-2407-021</td><td>数币余额付款</td><td>USDT Wallet</td><td>USDT Supplier · BOC **** 8821</td><td>USDT</td><td>1,280</td><td>8.00 USDT</td><td><span class="pill green">完成</span></td><td>2026-07-07 16:02</td></tr>
           <tr><td>CHAIN-2407-026</td><td>法币余额付款</td><td>USD Account</td><td>TRC20 Address · TRX9...2Abc</td><td>USD</td><td>2,500</td><td>--</td><td><span class="pill green">完成</span></td><td>2026-07-06 14:18</td></tr>
         </tbody></table>`;
@@ -5542,12 +5694,13 @@
             <div class="field"><label>订单号</label><input placeholder="搜索付款记录"></div>
             <div class="field"><label>付款类型</label><select><option>全部</option><option>法币余额付款</option><option>数币余额付款</option></select></div>
             <div class="field"><label>订单状态</label><select><option>全部</option><option>处理中</option><option>完成</option><option>失败</option></select></div>
+            <div class="field"><label>退票状态</label><select><option>全部</option><option>有退票</option><option>无退票</option></select></div>
             <div class="field"><label>日期</label><input placeholder="选择日期"></div>
           </div>
           <div class="quick-actions" style="justify-content:flex-end;margin-top:0;"><button class="btn ghost" data-action="reset-filter">重置</button><button class="btn primary" data-action="query">查询</button><button class="btn ghost" data-action="download">导出</button></div>
         </div>
         <table class="table" style="margin-top:16px;"><thead><tr><th>订单号</th><th>付款类型</th><th>扣账账户</th><th>到账账户</th><th>币种</th><th>金额</th><th>手续费</th><th>状态</th><th>创建时间</th></tr></thead><tbody>
-          <tr><td>PAY-2407-018</td><td>法币余额付款</td><td>USD Account</td><td>Shenzhen Supplier A · BOC **** 8821</td><td>USD</td><td>6,200</td><td>12.00</td><td><span class="pill amber">处理中</span></td><td>2026-07-08 10:24</td></tr>
+          <tr><td>PAY-2407-018</td><td>法币余额付款</td><td>USD Account</td><td>Shenzhen Supplier A · BOC **** 8821</td><td>USD</td><td>6,200</td><td>12.00</td><td><span class="pill green">完成</span><span class="status-returned">有退票</span></td><td>2026-07-08 10:24</td></tr>
           <tr><td>CPAY-2407-021</td><td>数币余额付款</td><td>USDT Wallet</td><td>USDT Supplier · BOC **** 8821</td><td>USDT</td><td>1,280</td><td>8.00 USDT</td><td><span class="pill green">完成</span></td><td>2026-07-07 16:02</td></tr>
           <tr><td>CHAIN-2407-026</td><td>法币余额付款</td><td>USD Account</td><td>TRC20 Address · TRX9...2Abc</td><td>USD</td><td>2,500</td><td>--</td><td><span class="pill green">完成</span></td><td>2026-07-06 14:18</td></tr>
         </tbody></table>`;
@@ -5688,8 +5841,56 @@
       });
       document.querySelectorAll('[data-action]').forEach(btn => btn.addEventListener('click', event => {
         event.preventDefault();
+        if (btn.dataset.action === 'open-account-application') {
+          openAccountApplicationModal();
+          return;
+        }
         showToast(actionText(btn.dataset.action));
       }));
+    }
+
+    function openAccountApplicationModal() {
+      const overlay = document.getElementById('accountApplicationOverlay');
+      if (!overlay) return;
+      overlay.classList.add('show');
+      overlay.setAttribute('aria-hidden', 'false');
+      overlay.querySelector('[data-close-account-application]')?.focus();
+    }
+
+    function closeAccountApplicationModal() {
+      const overlay = document.getElementById('accountApplicationOverlay');
+      if (!overlay) return;
+      overlay.classList.remove('show');
+      overlay.setAttribute('aria-hidden', 'true');
+    }
+
+    function bindAccountApplicationModal() {
+      const overlay = document.getElementById('accountApplicationOverlay');
+      if (!overlay || overlay.dataset.bound === 'true') return;
+      overlay.dataset.bound = 'true';
+      overlay.addEventListener('click', event => {
+        if (event.target === overlay || event.target.closest('[data-close-account-application]')) {
+          closeAccountApplicationModal();
+          return;
+        }
+        const option = event.target.closest('[data-account-application-option]');
+        if (option) {
+          const group = option.dataset.accountApplicationOption;
+          overlay.querySelectorAll(`[data-account-application-option="${group}"]`).forEach(item => {
+            const active = item === option;
+            item.classList.toggle('active', active);
+            item.setAttribute('aria-pressed', String(active));
+          });
+          return;
+        }
+        if (event.target.closest('[data-submit-account-application]')) {
+          closeAccountApplicationModal();
+          showToast('账户申请已提交，请前往收款工具查看申请状态');
+        }
+      });
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && overlay.classList.contains('show')) closeAccountApplicationModal();
+      });
     }
 
     function bindAcceptExchange() {
@@ -5797,7 +5998,7 @@
         if (list) {
           list.innerHTML = accounts.length
             ? accounts.map(account => renderFiatDepositAccountCard(account, account.key === accountKey)).join('')
-            : '<div class="empty">当前币种暂无已激活的充值账户</div>';
+            : '<div class="empty">当前币种暂无审核通过且可用的 VA／大账户</div>';
           list.querySelectorAll('[data-fiat-deposit-account]').forEach(button => {
             button.addEventListener('click', () => {
               accountKey = button.dataset.fiatDepositAccount;
@@ -5809,7 +6010,7 @@
         const account = depositAccountDetails[accountKey];
         if (!detail) return;
         if (!account || !meta) {
-          detail.innerHTML = '<div class="empty">请选择其他币种，或等待充值账户激活后再使用。</div>';
+          detail.innerHTML = '<div class="empty">请选择其他币种，或申请账户并等待审核通过后再使用。</div>';
           return;
         }
         detail.innerHTML = renderFiatDepositAccountDetail(account, currency, meta);
@@ -6395,6 +6596,7 @@
       toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
     }
 
+    bindAccountApplicationModal();
     setStep(1);
     updateIndustryExtras();
   </script>
