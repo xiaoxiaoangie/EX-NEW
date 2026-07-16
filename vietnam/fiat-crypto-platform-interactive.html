@@ -1956,36 +1956,19 @@
     .account-application-section:first-of-type { padding-top: 0; border-top: 0; }
     .account-application-label { margin-bottom: 10px; color: #475467; font-size: 13px; font-weight: 760; }
     .account-application-options { display: flex; flex-wrap: wrap; gap: 10px; }
-    .account-application-chip {
-      min-width: 104px;
-      min-height: 42px;
-      padding: 9px 14px;
-      border: 1px solid #d9e0eb;
-      border-radius: 9px;
-      background: #fff;
-      color: #344054;
-      text-align: left;
-      cursor: pointer;
-    }
-    .account-application-chip.active {
-      border-color: #7c3aed;
-      background: #faf7ff;
-      color: #6d28d9;
-      box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.1);
-    }
-    .account-application-bank-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .bank-tool-grid.account-application-bank-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
     .account-application-bank {
-      padding: 15px;
-      border: 1px solid #d9e0eb;
-      border-radius: 10px;
-      background: #fff;
-      color: #344054;
+      width: 100%;
       text-align: left;
       cursor: pointer;
     }
-    .account-application-bank.active { border-color: #7c3aed; background: #faf7ff; box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.1); }
-    .account-application-bank-name { font-size: 14px; font-weight: 820; }
-    .account-application-bank-meta { margin-top: 8px; display: grid; gap: 4px; color: #667085; font-size: 12px; }
+    .account-application-bank.active { border-color: #7c3aed; background: #faf9ff; box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.12); }
+    .account-application-bank .bank-tool-meta {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    .account-application-bank .bank-tool-meta-row { width: 100%; }
     .account-application-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; }
     .account-detail-close {
       position: absolute;
@@ -3040,6 +3023,15 @@
       background: #7c22ff;
       color: #fff;
     }
+    .records-filter.compact-records-filter {
+      grid-template-columns: minmax(150px, 1.2fr) repeat(4, minmax(118px, 1fr)) auto auto auto;
+      gap: 10px;
+      padding: 16px;
+    }
+    .records-filter.compact-records-filter .field label { margin-bottom: 6px; font-size: 12px; }
+    .records-filter.compact-records-filter.payout-records-filter {
+      grid-template-columns: minmax(160px, 1.25fr) repeat(3, minmax(130px, 1fr)) auto auto auto;
+    }
     .records-table-card {
       background: #fff;
       border: 0;
@@ -3598,7 +3590,7 @@
       .deposit-account-grid { grid-template-columns: 1fr; }
       .deposit-account-head { align-items: flex-start; flex-direction: column; }
       .account-application-modal { padding: 22px 18px; }
-      .account-application-bank-grid { grid-template-columns: 1fr; }
+      .bank-tool-grid.account-application-bank-grid { grid-template-columns: 1fr; }
       .account-detail-modal { padding: 18px; }
       .account-detail-selected { padding: 20px 18px 20px 58px; }
       .account-detail-selected::before { left: 18px; top: 24px; }
@@ -3877,29 +3869,43 @@
       <div class="account-application-section">
         <div class="account-application-label">币种</div>
         <div class="account-application-options" role="radiogroup" aria-label="币种">
-          <button type="button" class="account-application-chip active" data-account-application-option="currency" aria-pressed="true">USD</button>
-          <button type="button" class="account-application-chip" data-account-application-option="currency" aria-pressed="false">CNH</button>
-          <button type="button" class="account-application-chip" data-account-application-option="currency" aria-pressed="false">HKD</button>
+          <button type="button" class="fiat-currency-option active" data-account-application-option="currency" aria-pressed="true">🇺🇸 USD</button>
+          <button type="button" class="fiat-currency-option" data-account-application-option="currency" aria-pressed="false">🇨🇳 CNH</button>
+          <button type="button" class="fiat-currency-option" data-account-application-option="currency" aria-pressed="false">🇭🇰 HKD</button>
         </div>
       </div>
       <div class="account-application-section">
         <div class="account-application-label">国家 / 地区</div>
         <div class="account-application-options" role="radiogroup" aria-label="国家或地区">
-          <button type="button" class="account-application-chip active" data-account-application-option="region" aria-pressed="true">SG（新加坡）</button>
-          <button type="button" class="account-application-chip" data-account-application-option="region" aria-pressed="false">HK（中国香港）</button>
-          <button type="button" class="account-application-chip" data-account-application-option="region" aria-pressed="false">VN（越南）</button>
+          <button type="button" class="fiat-currency-option active" data-account-application-option="region" aria-pressed="true">🇸🇬 SG（新加坡）</button>
+          <button type="button" class="fiat-currency-option" data-account-application-option="region" aria-pressed="false">🇭🇰 HK（中国香港）</button>
+          <button type="button" class="fiat-currency-option" data-account-application-option="region" aria-pressed="false">🇻🇳 VN（越南）</button>
         </div>
       </div>
       <div class="account-application-section">
         <div class="account-application-label">银行</div>
-        <div class="account-application-bank-grid" role="radiogroup" aria-label="银行">
-          <button type="button" class="account-application-bank active" data-account-application-option="bank" aria-pressed="true">
-            <div class="account-application-bank-name">SGB</div>
-            <div class="account-application-bank-meta"><span>地区：SG</span><span>币种：USD</span><span>到账时效：T+1–T+0</span></div>
+        <div class="bank-tool-grid account-application-bank-grid" role="radiogroup" aria-label="银行">
+          <button type="button" class="bank-tool-card account-application-bank active" data-account-application-option="bank" aria-pressed="true">
+            <div class="bank-tool-card-head">
+              <div class="bank-tool-identity"><div class="bank-tool-logo sgb">sgb</div><div class="bank-tool-name">SGB · SAIGON BANK</div></div>
+            </div>
+            <div class="bank-tool-meta">
+              <div class="bank-tool-meta-row"><span class="bank-tool-meta-icon">●</span>地区：SG</div>
+              <div class="bank-tool-meta-row"><span class="bank-tool-meta-icon">◷</span>下号时效：1–2 个工作日</div>
+              <div class="bank-tool-meta-row"><span class="bank-tool-meta-icon">◷</span>到账时效：T+1–T+0</div>
+            </div>
+            <div class="bank-tool-currencies"><span class="bank-tool-currency">USD</span></div>
           </button>
-          <button type="button" class="account-application-bank" data-account-application-option="bank" aria-pressed="false">
-            <div class="account-application-bank-name">DBS BANK LTD</div>
-            <div class="account-application-bank-meta"><span>地区：SG</span><span>币种：USD / SGD</span><span>到账时效：T+1–T+0</span></div>
+          <button type="button" class="bank-tool-card account-application-bank" data-account-application-option="bank" aria-pressed="false">
+            <div class="bank-tool-card-head">
+              <div class="bank-tool-identity"><div class="bank-tool-logo dbs">DBS</div><div class="bank-tool-name">DBS BANK LTD</div></div>
+            </div>
+            <div class="bank-tool-meta">
+              <div class="bank-tool-meta-row"><span class="bank-tool-meta-icon">●</span>地区：SG</div>
+              <div class="bank-tool-meta-row"><span class="bank-tool-meta-icon">◷</span>下号时效：2–3 个工作日</div>
+              <div class="bank-tool-meta-row"><span class="bank-tool-meta-icon">◷</span>到账时效：T+1–T+0</div>
+            </div>
+            <div class="bank-tool-currencies"><span class="bank-tool-currency">USD</span><span class="bank-tool-currency">SGD</span></div>
           </button>
         </div>
       </div>
@@ -5091,8 +5097,9 @@
       if (tab === 'depositRecords') return `
         <div class="records-page">
           ${assetTabs('deposit', tab)}
-          <div class="records-filter">
+          <div class="records-filter compact-records-filter">
             <div class="field"><label>交易 ID</label><input placeholder="按交易 ID 搜索"></div>
+            <div class="field"><label>交易类型</label><select><option>全部</option><option>数币充值</option><option>法币充值</option><option>退款入账</option></select></div>
             <div class="field"><label>订单状态</label><select><option>全部</option><option>成功</option><option>处理中</option><option>失败</option></select></div>
             <div class="field"><label>开始日期</label><input placeholder="▦  开始日期"></div>
             <div class="field"><label>结束日期</label><input placeholder="▦  结束日期"></div>
@@ -5102,7 +5109,7 @@
           </div>
           <div class="records-table-card">
             <table class="table records-table">
-              <thead><tr><th>交易 ID</th><th>时间</th><th>类型</th><th>币种</th><th>金额</th><th>手续费</th><th>状态</th><th>操作</th></tr></thead>
+              <thead><tr><th>交易 ID</th><th>时间</th><th>交易类型</th><th>币种</th><th>金额</th><th>手续费</th><th>状态</th><th>操作</th></tr></thead>
               <tbody>
                 <tr>
                   <td>CD-20260709-1001</td>
@@ -5111,7 +5118,7 @@
                   <td><span class="asset-network-stack"><span class="currency-main">USDT</span><span class="network-tag">TRC-20</span></span></td>
                   <td><span class="amount-green">2,850.000000</span></td>
                   <td>-</td>
-                  <td><span class="status-success">成功</span></td>
+                  <td><span class="status-success">成功</span><span class="status-returned">有退款</span></td>
                   <td><a href="#" data-action="view">查看</a></td>
                 </tr>
                 <tr>
@@ -5145,13 +5152,13 @@
                   <td><a href="#" data-action="view">查看</a></td>
                 </tr>
                 <tr>
-                  <td>FD-20260707-2188</td>
+                  <td>RF-20260709-2188</td>
                   <td>2026-07-07 15:18:44</td>
-                  <td><span class="record-type">法币充值</span></td>
+                  <td><span class="record-type">退款入账</span></td>
                   <td>SGD</td>
                   <td><span class="amount-green">8,000.00</span></td>
-                  <td>3 SGD</td>
-                  <td><span class="status-failed">失败</span></td>
+                  <td>0 SGD</td>
+                  <td><span class="status-success">成功</span></td>
                   <td><a href="#" data-action="view">查看</a></td>
                 </tr>
               </tbody>
@@ -5280,10 +5287,10 @@
       if (tab === 'withdrawRecords') return `
         <div class="records-page">
           ${assetTabs('withdraw', tab)}
-          <div class="records-filter">
+          <div class="records-filter compact-records-filter">
             <div class="field"><label>交易 ID</label><input placeholder="按交易 ID 搜索"></div>
+            <div class="field"><label>交易类型</label><select><option>全部</option><option>法币提现</option><option>数币提现</option><option>退票入账</option></select></div>
             <div class="field"><label>订单状态</label><select><option>全部</option><option>处理中</option><option>成功</option><option>失败</option></select></div>
-            <div class="field"><label>退票状态</label><select><option>全部</option><option>有退票</option><option>无退票</option></select></div>
             <div class="field"><label>开始日期</label><input placeholder="▦  开始日期"></div>
             <div class="field"><label>结束日期</label><input placeholder="▦  结束日期"></div>
             <button class="btn ghost" data-action="reset-filter">重置</button>
@@ -5292,7 +5299,7 @@
           </div>
           <div class="records-table-card">
             <table class="table records-table">
-              <thead><tr><th>交易 ID</th><th>时间</th><th>类型</th><th>币种</th><th>金额</th><th>手续费</th><th>状态</th><th>操作</th></tr></thead>
+              <thead><tr><th>交易 ID</th><th>时间</th><th>交易类型</th><th>币种</th><th>金额</th><th>手续费</th><th>状态</th><th>操作</th></tr></thead>
               <tbody>
                 <tr>
                   <td>WD-20260709-2048</td>
@@ -5325,13 +5332,13 @@
                   <td><a href="#" data-action="view">查看</a></td>
                 </tr>
                 <tr>
-                  <td>WD-20260706-0915</td>
+                  <td>RT-20260706-0915</td>
                   <td>2026-07-06 09:15:31</td>
-                  <td><span class="record-type">法币提现</span></td>
+                  <td><span class="record-type">退票入账</span></td>
                   <td>HKD</td>
                   <td><span class="amount-green">18,000.00</span></td>
-                  <td>80 HKD</td>
-                  <td><span class="status-failed">失败</span></td>
+                  <td>0 HKD</td>
+                  <td><span class="status-success">成功</span></td>
                   <td><a href="#" data-action="view">查看</a></td>
                 </tr>
                 <tr>
@@ -5533,13 +5540,13 @@
         <div class="filter-card">
           <div class="form-row">
             <div class="field"><label>订单号 / TxID</label><input placeholder="搜索收款记录"></div>
-            <div class="field"><label>收款类型</label><select><option>全部</option><option>法币收款</option><option>数币收款</option></select></div>
+            <div class="field"><label>交易类型</label><select><option>全部</option><option>法币收款</option><option>数币收款</option></select></div>
             <div class="field"><label>币种</label><select><option>全部币种</option><option>USD</option><option>VND</option><option>USDT</option><option>USDC</option></select></div>
             <div class="field"><label>日期</label><input placeholder="选择日期"></div>
           </div>
           <div class="quick-actions" style="justify-content:flex-end;margin-top:0;"><button class="btn ghost" data-action="reset-filter">重置</button><button class="btn primary" data-action="query">查询</button><button class="btn ghost" data-action="download">导出</button></div>
         </div>
-        <table class="table" style="margin-top:16px;"><thead><tr><th>订单号 / TxID</th><th>收款类型</th><th>收款来源</th><th>收款账户 / 地址</th><th>到账账户</th><th>币种</th><th>金额</th><th>手续费</th><th>状态</th><th>完成时间</th></tr></thead><tbody>
+        <table class="table" style="margin-top:16px;"><thead><tr><th>订单号 / TxID</th><th>交易类型</th><th>收款来源</th><th>收款账户 / 地址</th><th>到账账户</th><th>币种</th><th>金额</th><th>手续费</th><th>状态</th><th>完成时间</th></tr></thead><tbody>
           <tr><td>COL-20260708-011</td><td>法币收款</td><td>Amazon Settlement</td><td>USD VA **** 1028</td><td>USD Account</td><td>USD</td><td>12,884.10</td><td>--</td><td><span class="pill green">已入账</span></td><td>2026-07-08 11:40</td></tr>
           <tr><td>CCOL-20260708-009<br>9b3...fa21</td><td>数币收款</td><td>TRC-20 Transfer</td><td>TRX...9Ab3</td><td>USDT Wallet</td><td>USDT</td><td>6,200.00</td><td>--</td><td><span class="pill green">已确认</span></td><td>2026-07-08 09:18</td></tr>
           <tr><td>COL-20260707-032</td><td>法币收款</td><td>Trade Buyer VN</td><td>VND VA **** 7610</td><td>VND Account</td><td>VND</td><td>254,600,000</td><td>--</td><td><span class="pill amber">处理中</span></td><td>2026-07-07 17:22</td></tr>
@@ -5590,20 +5597,17 @@
         <div style="margin-top:16px;">${payoutBody('fiatBalance')}</div>`;
       if (tab === 'payoutRecords') return `
         ${payoutTabs(tab)}
-        <div class="filter-card" style="margin-top:16px;">
-          <div class="form-row">
-            <div class="field"><label>订单号</label><input placeholder="搜索付款记录"></div>
-            <div class="field"><label>付款类型</label><select><option>全部</option><option>法币余额付款</option><option>数币余额付款</option></select></div>
-            <div class="field"><label>订单状态</label><select><option>全部</option><option>处理中</option><option>完成</option><option>失败</option></select></div>
-            <div class="field"><label>退票状态</label><select><option>全部</option><option>有退票</option><option>无退票</option></select></div>
-            <div class="field"><label>日期</label><input placeholder="选择日期"></div>
-          </div>
-          <div class="quick-actions" style="justify-content:flex-end;margin-top:0;"><button class="btn ghost" data-action="reset-filter">重置</button><button class="btn primary" data-action="query">查询</button><button class="btn ghost" data-action="download">导出</button></div>
+        <div class="records-filter compact-records-filter payout-records-filter" style="margin-top:16px;">
+          <div class="field"><label>订单号</label><input placeholder="搜索付款记录"></div>
+          <div class="field"><label>交易类型</label><select><option>全部</option><option>法币付款</option><option>数币付款</option><option>退票入账</option></select></div>
+          <div class="field"><label>订单状态</label><select><option>全部</option><option>处理中</option><option>完成</option><option>失败</option></select></div>
+          <div class="field"><label>日期</label><input placeholder="选择日期"></div>
+          <button class="btn ghost" data-action="reset-filter">重置</button><button class="btn primary" data-action="query">查询</button><button class="btn ghost" data-action="download">导出</button>
         </div>
-        <table class="table" style="margin-top:16px;"><thead><tr><th>订单号</th><th>付款类型</th><th>扣账账户</th><th>到账账户</th><th>币种</th><th>金额</th><th>手续费</th><th>状态</th><th>创建时间</th></tr></thead><tbody>
+        <table class="table" style="margin-top:16px;"><thead><tr><th>订单号</th><th>交易类型</th><th>扣账/入账账户</th><th>到账账户</th><th>币种</th><th>金额</th><th>手续费</th><th>状态</th><th>创建时间</th></tr></thead><tbody>
           <tr><td>PAY-2407-018</td><td>法币余额付款</td><td>USD Account</td><td>Shenzhen Supplier A · BOC **** 8821</td><td>USD</td><td>6,200</td><td>12.00</td><td><span class="pill green">完成</span><span class="status-returned">有退票</span></td><td>2026-07-08 10:24</td></tr>
           <tr><td>CPAY-2407-021</td><td>数币余额付款</td><td>USDT Wallet</td><td>USDT Supplier · BOC **** 8821</td><td>USDT</td><td>1,280</td><td>8.00 USDT</td><td><span class="pill green">完成</span></td><td>2026-07-07 16:02</td></tr>
-          <tr><td>CHAIN-2407-026</td><td>法币余额付款</td><td>USD Account</td><td>TRC20 Address · TRX9...2Abc</td><td>USD</td><td>2,500</td><td>--</td><td><span class="pill green">完成</span></td><td>2026-07-06 14:18</td></tr>
+          <tr><td>RTN-2407-026</td><td>退票入账</td><td>USD Account</td><td>原付款单 PAY-2407-018</td><td>USD</td><td>6,188</td><td>--</td><td><span class="pill green">完成</span></td><td>2026-07-06 14:18</td></tr>
         </tbody></table>`;
       if (['legacyFiatBalance', 'fiatToBank', 'fiatToChain'].includes(tab)) return `
         <div class="asset-workspace">
@@ -5689,20 +5693,17 @@
         </div>
         `;
       if (tab === 'records') return `
-        <div class="filter-card">
-          <div class="form-row">
-            <div class="field"><label>订单号</label><input placeholder="搜索付款记录"></div>
-            <div class="field"><label>付款类型</label><select><option>全部</option><option>法币余额付款</option><option>数币余额付款</option></select></div>
-            <div class="field"><label>订单状态</label><select><option>全部</option><option>处理中</option><option>完成</option><option>失败</option></select></div>
-            <div class="field"><label>退票状态</label><select><option>全部</option><option>有退票</option><option>无退票</option></select></div>
-            <div class="field"><label>日期</label><input placeholder="选择日期"></div>
-          </div>
-          <div class="quick-actions" style="justify-content:flex-end;margin-top:0;"><button class="btn ghost" data-action="reset-filter">重置</button><button class="btn primary" data-action="query">查询</button><button class="btn ghost" data-action="download">导出</button></div>
+        <div class="records-filter compact-records-filter payout-records-filter">
+          <div class="field"><label>订单号</label><input placeholder="搜索付款记录"></div>
+          <div class="field"><label>交易类型</label><select><option>全部</option><option>法币付款</option><option>数币付款</option><option>退票入账</option></select></div>
+          <div class="field"><label>订单状态</label><select><option>全部</option><option>处理中</option><option>完成</option><option>失败</option></select></div>
+          <div class="field"><label>日期</label><input placeholder="选择日期"></div>
+          <button class="btn ghost" data-action="reset-filter">重置</button><button class="btn primary" data-action="query">查询</button><button class="btn ghost" data-action="download">导出</button>
         </div>
         <table class="table" style="margin-top:16px;"><thead><tr><th>订单号</th><th>付款类型</th><th>扣账账户</th><th>到账账户</th><th>币种</th><th>金额</th><th>手续费</th><th>状态</th><th>创建时间</th></tr></thead><tbody>
           <tr><td>PAY-2407-018</td><td>法币余额付款</td><td>USD Account</td><td>Shenzhen Supplier A · BOC **** 8821</td><td>USD</td><td>6,200</td><td>12.00</td><td><span class="pill green">完成</span><span class="status-returned">有退票</span></td><td>2026-07-08 10:24</td></tr>
           <tr><td>CPAY-2407-021</td><td>数币余额付款</td><td>USDT Wallet</td><td>USDT Supplier · BOC **** 8821</td><td>USDT</td><td>1,280</td><td>8.00 USDT</td><td><span class="pill green">完成</span></td><td>2026-07-07 16:02</td></tr>
-          <tr><td>CHAIN-2407-026</td><td>法币余额付款</td><td>USD Account</td><td>TRC20 Address · TRX9...2Abc</td><td>USD</td><td>2,500</td><td>--</td><td><span class="pill green">完成</span></td><td>2026-07-06 14:18</td></tr>
+          <tr><td>RTN-2407-026</td><td>退票入账</td><td>USD Account</td><td>原付款单 PAY-2407-018</td><td>USD</td><td>6,188</td><td>--</td><td><span class="pill green">完成</span></td><td>2026-07-06 14:18</td></tr>
         </tbody></table>`;
       return payoutBody('fiatBalance');
     }
