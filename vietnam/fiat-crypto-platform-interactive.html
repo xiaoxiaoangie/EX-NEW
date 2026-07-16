@@ -3223,7 +3223,17 @@
     .directory-success-icon { width: 58px; height: 58px; margin: 0 auto 18px; display: grid; place-items: center; border-radius: 50%; background: #eaf8f1; color: #168a5b; font-size: 28px; font-weight: 900; }
     .directory-success-card h3 { margin: 0 0 10px; color: #1f2937; font-size: 20px; }
     .directory-success-card p { margin: 0 auto 24px; max-width: 490px; color: #667085; font-size: 14px; line-height: 1.7; }
-    .directory-success-actions { display: flex; justify-content: center; gap: 12px; }
+    .directory-success-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; }
+    .crypto-address-verification-note {
+      margin: 0 0 18px;
+      padding: 11px 13px;
+      border: 1px solid #f2d39a;
+      border-radius: 8px;
+      background: #fff9ed;
+      color: #8a5a12;
+      font-size: 13px;
+      line-height: 1.55;
+    }
     .collection-tools-page {
       grid-column: 1 / -1;
       display: grid;
@@ -3709,11 +3719,11 @@
           <button class="menu-item" data-page="payout" data-tab="balancePayment"><span class="menu-icon">▭</span><span>付款</span></button>
         </div>
 
-        <div class="menu-section">
+        <div class="menu-section hidden" aria-hidden="true" data-deferred-module="cards">
           <div class="menu-section-title purple">我的卡片</div>
-          <button class="menu-item" data-page="cards" data-tab="mycards"><span class="menu-icon">▭</span><span>卡片列表</span></button>
-          <button class="menu-item" data-page="cards" data-tab="orders"><span class="menu-icon">▣</span><span>卡订单</span></button>
-          <button class="menu-item" data-page="cards" data-tab="billing"><span class="menu-icon">☰</span><span>卡账单</span></button>
+          <button class="menu-item" tabindex="-1" data-page="cards" data-tab="mycards"><span class="menu-icon">▭</span><span>卡片列表</span></button>
+          <button class="menu-item" tabindex="-1" data-page="cards" data-tab="orders"><span class="menu-icon">▣</span><span>卡订单</span></button>
+          <button class="menu-item" tabindex="-1" data-page="cards" data-tab="billing"><span class="menu-icon">☰</span><span>卡账单</span></button>
         </div>
 
         <div class="menu-section">
@@ -3722,12 +3732,12 @@
           <button class="menu-item" data-page="reports" data-tab="balanceDetails"><span class="menu-icon">▤</span><span>余额明细</span></button>
         </div>
 
-        <div class="menu-section">
+        <div class="menu-section hidden" aria-hidden="true" data-deferred-module="settings">
           <div class="menu-section-title blue">设置中心</div>
-          <button class="menu-item" data-page="profile" data-tab="profile"><span class="menu-icon">☻</span><span>个人信息</span></button>
-          <button class="menu-item" data-page="profile" data-tab="api"><span class="menu-icon">&lt;/&gt;</span><span>API申请</span></button>
-          <button class="menu-item" data-page="profile" data-tab="security"><span class="menu-icon">▣</span><span>安全设置</span></button>
-          <button class="menu-item" data-page="profile" data-tab="roles"><span class="menu-icon">♢</span><span>角色与权限</span></button>
+          <button class="menu-item" tabindex="-1" data-page="profile" data-tab="profile"><span class="menu-icon">☻</span><span>个人信息</span></button>
+          <button class="menu-item" tabindex="-1" data-page="profile" data-tab="api"><span class="menu-icon">&lt;/&gt;</span><span>API申请</span></button>
+          <button class="menu-item" tabindex="-1" data-page="profile" data-tab="security"><span class="menu-icon">▣</span><span>安全设置</span></button>
+          <button class="menu-item" tabindex="-1" data-page="profile" data-tab="roles"><span class="menu-icon">♢</span><span>角色与权限</span></button>
         </div>
       </nav>
       <div class="side-foot">KYC passed · Fiat + Crypto enabled</div>
@@ -3762,6 +3772,7 @@
       page: 'assets',
       tab: 'overview',
       detected: false,
+      returnContext: null,
       profile: {
         name: 'Lotus Global Trade Co.',
         type: '企业',
@@ -3965,6 +3976,7 @@
       btn.addEventListener('click', () => {
         const page = btn.dataset.page;
         const tab = btn.dataset.tab || defaultTab(page);
+        state.returnContext = null;
         renderPage(page, tab);
       });
     });
@@ -4083,7 +4095,7 @@
                   <span>兑换</span>
                   <span class="dashboard-quick-arrow">›</span>
                 </button>
-                <button class="dashboard-quick-card" data-nav-page="cards" data-nav-tab="mycards">
+                <button class="dashboard-quick-card hidden" aria-hidden="true" tabindex="-1" data-nav-page="cards" data-nav-tab="mycards" data-deferred-module="cards">
                   <span class="dashboard-quick-icon purple">▭</span>
                   <span>我的卡片</span>
                   <span class="dashboard-quick-arrow">›</span>
@@ -4415,7 +4427,7 @@
             <div class="transfer-section">
               <div class="transfer-label-line">
                 <span>${selectLabel}</span>
-                <a href="#" data-nav-page="directory" data-nav-tab="${linkTab}">+ ${linkLabel}</a>
+                <a href="#" data-nav-page="directory" data-nav-tab="${linkTab}" data-return-page="${isWithdraw ? 'assets' : 'payout'}" data-return-tab="${activeTab}" data-return-label="${isWithdraw ? '提现' : '付款'}">+ ${linkLabel}</a>
               </div>
               <div class="transfer-select" data-transfer-select>
                 <button type="button" class="transfer-select-button" data-transfer-select-button>${renderRecipientOption(firstRecipient, 0, true, true)}</button>
@@ -4423,7 +4435,7 @@
                   <div class="transfer-dropdown-head">
                     <div class="transfer-search-row">
                       <input placeholder="${isBankTarget ? '请输入收款人昵称筛选' : '搜索昵称、币种、网络或地址'}" data-transfer-search>
-                      <a class="transfer-add-link" href="#" data-nav-page="directory" data-nav-tab="${linkTab}">+ ${linkLabel}</a>
+                      <a class="transfer-add-link" href="#" data-nav-page="directory" data-nav-tab="${linkTab}" data-return-page="${isWithdraw ? 'assets' : 'payout'}" data-return-tab="${activeTab}" data-return-label="${isWithdraw ? '提现' : '付款'}">+ ${linkLabel}</a>
                     </div>
                     <div class="transfer-filter-row" data-transfer-filter-row></div>
                   </div>
@@ -4705,6 +4717,9 @@
       if (isAddressSuccess || isAccountSuccess) {
         const listTab = isAddressSuccess ? 'beneficiaryAddress' : 'beneficiaryAccount';
         const addTab = isAddressSuccess ? 'addBeneficiaryAddress' : 'addBeneficiaryAccount';
+        const returnAction = state.returnContext
+          ? `<button class="btn primary" data-return-operation>返回${state.returnContext.label}页面</button>`
+          : '';
         return `
           <div class="directory-success-page">
             <div class="card directory-success-card">
@@ -4712,7 +4727,8 @@
               <h3>添加申请已提交</h3>
               <p>添加成功，请到列表查看添加状态。添加成功后可正常提现/付款。</p>
               <div class="directory-success-actions">
-                <button class="btn primary" data-nav-page="directory" data-nav-tab="${listTab}">查看列表</button>
+                ${returnAction}
+                <button class="btn ${state.returnContext ? 'ghost' : 'primary'}" data-nav-page="directory" data-nav-tab="${listTab}" data-clear-return-context>查看列表</button>
                 <button class="btn ghost" data-nav-page="directory" data-nav-tab="${addTab}">继续新增</button>
               </div>
             </div>
@@ -4861,6 +4877,7 @@
         <div class="span-12 asset-workspace">
           <div class="card asset-form" data-crypto-deposit>
             <h3>充币</h3>
+            <div class="crypto-address-verification-note">为确保充值顺利入账，请在转账前完成汇款地址验证。未验证或地址信息异常，可能导致入账延迟或无法入账。</div>
             <label>币种</label>
             <div class="option-grid">
               <div class="option-card selectable active" data-crypto-currency="USDT"><div class="coin-icon green">₮</div><div><div class="option-title">USDT</div><div class="option-sub">Tether USD</div></div></div>
@@ -4886,12 +4903,12 @@
           </div>
           <div class="side-card-stack">
             ${assetNotice('cryptoDeposit')}
-            <div class="hidden" aria-hidden="true">${sideShortcut({
+            ${sideShortcut({
               title: '地址管理',
-              desc: '管理已验证的汇款人地址，充值前可先完成地址登记与验证。',
+              desc: '登记并验证汇款地址，完成验证后再发起充值，降低入账异常风险。',
               button: '地址管理',
-              tab: 'remitter'
-            })}</div>
+              tab: 'beneficiaryAddress'
+            })}
           </div>
         </div>`;
       if (tab === 'fiatDeposit') return `
@@ -5633,8 +5650,25 @@
       bindDepositAccountCards();
       document.querySelectorAll('[data-nav-page]').forEach(btn => btn.addEventListener('click', event => {
         event.preventDefault();
+        if (btn.dataset.returnPage) {
+          state.returnContext = {
+            page: btn.dataset.returnPage,
+            tab: btn.dataset.returnTab || defaultTab(btn.dataset.returnPage),
+            label: btn.dataset.returnLabel || '原操作'
+          };
+        } else if (btn.hasAttribute('data-clear-return-context')) {
+          state.returnContext = null;
+        } else if (['addBeneficiaryAddress', 'addBeneficiaryAccount'].includes(btn.dataset.navTab) && state.page === 'directory' && !state.tab.endsWith('Success')) {
+          state.returnContext = null;
+        }
         renderPage(btn.dataset.navPage, btn.dataset.navTab || defaultTab(btn.dataset.navPage));
       }));
+      document.querySelector('[data-return-operation]')?.addEventListener('click', () => {
+        if (!state.returnContext) return;
+        const target = { ...state.returnContext };
+        state.returnContext = null;
+        renderPage(target.page, target.tab);
+      });
       document.querySelectorAll('.range-switch').forEach(group => {
         group.querySelectorAll('button').forEach(btn => btn.addEventListener('click', () => {
           group.querySelectorAll('button').forEach(item => item.classList.toggle('active', item === btn));
