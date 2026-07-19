@@ -3665,7 +3665,113 @@
       .dashboard-total-value { font-size: 26px; }
       .dashboard-section-head { align-items: flex-start; flex-direction: column; }
     }
-  </style>
+  /* Reserved payout workspace: shared beneficiary pattern + record detail */
+  .reserved-tabs { margin-bottom:16px; }
+  .reserved-beneficiary-trigger { width:100%; min-height:64px; display:flex; align-items:center; gap:12px; padding:12px 14px; border:1px solid #cfd8e3; border-radius:8px; background:#fff; text-align:left; }
+  .reserved-beneficiary-trigger:hover, .reserved-beneficiary-trigger.active { border-color:var(--purple); box-shadow:0 0 0 3px rgba(124,58,237,.1); }
+  .reserved-beneficiary-avatar { width:38px; height:38px; border-radius:8px; display:grid; place-items:center; background:#f0edff; color:var(--purple); font-weight:800; }
+  .reserved-beneficiary-copy { flex:1; min-width:0; }
+  .reserved-beneficiary-copy strong, .reserved-beneficiary-copy span { display:block; }
+  .reserved-beneficiary-copy span { margin-top:4px; color:var(--muted); font-size:12px; }
+  .reserved-beneficiary-list { margin-top:8px; border:1px solid var(--line); border-radius:8px; overflow:hidden; background:#fff; }
+  .reserved-beneficiary-option { width:100%; display:flex; gap:12px; align-items:center; padding:12px 14px; border:0; border-bottom:1px solid var(--line); background:#fff; text-align:left; }
+  .reserved-beneficiary-option:last-child { border-bottom:0; }
+  .reserved-beneficiary-option:hover { background:#faf9ff; }
+  .reserved-manage-actions { display:grid; gap:10px; }
+  .reserved-manage-actions .btn { width:100%; }
+  .verification-alert { padding:14px; border:1px solid #f6c76b; border-radius:8px; background:#fff8e8; color:#8a5a00; font-size:13px; line-height:1.55; }
+  .reserved-v2-section { padding-top:16px; margin-top:16px; border-top:1px solid #edf0f5; }
+  .reserved-v2-section:first-of-type { padding-top:0; margin-top:0; border-top:0; }
+  .reserved-v2-section-title { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; color:#344054; font-size:13px; font-weight:780; }
+  .reserved-v2-section-title a { color:#2085ff; text-decoration:none; }
+  .reserved-address-select { width:100%; display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:12px; padding:11px 13px; border:1px solid #d7dfea; border-radius:8px; background:#fff; text-align:left; }
+  .reserved-address-select.active { border-color:#60c7a5; background:#f2fcf8; }
+  .reserved-address-main strong, .reserved-address-main span { display:block; }
+  .reserved-address-main span { margin-top:4px; color:var(--muted); font-size:12px; }
+  .verified-mark { color:#07875f; background:#dff8ee; border-radius:999px; padding:5px 9px; font-size:12px; font-weight:750; }
+  .reserved-deposit-callout { margin-top:16px; padding:20px; border:2px solid #7c3aed; border-radius:10px; background:linear-gradient(135deg,#f8f2ff,#f5f8ff); text-align:center; }
+  .reserved-deposit-callout span { display:block; color:#667085; font-size:13px; }
+  .reserved-deposit-callout strong { display:block; margin-top:6px; color:#6d28d9; font-size:28px; letter-spacing:.2px; }
+  .reserved-side-notice h3 { color:#d64545; }
+  .reserved-side-notice ul { margin:0; padding-left:18px; display:grid; gap:12px; color:#475467; font-size:13px; line-height:1.55; }
+  .reserved-side-notice li::marker { color:#ff9da4; }
+  .reserved-payment-page .transfer-shell { margin-top:10px; gap:12px; }
+  .reserved-payment-page .transfer-form { padding:14px 16px; }
+  .reserved-payment-page .reserved-v2-section { padding-top:10px; margin-top:10px; }
+  .reserved-payment-page .reserved-v2-section-title { margin-bottom:7px; }
+  .reserved-payment-page input, .reserved-payment-page select { min-height:38px; padding-top:8px; padding-bottom:8px; }
+  .reserved-payment-page .payer-reference { padding:10px; }
+  .reserved-payment-page .reserved-quote-card { padding:8px 10px; gap:7px; }
+  .reserved-payment-page .reserved-quote-card small { margin-top:2px; line-height:1.25; }
+  .reserved-payment-page .reserved-quote-card b { margin-top:5px; }
+  .reserved-payment-page .fee-summary { padding:10px 12px; gap:6px; }
+  .reserved-payment-page .reserved-deposit-callout { margin-top:7px; padding:8px 10px; }
+  .reserved-payment-page .reserved-deposit-callout span { font-size:11px; }
+  .reserved-payment-page .reserved-deposit-callout strong { margin-top:2px; font-size:19px; }
+  .reserved-funding-grid { display:grid; grid-template-columns:1fr; gap:8px; }
+  .reserved-compact-options { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+  .reserved-compact-card { min-height:48px; display:flex; align-items:center; gap:9px; padding:8px 10px; border:1px solid #d7dfea; border-radius:8px; background:#fff; text-align:left; color:#344054; }
+  .reserved-compact-card.active { border-color:#7c3aed; background:#f7f1ff; box-shadow:0 0 0 1px rgba(124,58,237,.1); }
+  .reserved-compact-card.disabled { opacity:.42; cursor:not-allowed; background:#f4f5f7; }
+  .reserved-compact-card .coin-icon { width:30px; height:30px; flex:0 0 30px; }
+  .reserved-compact-card strong, .reserved-compact-card small { display:block; }
+  .reserved-compact-card small { margin-top:2px; color:#667085; font-size:11px; }
+  .reserved-generated-tool { margin-top:9px; display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:10px; padding:10px 12px; border:1px solid #d7dfea; border-radius:8px; background:#f8fafc; }
+  .reserved-generated-tool strong, .reserved-generated-tool span { display:block; }
+  .reserved-generated-tool span { margin-top:3px; color:#667085; font-size:11px; overflow-wrap:anywhere; }
+  .source-address-alert { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:9px 12px; border:1px solid #f6c76b; border-radius:8px; background:#fff8e8; color:#8a5a00; font-size:12px; line-height:1.45; }
+  .source-address-alert a { color:#7c3aed; font-weight:780; text-decoration:none; white-space:nowrap; }
+  .reserved-settlement-grid { display:grid; grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr); gap:10px; align-items:stretch; }
+  .reserved-address-panel, .reserved-fee-panel { border:1px solid #dfe4eb; border-radius:8px; background:#f8fafc; padding:10px; }
+  .reserved-address-panel { display:grid; grid-template-columns:92px minmax(0,1fr); gap:11px; align-items:center; }
+  .reserved-address-panel .qr-box { width:92px; border-width:8px; border-radius:6px; }
+  .reserved-address-detail { min-width:0; }
+  .reserved-address-detail strong, .reserved-address-detail span { display:block; }
+  .reserved-address-detail span { margin-top:5px; color:#667085; font-size:11px; overflow-wrap:anywhere; }
+  .reserved-address-detail .btn { margin-top:8px; min-height:32px; padding:0 10px; font-size:12px; }
+  .reserved-fee-panel .fee-summary { margin:0; border:0; background:transparent; padding:0; }
+  @media (max-width:900px) { .reserved-settlement-grid { grid-template-columns:1fr; } }
+  .reserved-record-row { cursor:pointer; }
+  .reserved-record-row:hover { background:#faf9ff; }
+  .record-link { color:var(--purple); font-weight:700; text-decoration:none; }
+  .record-detail-overlay { position:fixed; inset:0; z-index:120; display:none; background:rgba(17,24,39,.38); }
+  .record-detail-overlay.show { display:block; }
+  .record-detail-drawer { position:absolute; top:0; right:0; width:min(620px,100%); height:100%; overflow:auto; padding:24px; background:#fff; box-shadow:-16px 0 40px rgba(17,24,39,.18); }
+  .record-detail-head { display:flex; justify-content:space-between; gap:16px; align-items:flex-start; margin-bottom:20px; }
+  .record-detail-head h2 { margin:0 0 5px; font-size:21px; }
+  .record-detail-close { border:0; background:#f2f4f7; border-radius:8px; width:36px; height:36px; font-size:20px; }
+  .record-detail-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:8px; overflow:hidden; }
+  .record-detail-item { padding:13px; background:#fff; }
+  .record-detail-item span, .record-detail-item b { display:block; }
+  .record-detail-item span { color:var(--muted); font-size:12px; margin-bottom:5px; }
+  .record-timeline { margin-top:22px; }
+  .record-timeline h3 { margin:0 0 16px; }
+  .timeline-item { position:relative; display:grid; grid-template-columns:22px 1fr; gap:10px; padding-bottom:20px; }
+  .timeline-item:not(:last-child)::before { content:""; position:absolute; left:7px; top:16px; bottom:0; width:2px; background:#dfe4eb; }
+  .timeline-dot { width:16px; height:16px; margin-top:2px; border:4px solid #dfe4eb; border-radius:50%; background:#fff; z-index:1; }
+  .timeline-item.done .timeline-dot { border-color:var(--green); }
+  .timeline-item.current .timeline-dot { border-color:var(--purple); }
+  .timeline-copy strong { display:block; font-size:14px; }
+  .timeline-copy span { display:block; margin-top:4px; color:var(--muted); font-size:12px; line-height:1.45; }
+  .reservation-mini-detail { padding:15px; border:1px solid #dfe4eb; border-radius:8px; background:#f8fafc; margin-bottom:18px; }
+  .reservation-mini-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
+  .reservation-mini-head h3 { margin:0; font-size:15px; }
+  .reservation-child-list { display:grid; gap:12px; margin-top:20px; }
+  .reservation-child-card { border:1px solid #dfe4eb; border-radius:9px; overflow:hidden; background:#fff; }
+  .reservation-child-head { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 14px; background:#f8fafc; border-bottom:1px solid #e8ecf2; }
+  .reservation-child-title { display:flex; align-items:center; gap:9px; font-size:14px; font-weight:780; }
+  .reservation-child-index { width:25px; height:25px; display:grid; place-items:center; border-radius:7px; background:#ede9fe; color:#6d28d9; }
+  .reservation-child-body { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .reservation-child-field { padding:11px 14px; border-right:1px solid #edf0f5; border-bottom:1px solid #edf0f5; }
+  .reservation-child-field:nth-child(2n) { border-right:0; }
+  .reservation-child-field span, .reservation-child-field b { display:block; }
+  .reservation-child-field span { color:#667085; font-size:12px; margin-bottom:4px; }
+  .reservation-child-field b { font-size:13px; overflow-wrap:anywhere; }
+  .reserved-fee-stack { display:grid; gap:3px; }
+  .reserved-fee-stack span { white-space:nowrap; }
+  @media (max-width:760px) { .record-detail-grid { grid-template-columns:1fr; } }
+  @media (max-width:760px) { .reservation-child-body { grid-template-columns:1fr; } .reservation-child-field { border-right:0; } }
+</style>
 </head>
 <body>
   <section id="onboardingShell" class="shell">
@@ -4364,6 +4470,10 @@
           </div>`;
       },
       payout(tab) {
+        if (tab === 'reservedPayment') return `
+          <div class="dashboard-grid reserved-payment-page">
+            <div class="span-12">${payoutBody(tab)}</div>
+          </div>`;
         return `
           <div class="dashboard-grid">
             <div class="card span-12">
@@ -4451,6 +4561,7 @@
 
     function payoutNavGroup(tab) {
       if (['balancePayment', 'payoutCreate', 'payoutRecords', 'fiatBalance', 'fiatToBank', 'fiatToChain', 'cryptoBalance', 'cryptoToBank', 'records'].includes(tab)) return 'balancePayment';
+      if (['reservedPayment', 'reservedRecords'].includes(tab)) return 'reservedPayment';
       return tab;
     }
 
@@ -4459,6 +4570,13 @@
         <button class="tab hidden" aria-hidden="true" tabindex="-1" data-page="payout" data-tab="cryptoBalance">付到数币地址</button>
         <button class="tab ${active === 'fiatBalance' ? 'active' : ''}" data-page="payout" data-tab="fiatBalance">付到法币账户</button>
         <button class="tab ${active === 'payoutRecords' ? 'active' : ''}" data-page="payout" data-tab="payoutRecords">付款记录</button>
+      </div>`;
+    }
+
+    function reservedPaymentTabs(active) {
+      return `<div class="tabs reserved-tabs" role="tablist" aria-label="预约付款">
+        <button class="tab ${active === 'reservedPayment' ? 'active' : ''}" data-page="payout" data-tab="reservedPayment">预约付款</button>
+        <button class="tab ${active === 'reservedRecords' ? 'active' : ''}" data-page="payout" data-tab="reservedRecords">付款记录</button>
       </div>`;
     }
 
@@ -5650,9 +5768,67 @@
       return collectionBody('bankTools');
     }
 
+    function reservedPaymentCreateBody() {
+      const recipients = transferCatalog.recipients.paymentFiat.filter(item => item.type === 'bank');
+      return `
+        ${reservedPaymentTabs('reservedPayment')}
+        <div class="transfer-shell" data-reserved-payment>
+          <div class="card transfer-form">
+            <h3>预约付款</h3>
+            <p class="transfer-desc">选择已验证收款人和法币金额，锁定报价后按指定币种、网络和汇款地址完成充值。</p>
+
+            <section class="reserved-v2-section">
+              <div class="reserved-v2-section-title"><span>选择收款人</span><a href="#" data-nav-page="directory" data-nav-tab="addBeneficiaryAccount" data-return-page="payout" data-return-tab="reservedPayment" data-return-label="预约付款">+ 添加银行账户</a></div>
+              <div class="transfer-select" data-reserved-recipient-select>
+                <button type="button" class="transfer-select-button" data-reserved-recipient-trigger>${renderRecipientOption(recipients[0], 0, true, true)}</button>
+                <div class="transfer-dropdown"><div class="transfer-dropdown-head"><div class="transfer-search-row"><input placeholder="搜索收款人昵称、币种或银行" data-reserved-recipient-search><a class="transfer-add-link" href="#" data-nav-page="directory" data-nav-tab="addBeneficiaryAccount" data-return-page="payout" data-return-tab="reservedPayment">+ 添加银行账户</a></div></div><div class="transfer-options-list" data-reserved-recipient-options>${recipients.map((item,index) => `<button type="button" class="recipient-option bank ${index === 0 ? 'active' : ''}" data-reserved-beneficiary-option="${index}" data-name="${item.name}" data-target="${item.target}" data-search="${[item.name,...item.tags].join(' ').toLowerCase()}"><span class="recipient-avatar bank">▭</span><span class="recipient-name">${item.name}</span><span class="recipient-meta">${[item.entity,...item.tags].filter(Boolean).map(tag => `<span class="recipient-tag">${tag}</span>`).join('')}</span></button>`).join('')}</div></div>
+              </div>
+              <input type="hidden" data-reserved-beneficiary value="0">
+            </section>
+
+            <section class="reserved-v2-section">
+              <div class="field"><label>收款人应收到</label><div class="transfer-amount-row"><input type="number" min="100" value="1000" data-reserved-amount aria-label="收款人应收到金额"><select class="transfer-currency-select" data-reserved-fiat aria-label="收款法币"><option>USD</option><option>EUR</option></select></div><span class="metric-sub">最低预约金额为 100 USD 等值。</span></div>
+            </section>
+
+            <section class="reserved-v2-section">
+              <div class="field" style="margin-bottom:9px;"><label>付款用途</label><select data-reserved-purpose><option value="">请选择付款用途</option><option value="CBP">CBP · 跨境货物贸易</option><option value="ADS">ADS · 广告投放</option><option value="SVC">SVC · 服务费用</option><option value="LOG">LOG · 物流仓储</option></select></div>
+              <div class="field" style="margin-bottom:10px;"><label>附言</label><input data-reserved-memo maxlength="70" placeholder="请输入付款附言（选填）"><span class="metric-sub">仅支持大小写英文字母、数字、空格、.&amp;</span></div>
+              <div class="payer-reference-group"><div class="payer-reference-label">付款人名称 <span>银行流水中展示的名称</span></div><div class="payer-reference-options" role="radiogroup"><div class="payer-reference-option-wrap"><button type="button" class="payer-reference selected" data-reserved-payer="abcd" role="radio" aria-checked="true"><div class="payer-reference-icon">✓</div><span class="radio-dot"></span><div><div class="payer-reference-title">使用 ABCD 作为付款人名称</div><div class="payer-reference-sub">收款人银行流水将展示 ABCD（POBO）</div></div></button></div><div class="payer-reference-option-wrap"><button type="button" class="payer-reference" data-reserved-payer="partner" role="radio" aria-checked="false"><span class="radio-dot"></span><div><div class="payer-reference-title">使用支付机构名称</div><div class="payer-reference-sub">由实际提供出款服务的机构付款</div></div></button></div></div></div>
+              <div class="field" style="margin-top:14px;"><label>费用承担方</label><div class="fee-bearer-options"><button type="button" class="fee-bearer-card" data-reserved-fee-bearer="SHA">双方承担（SHA）</button><button type="button" class="fee-bearer-card active" data-reserved-fee-bearer="OUR">付款方承担（OUR）</button><button type="button" class="fee-bearer-card" data-reserved-fee-bearer="BEN">收款方承担（BEN）</button></div></div>
+            </section>
+
+            <section class="reserved-v2-section">
+              <div class="reserved-v2-section-title"><span>选择汇率报价</span><span class="metric-sub">锁定后 30 分钟内有效</span></div>
+              <div class="reserved-quote-grid"><button type="button" class="reserved-quote-card active" data-reserved-quote="realtime"><span class="radio-dot"></span><span><strong>实时汇率报价</strong><small>随市场实时更新，创建预约单时锁定</small><b data-reserved-live-rate>1 USDC ≈ 0.9985 USD</b></span></button><button type="button" class="reserved-quote-card" data-reserved-quote="locked"><span class="radio-dot"></span><span><strong>锁定汇率报价</strong><small>当前报价锁定 30 分钟</small><b data-reserved-lock-rate>1 USDC = 0.9978 USD</b></span></button></div>
+            </section>
+
+            <section class="reserved-v2-section">
+              <div class="reserved-v2-section-title"><span>生成充值工具</span><span class="metric-sub">选择币种和网络后生成本次充值地址</span></div>
+              <div class="source-address-alert"><span><b>来源汇款地址需报备：</b>为确保充值顺利入账，请在转账前完成实际转出地址的报备与验证。</span><a href="#" data-nav-page="directory" data-nav-tab="addBeneficiaryAddress" data-return-page="payout" data-return-tab="reservedPayment">+ 添加汇款地址</a></div>
+              <div class="reserved-funding-grid" style="margin-top:9px;">
+                <div><label>充值币种</label><div class="reserved-compact-options" style="margin-top:6px;" data-reserved-token-chips><button type="button" class="reserved-compact-card active" data-reserved-token-chip="USDC"><span class="coin-icon blue">$</span><span><strong>USDC</strong><small>USD Coin</small></span></button><button type="button" class="reserved-compact-card" data-reserved-token-chip="USDT"><span class="coin-icon green">₮</span><span><strong>USDT</strong><small>Tether USD</small></span></button></div><select class="hidden" data-reserved-token><option>USDC</option><option>USDT</option></select></div>
+                <div><label>充值网络</label><div class="reserved-compact-options" style="margin-top:6px;"><button type="button" class="reserved-compact-card active" data-reserved-network-card="Ethereum (ERC-20)" data-reserved-network-currencies="USDC,USDT"><span class="coin-icon purple">E</span><span><strong>ERC-20</strong><small>Ethereum</small></span></button><button type="button" class="reserved-compact-card" data-reserved-network-card="TRON (TRC-20)" data-reserved-network-currencies="USDT"><span class="coin-icon red">T</span><span><strong>TRC-20</strong><small>Tron</small></span></button></div><select class="hidden" data-reserved-network><option>Ethereum (ERC-20)</option><option>TRON (TRC-20)</option></select></div>
+              </div>
+            </section>
+
+            <section class="reserved-v2-section"><div class="reserved-settlement-grid"><div class="reserved-address-panel"><div class="qr-box" aria-hidden="true"></div><div class="reserved-address-detail"><strong data-reserved-tool-title>本次 USDC 充值地址</strong><span data-reserved-generated-address>0x89F4A21C6B7E9082D15A63C0F71B4E298D33A21</span><button type="button" class="btn ghost" data-action="copy-address">复制地址</button></div></div><div class="reserved-fee-panel"><div class="fee-summary"><div class="summary-row"><span>收款人</span><b data-reserved-summary-beneficiary>${recipients[0].name}</b></div><div class="summary-row"><span>承兑手续费</span><b data-reserved-fee>1.50 USD</b></div><div class="summary-row"><span>付款手续费</span><b data-reserved-payment-fee>12.00 USD</b></div><div class="summary-row"><span>POBO 附加费</span><b data-reserved-pobo-fee>8.00 USD</b></div><div class="summary-row"><span>充币费</span><b data-reserved-crypto-fee>1.00 USDC</b></div><div class="summary-row"><span>收款人预计收到</span><b data-reserved-payout>1,000.00 USD</b></div></div><div class="reserved-deposit-callout"><span>您需要充值</span><strong data-reserved-deposit>1,024.03 USDC</strong></div></div></div></section>
+            <label class="reserved-confirm"><input type="checkbox" data-reserved-agree><span>我已核对收款人、付款金额、报价、充值地址与全部费用。</span></label><div class="transfer-actions"><button class="btn ghost" data-action="cancel">取消</button><button class="btn primary" data-create-reservation disabled>锁定报价并创建预约单</button></div>
+            <div class="reserved-result hidden" data-reserved-result><div class="reserved-result-head"><div><strong>预约单已创建，汇率已锁定</strong><span>RS-20260717-1028 · 请在 29:59 内完成充值</span></div><span class="pill amber">待充值</span></div><div class="field"><label>充值资产 / 网络</label><input value="USDC · Ethereum (ERC-20)" readonly data-reserved-result-network></div><div class="field"><label>应充值金额</label><input value="1,024.03 USDC" readonly data-reserved-result-amount></div></div>
+          </div>
+          <div class="side-card-stack">
+            <div class="side-card"><h3>预约付款流程</h3><div class="event"><span class="event-dot"></span><div><div class="event-title">1. 选择收款人和金额</div><div class="event-sub">收款人银行账户必须验证通过</div></div></div><div class="event"><span class="event-dot"></span><div><div class="event-title">2. 锁定汇率报价</div><div class="event-sub">确认费用及应充值金额</div></div></div><div class="event"><span class="event-dot"></span><div><div class="event-title">3. 向验证地址充币</div><div class="event-sub">地址必须验证通过</div></div></div><div class="event"><span class="event-dot"></span><div><div class="event-title">4. 自动兑换并付款</div><div class="event-sub">充币到账后执行付款</div></div></div></div>
+            <div class="side-card reserved-side-notice"><h3>! 重要提示</h3><ul><li><b>验证要求：</b>收款人账户与汇款地址均需验证通过。</li><li><b>处理时效：</b>充币到账后预计 1–3 个工作日收款人收到钱。</li><li><b>联系支持：</b>请联系您的客户经理或邮件联系 support@eurewax.example</li></ul></div>
+            ${sideShortcut({title:'收款人账户',desc:'维护收款人的银行账户，预约付款时可直接选择已验证账户。',button:'收款人账户',tab:'beneficiaryAccount'})}
+            ${sideShortcut({title:'地址管理',desc:'登记并验证汇款地址，完成验证后再发起充值，降低入账异常风险。',button:'地址管理',tab:'beneficiaryAddress'})}
+          </div>
+        </div>`;
+    }
+
     function payoutBody(tab) {
+      if (tab === 'reservedPayment') return reservedPaymentCreateBody();
       if (tab === 'balancePayment') return payoutBody('fiatBalance');
-      if (tab === 'reservedPayment') return `
+      if (tab === '__legacyReservedPayment') return `
+        ${reservedPaymentTabs(tab)}
         <div class="transfer-shell" data-reserved-payment>
           <div class="card transfer-form">
             <h3>预约付款到法币账户</h3>
@@ -5663,11 +5839,15 @@
                 <span>选择收款人</span>
                 <a href="#" data-nav-page="directory" data-nav-tab="addBeneficiaryAccount" data-return-page="payout" data-return-tab="reservedPayment" data-return-label="预约付款">+ 添加银行账户</a>
               </div>
-              <select data-reserved-beneficiary aria-label="选择收款人">
-                <option value="">请选择已验证收款人</option>
-                <option value="supplier">Shenzhen Supplier A · BOC **** 8821 · USD</option>
-                <option value="media">Blue Ocean Media Ltd · HSBC **** 3906 · USD</option>
-              </select>
+              <button type="button" class="reserved-beneficiary-trigger" data-reserved-beneficiary-trigger aria-expanded="false">
+                <span class="reserved-beneficiary-avatar">▥</span>
+                <span class="reserved-beneficiary-copy"><strong data-reserved-beneficiary-name>请选择已验证收款人</strong><span data-reserved-beneficiary-meta>银行账户 · 币种 · 账户尾号</span></span><span>⌄</span>
+              </button>
+              <input type="hidden" data-reserved-beneficiary value="">
+              <div class="reserved-beneficiary-list hidden" data-reserved-beneficiary-list>
+                <button type="button" class="reserved-beneficiary-option" data-reserved-beneficiary-option="supplier" data-name="Shenzhen Supplier A" data-meta="银行账户 · USD · BANK OF CHINA **** 8821"><span class="reserved-beneficiary-avatar">▥</span><span class="reserved-beneficiary-copy"><strong>Shenzhen Supplier A</strong><span>银行账户 · USD · BANK OF CHINA **** 8821 · 已验证</span></span></button>
+                <button type="button" class="reserved-beneficiary-option" data-reserved-beneficiary-option="media" data-name="Blue Ocean Media Ltd" data-meta="银行账户 · USD · HSBC **** 3906"><span class="reserved-beneficiary-avatar">▥</span><span class="reserved-beneficiary-copy"><strong>Blue Ocean Media Ltd</strong><span>银行账户 · USD · HSBC **** 3906 · 已验证</span></span></button>
+              </div>
             </div>
 
             <div class="field" style="margin-bottom:14px;">
@@ -5758,11 +5938,35 @@
             </div>
           </div>
           <div class="side-card-stack">
+            <div class="side-card"><h3>收款人管理</h3><p class="metric-sub">统一维护预约付款使用的收款人银行账户。</p><div class="reserved-manage-actions"><button class="btn primary" data-nav-page="directory" data-nav-tab="addBeneficiaryAccount" data-return-page="payout" data-return-tab="reservedPayment">+ 添加银行账户</button></div></div>
+            <div class="side-card"><h3>地址簿管理</h3><p class="metric-sub">维护汇款地址并完成验证后再发起充值。</p><div class="reserved-manage-actions"><button class="btn ghost" data-nav-page="directory" data-nav-tab="addBeneficiaryAddress" data-return-page="payout" data-return-tab="reservedPayment">+ 添加汇款地址</button><button class="btn ghost" data-nav-page="directory" data-nav-tab="beneficiaryAddress">查看地址簿</button></div></div>
+            <div class="verification-alert"><b>汇款地址验证提醒</b><br>为确保充值顺利入账，请在转账前完成汇款地址验证。未验证或地址信息异常，可能导致入账延迟或无法入账。</div>
             <div class="side-card"><h3>预约付款流程</h3><div class="event"><span class="event-dot"></span><div><div class="event-title">1. 创建预约单</div><div class="event-sub">确认收款人、报价和费用</div></div></div><div class="event"><span class="event-dot"></span><div><div class="event-title">2. 充值数币</div><div class="event-sub">按指定资产、网络和金额充值</div></div></div><div class="event"><span class="event-dot"></span><div><div class="event-title">3. 自动付款</div><div class="event-sub">入账后自动兑换并付款</div></div></div></div>
             <div class="side-card"><h3>预约付款说明</h3><p class="metric-sub">预约付款可以在充值前确定执行路径，降低内部资金调度成本。客户只需关注应充值金额和收款人预计到账金额。</p></div>
             <div class="side-card"><h3>充值注意事项</h3><p class="metric-sub">错币、错链、少充、超额或超时到账可能进入人工处理，并可能按约定产生异常处理费。</p></div>
           </div>
         </div>`;
+      if (tab === 'reservedRecords') return `
+        ${reservedPaymentTabs(tab)}
+        <div class="records-filter compact-records-filter payout-records-filter">
+          <div class="field"><label>预约单号</label><input placeholder="搜索预约付款记录"></div>
+          <div class="field"><label>收款人</label><input placeholder="搜索收款人"></div>
+          <div class="field"><label>订单状态</label><select><option>全部</option><option>待充值</option><option>处理中</option><option>付款成功</option><option>已失效</option></select></div>
+          <div class="field"><label>创建日期</label><input placeholder="选择日期"></div>
+          <button class="btn ghost" data-action="reset-filter">重置</button><button class="btn primary" data-action="query">查询</button><button class="btn ghost" data-action="download">导出</button>
+        </div>
+        <table class="table" style="margin-top:16px;"><thead><tr><th>预约单号</th><th>收款人</th><th>预计充值金额</th><th>锁定汇率</th><th>手续费</th><th>收款金额</th><th>状态</th><th>操作</th></tr></thead><tbody>
+          <tr class="reserved-record-row" data-reserved-record="RS-20260717-1028"><td><a class="record-link" href="#">RS-20260717-1028</a><br><span class="metric-sub">2026-07-17 14:08</span></td><td>Shenzhen Supplier A<br><span class="metric-sub">BOC **** 8821</span></td><td><b>10,023.50 USDC</b><br><span class="metric-sub">Ethereum · ERC-20</span></td><td><b>1:1</b><br><span class="metric-sub">USDC / USD</span></td><td><span class="reserved-fee-stack"><span>承兑 15.00 USD</span><span>付款 12.00 USD</span><span>POBO 8.00 USD</span></span></td><td><b>10,000.00 USD</b></td><td><span class="pill amber">待充值</span></td><td><a class="record-link" href="#">详情</a></td></tr>
+          <tr class="reserved-record-row" data-reserved-record="RS-20260716-0986"><td><a class="record-link" href="#">RS-20260716-0986</a><br><span class="metric-sub">2026-07-16 09:35</span></td><td>Blue Ocean Media Ltd<br><span class="metric-sub">HSBC **** 3906</span></td><td><b>5,021.00 USDC</b><br><span class="metric-sub">Ethereum · ERC-20</span></td><td><b>1:1</b><br><span class="metric-sub">USDC / USD</span></td><td><span class="reserved-fee-stack"><span>承兑 7.50 USD</span><span>付款 10.00 USD</span><span>POBO 3.50 USD</span></span></td><td><b>5,000.00 USD</b></td><td><span class="pill green">付款成功</span></td><td><a class="record-link" href="#">详情</a></td></tr>
+          <tr class="reserved-record-row" data-reserved-record="RS-20260715-0912"><td><a class="record-link" href="#">RS-20260715-0912</a><br><span class="metric-sub">2026-07-15 17:20</span></td><td>Shenzhen Supplier A<br><span class="metric-sub">BOC **** 8821</span></td><td><b>2,009.00 USDT</b><br><span class="metric-sub">TRON · TRC-20</span></td><td><b>1:1</b><br><span class="metric-sub">USDT / USD</span></td><td><span class="reserved-fee-stack"><span>承兑 3.00 USD</span><span>付款 6.00 USD</span><span>POBO 0.00 USD</span></span></td><td><b>2,000.00 USD</b></td><td><span class="pill gray">已失效</span></td><td><a class="record-link" href="#">详情</a></td></tr>
+        </tbody></table>
+        <div class="record-detail-overlay" data-record-detail aria-hidden="true"><aside class="record-detail-drawer" role="dialog" aria-modal="true" aria-labelledby="recordDetailTitle">
+          <div class="record-detail-head"><div><h2 id="recordDetailTitle">预约付款详情</h2><span class="metric-sub" data-detail-order>RS-20260717-1028</span></div><button class="record-detail-close" data-close-record-detail aria-label="关闭">×</button></div>
+          <div class="reservation-mini-detail"><div class="reservation-mini-head"><h3>预约单概要</h3><span class="pill amber" data-detail-status>待充值</span></div><div class="record-detail-grid"><div class="record-detail-item"><span>原预约单号</span><b data-detail-original-order>RS-20260717-1028</b></div><div class="record-detail-item"><span>收款人</span><b data-detail-beneficiary>Shenzhen Supplier A</b></div><div class="record-detail-item"><span>收款账户</span><b data-detail-account>BOC **** 8821</b></div><div class="record-detail-item"><span>预计充值金额</span><b data-detail-deposit>10,023.50 USDC</b></div><div class="record-detail-item"><span>锁定汇率</span><b data-detail-rate>1 USDC = 1 USD</b></div><div class="record-detail-item"><span>收款金额</span><b data-detail-payout>10,000.00 USD</b></div></div></div>
+          <div class="record-timeline"><h3>处理进度</h3><div data-detail-timeline></div></div>
+          <div class="reservation-child-list" data-detail-children></div>
+          <div class="verification-alert"><b>转账前请确认</b><br>为确保充值顺利入账，请在转账前完成汇款地址验证。未验证或地址信息异常，可能导致入账延迟或无法入账。</div>
+        </aside></div>`;
       if (tab === 'cryptoBalance') return renderTransferForm('payment', 'crypto', tab);
       if (tab === 'fiatBalance') return renderTransferForm('payment', 'fiat', tab);
       if (tab === 'payoutCreate') return `
@@ -5976,6 +6180,7 @@
       bindAcceptExchange();
       bindDepositAccountCards();
       bindReservedPayment();
+      bindReservedRecords();
       document.querySelectorAll('[data-nav-page]').forEach(btn => btn.addEventListener('click', event => {
         event.preventDefault();
         if (btn.dataset.returnPage) {
@@ -6037,29 +6242,53 @@
       const agree = root.querySelector('[data-reserved-agree]');
       const create = root.querySelector('[data-create-reservation]');
       const result = root.querySelector('[data-reserved-result]');
-      let payer = 'verified';
+      let payer = 'abcd';
       let feeBearer = 'OUR';
+      const beneficiaryTrigger = root.querySelector('[data-reserved-recipient-trigger]');
+      const beneficiaryList = root.querySelector('[data-reserved-recipient-select]');
+      const beneficiarySearch = root.querySelector('[data-reserved-recipient-search]');
       const money = (value, currency) => `${Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}`;
+
+      function updateFundingTool() {
+        const token = tokenSelect.value;
+        const network = networkSelect.value;
+        const addresses = {
+          'USDC|Ethereum (ERC-20)': '0x89F4A21C6B7E9082D15A63C0F71B4E298D33A21',
+          'USDT|Ethereum (ERC-20)': '0x45B0E52C9F18A1C6A42C4774F2B8DC63B2C9950',
+          'USDT|TRON (TRC-20)': 'TRX9Ab3Qh6n4kV2N8UQmR7c1p5LxT2Fd9H'
+        };
+        root.querySelectorAll('[data-reserved-network-card]').forEach(card => {
+          const supported = card.dataset.reservedNetworkCurrencies.split(',').includes(token);
+          card.classList.toggle('disabled', !supported);
+          card.classList.toggle('active', supported && card.dataset.reservedNetworkCard === network);
+        });
+        root.querySelector('[data-reserved-tool-title]').textContent = `本次 ${token} 充值地址`;
+        const toolIcon = root.querySelector('[data-reserved-tool-icon]');
+        if (toolIcon) toolIcon.textContent = token === 'USDC' ? '$' : '₮';
+        root.querySelector('[data-reserved-generated-address]').textContent = addresses[`${token}|${network}`] || '请选择支持的网络';
+      }
 
       function updateReservation() {
         const amount = Math.max(0, Number(amountInput.value) || 0);
         const fiat = fiatSelect.value;
         const token = tokenSelect.value;
-        const rate = quote === 'parity' ? 1 : 0.9985;
-        const feeRate = quote === 'parity' ? 0.002 : 0.0015;
+        const rate = quote === 'locked' ? 0.9978 : 0.9985;
+        const feeRate = 0.0015;
         const acceptanceFee = amount * feeRate;
         const paymentFee = feeBearer === 'OUR' ? 12 : feeBearer === 'SHA' ? 6 : 0;
-        const poboFee = payer === 'verified' ? 8 : 0;
-        const deposit = (amount + acceptanceFee + paymentFee + poboFee) / rate;
-        root.querySelector('[data-reserved-mode]').textContent = quote === 'parity' ? '1:1 平价汇率' : '市场化汇率';
+        const poboFee = payer === 'abcd' ? 8 : 0;
+        const cryptoFee = token === 'USDC' ? 1 : 1.5;
+        const deposit = (amount + acceptanceFee + paymentFee + poboFee) / rate + cryptoFee;
         root.querySelector('[data-reserved-live-rate]').textContent = `1 ${token} ≈ ${rate.toFixed(4)} ${fiat}`;
         root.querySelector('[data-reserved-deposit]').textContent = money(deposit, token);
         root.querySelector('[data-reserved-fee]').textContent = money(acceptanceFee, fiat);
         root.querySelector('[data-reserved-payment-fee]').textContent = money(paymentFee, fiat);
         root.querySelector('[data-reserved-pobo-fee]').textContent = money(poboFee, fiat);
+        root.querySelector('[data-reserved-crypto-fee]').textContent = money(cryptoFee, token);
         root.querySelector('[data-reserved-payout]').textContent = money(amount, fiat);
         root.querySelector('[data-reserved-result-network]').value = `${token} · ${networkSelect.value}`;
         root.querySelector('[data-reserved-result-amount]').value = money(deposit, token);
+        updateFundingTool();
         create.disabled = !(amount >= 100 && beneficiary.value && purpose.value && agree.checked);
         result.classList.add('hidden');
       }
@@ -6072,6 +6301,14 @@
       root.querySelectorAll('[data-reserved-token-chip]').forEach(chip => chip.addEventListener('click', () => {
         tokenSelect.value = chip.dataset.reservedTokenChip;
         root.querySelectorAll('[data-reserved-token-chip]').forEach(item => item.classList.toggle('active', item === chip));
+        if (tokenSelect.value === 'USDC') networkSelect.value = 'Ethereum (ERC-20)';
+        const addressMeta = root.querySelector('[data-reserved-address-meta]');
+        if (addressMeta) addressMeta.textContent = tokenSelect.value === 'USDC' ? 'ERC-20 · 0x89...a21' : (networkSelect.value.includes('TRON') ? 'TRC-20 · TRX9...2Abc' : 'ERC-20 · 0x45...9950');
+        updateReservation();
+      }));
+      root.querySelectorAll('[data-reserved-network-card]').forEach(card => card.addEventListener('click', () => {
+        if (card.classList.contains('disabled')) return;
+        networkSelect.value = card.dataset.reservedNetworkCard;
         updateReservation();
       }));
       root.querySelectorAll('[data-reserved-payer]').forEach(option => option.addEventListener('click', () => {
@@ -6088,8 +6325,29 @@
         root.querySelectorAll('[data-reserved-fee-bearer]').forEach(item => item.classList.toggle('active', item === option));
         updateReservation();
       }));
-      [amountInput, fiatSelect, tokenSelect, networkSelect, beneficiary, purpose, agree].forEach(control => {
+      beneficiaryTrigger?.addEventListener('click', () => {
+        const open = beneficiaryList.classList.toggle('open');
+        beneficiaryTrigger.setAttribute('aria-expanded', String(open));
+      });
+      root.querySelectorAll('[data-reserved-beneficiary-option]').forEach(option => option.addEventListener('click', () => {
+        beneficiary.value = option.dataset.reservedBeneficiaryOption;
+        beneficiaryTrigger.innerHTML = option.innerHTML;
+        root.querySelectorAll('[data-reserved-beneficiary-option]').forEach(item => item.classList.toggle('active', item === option));
+        root.querySelector('[data-reserved-summary-beneficiary]').textContent = option.dataset.name;
+        beneficiaryList.classList.remove('open');
+        beneficiaryTrigger.setAttribute('aria-expanded', 'false');
+        updateReservation();
+      }));
+      beneficiarySearch?.addEventListener('input', () => {
+        const keyword = beneficiarySearch.value.trim().toLowerCase();
+        root.querySelectorAll('[data-reserved-beneficiary-option]').forEach(option => option.classList.toggle('hidden', !option.dataset.search.includes(keyword)));
+      });
+      [amountInput, fiatSelect, tokenSelect, networkSelect, purpose, agree].forEach(control => {
         control.addEventListener(control === amountInput ? 'input' : 'change', updateReservation);
+      });
+      networkSelect.addEventListener('change', () => {
+        const addressMeta = root.querySelector('[data-reserved-address-meta]');
+        if (addressMeta) addressMeta.textContent = networkSelect.value.includes('TRON') ? 'TRC-20 · TRX9...2Abc' : `${tokenSelect.value} · ERC-20 · 0x89...a21`;
       });
       create.addEventListener('click', () => {
         if (create.disabled) return;
@@ -6100,6 +6358,33 @@
         result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       });
       updateReservation();
+    }
+
+    function bindReservedRecords() {
+      const overlay = document.querySelector('[data-record-detail]');
+      if (!overlay) return;
+      const records = {
+        'RS-20260717-1028': { beneficiary:'Shenzhen Supplier A', account:'BOC **** 8821', deposit:'10,023.50 USDC · ERC-20', rate:'1 USDC = 1 USD', payout:'10,000.00 USD', status:'待充值', statusClass:'amber', timeline:[['done','预约单已创建','2026-07-17 14:08 · 1:1 汇率及费用已锁定'],['current','等待充值','请向已验证 ERC-20 汇款地址充值 10,023.50 USDC'],['','等待承兑','充值确认后创建承兑子单'],['','等待付款','承兑完成后创建付款子单']], children:[{type:'充值子单',index:'1',status:'待充值',statusClass:'amber',fields:[['充币子单号','DEP-20260717-1028-01'],['原预约单号','RS-20260717-1028'],['预计到账金额','10,023.50 USDC'],['实际到账金额','-- USDC'],['充值网络','Ethereum · ERC-20'],['充币手续费','1.00 USDC']]},{type:'承兑子单',index:'2',status:'未创建',statusClass:'gray',fields:[['承兑子单号','待充值确认后生成'],['卖出金额','-- USDC'],['买入金额','-- USD'],['实际承兑汇率','--'],['承兑手续费','15.00 USD'],['状态','未创建']]},{type:'付款子单',index:'3',status:'未创建',statusClass:'gray',fields:[['付款子单号','待承兑成功后生成'],['收款人','Shenzhen Supplier A'],['收款金额','10,000.00 USD'],['付款手续费','12.00 USD'],['POBO 附加费','8.00 USD'],['状态','未创建']]}] },
+        'RS-20260716-0986': { beneficiary:'Blue Ocean Media Ltd', account:'HSBC **** 3906', deposit:'5,021.00 USDC · ERC-20', rate:'1 USDC = 1 USD', payout:'5,000.00 USD', status:'付款成功', statusClass:'green', timeline:[['done','预约单已创建','2026-07-16 09:35 · 1:1 汇率已锁定'],['done','充值已确认','2026-07-16 09:52 · 实际到账 5,021.00 USDC'],['done','承兑已完成','2026-07-16 09:55 · 实际买入 5,013.50 USD'],['done','付款成功','2026-07-16 12:18 · 收款行已受理']], children:[{type:'充值子单',index:'1',status:'已确认',statusClass:'green',fields:[['充币子单号','DEP-20260716-0986-01'],['原预约单号','RS-20260716-0986'],['实际到账金额','5,021.00 USDC'],['充值网络','Ethereum · ERC-20'],['TxID','0xa81c...90ef'],['充币手续费','1.00 USDC']]},{type:'承兑子单',index:'2',status:'成功',statusClass:'green',fields:[['承兑子单号','CVT-20260716-0986-01'],['卖出金额','5,020.00 USDC'],['买入金额','5,013.50 USD'],['实际承兑汇率','1 USDC = 0.9987 USD'],['承兑手续费','7.50 USD'],['状态','成功']]},{type:'付款子单',index:'3',status:'成功',statusClass:'green',fields:[['付款子单号','PAY-20260716-0986-01'],['收款人','Blue Ocean Media Ltd'],['收款金额','5,000.00 USD'],['付款手续费','10.00 USD'],['POBO 附加费','3.50 USD'],['状态','成功']]}] },
+        'RS-20260715-0912': { beneficiary:'Shenzhen Supplier A', account:'BOC **** 8821', deposit:'2,009.00 USDT · TRC-20', rate:'1 USDT = 1 USD', payout:'2,000.00 USD', status:'已失效', statusClass:'gray', timeline:[['done','预约单已创建','2026-07-15 17:20 · 1:1 汇率已锁定'],['current','预约单已失效','2026-07-15 17:50 · 未在有效期内完成充值']], children:[{type:'充值子单',index:'1',status:'已关闭',statusClass:'gray',fields:[['充币子单号','DEP-20260715-0912-01'],['原预约单号','RS-20260715-0912'],['实际到账金额','0.00 USDT'],['充值网络','TRON · TRC-20'],['充币手续费','0.00 USDT'],['状态','已关闭']]},{type:'承兑子单',index:'2',status:'未创建',statusClass:'gray',fields:[['承兑子单号','--'],['卖出金额','--'],['买入金额','--'],['实际承兑汇率','--'],['承兑手续费','0.00 USD'],['状态','未创建']]},{type:'付款子单',index:'3',status:'未创建',statusClass:'gray',fields:[['付款子单号','--'],['收款人','Shenzhen Supplier A'],['收款金额','2,000.00 USD'],['付款手续费','0.00 USD'],['POBO 附加费','0.00 USD'],['状态','未创建']]}] }
+      };
+      const close = () => { overlay.classList.remove('show'); overlay.setAttribute('aria-hidden','true'); };
+      document.querySelectorAll('[data-reserved-record]').forEach(row => row.addEventListener('click', event => {
+        event.preventDefault();
+        const id = row.dataset.reservedRecord;
+        const item = records[id];
+        if (!item) return;
+        overlay.querySelector('[data-detail-order]').textContent = id;
+        overlay.querySelector('[data-detail-original-order]').textContent = id;
+        ['beneficiary','account','deposit','rate','payout','status'].forEach(key => overlay.querySelector(`[data-detail-${key}]`).textContent = item[key]);
+        const statusPill = overlay.querySelector('[data-detail-status]');
+        statusPill.className = `pill ${item.statusClass}`;
+        overlay.querySelector('[data-detail-timeline]').innerHTML = item.timeline.map(([state,title,desc]) => `<div class="timeline-item ${state}"><span class="timeline-dot"></span><div class="timeline-copy"><strong>${title}</strong><span>${desc}</span></div></div>`).join('');
+        overlay.querySelector('[data-detail-children]').innerHTML = item.children.map(child => `<section class="reservation-child-card"><div class="reservation-child-head"><div class="reservation-child-title"><span class="reservation-child-index">${child.index}</span>${child.type}</div><span class="pill ${child.statusClass}">${child.status}</span></div><div class="reservation-child-body">${child.fields.map(([label,value]) => `<div class="reservation-child-field"><span>${label}</span><b>${value}</b></div>`).join('')}</div></section>`).join('');
+        overlay.classList.add('show'); overlay.setAttribute('aria-hidden','false');
+        overlay.querySelector('[data-close-record-detail]').focus();
+      }));
+      overlay.addEventListener('click', event => { if (event.target === overlay || event.target.closest('[data-close-record-detail]')) close(); });
     }
 
     function openAccountApplicationModal() {
