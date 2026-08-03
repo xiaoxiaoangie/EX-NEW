@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>数法融合平台交互原型</title>
+  <title>BlancBlock · 预约付款交互原型</title>
   <style>
     :root {
       --bg: #f5f3ff;
@@ -324,6 +324,11 @@
       color: var(--ink);
       margin-bottom: 4px;
     }
+    .field label .req { color: var(--red); margin-left: 2px; }
+    .proof-upload-tip { margin-top: 8px; font-size: 12px; color: var(--muted); line-height: 1.6; }
+    .proof-file-list { margin-top: 10px; display: grid; gap: 6px; }
+    .proof-file-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: #fff; font-size: 12px; color: var(--ink); }
+    .proof-file-remove { border: 0; background: none; color: var(--red); cursor: pointer; font-size: 12px; }
     .exchange-widget {
       max-width: 860px;
       margin: 0;
@@ -3970,7 +3975,7 @@
         <div class="menu-section">
           <div class="menu-section-title purple">交易对手方</div>
           <button class="menu-item" data-page="directory" data-tab="beneficiaryAddress"><span class="menu-icon">◇</span><span>对手方地址簿</span></button>
-          <button class="menu-item" data-page="directory" data-tab="beneficiaryAccount"><span class="menu-icon">▤</span><span>对手方账户</span></button>
+          <button class="menu-item" data-page="directory" data-tab="beneficiaryAccount"><span class="menu-icon">▤</span><span>收款人银行账户</span></button>
         </div>
 
         <div class="menu-section">
@@ -4842,9 +4847,9 @@
           <div class="side-card-stack">
             ${assetNotice(targetType === 'address' ? 'cryptoWithdraw' : 'fiatWithdraw')}
             ${sideShortcut({
-              title: isBankTarget ? '收款人账户' : '地址簿',
+              title: isBankTarget ? '收款人银行账户' : '地址簿',
               desc: isBankTarget ? '维护收款人的银行账户，法币提现或付款时可直接选择已验证账户。' : '维护已验证的数币地址，提币时可直接选择。',
-              button: isBankTarget ? '收款人账户' : '地址簿',
+              button: isBankTarget ? '收款人银行账户' : '地址簿',
               tab: isBankTarget ? 'beneficiaryAccount' : 'beneficiaryAddress'
             })}
           </div>
@@ -5042,10 +5047,43 @@
       return exchangeBody('fiatCryptoAccept');
     }
 
+    function proofUploadField(existingFiles = []) {
+      return `
+        <div class="field full" data-proof-upload>
+          <label>账户证明信（预约付款必填）<span class="req">*</span></label>
+          <label class="upload-box"><span><strong>上传账户证明信</strong>支持 PDF、JPG、PNG，最多上传 5 张。</span><input type="file" accept=".pdf,.jpg,.jpeg,.png" multiple style="display:none;"><span class="pill">选择文件</span></label>
+          <div class="proof-upload-tip">可上传：实体银行账户的账户证明信、三方机构（VAB）账户的账户证明信、账户流水或月结单；文件需露出账户名称。</div>
+          <div class="proof-file-list">${existingFiles.map(name => `<div class="proof-file-item"><span>${name}</span><button type="button" class="proof-file-remove">删除</button></div>`).join('')}</div>
+        </div>`;
+    }
+
+    function beneficiaryAccountFields(data = {}) {
+      const input = (label, placeholder, value = '', required = true) => `<div class="field"><label>${label}${required ? '<span class="req">*</span>' : ''}</label><input placeholder="${placeholder}"${value ? ` value="${value}"` : ''}></div>`;
+      const select = (label, options, selected, required = true) => `<div class="field"><label>${label}${required ? '<span class="req">*</span>' : ''}</label><select>${options.map(opt => `<option${opt === selected ? ' selected' : ''}>${opt}</option>`).join('')}</select></div>`;
+      return `
+        ${select('账户类型', ['企业', '个人'], data.accountType || '企业')}
+        ${select('币种', ['USD', 'EUR', 'SGD', 'HKD'], data.currency || 'USD')}
+        ${select('银行地区', ['请选择银行所在地区', 'United States', 'Singapore', 'Hong Kong SAR'], data.region || '请选择银行所在地区')}
+        ${input('昵称', '请输入昵称', data.nickname)}
+        ${select('收款人类型', ['请选择收款人类型', '企业', '个人'], data.payeeType || '请选择收款人类型')}
+        ${input('收款人名称', '请输入收款人名称', data.payeeName)}
+        ${input('收款人地址', '请输入收款人地址', data.payeeAddress)}
+        ${select('清算网络', ['SWIFT', '本地清算'], data.network || 'SWIFT', false)}
+        ${input('银行名称', '请输入您的银行名称', data.bankName)}
+        ${input('SWIFT/BIC 代码', '请输入您的代码', data.swift)}
+        ${input('银行账号', '请输入银行账号', data.accountNo)}
+        ${input('银行地址', '请输入银行地址', data.bankAddress)}
+        ${input('中间银行SWIFT/BIC代码', '请输入', data.midSwift, false)}
+        ${input('中间银行名称', '请输入', data.midBank, false)}
+        ${proofUploadField(data.proofFiles || [])}
+      `;
+    }
+
     function directoryBody(tab) {
       const normalized = tab === 'beneficiary' ? 'beneficiaryAddress' : tab;
       const isAddAddress = normalized === 'addBeneficiaryAddress';
       const isAddAccount = normalized === 'addBeneficiaryAccount';
+      const isEditAccount = normalized === 'editBeneficiaryAccount';
       const isAddressSuccess = normalized === 'beneficiaryAddressSuccess';
       const isAccountSuccess = normalized === 'beneficiaryAccountSuccess';
       if (isAddressSuccess || isAccountSuccess) {
@@ -5068,13 +5106,44 @@
             </div>
           </div>`;
       }
+      if (isEditAccount) {
+        return `
+          <div class="directory-add-page">
+            <div class="card directory-add-card">
+              <h3>编辑收款人</h3>
+              <p>修改收款银行账户信息，保存后账户将进入重新审核。</p>
+              <div class="form-grid">
+                ${beneficiaryAccountFields({
+                  accountType: '企业',
+                  currency: 'USD',
+                  region: 'United States',
+                  nickname: 'Kevin Xiong',
+                  payeeType: '企业',
+                  payeeName: 'Kevin Xiong',
+                  payeeAddress: '123 Market Street, San Francisco, CA',
+                  network: 'SWIFT',
+                  bankName: 'JPMorgan Chase Bank',
+                  swift: 'IPLK8888',
+                  accountNo: '62818018665736',
+                  bankAddress: '270 Park Avenue, New York, NY',
+                  proofFiles: ['Account_Proof_Letter_KevinXiong.pdf']
+                })}
+              </div>
+              <div class="directory-add-note">修改收款人名称、银行名称、银行账号、SWIFT/BIC 代码或重新上传账户证明信后，原审核结果与渠道报备资格将失效，该账户需重新审核；审核通过前不可用于预约付款。</div>
+              <div class="directory-add-actions">
+                <button class="btn ghost" data-nav-page="directory" data-nav-tab="beneficiaryAccount">取消</button>
+                <button class="btn primary" data-action="save-beneficiary">保存</button>
+              </div>
+            </div>
+          </div>`;
+      }
       if (isAddAddress || isAddAccount) {
         const listTab = isAddAddress ? 'beneficiaryAddress' : 'beneficiaryAccount';
         const successTab = isAddAddress ? 'beneficiaryAddressSuccess' : 'beneficiaryAccountSuccess';
         return `
           <div class="directory-add-page">
             <div class="card directory-add-card">
-              <h3>${isAddAddress ? '新增对手方地址' : '新增对手方账户'}</h3>
+              <h3>${isAddAddress ? '新增对手方地址' : '新增收款人'}</h3>
               <p>${isAddAddress ? '填写收款地址信息，提交后系统将进行地址验证。' : '填写收款银行账户信息，提交后系统将进行账户审核。'}</p>
               <div class="form-grid">
                 ${isAddAddress ? `
@@ -5083,16 +5152,9 @@
                   <div class="field"><label>币种</label><select><option value="">请选择币种</option><option>USDT</option><option>USDC</option></select></div>
                   <div class="field"><label>通用地址</label><select><option>是</option><option>否</option></select></div>
                   <div class="field full"><label>地址</label><input placeholder="请输入完整链上地址"></div>
-                ` : `
-                  <div class="field"><label>收款人姓名</label><input placeholder="请输入银行账户持有人姓名"></div>
-                  <div class="field"><label>国家/地区</label><select><option value="">请选择国家/地区</option><option>United States</option><option>Singapore</option><option>Hong Kong SAR</option></select></div>
-                  <div class="field"><label>银行名称</label><input placeholder="请输入银行名称"></div>
-                  <div class="field"><label>SWIFT/BIC 编码</label><input placeholder="请输入 SWIFT/BIC 编码"></div>
-                  <div class="field"><label>账号编号</label><input placeholder="请输入银行账号"></div>
-                  <div class="field"><label>账户币种</label><select><option value="">请选择币种</option><option>USD</option><option>EUR</option><option>SGD</option><option>HKD</option></select></div>
-                `}
+                ` : beneficiaryAccountFields()}
               </div>
-              <div class="directory-add-note">提交后请到列表查看验证或审核状态。状态通过后，该地址或账户才可用于正常提现/付款。</div>
+              <div class="directory-add-note">${isAddAccount ? '预约付款仅支持同名提现；账户证明信审核通过后，该账户才可用于预约付款。' : '提交后请到列表查看验证状态。状态通过后，该地址才可用于正常提现/付款。'}</div>
               <div class="directory-add-actions">
                 <button class="btn ghost" data-nav-page="directory" data-nav-tab="${listTab}">取消</button>
                 <button class="btn primary" data-nav-page="directory" data-nav-tab="${successTab}">提交</button>
@@ -5101,11 +5163,11 @@
           </div>`;
       }
       const isAddress = normalized.endsWith('Address');
-      const title = isAddress ? '地址簿' : '银行账户';
+      const title = isAddress ? '地址簿' : '收款人银行账户';
       const desc = isAddress ? '管理收款人的数币地址、网络与验证状态' : '管理收款人的银行账户与审核状态';
       const actionButtons = `
         <div class="directory-actions">
-          <button class="btn primary" data-nav-page="directory" data-nav-tab="${isAddress ? 'addBeneficiaryAddress' : 'addBeneficiaryAccount'}">＋ 新增</button>
+          <button class="btn primary" data-nav-page="directory" data-nav-tab="${isAddress ? 'addBeneficiaryAddress' : 'addBeneficiaryAccount'}">${isAddress ? '＋ 新增' : '新增收款人 ＋'}</button>
         </div>`;
       const addressFilter = `
         <div class="records-filter directory-filter address">
@@ -5164,7 +5226,7 @@
           <td>2025-06-12 20:59:56</td>
           <td><span class="verified-tag">已验证</span></td>
           <td><span class="verified-tag">审核通过</span></td>
-          <td><a href="#" data-action="view">详情</a><a href="#" class="edit-link" data-action="edit">编辑</a></td>
+          <td><a href="#" data-action="view">详情</a><a href="#" class="edit-link" data-nav-page="directory" data-nav-tab="editBeneficiaryAccount">编辑</a></td>
         </tr>
         <tr>
           <td>0276002910</td>
@@ -5173,7 +5235,7 @@
           <td>2026-07-08 11:20:31</td>
           <td><span class="verified-tag">已验证</span></td>
           <td><span class="status-warning">审核中</span></td>
-          <td><a href="#" data-action="view">详情</a><a href="#" class="edit-link" data-action="edit">编辑</a></td>
+          <td><a href="#" data-action="view">详情</a><a href="#" class="edit-link" data-nav-page="directory" data-nav-tab="editBeneficiaryAccount">编辑</a></td>
         </tr>`;
       return `
         <div class="directory-page">
@@ -5774,8 +5836,7 @@
     function reservedPaymentCreateBody() {
       const recipients = transferCatalog.recipients.withdrawFiat.filter(item => item.type === 'bank' && item.tags.includes('USD'));
       return `
-        ${reservedPaymentTabs('reservedPayment')}
-        <div class="verification-alert" style="margin-bottom:16px;"><b>预约付款仅支持同名提现</b><br>本产品只能将资金提现至与当前商户实名认证主体名称一致的银行账户。产品开通后，非同名账户不会出现在可选列表中。</div>
+        <div class="verification-alert" style="margin-bottom:16px;"><b>提醒：预约付款仅支持同名提现，收款账户需补充账户证明信</b><br>收款账户名称必须与当前商户实名认证主体名称一致。账户证明信审核时效为 T+1；如材料审核通过后该账户仍无法选择，请联系客户经理。<a href="#" data-nav-page="directory" data-nav-tab="addBeneficiaryAccount" data-return-page="payout" data-return-tab="reservedPayment" data-return-label="预约付款">去补充账户证明信</a></div>
         <div class="transfer-shell" data-reserved-payment>
           <div class="card transfer-form">
             <h3>预约付款</h3>
@@ -5791,38 +5852,34 @@
             </section>
 
             <section class="reserved-v2-section">
-              <div class="field"><label>提现金额</label><div class="transfer-amount-row"><input type="number" min="10000" value="10000" data-reserved-amount aria-label="预约付款提现金额"><select class="transfer-currency-select" data-reserved-fiat aria-label="提现法币"><option>USD</option></select></div><span class="metric-sub">本期仅支持 USD，最低预约付款金额为 10,000 USD。</span></div>
+              <div class="field"><label>提现金额</label><div class="transfer-amount-row"><input type="number" min="10000" value="10000" data-reserved-amount aria-label="预约付款提现金额"><select class="transfer-currency-select" data-reserved-fiat aria-label="提现法币"><option>USD</option></select></div><span class="metric-sub">本期仅支持 USD，最低预约付款金额为 10O0 USD。</span></div>
             </section>
 
             <section class="reserved-v2-section">
               <div class="field" style="margin-bottom:9px;"><label>付款用途</label><select data-reserved-purpose><option value="">请选择付款用途</option><option value="CBP">CBP · 跨境货物贸易</option><option value="ADS">ADS · 广告投放</option><option value="SVC">SVC · 服务费用</option><option value="LOG">LOG · 物流仓储</option></select></div>
               <div class="field" style="margin-bottom:10px;"><label>附言</label><input data-reserved-memo maxlength="70" placeholder="请输入付款附言（选填）"><span class="metric-sub">仅支持大小写英文字母、数字、空格、.&amp;</span></div>
-              <div class="payer-reference-group"><div class="payer-reference-label">提现规则</div><div class="payer-reference-options"><div class="payer-reference-option-wrap"><button type="button" class="payer-reference selected" data-reserved-payer="sameName" aria-pressed="true"><div class="payer-reference-icon">✓</div><div><div class="payer-reference-title">仅支持同名提现</div><div class="payer-reference-sub">银行账户名称必须与商户实名认证主体名称一致，不支持向供应商或其他第三方账户付款。</div></div></button></div></div></div>
+              <div class="payer-reference-group"><div class="payer-reference-label">汇款人名称</div><div class="payer-reference-options"><div class="payer-reference-option-wrap"><div class="payer-reference selected"><div class="payer-reference-icon">✓</div><div><div class="payer-reference-title">使用 ABCD Trading Limited 作为汇款人名称</div><div class="payer-reference-sub">已固定为商户实名认证主体名称，无需选择。</div></div></div></div></div></div>
             </section>
 
             <section class="reserved-v2-section">
-              <div class="reserved-v2-section-title"><span>固定汇率</span><span class="metric-sub">本期不提供实时汇率选择</span></div>
-              <div class="reserved-quote-grid"><button type="button" class="reserved-quote-card active" data-reserved-quote="parity"><span class="radio-dot"></span><span><strong>1:1 固定汇率</strong><small>创建预约单时按固定汇率计算</small><b data-reserved-live-rate>1 USDC = 1 USD</b></span></button></div>
+              <div class="reserved-v2-section-title"><span>固定汇率</span></div>
+              <div class="reserved-quote-grid" style="grid-template-columns:1fr;"><div class="reserved-quote-card active" style="cursor:default;"><span style="white-space:nowrap;"><strong data-reserved-live-rate>1:1 汇率</strong><small> · 固定汇率，到期按预约金额执行兑换和付款</small></span></div></div>
             </section>
 
             <section class="reserved-v2-section">
               <div class="reserved-v2-section-title"><span>生成充值工具</span><span class="metric-sub">选择币种和网络后生成本次充值地址</span></div>
-              <div class="source-address-alert"><span><b>来源汇款地址需报备：</b>为确保充值顺利入账，请在转账前完成实际转出地址的报备与验证。</span><a href="#" data-nav-page="directory" data-nav-tab="addBeneficiaryAddress" data-return-page="payout" data-return-tab="reservedPayment">+ 添加汇款地址</a></div>
               <div class="reserved-funding-grid" style="margin-top:9px;">
                 <div><label>充值币种</label><div class="reserved-compact-options" style="margin-top:6px;" data-reserved-token-chips><button type="button" class="reserved-compact-card active" data-reserved-token-chip="USDC"><span class="coin-icon blue">$</span><span><strong>USDC</strong><small>USD Coin</small></span></button><button type="button" class="reserved-compact-card" data-reserved-token-chip="USDT"><span class="coin-icon green">₮</span><span><strong>USDT</strong><small>Tether USD</small></span></button></div><select class="hidden" data-reserved-token><option>USDC</option><option>USDT</option></select></div>
                 <div><label>充值网络</label><div class="reserved-compact-options" style="margin-top:6px;"><button type="button" class="reserved-compact-card active" data-reserved-network-card="Ethereum (ERC-20)" data-reserved-network-currencies="USDC,USDT"><span class="coin-icon purple">E</span><span><strong>ERC-20</strong><small>Ethereum</small></span></button><button type="button" class="reserved-compact-card" data-reserved-network-card="TRON (TRC-20)" data-reserved-network-currencies="USDT"><span class="coin-icon red">T</span><span><strong>TRC-20</strong><small>Tron</small></span></button></div><select class="hidden" data-reserved-network><option>Ethereum (ERC-20)</option><option>TRON (TRC-20)</option></select></div>
               </div>
             </section>
 
-            <section class="reserved-v2-section"><div class="reserved-settlement-grid"><div class="reserved-address-panel"><div class="qr-box" aria-hidden="true"></div><div class="reserved-address-detail"><strong data-reserved-tool-title>本次 USDC 充值地址</strong><span data-reserved-generated-address>0x89F4A21C6B7E9082D15A63C0F71B4E298D33A21</span><button type="button" class="btn ghost" data-action="copy-address">复制地址</button></div></div><div class="reserved-fee-panel"><div class="fee-summary"><div class="summary-row"><span>同名提现账户</span><b data-reserved-summary-beneficiary>${recipients[0].name}</b></div><div class="summary-row"><span>承兑手续费</span><b data-reserved-fee>15.00 USD</b></div><div class="summary-row"><span>提现手续费</span><b data-reserved-payment-fee>12.00 USD</b></div><div class="summary-row"><span>POBO 附加费</span><b data-reserved-pobo-fee>0.00 USD</b></div><div class="summary-row"><span>充币费</span><b data-reserved-crypto-fee>1.00 USDC</b></div><div class="summary-row"><span>同名账户预计到账</span><b data-reserved-payout>10,000.00 USD</b></div></div><div class="reserved-deposit-callout"><span>您需要充值</span><strong data-reserved-deposit>10,028.00 USDC</strong></div></div></div></section>
-            <label class="reserved-confirm"><input type="checkbox" data-reserved-agree><span>我已确认提现账户与商户实名认证主体同名，并核对金额、充值地址和全部费用。</span></label><div class="transfer-actions"><button class="btn ghost" data-action="cancel">取消</button><button class="btn primary" data-create-reservation disabled>创建预约付款单</button></div>
-            <div class="reserved-result hidden" data-reserved-result><div class="reserved-result-head"><div><strong>预约付款单已创建</strong><span>RS-20260717-1028 · 请在有效期内完成充值</span></div><span class="pill amber">待充值</span></div><div class="field"><label>充值资产 / 网络</label><input value="USDC · Ethereum (ERC-20)" readonly data-reserved-result-network></div><div class="field"><label>应充值金额</label><input value="10,028.00 USDC" readonly data-reserved-result-amount></div></div>
+            <section class="reserved-v2-section"><div class="reserved-settlement-grid"><div class="reserved-address-panel"><div class="qr-box" aria-hidden="true"></div><div class="reserved-address-detail"><strong data-reserved-tool-title>本次 USDC 充值地址</strong><span data-reserved-generated-address>0x89F4A21C6B7E9082D15A63C0F71B4E298D33A21</span><button type="button" class="btn ghost" data-action="copy-address">复制地址</button></div></div><div class="reserved-fee-panel"><div class="fee-summary"><div class="summary-row"><span>同名提现账户</span><b data-reserved-summary-beneficiary>${recipients[0].name}</b></div><div class="summary-row"><span>承兑手续费</span><b data-reserved-fee>15.00 USD</b></div><div class="summary-row"><span>提现手续费</span><b data-reserved-payment-fee>12.00 USD</b></div><div class="summary-row"><span>POBO 附加费</span><b data-reserved-pobo-fee>0.00 USD</b></div><div class="summary-row"><span>充币费</span><b data-reserved-crypto-fee>1.00 USDC</b></div><div class="summary-row"><span>同名账户预计到账</span><b data-reserved-payout>1000.00 USD</b></div></div><div class="reserved-deposit-callout"><span>您需要充值</span><strong data-reserved-deposit>1028.00 USDC</strong></div></div></div></section>
+            <label class="reserved-confirm"><input type="checkbox" data-reserved-agree><span>我已确认提现账户与商户实名认证主体同名，并核对金额、充值地址和全部费用。预约单有效期为 48 小时；</span></label><div class="transfer-actions"><button class="btn ghost" data-action="cancel">取消</button><button class="btn primary" data-create-reservation disabled>创建预约付款单</button></div>
+            <div class="reserved-result hidden" data-reserved-result><div class="reserved-result-head"><div><strong>预约付款单已创建</strong><span>RS-20260717-1028 · 请在有效期内完成充值</span></div><span class="pill amber">待充值</span></div><div class="field"><label>充值资产 / 网络</label><input value="USDC · Ethereum (ERC-20)" readonly data-reserved-result-network></div><div class="field"><label>应充值金额</label><input value="1028.00 USDC" readonly data-reserved-result-amount></div></div>
           </div>
           <div class="side-card-stack">
-            <div class="side-card"><h3>预约付款流程</h3><div class="event"><span class="event-dot"></span><div><div class="event-title">1. 选择同名账户</div><div class="event-sub">仅展示与商户实名认证主体同名的已验证账户</div></div></div><div class="event"><span class="event-dot"></span><div><div class="event-title">2. 确认 1:1 汇率和费用</div><div class="event-sub">确认应充值金额</div></div></div><div class="event"><span class="event-dot"></span><div><div class="event-title">3. 按指定网络充币</div><div class="event-sub">充值到账后自动执行</div></div></div><div class="event"><span class="event-dot"></span><div><div class="event-title">4. 同名提现到账</div><div class="event-sub">USD 付至已验证同名银行账户</div></div></div></div>
-            <div class="side-card reserved-side-notice"><h3>! 重要提示</h3><ul><li><b>同名要求：</b>账户名称必须与商户实名认证主体一致。</li><li><b>币种要求：</b>本期仅支持 USD。</li><li><b>联系支持：</b>请联系您的客户经理或邮件联系 support@eurewax.example</li></ul></div>
-            ${sideShortcut({title:'同名银行账户',desc:'维护与商户实名认证主体一致的银行账户，审核通过后可用于预约付款。',button:'同名账户',tab:'beneficiaryAccount'})}
-            ${sideShortcut({title:'地址管理',desc:'登记并验证汇款地址，完成验证后再发起充值，降低入账异常风险。',button:'地址管理',tab:'beneficiaryAddress'})}
+            <div class="side-card reserved-side-notice"><h3>! 重要提示</h3><ul><li><b>需先预约：</b>仅预约付款可享受 1:1 汇率；不预约直接付款，不享受该汇率。</li><li><b>预约单有效期：</b>48 小时。有效期内可多笔累计，统一在到期时判断是否达到预约金额；超时订单失效，超过有效期后充币将入账至数币钱包，无法享受 1:1 汇率。</li><li><b>金额不足：</b>到期时实际充值金额仍不够预约金额，不执行兑换，已充值资金留在数币钱包，不享受 1:1 汇率。</li><li><b>超额充值：</b>到期仅按预约金额兑换并付款；超出部分不兑换，留在数币钱包。请按需充值，避免多充。</li><li><b>不可取消：</b>本期预约付款发起后暂不支持取消。</li></ul></div>
           </div>
         </div>`;
     }
@@ -5923,11 +5980,11 @@
             <div class="fee-summary">
               <div class="summary-row"><span>服务路径</span><b data-reserved-path>标准服务</b></div>
               <div class="summary-row"><span>兑换方式</span><b data-reserved-mode>市场化汇率</b></div>
-              <div class="summary-row"><span>预计充值</span><b data-reserved-deposit>10,027.54 USDT</b></div>
+              <div class="summary-row"><span>预计充值</span><b data-reserved-deposit>1027.54 USDT</b></div>
               <div class="summary-row"><span>承兑手续费</span><b data-reserved-fee>15.00 USD</b></div>
               <div class="summary-row"><span>付款费用</span><b data-reserved-payment-fee>12.00 USD</b></div>
               <div class="summary-row"><span>POBO 附加费</span><b data-reserved-pobo-fee>8.00 USD</b></div>
-              <div class="summary-row"><span>收款人预计收到</span><b style="color:#7c3aed;" data-reserved-payout>10,000.00 USD</b></div>
+              <div class="summary-row"><span>收款人预计收到</span><b style="color:#7c3aed;" data-reserved-payout>1000.00 USD</b></div>
             </div>
 
             <label class="reserved-confirm"><input type="checkbox" data-reserved-agree><span>我已核对收款人、付款金额、报价和费用。创建后请严格按照预约单指定的币种、网络、金额和时限充值。</span></label>
@@ -5936,7 +5993,7 @@
             <div class="reserved-result hidden" data-reserved-result>
               <div class="reserved-result-head"><div><strong>预约单已创建</strong><span>RS-20260717-1028 · 请在 29:59 内充值</span></div><span class="pill amber">待充值</span></div>
               <div class="field"><label>充值资产 / 网络</label><input value="USDT · TRON (TRC-20)" readonly data-reserved-result-network></div>
-              <div class="field"><label>应充值金额</label><input value="10,027.54 USDT" readonly data-reserved-result-amount></div>
+              <div class="field"><label>应充值金额</label><input value="1027.54 USDT" readonly data-reserved-result-amount></div>
               <div class="field"><label>本次预约充值地址</label><div class="reserved-address-row"><input value="TQ8sD3mK7pV2xN9cR4aL6uY1hF5wE0zB" readonly data-reserved-address><button class="btn ghost" data-action="copy-address">复制</button></div><span class="metric-sub">仅用于交互演示，请勿向该地址充值真实资产。</span></div>
             </div>
           </div>
@@ -5946,7 +6003,7 @@
             <div class="verification-alert"><b>汇款地址验证提醒</b><br>为确保充值顺利入账，请在转账前完成汇款地址验证。未验证或地址信息异常，可能导致入账延迟或无法入账。</div>
             <div class="side-card"><h3>预约付款流程</h3><div class="event"><span class="event-dot"></span><div><div class="event-title">1. 创建预约单</div><div class="event-sub">确认收款人、报价和费用</div></div></div><div class="event"><span class="event-dot"></span><div><div class="event-title">2. 充值数币</div><div class="event-sub">按指定资产、网络和金额充值</div></div></div><div class="event"><span class="event-dot"></span><div><div class="event-title">3. 自动付款</div><div class="event-sub">入账后自动兑换并付款</div></div></div></div>
             <div class="side-card"><h3>预约付款说明</h3><p class="metric-sub">预约付款可以在充值前确定执行路径，降低内部资金调度成本。客户只需关注应充值金额和收款人预计到账金额。</p></div>
-            <div class="side-card"><h3>充值注意事项</h3><p class="metric-sub">错币、错链、少充、超额或超时到账可能进入人工处理，并可能按约定产生异常处理费。</p></div>
+            <div class="side-card"><h3>充值注意事项</h3><p class="metric-sub">错币、错链或超时到账可能进入人工处理。统一在 48 小时到期时判断累计充值是否达到预约金额：达到按预约金额执行付款，超出部分不兑换、留在数币钱包；未达到不执行兑换，资金留在数币钱包，不享受 1:1 汇率。</p></div>
           </div>
         </div>`;
       if (tab === 'reservedRecords') return `
@@ -5959,13 +6016,13 @@
           <button class="btn ghost" data-action="reset-filter">重置</button><button class="btn primary" data-action="query">查询</button><button class="btn ghost" data-action="download">导出</button>
         </div>
         <table class="table" style="margin-top:16px;"><thead><tr><th>预约单号</th><th>收款人</th><th>预计充值金额</th><th>锁定汇率</th><th>手续费</th><th>收款金额</th><th>状态</th><th>操作</th></tr></thead><tbody>
-          <tr class="reserved-record-row" data-reserved-record="RS-20260717-1028"><td><a class="record-link" href="#">RS-20260717-1028</a><br><span class="metric-sub">2026-07-17 14:08</span></td><td>Shenzhen Supplier A<br><span class="metric-sub">BOC **** 8821</span></td><td><b>10,023.50 USDC</b><br><span class="metric-sub">Ethereum · ERC-20</span></td><td><b>1:1</b><br><span class="metric-sub">USDC / USD</span></td><td><span class="reserved-fee-stack"><span>承兑 15.00 USD</span><span>付款 12.00 USD</span><span>POBO 8.00 USD</span></span></td><td><b>10,000.00 USD</b></td><td><span class="pill amber">待充值</span></td><td><a class="record-link" href="#">详情</a></td></tr>
-          <tr class="reserved-record-row" data-reserved-record="RS-20260716-0986"><td><a class="record-link" href="#">RS-20260716-0986</a><br><span class="metric-sub">2026-07-16 09:35</span></td><td>Blue Ocean Media Ltd<br><span class="metric-sub">HSBC **** 3906</span></td><td><b>5,021.00 USDC</b><br><span class="metric-sub">Ethereum · ERC-20</span></td><td><b>1:1</b><br><span class="metric-sub">USDC / USD</span></td><td><span class="reserved-fee-stack"><span>承兑 7.50 USD</span><span>付款 10.00 USD</span><span>POBO 3.50 USD</span></span></td><td><b>5,000.00 USD</b></td><td><span class="pill green">付款成功</span></td><td><a class="record-link" href="#">详情</a></td></tr>
+          <tr class="reserved-record-row" data-reserved-record="RS-20260717-1028"><td><a class="record-link" href="#">RS-20260717-1028</a><br><span class="metric-sub">2026-07-17 14:08</span></td><td>Shenzhen Supplier A<br><span class="metric-sub">BOC **** 8821</span></td><td><b>1023.50 USDC</b><br><span class="metric-sub">Ethereum · ERC-20</span></td><td><b>1:1</b><br><span class="metric-sub">USDC / USD</span></td><td><span class="reserved-fee-stack"><span>承兑 15.00 USD</span><span>付款 12.00 USD</span><span>POBO 8.00 USD</span></span></td><td><b>1000.00 USD</b></td><td><span class="pill amber">待充值</span></td><td><a class="record-link" href="#">详情</a></td></tr>
+          <tr class="reserved-record-row" data-reserved-record="RS-20260716-0986"><td><a class="record-link" href="#">RS-20260716-0986</a><br><span class="metric-sub">2026-07-16 09:35</span></td><td>Blue Ocean Media Ltd<br><span class="metric-sub">HSBC **** 3906</span></td><td><b>521.00 USDC</b><br><span class="metric-sub">Ethereum · ERC-20</span></td><td><b>1:1</b><br><span class="metric-sub">USDC / USD</span></td><td><span class="reserved-fee-stack"><span>承兑 7.50 USD</span><span>付款 10.00 USD</span><span>POBO 3.50 USD</span></span></td><td><b>5,000.00 USD</b></td><td><span class="pill green">付款成功</span></td><td><a class="record-link" href="#">详情</a></td></tr>
           <tr class="reserved-record-row" data-reserved-record="RS-20260715-0912"><td><a class="record-link" href="#">RS-20260715-0912</a><br><span class="metric-sub">2026-07-15 17:20</span></td><td>Shenzhen Supplier A<br><span class="metric-sub">BOC **** 8821</span></td><td><b>2,009.00 USDT</b><br><span class="metric-sub">TRON · TRC-20</span></td><td><b>1:1</b><br><span class="metric-sub">USDT / USD</span></td><td><span class="reserved-fee-stack"><span>承兑 3.00 USD</span><span>付款 6.00 USD</span><span>POBO 0.00 USD</span></span></td><td><b>2,000.00 USD</b></td><td><span class="pill gray">已失效</span></td><td><a class="record-link" href="#">详情</a></td></tr>
         </tbody></table>
         <div class="record-detail-overlay" data-record-detail aria-hidden="true"><aside class="record-detail-drawer" role="dialog" aria-modal="true" aria-labelledby="recordDetailTitle">
           <div class="record-detail-head"><div><h2 id="recordDetailTitle">预约付款详情</h2><span class="metric-sub" data-detail-order>RS-20260717-1028</span></div><button class="record-detail-close" data-close-record-detail aria-label="关闭">×</button></div>
-          <div class="reservation-mini-detail"><div class="reservation-mini-head"><h3>预约单概要</h3><span class="pill amber" data-detail-status>待充值</span></div><div class="record-detail-grid"><div class="record-detail-item"><span>原预约单号</span><b data-detail-original-order>RS-20260717-1028</b></div><div class="record-detail-item"><span>收款人</span><b data-detail-beneficiary>Shenzhen Supplier A</b></div><div class="record-detail-item"><span>收款账户</span><b data-detail-account>BOC **** 8821</b></div><div class="record-detail-item"><span>预计充值金额</span><b data-detail-deposit>10,023.50 USDC</b></div><div class="record-detail-item"><span>锁定汇率</span><b data-detail-rate>1 USDC = 1 USD</b></div><div class="record-detail-item"><span>收款金额</span><b data-detail-payout>10,000.00 USD</b></div></div></div>
+          <div class="reservation-mini-detail"><div class="reservation-mini-head"><h3>预约单概要</h3><span class="pill amber" data-detail-status>待充值</span></div><div class="record-detail-grid"><div class="record-detail-item"><span>原预约单号</span><b data-detail-original-order>RS-20260717-1028</b></div><div class="record-detail-item"><span>收款人</span><b data-detail-beneficiary>Shenzhen Supplier A</b></div><div class="record-detail-item"><span>收款账户</span><b data-detail-account>BOC **** 8821</b></div><div class="record-detail-item"><span>预计充值金额</span><b data-detail-deposit>1023.50 USDC</b></div><div class="record-detail-item"><span>锁定汇率</span><b data-detail-rate>1 USDC = 1 USD</b></div><div class="record-detail-item"><span>收款金额</span><b data-detail-payout>1000.00 USD</b></div></div></div>
           <div class="record-timeline"><h3>处理进度</h3><div data-detail-timeline></div></div>
           <div class="reservation-child-list" data-detail-children></div>
           <div class="verification-alert"><b>转账前请确认</b><br>为确保充值顺利入账，请在转账前完成汇款地址验证。未验证或地址信息异常，可能导致入账延迟或无法入账。</div>
@@ -6102,8 +6159,8 @@
       return `
         <div class="quick-actions" style="margin-top:0;margin-bottom:14px;"><button class="btn primary" data-action="new-card">开卡</button><button class="btn ghost" data-action="topup-card">充值</button><button class="btn ghost" data-action="freeze-card">冻结</button><button class="btn ghost" data-action="cancel-card">销卡</button></div>
         <table class="table"><thead><tr><th>卡号</th><th>用途</th><th>余额</th><th>限额</th><th>状态</th></tr></thead><tbody>
-          <tr><td>**** 4481</td><td>广告投流</td><td>USD 4,820.00</td><td>USD 10,000 / day</td><td><span class="pill green">可用</span></td></tr>
-          <tr><td>**** 9082</td><td>货物采购</td><td>USD 1,120.00</td><td>USD 5,000 / day</td><td><span class="pill gray">冻结</span></td></tr>
+          <tr><td>**** 4481</td><td>广告投流</td><td>USD 4,820.00</td><td>USD 1000 / day</td><td><span class="pill green">可用</span></td></tr>
+          <tr><td>**** 9082</td><td>货物采购</td><td>USD 1,120.00</td><td>USD 5000 / day</td><td><span class="pill gray">冻结</span></td></tr>
         </tbody></table>`;
     }
 
@@ -6228,8 +6285,35 @@
           openAccountApplicationModal();
           return;
         }
+        if (btn.dataset.action === 'save-beneficiary') {
+          showToast('收款人信息已保存，账户证明信将重新审核');
+          renderPage('directory', 'beneficiaryAccount');
+          return;
+        }
         showToast(actionText(btn.dataset.action));
       }));
+      document.querySelectorAll('[data-proof-upload]').forEach(box => {
+        const input = box.querySelector('input[type="file"]');
+        const list = box.querySelector('.proof-file-list');
+        const render = names => {
+          list.innerHTML = names.map(name => `<div class="proof-file-item"><span>${name}</span><button type="button" class="proof-file-remove">删除</button></div>`).join('');
+        };
+        let files = [...list.querySelectorAll('.proof-file-item span')].map(el => el.textContent);
+        input.addEventListener('change', () => {
+          const incoming = [...input.files].map(file => file.name);
+          if (files.length + incoming.length > 5) { showToast('账户证明信最多上传 5 张'); input.value = ''; return; }
+          files = files.concat(incoming);
+          render(files);
+        });
+        list.addEventListener('click', event => {
+          const removeBtn = event.target.closest('.proof-file-remove');
+          if (!removeBtn) return;
+          const index = [...list.querySelectorAll('.proof-file-item')].indexOf(removeBtn.closest('.proof-file-item'));
+          files.splice(index, 1);
+          render(files);
+          showToast('已删除该证明文件');
+        });
+      });
     }
 
     function bindReservedPayment() {
@@ -6282,7 +6366,7 @@
         const poboFee = 0;
         const cryptoFee = token === 'USDC' ? 1 : 1.5;
         const deposit = (amount + acceptanceFee + paymentFee + poboFee) / rate + cryptoFee;
-        root.querySelector('[data-reserved-live-rate]').textContent = `1 ${token} ≈ ${rate.toFixed(4)} ${fiat}`;
+        root.querySelector('[data-reserved-live-rate]').textContent = '1:1 汇率';
         root.querySelector('[data-reserved-deposit]').textContent = money(deposit, token);
         root.querySelector('[data-reserved-fee]').textContent = money(acceptanceFee, fiat);
         root.querySelector('[data-reserved-payment-fee]').textContent = money(paymentFee, fiat);
@@ -6368,7 +6452,7 @@
       if (!overlay) return;
       const records = {
         'RS-20260717-1028': { beneficiary:'Shenzhen Supplier A', account:'BOC **** 8821', deposit:'10,023.50 USDC · ERC-20', rate:'1 USDC = 1 USD', payout:'10,000.00 USD', status:'待充值', statusClass:'amber', timeline:[['done','预约单已创建','2026-07-17 14:08 · 1:1 汇率及费用已锁定'],['current','等待充值','请向已验证 ERC-20 汇款地址充值 10,023.50 USDC'],['','等待承兑','充值确认后创建承兑子单'],['','等待付款','承兑完成后创建付款子单']], children:[{type:'充值子单',index:'1',status:'待充值',statusClass:'amber',fields:[['充币子单号','DEP-20260717-1028-01'],['原预约单号','RS-20260717-1028'],['预计到账金额','10,023.50 USDC'],['实际到账金额','-- USDC'],['充值网络','Ethereum · ERC-20'],['充币手续费','1.00 USDC']]},{type:'承兑子单',index:'2',status:'未创建',statusClass:'gray',fields:[['承兑子单号','待充值确认后生成'],['卖出金额','-- USDC'],['买入金额','-- USD'],['实际承兑汇率','--'],['承兑手续费','15.00 USD'],['状态','未创建']]},{type:'付款子单',index:'3',status:'未创建',statusClass:'gray',fields:[['付款子单号','待承兑成功后生成'],['收款人','Shenzhen Supplier A'],['收款金额','10,000.00 USD'],['付款手续费','12.00 USD'],['POBO 附加费','8.00 USD'],['状态','未创建']]}] },
-        'RS-20260716-0986': { beneficiary:'Blue Ocean Media Ltd', account:'HSBC **** 3906', deposit:'5,021.00 USDC · ERC-20', rate:'1 USDC = 1 USD', payout:'5,000.00 USD', status:'付款成功', statusClass:'green', timeline:[['done','预约单已创建','2026-07-16 09:35 · 1:1 汇率已锁定'],['done','充值已确认','2026-07-16 09:52 · 实际到账 5,021.00 USDC'],['done','承兑已完成','2026-07-16 09:55 · 实际买入 5,013.50 USD'],['done','付款成功','2026-07-16 12:18 · 收款行已受理']], children:[{type:'充值子单',index:'1',status:'已确认',statusClass:'green',fields:[['充币子单号','DEP-20260716-0986-01'],['原预约单号','RS-20260716-0986'],['实际到账金额','5,021.00 USDC'],['充值网络','Ethereum · ERC-20'],['TxID','0xa81c...90ef'],['充币手续费','1.00 USDC']]},{type:'承兑子单',index:'2',status:'成功',statusClass:'green',fields:[['承兑子单号','CVT-20260716-0986-01'],['卖出金额','5,020.00 USDC'],['买入金额','5,013.50 USD'],['实际承兑汇率','1 USDC = 0.9987 USD'],['承兑手续费','7.50 USD'],['状态','成功']]},{type:'付款子单',index:'3',status:'成功',statusClass:'green',fields:[['付款子单号','PAY-20260716-0986-01'],['收款人','Blue Ocean Media Ltd'],['收款金额','5,000.00 USD'],['付款手续费','10.00 USD'],['POBO 附加费','3.50 USD'],['状态','成功']]}] },
+        'RS-20260716-0986': { beneficiary:'Blue Ocean Media Ltd', account:'HSBC **** 3906', deposit:'5,021.00 USDC · ERC-20', rate:'1 USDC = 1 USD', payout:'5,000.00 USD', status:'付款成功', statusClass:'green', timeline:[['done','预约单已创建','2026-07-16 09:35 · 1:1 汇率已锁定'],['done','充值已确认','2026-07-16 09:52 · 实际到账 5,021.00 USDC'],['done','承兑已完成','2026-07-16 09:55 · 按预约金额买入 5,020.00 USD'],['done','付款成功','2026-07-16 12:18 · 收款行已受理']], children:[{type:'充值子单',index:'1',status:'已确认',statusClass:'green',fields:[['充币子单号','DEP-20260716-0986-01'],['原预约单号','RS-20260716-0986'],['实际到账金额','5,021.00 USDC'],['充值网络','Ethereum · ERC-20'],['TxID','0xa81c...90ef'],['充币手续费','1.00 USDC'],['超出部分处理','1.00 USDC 留在数币钱包']]},{type:'承兑子单',index:'2',status:'成功',statusClass:'green',fields:[['承兑子单号','CVT-20260716-0986-01'],['卖出金额','5,020.00 USDC'],['买入金额','5,020.00 USD'],['实际承兑汇率','1 USDC = 1 USD'],['承兑手续费','7.50 USD'],['状态','成功']]},{type:'付款子单',index:'3',status:'成功',statusClass:'green',fields:[['付款子单号','PAY-20260716-0986-01'],['收款人','Blue Ocean Media Ltd'],['收款金额','5,000.00 USD'],['付款手续费','10.00 USD'],['POBO 附加费','3.50 USD'],['状态','成功']]}] },
         'RS-20260715-0912': { beneficiary:'Shenzhen Supplier A', account:'BOC **** 8821', deposit:'2,009.00 USDT · TRC-20', rate:'1 USDT = 1 USD', payout:'2,000.00 USD', status:'已失效', statusClass:'gray', timeline:[['done','预约单已创建','2026-07-15 17:20 · 1:1 汇率已锁定'],['current','预约单已失效','2026-07-15 17:50 · 未在有效期内完成充值']], children:[{type:'充值子单',index:'1',status:'已关闭',statusClass:'gray',fields:[['充币子单号','DEP-20260715-0912-01'],['原预约单号','RS-20260715-0912'],['实际到账金额','0.00 USDT'],['充值网络','TRON · TRC-20'],['充币手续费','0.00 USDT'],['状态','已关闭']]},{type:'承兑子单',index:'2',status:'未创建',statusClass:'gray',fields:[['承兑子单号','--'],['卖出金额','--'],['买入金额','--'],['实际承兑汇率','--'],['承兑手续费','0.00 USD'],['状态','未创建']]},{type:'付款子单',index:'3',status:'未创建',statusClass:'gray',fields:[['付款子单号','--'],['收款人','Shenzhen Supplier A'],['收款金额','2,000.00 USD'],['付款手续费','0.00 USD'],['POBO 附加费','0.00 USD'],['状态','未创建']]}] }
       };
       const close = () => { overlay.classList.remove('show'); overlay.setAttribute('aria-hidden','true'); };

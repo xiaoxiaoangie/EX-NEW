@@ -17,8 +17,8 @@
       --green: #12a87a;
       --amber: #d9822b;
       --red: #d64545;
-      --nav: #2d1b69;
-      --nav-2: #7c3aed;
+      --nav: #ffffff;
+      --nav-2: #f0edff;
       --shadow: 0 18px 45px rgba(19, 34, 56, 0.12);
       --radius: 8px;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
@@ -28,6 +28,9 @@
     body {
       margin: 0;
       color: var(--ink);
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
       background:
         linear-gradient(120deg, rgba(36, 107, 254, 0.08), rgba(18, 168, 122, 0.05) 42%, rgba(217, 130, 43, 0.05)),
         var(--bg);
@@ -760,11 +763,11 @@
     }
     .sidebar {
       background: var(--nav);
-      color: #ffffff;
+      color: #5f6b7a;
       display: flex;
       flex-direction: column;
       min-height: 0;
-      border-right: 0;
+      border-right: 1px solid #e6e1f2;
     }
     .side-brand {
       padding: 18px 22px 14px;
@@ -772,7 +775,7 @@
       align-items: center;
       gap: 8px;
       font-weight: 900;
-      color: #ffffff;
+      color: #101828;
       font-size: 25px;
       letter-spacing: 0;
     }
@@ -806,7 +809,7 @@
       width: 100%;
       border: 0;
       background: transparent;
-      color: rgba(255,255,255,.9);
+      color: #475569;
       min-height: 44px;
       display: flex;
       align-items: center;
@@ -820,29 +823,29 @@
       cursor: pointer;
     }
     .menu-item.active, .menu-item:hover {
-      background: #7c3aed;
-      color: #ffffff;
-      box-shadow: 0 8px 18px rgba(19, 8, 58, .24);
+      background: #eef0ff;
+      color: var(--purple);
+      box-shadow: 0 4px 10px rgba(76, 81, 191, 0.08);
     }
     .menu-icon {
       width: 22px;
       height: 22px;
       display: grid;
       place-items: center;
-      color: rgba(255,255,255,.9);
+      color: #526174;
       font-size: 16px;
       line-height: 1;
       flex: 0 0 auto;
     }
     .menu-item.active .menu-icon,
     .menu-item:hover .menu-icon {
-      color: #ffffff;
+      color: var(--purple);
     }
     .menu-section {
       margin-top: 18px;
     }
     .menu-section-title {
-      display: none;
+      display: flex;
       align-items: center;
       gap: 8px;
       padding: 0 22px 8px;
@@ -869,9 +872,9 @@
     .side-foot {
       margin-top: auto;
       padding: 14px;
-      border-top: 1px solid rgba(255,255,255,.12);
+      border-top: 1px solid #eeeaf7;
       font-size: 12px;
-      color: rgba(255,255,255,.6);
+      color: #98a2b3;
     }
     .content {
       min-width: 0;
@@ -2965,14 +2968,14 @@
     .reserved-confirm {
       display: flex;
       gap: 9px;
-      align-items: flex-start;
+      align-items: center;
       margin-top: 16px;
       color: #667085;
       font-size: 12px;
       font-weight: 650;
       line-height: 1.5;
     }
-    .reserved-confirm input { width: 16px; min-height: 16px; margin-top: 2px; flex: 0 0 16px; }
+    .reserved-confirm input[type="checkbox"] { appearance:auto; width:16px; height:16px; min-height:16px; margin:0; padding:0; flex:0 0 16px; accent-color:var(--purple); }
     .reserved-result {
       margin-top: 18px;
       padding: 18px;
@@ -3699,6 +3702,32 @@
   .reserved-payment-page .transfer-form { padding:14px 16px; }
   .reserved-payment-page .reserved-v2-section { padding-top:10px; margin-top:10px; }
   .reserved-payment-page .reserved-v2-section-title { margin-bottom:7px; }
+  .reserved-payment-page { font-family:Inter,"PingFang SC","Microsoft YaHei",system-ui,sans-serif; }
+  .reserved-payment-page h2,.reserved-payment-page h3,.reserved-payment-page strong,.reserved-payment-page b { font-weight:650; letter-spacing:-.01em; }
+  .reserved-intro { max-width:980px; margin:10px auto; }
+  .reserved-intro-hero { padding:30px; border-radius:16px; color:#fff; background:linear-gradient(135deg,#5526c9,#8b5cf6); }
+  .reserved-intro-hero h2 { margin:0 0 10px; font-size:28px; }
+  .reserved-intro-hero p { max-width:720px; margin:0; line-height:1.75; color:#f3efff; }
+  .reserved-intro-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin:14px 0; }
+  .reserved-intro-card { padding:18px; border:1px solid #e4ddfa; border-radius:12px; background:#fff; }
+  .reserved-intro-card strong { display:block; margin-bottom:7px; color:#3f2a78; }
+  .reserved-intro-card a { display:inline-flex; margin-top:10px; color:#6938ef; font-weight:600; text-decoration:none; }
+  .reserved-agreement { display:flex; gap:9px; align-items:flex-start; padding:16px; border:1px solid #e4ddfa; border-radius:10px; background:#faf9ff; }
+  .reserved-agreement a { color:#6d28d9; }
+  .reserved-apply-actions { display:flex; justify-content:flex-end; margin-top:14px; }
+  .reserved-apply-status { padding:22px; text-align:center; border:1px solid #f4c56a; border-radius:12px; background:#fffaf0; }
+  .reserved-select-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .reserved-intro-hero { position:relative; overflow:hidden; background:linear-gradient(135deg,#221144 0%,#4d2aa8 58%,#7257d8 100%); box-shadow:0 18px 46px rgba(55,29,115,.18); }
+  .reserved-intro-hero:after { content:""; position:absolute; right:-70px; top:-90px; width:260px; height:260px; border-radius:50%; background:rgba(255,255,255,.08); }
+  .reserved-intro-grid { align-items:stretch; }
+  .reserved-intro-card { border-color:#e9e3f5; box-shadow:0 8px 24px rgba(47,37,66,.06); }
+  .reserved-apply-status.rejected { border-color:#f3b4b4; background:#fff7f7; color:#912018; }
+  .demo-state-switch { position:fixed; right:22px; bottom:22px; z-index:50; width:252px; padding:12px; border:1px solid #ddd6ec; border-radius:14px; background:rgba(255,255,255,.96); box-shadow:0 18px 50px rgba(31,20,54,.2); backdrop-filter:blur(12px); }
+  .demo-state-switch strong { display:block; margin-bottom:8px; color:#33264d; font-size:13px; }
+  .demo-state-buttons { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
+  .demo-state-buttons button { min-height:34px; border:1px solid #ddd6ec; border-radius:8px; background:#fff; color:#57466f; cursor:pointer; }
+  .demo-state-buttons button.active { border-color:#6d4ad0; background:#f2edff; color:#5930bd; font-weight:700; }
+  @media(max-width:760px){.reserved-intro-grid,.reserved-select-row{grid-template-columns:1fr}}
   .reserved-payment-page input, .reserved-payment-page select { min-height:38px; padding-top:8px; padding-bottom:8px; }
   .reserved-payment-page .payer-reference { padding:10px; }
   .reserved-payment-page .reserved-quote-card { padding:8px 10px; gap:7px; }
@@ -3949,7 +3978,7 @@
 
   <section id="appShell" class="app">
     <aside class="sidebar">
-      <div class="side-brand"><span>BlancBlock</span><span class="brand-knot"></span></div>
+      <div class="side-brand"><span>Eurewa</span><span class="brand-knot"></span></div>
       <nav class="nav" aria-label="主菜单">
         <button class="menu-item active" data-page="dashboard"><span class="menu-icon">▦</span><span>仪表盘</span></button>
 
@@ -3957,8 +3986,7 @@
           <div class="menu-section-title">资产</div>
           <button class="menu-item" data-page="assets" data-tab="myAssets"><span class="menu-icon">▣</span><span>资产</span></button>
           <button class="menu-item" data-page="assets" data-tab="deposit"><span class="menu-icon">◎</span><span>充值</span></button>
-          <button class="menu-item" data-page="assets" data-tab="withdraw"><span class="menu-icon">↟</span><span>法币提现</span></button>
-          <button class="menu-item" data-page="payout" data-tab="reservedPayment"><span class="menu-icon">◷</span><span>预约付款</span></button>
+          <button class="menu-item" data-page="assets" data-tab="withdraw"><span class="menu-icon">↟</span><span>提现</span></button>
         </div>
 
         <div class="menu-section">
@@ -3982,6 +4010,7 @@
         <div class="menu-section">
           <div class="menu-section-title orange">付款</div>
           <button class="menu-item" data-page="payout" data-tab="balancePayment"><span class="menu-icon">▭</span><span>钱包付款</span></button>
+          <button class="menu-item" data-page="payout" data-tab="reservedPayment"><span class="menu-icon">◷</span><span>预约付款</span></button>
         </div>
 
         <div class="menu-section hidden" aria-hidden="true" data-deferred-module="cards">
@@ -4005,7 +4034,7 @@
           <button class="menu-item" tabindex="-1" data-page="profile" data-tab="roles"><span class="menu-icon">♢</span><span>角色与权限</span></button>
         </div>
       </nav>
-      <div class="side-foot">KYC passed · Fiat + Crypto enabled</div>
+      <div class="side-foot">Fiat + Crypto workspace</div>
     </aside>
     <div class="content">
       <header class="topbar">
@@ -4014,8 +4043,8 @@
           <p id="pageSubtitle">总余额、法币余额、数币余额、充值和提现。</p>
         </div>
         <div class="top-actions">
-          <span class="status">审核通过</span>
-          <button class="btn ghost" id="resetDemo">重新开户</button>
+          <span class="status">操作台</span>
+          <button class="btn ghost hidden" id="resetDemo">返回开户注册</button>
         </div>
       </header>
       <main id="main" class="main"></main>
@@ -4085,6 +4114,15 @@
   </div>
 
   <div id="toast" class="toast">已提交</div>
+  <aside class="demo-state-switch" aria-label="预约付款状态演示">
+    <strong>预约付款状态演示</strong>
+    <div class="demo-state-buttons">
+      <button type="button" data-demo-access="not_applied">未申请</button>
+      <button type="button" data-demo-access="pending">审核中</button>
+      <button type="button" data-demo-access="approved">审核通过</button>
+      <button type="button" data-demo-access="rejected">审核拒绝</button>
+    </div>
+  </aside>
 
   <script>
     const state = {
@@ -4282,7 +4320,7 @@
     document.getElementById('enterApp').addEventListener('click', () => {
       document.getElementById('onboardingShell').classList.add('hidden');
       document.getElementById('appShell').classList.remove('hidden');
-      renderPage('payout', 'reservedPayment');
+      renderPage('dashboard', 'overview');
     });
 
     document.getElementById('resetDemo').addEventListener('click', () => {
@@ -4358,9 +4396,6 @@
 
     function getPageMeta(page, tab) {
       if (page === 'assets') return assetTitles[tab] || assetTitles[assetNavGroup(tab)] || assetTitles.myAssets;
-      if (page === 'payout' && ['reservedPayment', 'reservedRecords'].includes(tab)) {
-        return { title: '预约付款', subtitle: '先预约并充值数币，再提现至商户实名认证主体的同名 USD 银行账户。' };
-      }
       return titles[page] || titles.assets;
     }
 
@@ -4577,7 +4612,7 @@
     }
 
     function reservedPaymentTabs(active) {
-      return `<div class="tabs reserved-tabs" role="tablist" aria-label="预约付款">
+      return `<div class="tabs reserved-tabs" role="tablist" aria-label="付款">
         <button class="tab ${active === 'reservedPayment' ? 'active' : ''}" data-page="payout" data-tab="reservedPayment">预约付款</button>
         <button class="tab ${active === 'reservedRecords' ? 'active' : ''}" data-page="payout" data-tab="reservedRecords">付款记录</button>
       </div>`;
@@ -5772,56 +5807,79 @@
     }
 
     function reservedPaymentCreateBody() {
-      const recipients = transferCatalog.recipients.withdrawFiat.filter(item => item.type === 'bank' && item.tags.includes('USD'));
+      const accessStatus = localStorage.getItem('reservedPaymentAccess') || 'not_applied';
+      const merchantCountry = state.profile.country;
+      const reservedSupportedCountries = ['Vietnam'];
+      const countrySupported = reservedSupportedCountries.includes(merchantCountry);
+      if (accessStatus !== 'approved') {
+        const pending = accessStatus === 'pending';
+        const rejected = accessStatus === 'rejected';
+        return `
+          ${reservedPaymentTabs('reservedPayment')}
+          <div class="reserved-intro" data-reserved-access>
+            <section class="reserved-intro-hero">
+              <h2>先预约，再充值，付款更确定</h2>
+              <p>提前确认收款人、到账金额和全部费用，再按预约单指定的币种、网络和地址充值。资金确认后，系统自动完成兑换与付款。</p>
+            </section>
+            <div class="reserved-intro-grid">
+              <div class="reserved-intro-card"><strong>固定 1:1 汇率</strong><span>预约金额更清晰，服务费及其他费用单独展示。</span></div>
+              <div class="reserved-intro-card"><strong>以收款人名义付款</strong><span>付款人名称与收款人名称一致，便于收款人识别资金并完成入账。</span></div>
+              <div class="reserved-intro-card"><strong>收款人账户证明</strong><span>请为预约付款使用的收款人银行账户提交账户证明信，审核通过后该账户才可用于付款。</span><a href="#" data-nav-page="directory" data-nav-tab="beneficiaryAccount" data-return-page="payout" data-return-tab="reservedPayment" data-return-label="产品开通">去提交账户证明 →</a></div>
+              <div class="reserved-intro-card"><strong>充值前完成通道校验</strong><span>选择收款人时自动确认付款能力，无法执行时不会生成充值指令。</span></div>
+            </div>
+            ${countrySupported
+              ? `<div class="reserved-apply-status"><h3>所在国家/地区支持开通</h3><p>${merchantCountry} 当前符合付款产品开通范围，您可以提交申请。</p></div>`
+              : `<div class="reserved-apply-status rejected"><h3>暂不支持开通</h3><p>当前暂不支持您所在国家或地区开通付款服务。如有疑问，请联系客户经理。</p><p class="metric-sub">商户所在国家/地区：${merchantCountry}</p></div>`}
+            ${pending ? `<div class="reserved-apply-status"><h3>开通申请审核中</h3><p>合规审核完成后即可使用付款，请耐心等待。</p></div>` : rejected ? `<div class="reserved-apply-status rejected"><h3>开通申请未通过</h3><p>原因：当前提交的业务资料不足以完成审核。请联系客户经理补充材料后重新申请。</p></div>` : ''}
+            ${!pending && countrySupported ? `
+            <label class="reserved-agreement"><input type="checkbox" data-reserved-agreement><span>我已阅读并同意 <a href="#" data-reserved-agreement-link>《预约付款服务协议》</a></span></label>
+            <div class="reserved-apply-actions"><button type="button" class="btn primary" data-apply-reserved disabled>${rejected ? '重新申请' : '申请开通预约付款'}</button></div>` : ''}
+          </div>`;
+      }
+      const recipients = transferCatalog.recipients.paymentFiat.filter(item => item.type === 'bank');
       return `
         ${reservedPaymentTabs('reservedPayment')}
-        <div class="verification-alert" style="margin-bottom:16px;"><b>预约付款仅支持同名提现</b><br>本产品只能将资金提现至与当前商户实名认证主体名称一致的银行账户。产品开通后，非同名账户不会出现在可选列表中。</div>
         <div class="transfer-shell" data-reserved-payment>
           <div class="card transfer-form">
             <h3>预约付款</h3>
-            <p class="transfer-desc">选择当前商户审核通过的同名 USD 银行账户，确认付款金额后，按指定币种和网络完成充值。</p>
+            <p class="transfer-desc">选择收款人后系统将校验付款通道和账户证明信；本期仅提供 1:1 平价兑换。</p>
 
             <section class="reserved-v2-section">
-              <div class="reserved-v2-section-title"><span>选择同名银行账户</span><a href="#" data-nav-page="directory" data-nav-tab="addBeneficiaryAccount" data-return-page="payout" data-return-tab="reservedPayment" data-return-label="预约付款">+ 添加同名账户</a></div>
+              <div class="reserved-v2-section-title"><span>选择收款人</span><a href="#" data-nav-page="directory" data-nav-tab="addBeneficiaryAccount" data-return-page="payout" data-return-tab="reservedPayment" data-return-label="预约付款">+ 添加银行账户</a></div>
               <div class="transfer-select" data-reserved-recipient-select>
                 <button type="button" class="transfer-select-button" data-reserved-recipient-trigger>${renderRecipientOption(recipients[0], 0, true, true)}</button>
-                <div class="transfer-dropdown"><div class="transfer-dropdown-head"><div class="transfer-search-row"><input placeholder="搜索同名账户、币种或银行" data-reserved-recipient-search><a class="transfer-add-link" href="#" data-nav-page="directory" data-nav-tab="addBeneficiaryAccount" data-return-page="payout" data-return-tab="reservedPayment">+ 添加同名账户</a></div></div><div class="transfer-options-list" data-reserved-recipient-options>${recipients.map((item,index) => `<button type="button" class="recipient-option bank ${index === 0 ? 'active' : ''}" data-reserved-beneficiary-option="${index}" data-name="${item.name}" data-target="${item.target}" data-search="${[item.name,...item.tags].join(' ').toLowerCase()}"><span class="recipient-avatar bank">▭</span><span class="recipient-name">${item.name}</span><span class="recipient-meta">${[item.entity,...item.tags,'同名账户'].filter(Boolean).map(tag => `<span class="recipient-tag">${tag}</span>`).join('')}</span></button>`).join('')}</div></div>
+                <div class="transfer-dropdown"><div class="transfer-dropdown-head"><div class="transfer-search-row"><input placeholder="搜索收款人昵称、币种或银行" data-reserved-recipient-search><a class="transfer-add-link" href="#" data-nav-page="directory" data-nav-tab="addBeneficiaryAccount" data-return-page="payout" data-return-tab="reservedPayment">+ 添加银行账户</a></div></div><div class="transfer-options-list" data-reserved-recipient-options>${recipients.filter((item,index) => index === 0).map((item,index) => `<button type="button" class="recipient-option bank active" data-reserved-beneficiary-option="${index}" data-route-state="available" data-name="${item.name}" data-target="${item.target}" data-search="${[item.name,...item.tags].join(' ').toLowerCase()}"><span class="recipient-avatar bank">▭</span><span class="recipient-name">${item.name}</span><span class="recipient-meta">${[item.entity,...item.tags].filter(Boolean).map(tag => `<span class="recipient-tag">${tag}</span>`).join('')}<span class="recipient-tag">已验证 · 可选择</span></span></button>`).join('')}</div></div>
               </div>
               <input type="hidden" data-reserved-beneficiary value="0">
+              <div class="source-address-alert" data-reserved-route-result><span><b>校验通过：</b>该收款账户当前可用于预约付款。</span></div>
             </section>
 
             <section class="reserved-v2-section">
-              <div class="field"><label>提现金额</label><div class="transfer-amount-row"><input type="number" min="10000" value="10000" data-reserved-amount aria-label="预约付款提现金额"><select class="transfer-currency-select" data-reserved-fiat aria-label="提现法币"><option>USD</option></select></div><span class="metric-sub">本期仅支持 USD，最低预约付款金额为 10,000 USD。</span></div>
+              <div class="field"><label>收款人应收到</label><div class="transfer-amount-row"><input type="number" min="10000" value="10000" data-reserved-amount aria-label="收款人应收到金额"><select class="transfer-currency-select" data-reserved-fiat aria-label="收款法币"><option value="USD">🇺🇸 USD</option></select></div><span class="metric-sub">本期仅支持 USD；最低起付金额由产品配置控制，当前为 10,000 USD。</span></div>
             </section>
 
             <section class="reserved-v2-section">
               <div class="field" style="margin-bottom:9px;"><label>付款用途</label><select data-reserved-purpose><option value="">请选择付款用途</option><option value="CBP">CBP · 跨境货物贸易</option><option value="ADS">ADS · 广告投放</option><option value="SVC">SVC · 服务费用</option><option value="LOG">LOG · 物流仓储</option></select></div>
-              <div class="field" style="margin-bottom:10px;"><label>附言</label><input data-reserved-memo maxlength="70" placeholder="请输入付款附言（选填）"><span class="metric-sub">仅支持大小写英文字母、数字、空格、.&amp;</span></div>
-              <div class="payer-reference-group"><div class="payer-reference-label">提现规则</div><div class="payer-reference-options"><div class="payer-reference-option-wrap"><button type="button" class="payer-reference selected" data-reserved-payer="sameName" aria-pressed="true"><div class="payer-reference-icon">✓</div><div><div class="payer-reference-title">仅支持同名提现</div><div class="payer-reference-sub">银行账户名称必须与商户实名认证主体名称一致，不支持向供应商或其他第三方账户付款。</div></div></button></div></div></div>
+              <div class="field" style="margin-bottom:10px;"><label>附言 <span class="metric-sub">仅支持大小写英文字母、数字、空格、.&amp;</span></label><input data-reserved-memo maxlength="70" placeholder="请输入付款附言（选填）"></div>
+              <div class="source-address-alert"><span><b>付款人名称：</b>本期固定使用所选收款人名称，收款人银行流水将展示该名称；暂不支持使用商户或其他付款人名称。</span></div>
             </section>
 
             <section class="reserved-v2-section">
-              <div class="reserved-v2-section-title"><span>固定汇率</span><span class="metric-sub">本期不提供实时汇率选择</span></div>
-              <div class="reserved-quote-grid"><button type="button" class="reserved-quote-card active" data-reserved-quote="parity"><span class="radio-dot"></span><span><strong>1:1 固定汇率</strong><small>创建预约单时按固定汇率计算</small><b data-reserved-live-rate>1 USDC = 1 USD</b></span></button></div>
-            </section>
-
-            <section class="reserved-v2-section">
-              <div class="reserved-v2-section-title"><span>生成充值工具</span><span class="metric-sub">选择币种和网络后生成本次充值地址</span></div>
               <div class="source-address-alert"><span><b>来源汇款地址需报备：</b>为确保充值顺利入账，请在转账前完成实际转出地址的报备与验证。</span><a href="#" data-nav-page="directory" data-nav-tab="addBeneficiaryAddress" data-return-page="payout" data-return-tab="reservedPayment">+ 添加汇款地址</a></div>
-              <div class="reserved-funding-grid" style="margin-top:9px;">
-                <div><label>充值币种</label><div class="reserved-compact-options" style="margin-top:6px;" data-reserved-token-chips><button type="button" class="reserved-compact-card active" data-reserved-token-chip="USDC"><span class="coin-icon blue">$</span><span><strong>USDC</strong><small>USD Coin</small></span></button><button type="button" class="reserved-compact-card" data-reserved-token-chip="USDT"><span class="coin-icon green">₮</span><span><strong>USDT</strong><small>Tether USD</small></span></button></div><select class="hidden" data-reserved-token><option>USDC</option><option>USDT</option></select></div>
-                <div><label>充值网络</label><div class="reserved-compact-options" style="margin-top:6px;"><button type="button" class="reserved-compact-card active" data-reserved-network-card="Ethereum (ERC-20)" data-reserved-network-currencies="USDC,USDT"><span class="coin-icon purple">E</span><span><strong>ERC-20</strong><small>Ethereum</small></span></button><button type="button" class="reserved-compact-card" data-reserved-network-card="TRON (TRC-20)" data-reserved-network-currencies="USDT"><span class="coin-icon red">T</span><span><strong>TRC-20</strong><small>Tron</small></span></button></div><select class="hidden" data-reserved-network><option>Ethereum (ERC-20)</option><option>TRON (TRC-20)</option></select></div>
+              <div class="reserved-select-row" style="margin-top:9px;">
+                <select data-reserved-token aria-label="选择充值币种"><option value="">选择充值币种</option><option value="USDT">₮ USDT</option><option value="USDC">$ USDC</option></select>
+                <select data-reserved-network aria-label="选择充值网络" disabled><option value="">请先选择充值币种</option></select>
               </div>
             </section>
 
-            <section class="reserved-v2-section"><div class="reserved-settlement-grid"><div class="reserved-address-panel"><div class="qr-box" aria-hidden="true"></div><div class="reserved-address-detail"><strong data-reserved-tool-title>本次 USDC 充值地址</strong><span data-reserved-generated-address>0x89F4A21C6B7E9082D15A63C0F71B4E298D33A21</span><button type="button" class="btn ghost" data-action="copy-address">复制地址</button></div></div><div class="reserved-fee-panel"><div class="fee-summary"><div class="summary-row"><span>同名提现账户</span><b data-reserved-summary-beneficiary>${recipients[0].name}</b></div><div class="summary-row"><span>承兑手续费</span><b data-reserved-fee>15.00 USD</b></div><div class="summary-row"><span>提现手续费</span><b data-reserved-payment-fee>12.00 USD</b></div><div class="summary-row"><span>POBO 附加费</span><b data-reserved-pobo-fee>0.00 USD</b></div><div class="summary-row"><span>充币费</span><b data-reserved-crypto-fee>1.00 USDC</b></div><div class="summary-row"><span>同名账户预计到账</span><b data-reserved-payout>10,000.00 USD</b></div></div><div class="reserved-deposit-callout"><span>您需要充值</span><strong data-reserved-deposit>10,028.00 USDC</strong></div></div></div></section>
-            <label class="reserved-confirm"><input type="checkbox" data-reserved-agree><span>我已确认提现账户与商户实名认证主体同名，并核对金额、充值地址和全部费用。</span></label><div class="transfer-actions"><button class="btn ghost" data-action="cancel">取消</button><button class="btn primary" data-create-reservation disabled>创建预约付款单</button></div>
-            <div class="reserved-result hidden" data-reserved-result><div class="reserved-result-head"><div><strong>预约付款单已创建</strong><span>RS-20260717-1028 · 请在有效期内完成充值</span></div><span class="pill amber">待充值</span></div><div class="field"><label>充值资产 / 网络</label><input value="USDC · Ethereum (ERC-20)" readonly data-reserved-result-network></div><div class="field"><label>应充值金额</label><input value="10,028.00 USDC" readonly data-reserved-result-amount></div></div>
+            <section class="reserved-v2-section"><div class="reserved-settlement-grid"><div class="reserved-address-panel"><div class="qr-box" aria-hidden="true"></div><div class="reserved-address-detail"><strong data-reserved-tool-title>本次充值地址</strong><span data-reserved-generated-address>请先选择充值币种和网络</span><button type="button" class="btn ghost" data-action="copy-address">复制地址</button></div></div><div class="reserved-fee-panel"><div class="fee-summary"><div class="summary-row"><span>收款人</span><b data-reserved-summary-beneficiary>${recipients[0].name}</b></div><div class="summary-row"><span>付款人名称</span><b data-reserved-summary-payer>${recipients[0].name}</b></div><div class="summary-row"><span>固定汇率</span><b data-reserved-live-rate>1 USDT/USDC = 1 USD</b></div><div class="summary-row"><span>承兑手续费</span><b data-reserved-fee>15.00 USD</b></div><div class="summary-row"><span>付款手续费</span><b data-reserved-payment-fee>12.00 USD</b></div><div class="summary-row"><span>POBO 附加费</span><b data-reserved-pobo-fee>8.00 USD</b></div><div class="summary-row"><span>充币费</span><b data-reserved-crypto-fee>--</b></div><div class="summary-row"><span>收款人预计收到</span><b data-reserved-payout>10,000.00 USD</b></div></div><div class="reserved-deposit-callout"><span>您需要充值</span><strong data-reserved-deposit>请选择币种和网络</strong></div></div></div></section>
+            <label class="reserved-confirm"><input type="checkbox" data-reserved-agree><span>我已核对收款人、付款金额、报价、充值地址与全部费用。</span></label><div class="transfer-actions"><button class="btn ghost" data-action="cancel">取消</button><button class="btn primary" data-create-reservation disabled>锁定报价并创建预约单</button></div>
+            <div class="reserved-result hidden" data-reserved-result><div class="reserved-result-head"><div><strong>预约单已创建，汇率已锁定</strong><span>RS-20260717-1028 · 请在 29:59 内完成充值</span></div><span class="pill amber">待充值</span></div><div class="field"><label>充值资产 / 网络</label><input value="USDC · Ethereum (ERC-20)" readonly data-reserved-result-network></div><div class="field"><label>应充值金额</label><input value="1,024.03 USDC" readonly data-reserved-result-amount></div></div>
           </div>
           <div class="side-card-stack">
-            <div class="side-card"><h3>预约付款流程</h3><div class="event"><span class="event-dot"></span><div><div class="event-title">1. 选择同名账户</div><div class="event-sub">仅展示与商户实名认证主体同名的已验证账户</div></div></div><div class="event"><span class="event-dot"></span><div><div class="event-title">2. 确认 1:1 汇率和费用</div><div class="event-sub">确认应充值金额</div></div></div><div class="event"><span class="event-dot"></span><div><div class="event-title">3. 按指定网络充币</div><div class="event-sub">充值到账后自动执行</div></div></div><div class="event"><span class="event-dot"></span><div><div class="event-title">4. 同名提现到账</div><div class="event-sub">USD 付至已验证同名银行账户</div></div></div></div>
-            <div class="side-card reserved-side-notice"><h3>! 重要提示</h3><ul><li><b>同名要求：</b>账户名称必须与商户实名认证主体一致。</li><li><b>币种要求：</b>本期仅支持 USD。</li><li><b>联系支持：</b>请联系您的客户经理或邮件联系 support@eurewax.example</li></ul></div>
-            ${sideShortcut({title:'同名银行账户',desc:'维护与商户实名认证主体一致的银行账户，审核通过后可用于预约付款。',button:'同名账户',tab:'beneficiaryAccount'})}
+            <div class="side-card"><h3>付款流程</h3><div class="event"><span class="event-dot"></span><div><div class="event-title">1. 选择收款人和金额</div><div class="event-sub">收款人银行账户必须验证通过</div></div></div><div class="event"><span class="event-dot"></span><div><div class="event-title">2. 锁定汇率报价</div><div class="event-sub">确认费用及应充值金额</div></div></div><div class="event"><span class="event-dot"></span><div><div class="event-title">3. 向验证地址充币</div><div class="event-sub">地址必须验证通过</div></div></div><div class="event"><span class="event-dot"></span><div><div class="event-title">4. 自动兑换并付款</div><div class="event-sub">充币到账后执行付款</div></div></div></div>
+            <div class="side-card reserved-side-notice"><h3>! 重要提示</h3><ul><li><b>验证要求：</b>收款人账户与汇款地址均需验证通过。</li><li><b>处理时效：</b>充币到账后预计 1–3 个工作日收款人收到钱。</li><li><b>联系支持：</b>请联系您的客户经理或邮件联系 support@eurewax.example</li></ul></div>
+            ${sideShortcut({title:'收款人账户',desc:'维护收款人的银行账户，预约付款时可直接选择已验证账户。',button:'收款人账户',tab:'beneficiaryAccount'})}
             ${sideShortcut({title:'地址管理',desc:'登记并验证汇款地址，完成验证后再发起充值，降低入账异常风险。',button:'地址管理',tab:'beneficiaryAddress'})}
           </div>
         </div>`;
@@ -5834,13 +5892,13 @@
         ${reservedPaymentTabs(tab)}
         <div class="transfer-shell" data-reserved-payment>
           <div class="card transfer-form">
-            <h3>预约付款到法币账户</h3>
+            <h3>付款到法币账户</h3>
             <p class="transfer-desc">先填写付款信息并选择报价，创建预约单后再按指定币种、网络和金额充值。</p>
 
             <div class="transfer-section">
               <div class="transfer-label-line">
                 <span>选择收款人</span>
-                <a href="#" data-nav-page="directory" data-nav-tab="addBeneficiaryAccount" data-return-page="payout" data-return-tab="reservedPayment" data-return-label="预约付款">+ 添加银行账户</a>
+                <a href="#" data-nav-page="directory" data-nav-tab="addBeneficiaryAccount" data-return-page="payout" data-return-tab="reservedPayment" data-return-label="付款">+ 添加银行账户</a>
               </div>
               <button type="button" class="reserved-beneficiary-trigger" data-reserved-beneficiary-trigger aria-expanded="false">
                 <span class="reserved-beneficiary-avatar">▥</span>
@@ -5857,9 +5915,9 @@
               <label>收款金额</label>
               <div class="transfer-amount-row">
                 <input type="number" min="100" value="10000" data-reserved-amount aria-label="收款金额">
-                <select class="transfer-currency-select" data-reserved-fiat aria-label="收款币种"><option>USD</option><option>EUR</option></select>
+                <select class="transfer-currency-select" data-reserved-fiat aria-label="收款币种"><option>USD</option></select>
               </div>
-              <span class="metric-sub">最低预约金额 100 USD 等值；实际可用币种以收款人账户为准。</span>
+              <span class="metric-sub">本期仅支持 USD，最低预约金额为 1,000 USD。</span>
             </div>
 
             <div class="transfer-currency-chooser">
@@ -5944,15 +6002,15 @@
             <div class="side-card"><h3>收款人管理</h3><p class="metric-sub">统一维护预约付款使用的收款人银行账户。</p><div class="reserved-manage-actions"><button class="btn primary" data-nav-page="directory" data-nav-tab="addBeneficiaryAccount" data-return-page="payout" data-return-tab="reservedPayment">+ 添加银行账户</button></div></div>
             <div class="side-card"><h3>地址簿管理</h3><p class="metric-sub">维护汇款地址并完成验证后再发起充值。</p><div class="reserved-manage-actions"><button class="btn ghost" data-nav-page="directory" data-nav-tab="addBeneficiaryAddress" data-return-page="payout" data-return-tab="reservedPayment">+ 添加汇款地址</button><button class="btn ghost" data-nav-page="directory" data-nav-tab="beneficiaryAddress">查看地址簿</button></div></div>
             <div class="verification-alert"><b>汇款地址验证提醒</b><br>为确保充值顺利入账，请在转账前完成汇款地址验证。未验证或地址信息异常，可能导致入账延迟或无法入账。</div>
-            <div class="side-card"><h3>预约付款流程</h3><div class="event"><span class="event-dot"></span><div><div class="event-title">1. 创建预约单</div><div class="event-sub">确认收款人、报价和费用</div></div></div><div class="event"><span class="event-dot"></span><div><div class="event-title">2. 充值数币</div><div class="event-sub">按指定资产、网络和金额充值</div></div></div><div class="event"><span class="event-dot"></span><div><div class="event-title">3. 自动付款</div><div class="event-sub">入账后自动兑换并付款</div></div></div></div>
-            <div class="side-card"><h3>预约付款说明</h3><p class="metric-sub">预约付款可以在充值前确定执行路径，降低内部资金调度成本。客户只需关注应充值金额和收款人预计到账金额。</p></div>
+            <div class="side-card"><h3>付款流程</h3><div class="event"><span class="event-dot"></span><div><div class="event-title">1. 创建预约单</div><div class="event-sub">确认收款人、报价和费用</div></div></div><div class="event"><span class="event-dot"></span><div><div class="event-title">2. 充值数币</div><div class="event-sub">按指定资产、网络和金额充值</div></div></div><div class="event"><span class="event-dot"></span><div><div class="event-title">3. 自动付款</div><div class="event-sub">入账后自动兑换并付款</div></div></div></div>
+            <div class="side-card"><h3>预约付款说明</h3><p class="metric-sub">预约付款产品支持在充值前确定执行路径，降低内部资金调度成本。客户只需关注应充值金额和收款人预计到账金额。</p></div>
             <div class="side-card"><h3>充值注意事项</h3><p class="metric-sub">错币、错链、少充、超额或超时到账可能进入人工处理，并可能按约定产生异常处理费。</p></div>
           </div>
         </div>`;
       if (tab === 'reservedRecords') return `
         ${reservedPaymentTabs(tab)}
         <div class="records-filter compact-records-filter payout-records-filter">
-          <div class="field"><label>预约单号</label><input placeholder="搜索预约付款记录"></div>
+          <div class="field"><label>预约单号</label><input placeholder="搜索付款记录"></div>
           <div class="field"><label>收款人</label><input placeholder="搜索收款人"></div>
           <div class="field"><label>订单状态</label><select><option>全部</option><option>待充值</option><option>处理中</option><option>付款成功</option><option>已失效</option></select></div>
           <div class="field"><label>创建日期</label><input placeholder="选择日期"></div>
@@ -5961,13 +6019,14 @@
         <table class="table" style="margin-top:16px;"><thead><tr><th>预约单号</th><th>收款人</th><th>预计充值金额</th><th>锁定汇率</th><th>手续费</th><th>收款金额</th><th>状态</th><th>操作</th></tr></thead><tbody>
           <tr class="reserved-record-row" data-reserved-record="RS-20260717-1028"><td><a class="record-link" href="#">RS-20260717-1028</a><br><span class="metric-sub">2026-07-17 14:08</span></td><td>Shenzhen Supplier A<br><span class="metric-sub">BOC **** 8821</span></td><td><b>10,023.50 USDC</b><br><span class="metric-sub">Ethereum · ERC-20</span></td><td><b>1:1</b><br><span class="metric-sub">USDC / USD</span></td><td><span class="reserved-fee-stack"><span>承兑 15.00 USD</span><span>付款 12.00 USD</span><span>POBO 8.00 USD</span></span></td><td><b>10,000.00 USD</b></td><td><span class="pill amber">待充值</span></td><td><a class="record-link" href="#">详情</a></td></tr>
           <tr class="reserved-record-row" data-reserved-record="RS-20260716-0986"><td><a class="record-link" href="#">RS-20260716-0986</a><br><span class="metric-sub">2026-07-16 09:35</span></td><td>Blue Ocean Media Ltd<br><span class="metric-sub">HSBC **** 3906</span></td><td><b>5,021.00 USDC</b><br><span class="metric-sub">Ethereum · ERC-20</span></td><td><b>1:1</b><br><span class="metric-sub">USDC / USD</span></td><td><span class="reserved-fee-stack"><span>承兑 7.50 USD</span><span>付款 10.00 USD</span><span>POBO 3.50 USD</span></span></td><td><b>5,000.00 USD</b></td><td><span class="pill green">付款成功</span></td><td><a class="record-link" href="#">详情</a></td></tr>
+          <tr class="reserved-record-row" data-reserved-record="RS-20260716-0972"><td><a class="record-link" href="#">RS-20260716-0972</a><br><span class="metric-sub">2026-07-16 08:40</span></td><td>Delta Components Ltd<br><span class="metric-sub">CITI **** 6628</span></td><td><b>10,023.50 USDC</b><br><span class="metric-sub">Ethereum · ERC-20</span></td><td><b>1:1</b><br><span class="metric-sub">USDC / USD</span></td><td><span class="reserved-fee-stack"><span>承兑 15.00 USD</span><span>付款 12.00 USD</span><span>POBO 8.00 USD</span></span></td><td><b>10,000.00 USD</b></td><td><span class="pill red">出款失败</span></td><td><a class="record-link" href="#">详情</a></td></tr>
           <tr class="reserved-record-row" data-reserved-record="RS-20260715-0912"><td><a class="record-link" href="#">RS-20260715-0912</a><br><span class="metric-sub">2026-07-15 17:20</span></td><td>Shenzhen Supplier A<br><span class="metric-sub">BOC **** 8821</span></td><td><b>2,009.00 USDT</b><br><span class="metric-sub">TRON · TRC-20</span></td><td><b>1:1</b><br><span class="metric-sub">USDT / USD</span></td><td><span class="reserved-fee-stack"><span>承兑 3.00 USD</span><span>付款 6.00 USD</span><span>POBO 0.00 USD</span></span></td><td><b>2,000.00 USD</b></td><td><span class="pill gray">已失效</span></td><td><a class="record-link" href="#">详情</a></td></tr>
         </tbody></table>
         <div class="record-detail-overlay" data-record-detail aria-hidden="true"><aside class="record-detail-drawer" role="dialog" aria-modal="true" aria-labelledby="recordDetailTitle">
           <div class="record-detail-head"><div><h2 id="recordDetailTitle">预约付款详情</h2><span class="metric-sub" data-detail-order>RS-20260717-1028</span></div><button class="record-detail-close" data-close-record-detail aria-label="关闭">×</button></div>
-          <div class="reservation-mini-detail"><div class="reservation-mini-head"><h3>预约单概要</h3><span class="pill amber" data-detail-status>待充值</span></div><div class="record-detail-grid"><div class="record-detail-item"><span>原预约单号</span><b data-detail-original-order>RS-20260717-1028</b></div><div class="record-detail-item"><span>收款人</span><b data-detail-beneficiary>Shenzhen Supplier A</b></div><div class="record-detail-item"><span>收款账户</span><b data-detail-account>BOC **** 8821</b></div><div class="record-detail-item"><span>预计充值金额</span><b data-detail-deposit>10,023.50 USDC</b></div><div class="record-detail-item"><span>锁定汇率</span><b data-detail-rate>1 USDC = 1 USD</b></div><div class="record-detail-item"><span>收款金额</span><b data-detail-payout>10,000.00 USD</b></div></div></div>
+          <div class="reservation-mini-detail"><div class="reservation-mini-head"><h3>客户提交信息</h3><span class="pill amber" data-detail-status>待充值</span></div><div class="record-detail-grid" data-detail-fields></div></div>
+          <div class="reservation-mini-detail"><div class="reservation-mini-head"><h3>实际执行结果</h3></div><div class="record-detail-grid" data-detail-results></div></div>
           <div class="record-timeline"><h3>处理进度</h3><div data-detail-timeline></div></div>
-          <div class="reservation-child-list" data-detail-children></div>
           <div class="verification-alert"><b>转账前请确认</b><br>为确保充值顺利入账，请在转账前完成汇款地址验证。未验证或地址信息异常，可能导致入账延迟或无法入账。</div>
         </aside></div>`;
       if (tab === 'cryptoBalance') return renderTransferForm('payment', 'crypto', tab);
@@ -6182,6 +6241,7 @@
       bindFiatDeposit();
       bindAcceptExchange();
       bindDepositAccountCards();
+      bindReservedAccess();
       bindReservedPayment();
       bindReservedRecords();
       document.querySelectorAll('[data-nav-page]').forEach(btn => btn.addEventListener('click', event => {
@@ -6232,6 +6292,30 @@
       }));
     }
 
+    function bindReservedAccess() {
+      const root = document.querySelector('[data-reserved-access]');
+      if (!root) return;
+      const agreement = root.querySelector('[data-reserved-agreement]');
+      const apply = root.querySelector('[data-apply-reserved]');
+      agreement?.addEventListener('change', () => { apply.disabled = !agreement.checked; });
+      root.querySelector('[data-reserved-agreement-link]')?.addEventListener('click', event => {
+        event.preventDefault();
+        alert('预约付款服务协议（交互示意）\\n\\n1. 本期采用固定 1:1 汇率，费用单独收取。\\n2. 收款人账户证明信审核通过后方可付款。\\n3. 客户须按预约单指定币种、网络、金额和时限充值。\\n4. 错币、错链、少充、超额和迟到到账进入异常处理。');
+      });
+      apply?.addEventListener('click', () => {
+        if (apply.disabled) return;
+        const reservedSupportedCountries = ['Vietnam'];
+        if (!reservedSupportedCountries.includes(state.profile.country)) {
+          showToast('当前暂不支持您所在国家或地区开通付款服务。如有疑问，请联系客户经理。');
+          renderPage('payout', 'reservedPayment');
+          return;
+        }
+        localStorage.setItem('reservedPaymentAccess', 'pending');
+        showToast('开通申请已提交，等待 PP 合规审核');
+        renderPage('payout', 'reservedPayment');
+      });
+    }
+
     function bindReservedPayment() {
       const root = document.querySelector('[data-reserved-payment]');
       if (!root) return;
@@ -6245,7 +6329,7 @@
       const agree = root.querySelector('[data-reserved-agree]');
       const create = root.querySelector('[data-create-reservation]');
       const result = root.querySelector('[data-reserved-result]');
-      let payer = 'sameName';
+      let payer = 'abcd';
       let feeBearer = 'OUR';
       const beneficiaryTrigger = root.querySelector('[data-reserved-recipient-trigger]');
       const beneficiaryList = root.querySelector('[data-reserved-recipient-select]');
@@ -6260,15 +6344,10 @@
           'USDT|Ethereum (ERC-20)': '0x45B0E52C9F18A1C6A42C4774F2B8DC63B2C9950',
           'USDT|TRON (TRC-20)': 'TRX9Ab3Qh6n4kV2N8UQmR7c1p5LxT2Fd9H'
         };
-        root.querySelectorAll('[data-reserved-network-card]').forEach(card => {
-          const supported = card.dataset.reservedNetworkCurrencies.split(',').includes(token);
-          card.classList.toggle('disabled', !supported);
-          card.classList.toggle('active', supported && card.dataset.reservedNetworkCard === network);
-        });
-        root.querySelector('[data-reserved-tool-title]').textContent = `本次 ${token} 充值地址`;
+        root.querySelector('[data-reserved-tool-title]').textContent = token ? `本次 ${token} 充值地址` : '本次充值地址';
         const toolIcon = root.querySelector('[data-reserved-tool-icon]');
         if (toolIcon) toolIcon.textContent = token === 'USDC' ? '$' : '₮';
-        root.querySelector('[data-reserved-generated-address]').textContent = addresses[`${token}|${network}`] || '请选择支持的网络';
+        root.querySelector('[data-reserved-generated-address]').textContent = addresses[`${token}|${network}`] || '请先选择充值币种和网络';
       }
 
       function updateReservation() {
@@ -6279,20 +6358,20 @@
         const feeRate = 0.0015;
         const acceptanceFee = amount * feeRate;
         const paymentFee = feeBearer === 'OUR' ? 12 : feeBearer === 'SHA' ? 6 : 0;
-        const poboFee = 0;
-        const cryptoFee = token === 'USDC' ? 1 : 1.5;
+        const poboFee = payer === 'abcd' ? 8 : 0;
+        const cryptoFee = token === 'USDC' ? 1 : token === 'USDT' ? 1.5 : 0;
         const deposit = (amount + acceptanceFee + paymentFee + poboFee) / rate + cryptoFee;
-        root.querySelector('[data-reserved-live-rate]').textContent = `1 ${token} ≈ ${rate.toFixed(4)} ${fiat}`;
-        root.querySelector('[data-reserved-deposit]').textContent = money(deposit, token);
+        root.querySelector('[data-reserved-live-rate]').textContent = token ? `1 ${token} = 1 ${fiat}` : '1 USDT/USDC = 1 USD';
+        root.querySelector('[data-reserved-deposit]').textContent = token && networkSelect.value ? money(deposit, token) : '请选择币种和网络';
         root.querySelector('[data-reserved-fee]').textContent = money(acceptanceFee, fiat);
         root.querySelector('[data-reserved-payment-fee]').textContent = money(paymentFee, fiat);
         root.querySelector('[data-reserved-pobo-fee]').textContent = money(poboFee, fiat);
-        root.querySelector('[data-reserved-crypto-fee]').textContent = money(cryptoFee, token);
+        root.querySelector('[data-reserved-crypto-fee]').textContent = token ? money(cryptoFee, token) : '--';
         root.querySelector('[data-reserved-payout]').textContent = money(amount, fiat);
-        root.querySelector('[data-reserved-result-network]').value = `${token} · ${networkSelect.value}`;
-        root.querySelector('[data-reserved-result-amount]').value = money(deposit, token);
+        root.querySelector('[data-reserved-result-network]').value = token && networkSelect.value ? `${token} · ${networkSelect.value}` : '';
+        root.querySelector('[data-reserved-result-amount]').value = token && networkSelect.value ? money(deposit, token) : '';
         updateFundingTool();
-        create.disabled = !(amount >= 10000 && beneficiary.value && purpose.value && agree.checked);
+        create.disabled = !(amount >= 10000 && beneficiary.value && purpose.value && token && networkSelect.value && agree.checked);
         result.classList.add('hidden');
       }
 
@@ -6301,19 +6380,16 @@
         root.querySelectorAll('[data-reserved-quote]').forEach(item => item.classList.toggle('active', item === card));
         updateReservation();
       }));
-      root.querySelectorAll('[data-reserved-token-chip]').forEach(chip => chip.addEventListener('click', () => {
-        tokenSelect.value = chip.dataset.reservedTokenChip;
-        root.querySelectorAll('[data-reserved-token-chip]').forEach(item => item.classList.toggle('active', item === chip));
-        if (tokenSelect.value === 'USDC') networkSelect.value = 'Ethereum (ERC-20)';
-        const addressMeta = root.querySelector('[data-reserved-address-meta]');
-        if (addressMeta) addressMeta.textContent = tokenSelect.value === 'USDC' ? 'ERC-20 · 0x89...a21' : (networkSelect.value.includes('TRON') ? 'TRC-20 · TRX9...2Abc' : 'ERC-20 · 0x45...9950');
+      tokenSelect.addEventListener('change', () => {
+        const options = tokenSelect.value === 'USDC'
+          ? [['','选择充值网络'],['Ethereum (ERC-20)','Ξ ERC-20 · Ethereum']]
+          : tokenSelect.value === 'USDT'
+            ? [['','选择充值网络'],['Ethereum (ERC-20)','Ξ ERC-20 · Ethereum'],['TRON (TRC-20)','◈ TRC-20 · Tron']]
+            : [['','请先选择充值币种']];
+        networkSelect.innerHTML = options.map(([value,label]) => `<option value="${value}">${label}</option>`).join('');
+        networkSelect.disabled = !tokenSelect.value;
         updateReservation();
-      }));
-      root.querySelectorAll('[data-reserved-network-card]').forEach(card => card.addEventListener('click', () => {
-        if (card.classList.contains('disabled')) return;
-        networkSelect.value = card.dataset.reservedNetworkCard;
-        updateReservation();
-      }));
+      });
       root.querySelectorAll('[data-reserved-payer]').forEach(option => option.addEventListener('click', () => {
         payer = option.dataset.reservedPayer;
         root.querySelectorAll('[data-reserved-payer]').forEach(item => {
@@ -6333,10 +6409,19 @@
         beneficiaryTrigger.setAttribute('aria-expanded', String(open));
       });
       root.querySelectorAll('[data-reserved-beneficiary-option]').forEach(option => option.addEventListener('click', () => {
+        const routeState = option.dataset.routeState;
+        const routeResult = root.querySelector('[data-reserved-route-result]');
+        if (routeState !== 'available') {
+          routeResult.innerHTML = '<span><b>暂不可用：</b>该收款账户当前无法用于预约付款，请更换收款账户或联系客户经理。</span>';
+          showToast('该收款账户当前不可用');
+          return;
+        }
+        routeResult.innerHTML = '<span><b>校验通过：</b>该收款账户当前可用于预约付款。</span>';
         beneficiary.value = option.dataset.reservedBeneficiaryOption;
         beneficiaryTrigger.innerHTML = option.innerHTML;
         root.querySelectorAll('[data-reserved-beneficiary-option]').forEach(item => item.classList.toggle('active', item === option));
         root.querySelector('[data-reserved-summary-beneficiary]').textContent = option.dataset.name;
+        root.querySelector('[data-reserved-summary-payer]').textContent = option.dataset.name;
         beneficiaryList.classList.remove('open');
         beneficiaryTrigger.setAttribute('aria-expanded', 'false');
         updateReservation();
@@ -6369,6 +6454,7 @@
       const records = {
         'RS-20260717-1028': { beneficiary:'Shenzhen Supplier A', account:'BOC **** 8821', deposit:'10,023.50 USDC · ERC-20', rate:'1 USDC = 1 USD', payout:'10,000.00 USD', status:'待充值', statusClass:'amber', timeline:[['done','预约单已创建','2026-07-17 14:08 · 1:1 汇率及费用已锁定'],['current','等待充值','请向已验证 ERC-20 汇款地址充值 10,023.50 USDC'],['','等待承兑','充值确认后创建承兑子单'],['','等待付款','承兑完成后创建付款子单']], children:[{type:'充值子单',index:'1',status:'待充值',statusClass:'amber',fields:[['充币子单号','DEP-20260717-1028-01'],['原预约单号','RS-20260717-1028'],['预计到账金额','10,023.50 USDC'],['实际到账金额','-- USDC'],['充值网络','Ethereum · ERC-20'],['充币手续费','1.00 USDC']]},{type:'承兑子单',index:'2',status:'未创建',statusClass:'gray',fields:[['承兑子单号','待充值确认后生成'],['卖出金额','-- USDC'],['买入金额','-- USD'],['实际承兑汇率','--'],['承兑手续费','15.00 USD'],['状态','未创建']]},{type:'付款子单',index:'3',status:'未创建',statusClass:'gray',fields:[['付款子单号','待承兑成功后生成'],['收款人','Shenzhen Supplier A'],['收款金额','10,000.00 USD'],['付款手续费','12.00 USD'],['POBO 附加费','8.00 USD'],['状态','未创建']]}] },
         'RS-20260716-0986': { beneficiary:'Blue Ocean Media Ltd', account:'HSBC **** 3906', deposit:'5,021.00 USDC · ERC-20', rate:'1 USDC = 1 USD', payout:'5,000.00 USD', status:'付款成功', statusClass:'green', timeline:[['done','预约单已创建','2026-07-16 09:35 · 1:1 汇率已锁定'],['done','充值已确认','2026-07-16 09:52 · 实际到账 5,021.00 USDC'],['done','承兑已完成','2026-07-16 09:55 · 实际买入 5,013.50 USD'],['done','付款成功','2026-07-16 12:18 · 收款行已受理']], children:[{type:'充值子单',index:'1',status:'已确认',statusClass:'green',fields:[['充币子单号','DEP-20260716-0986-01'],['原预约单号','RS-20260716-0986'],['实际到账金额','5,021.00 USDC'],['充值网络','Ethereum · ERC-20'],['TxID','0xa81c...90ef'],['充币手续费','1.00 USDC']]},{type:'承兑子单',index:'2',status:'成功',statusClass:'green',fields:[['承兑子单号','CVT-20260716-0986-01'],['卖出金额','5,020.00 USDC'],['买入金额','5,013.50 USD'],['实际承兑汇率','1 USDC = 0.9987 USD'],['承兑手续费','7.50 USD'],['状态','成功']]},{type:'付款子单',index:'3',status:'成功',statusClass:'green',fields:[['付款子单号','PAY-20260716-0986-01'],['收款人','Blue Ocean Media Ltd'],['收款金额','5,000.00 USD'],['付款手续费','10.00 USD'],['POBO 附加费','3.50 USD'],['状态','成功']]}] },
+        'RS-20260716-0972': { beneficiary:'Delta Components Ltd', account:'CITI **** 6628', deposit:'10,023.50 USDC · ERC-20', rate:'1 USDC = 1 USD', payout:'10,000.00 USD', status:'出款失败', statusClass:'red', timeline:[['done','预约单已创建','2026-07-16 08:40 · 应充值 10,023.50 USDC'],['done','充值已确认','2026-07-16 08:53 · 实际到账 9,500.00 USDC，少充 523.50 USDC'],['done','按实际到账金额完成兑换','2026-07-16 08:57 · 实际兑换所得 9,485.00 USD'],['current','出款失败','到账金额与预约单应充值金额不匹配；资金已留在法币账户，可继续出款']], children:[{type:'充值子单',fields:[['实际到账金额','9,500.00 USDC']]},{type:'承兑子单',fields:[['卖出金额','9,500.00 USDC'],['买入金额','9,485.00 USD'],['承兑手续费','15.00 USD']]},{type:'付款子单',fields:[['实际付出金额','0.00 USD'],['付款手续费','12.00 USD'],['POBO 附加费','8.00 USD']]}] },
         'RS-20260715-0912': { beneficiary:'Shenzhen Supplier A', account:'BOC **** 8821', deposit:'2,009.00 USDT · TRC-20', rate:'1 USDT = 1 USD', payout:'2,000.00 USD', status:'已失效', statusClass:'gray', timeline:[['done','预约单已创建','2026-07-15 17:20 · 1:1 汇率已锁定'],['current','预约单已失效','2026-07-15 17:50 · 未在有效期内完成充值']], children:[{type:'充值子单',index:'1',status:'已关闭',statusClass:'gray',fields:[['充币子单号','DEP-20260715-0912-01'],['原预约单号','RS-20260715-0912'],['实际到账金额','0.00 USDT'],['充值网络','TRON · TRC-20'],['充币手续费','0.00 USDT'],['状态','已关闭']]},{type:'承兑子单',index:'2',status:'未创建',statusClass:'gray',fields:[['承兑子单号','--'],['卖出金额','--'],['买入金额','--'],['实际承兑汇率','--'],['承兑手续费','0.00 USD'],['状态','未创建']]},{type:'付款子单',index:'3',status:'未创建',statusClass:'gray',fields:[['付款子单号','--'],['收款人','Shenzhen Supplier A'],['收款金额','2,000.00 USD'],['付款手续费','0.00 USD'],['POBO 附加费','0.00 USD'],['状态','未创建']]}] }
       };
       const close = () => { overlay.classList.remove('show'); overlay.setAttribute('aria-hidden','true'); };
@@ -6378,12 +6464,37 @@
         const item = records[id];
         if (!item) return;
         overlay.querySelector('[data-detail-order]').textContent = id;
-        overlay.querySelector('[data-detail-original-order]').textContent = id;
-        ['beneficiary','account','deposit','rate','payout','status'].forEach(key => overlay.querySelector(`[data-detail-${key}]`).textContent = item[key]);
+        const submittedFields = [
+          ['预约单号', id],
+          ['提交时间', item.timeline[0]?.[2]?.split(' · ')[0] || '--'],
+          ['收款人', item.beneficiary],
+          ['收款账户', item.account],
+          ['收款人应收到', item.payout],
+          ['充值币种 / 网络', item.deposit],
+          ['固定汇率', item.rate],
+          ['付款用途', 'CBP · 跨境货物贸易'],
+          ['附言', `INV-${id.replace('RS-','')}`],
+          ['付款人名称', `${item.beneficiary}（与收款人一致）`],
+          ['承兑手续费', item.children?.[1]?.fields?.find(field => field[0] === '承兑手续费')?.[1] || '--'],
+          ['付款手续费', item.children?.[2]?.fields?.find(field => field[0] === '付款手续费')?.[1] || '--'],
+          ['POBO 附加费', item.children?.[2]?.fields?.find(field => field[0] === 'POBO 附加费')?.[1] || '--']
+        ];
+        overlay.querySelector('[data-detail-fields]').innerHTML = submittedFields.map(([label,value]) => `<div class="record-detail-item"><span>${label}</span><b>${value}</b></div>`).join('');
+        const resultFields = [
+          ['应充值金额', item.deposit],
+          ['实际到账金额', item.children?.[0]?.fields?.find(field => field[0] === '实际到账金额')?.[1] || '--'],
+          ['实际卖出金额', item.children?.[1]?.fields?.find(field => field[0] === '卖出金额')?.[1] || '--'],
+          ['实际兑换所得', item.children?.[1]?.fields?.find(field => field[0] === '买入金额')?.[1] || '--'],
+          ['实际付出金额', item.children?.[2]?.fields?.find(field => ['实际付出金额','收款金额'].includes(field[0]))?.[1] || '--'],
+          ['资金去向', id === 'RS-20260716-0972' ? '法币账户 · 9,485.00 USD' : item.status === '付款成功' ? '已付至收款人账户' : '--'],
+          ['失败原因', id === 'RS-20260716-0972' ? '到账金额与预约单应充值金额不匹配' : '--'],
+          ['后续处理', id === 'RS-20260716-0972' ? '可从法币账户继续出款' : '--']
+        ];
+        overlay.querySelector('[data-detail-results]').innerHTML = resultFields.map(([label,value]) => `<div class="record-detail-item"><span>${label}</span><b>${value}</b></div>`).join('');
         const statusPill = overlay.querySelector('[data-detail-status]');
         statusPill.className = `pill ${item.statusClass}`;
+        statusPill.textContent = item.status;
         overlay.querySelector('[data-detail-timeline]').innerHTML = item.timeline.map(([state,title,desc]) => `<div class="timeline-item ${state}"><span class="timeline-dot"></span><div class="timeline-copy"><strong>${title}</strong><span>${desc}</span></div></div>`).join('');
-        overlay.querySelector('[data-detail-children]').innerHTML = item.children.map(child => `<section class="reservation-child-card"><div class="reservation-child-head"><div class="reservation-child-title"><span class="reservation-child-index">${child.index}</span>${child.type}</div><span class="pill ${child.statusClass}">${child.status}</span></div><div class="reservation-child-body">${child.fields.map(([label,value]) => `<div class="reservation-child-field"><span>${label}</span><b>${value}</b></div>`).join('')}</div></section>`).join('');
         overlay.classList.add('show'); overlay.setAttribute('aria-hidden','false');
         overlay.querySelector('[data-close-record-detail]').focus();
       }));
@@ -7137,10 +7248,25 @@
       toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
     }
 
+    function syncDemoAccessButtons() {
+      const current = localStorage.getItem('reservedPaymentAccess') || 'not_applied';
+      document.querySelectorAll('[data-demo-access]').forEach(button => {
+        button.classList.toggle('active', button.dataset.demoAccess === current);
+      });
+    }
+
+    document.querySelectorAll('[data-demo-access]').forEach(button => {
+      button.addEventListener('click', () => {
+        localStorage.setItem('reservedPaymentAccess', button.dataset.demoAccess);
+        syncDemoAccessButtons();
+        renderPage('payout', 'reservedPayment');
+        showToast(`已切换为：${button.textContent}`);
+      });
+    });
+
     bindAccountApplicationModal();
-    setStep(1);
-    updateIndustryExtras();
-    renderPage('payout', 'reservedPayment');
+    syncDemoAccessButtons();
+    renderPage('dashboard', 'overview');
   </script>
 </body>
 </html>

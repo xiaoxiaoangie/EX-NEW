@@ -291,9 +291,15 @@
             </div>
           </div>
 
-          <div class="mb-4 max-w-xs">
-            <div class="field-label required">POBO</div>
-            <select><option>支持</option><option>不支持</option></select>
+          <div class="mb-4">
+            <div class="field-label required">是否支持 POBO（按商户-收款人类型分别配置）</div>
+            <div class="flex flex-wrap gap-x-8 gap-y-2">
+              <div class="flex items-center gap-2"><span class="text-sm font-medium text-gray-600 w-8">B2B</span><span class="flex gap-2 pay-method-group"><span class="chip on">支持</span><span class="chip">不支持</span></span></div>
+              <div class="flex items-center gap-2"><span class="text-sm font-medium text-gray-600 w-8">B2C</span><span class="flex gap-2 pay-method-group"><span class="chip on">支持</span><span class="chip">不支持</span></span></div>
+              <div class="flex items-center gap-2"><span class="text-sm font-medium text-gray-600 w-8">C2B</span><span class="flex gap-2 pay-method-group"><span class="chip">支持</span><span class="chip on">不支持</span></span></div>
+              <div class="flex items-center gap-2"><span class="text-sm font-medium text-gray-600 w-8">C2C</span><span class="flex gap-2 pay-method-group"><span class="chip">支持</span><span class="chip on">不支持</span></span></div>
+            </div>
+            <p class="text-xs text-gray-400 mt-1">仅对上方已勾选的商户-收款人类型生效。</p>
           </div>
 
           <div class="field-label required">渠道限额（按收款人账户币种 + 商户-收款人类型）</div>
@@ -323,7 +329,7 @@
       <p class="text-xs text-gray-400 mb-4">付款失败后的资金退回规则；异常处理有独立备注。</p>
       <div class="grid grid-cols-2 gap-x-8 gap-y-5">
         <div><div class="field-label required">付款失败资金退回</div><div class="flex gap-2"><span class="chip on">大账户</span><span class="chip">商户账户</span></div></div>
-        <div><div class="field-label required">退回币种（多选）</div><div class="flex flex-wrap gap-2"><span class="chip on">渠道结算币种</span><span class="chip">收款人账户币种</span><span class="chip">付款钱包币种</span><span class="chip">自定义币种</span></div></div>
+        <div><div class="field-label required">退回币种（多选）</div><div class="flex flex-wrap gap-2"><span class="chip on">渠道结算币种</span><span class="chip">收款人账户币种</span><span class="chip">付款钱包币种</span><span class="chip">自定义币种</span></div><p class="text-xs text-gray-400 mt-1">多选仅作登记，无优先级判断。</p></div>
         <div class="col-span-2">
           <div class="field-label required">退回金额（单选）</div>
           <div class="flex gap-2 mb-2 toggle-pair" data-detail="fee-note"><span class="chip on" data-val="no">原金额</span><span class="chip" data-val="yes">去掉手续费金额</span></div>
@@ -432,48 +438,154 @@
 
     <!-- ===== 2. 申报人与申报资料（人民币结汇特有） ===== -->
     <div class="border-t border-gray-100 mt-8 pt-6">
-      <h3 class="font-bold text-gray-900 mb-1">2. 申报人与申报资料</h3>
-      <p class="text-xs text-gray-400 mb-4">外汇管制国家特有逻辑，在「外币付款」能力基础上追加</p>
-      <div class="grid grid-cols-2 gap-x-8 gap-y-5">
-        <div class="col-span-2">
-          <div class="field-label required">申报人国家</div>
-          <div class="flex gap-2 mb-2 toggle-pair" data-detail="cny-declarant-country-box">
-            <span class="chip on" data-val="no">跟随收款人所在国家</span>
-            <span class="chip" data-val="yes">自定义国家</span>
-          </div>
-          <div id="cny-declarant-country-box" class="hidden">
-            <input type="text" list="countryDatalist" class="country-search" data-tags="cny-declarant-country-tags" placeholder="搜索国家后回车添加">
-            <div id="cny-declarant-country-tags" class="flex flex-wrap gap-2 mt-2"></div>
-          </div>
-        </div>
-        <div class="col-span-2">
-          <div class="field-label required">申报人证件类型（可多选）</div>
-          <div class="flex gap-2"><span class="chip on">身份证</span><span class="chip">护照</span><span class="chip">营业执照</span></div>
-        </div>
-        <div class="col-span-2">
-          <div class="field-label required">贸易背景申报（与行业分类 + 资金来源联动）</div>
-          <div class="border border-gray-200 rounded-lg overflow-hidden text-sm">
-            <div class="grid grid-cols-2 bg-gray-50 text-xs font-semibold text-gray-500"><div class="px-4 py-2">资金来源</div><div class="px-4 py-2">申报材料</div></div>
-            <div class="grid grid-cols-2 border-t border-gray-200">
-              <div class="px-4 py-3">平台结算款 / 三方收单机构</div>
-              <div class="px-4 py-3"><span class="chip on">平台 / 独立站订单明细</span></div>
-            </div>
-            <div class="grid grid-cols-2 border-t border-gray-200">
-              <div class="px-4 py-3">线下贸易款</div>
-              <div class="px-4 py-3 space-y-2">
-                <div class="flex flex-wrap gap-2 items-center"><span class="chip on">PI</span><span class="chip">物流</span><span class="chip">提单</span><span class="chip">网站</span><span class="chip">报关单</span><span class="chip">＋ 加一行</span></div>
-                <p class="text-xs text-gray-400">可添加多行，一行可多选；行内 = OR，行间 = AND。</p>
+      <h3 class="font-bold text-gray-900 mb-1">2. 申报人与申报资料（贸易背景申报）</h3>
+      <p class="text-xs text-gray-400 mb-4">外汇管制国家特有逻辑，在「外币付款」能力基础上追加；<b>申报人国家默认 = 中国大陆，不展示、不配置</b>；贸易背景申报按「明细来源类型」逐行配置</p>
+      <p class="text-xs text-gray-400 mb-4">公共枚举 —— 申报编码：<b>122030、121010</b>；贸易背景（多选）：<b>订单明细、合同、PI、物流/快递、报关单、银行流水、交付物凭证</b></p>
+      <div class="space-y-5">
+
+        <!-- 在线类 -->
+        <div>
+          <div class="field-label required">明细来源类型 · 在线类</div>
+          <p class="text-xs text-gray-400 mb-2">在线类每行同样需配置申报人要求：证件类型（身份证 / 护照 / 营业执照）+ 申报人类型（个人 / 企业）</p>
+          <div class="border border-gray-200 rounded-lg divide-y divide-gray-100 text-sm">
+            <div class="p-4">
+              <div class="font-semibold text-gray-800 mb-2">1. 平台结算</div>
+              <div class="grid grid-cols-2 gap-3 mb-2">
+                <div><div class="field-label">平台（电商平台 / 游戏平台 / 应用市场）</div><select><option>Amazon（电商平台）</option><option>Shopee（电商平台）</option><option>TikTok Shop（电商平台）</option><option>App Store（应用市场）</option><option>Google Play（应用市场）</option></select></div>
+                <div><div class="field-label">站点</div><select><option>US</option><option>JP</option><option>SG</option><option>全站点</option></select></div>
               </div>
+              <div class="flex flex-wrap items-center gap-2 mb-2"><span class="text-xs font-semibold text-gray-500">申报编码</span><span class="flex gap-2 pay-method-group"><span class="chip on">122030</span><span class="chip">121010</span></span><span class="text-xs font-semibold text-gray-500 ml-4">贸易背景</span><span class="chip on">订单明细</span><span class="chip">合同</span><span class="chip">银行流水</span></div>
+              <div class="flex flex-wrap items-center gap-2"><span class="text-xs font-semibold text-gray-500">申报人要求</span><span class="text-xs text-gray-500">证件类型</span><span class="chip on">身份证</span><span class="chip">护照</span><span class="chip">营业执照</span><span class="text-xs text-gray-500 ml-2">申报人类型</span><span class="chip on">个人</span><span class="chip">企业</span></div>
+            </div>
+            <div class="p-4">
+              <div class="font-semibold text-gray-800 mb-2">2. 独立站</div>
+              <div class="grid grid-cols-2 gap-3 mb-2">
+                <div><div class="field-label">独立站名称</div><input type="text" placeholder="独立站名称"></div>
+                <div><div class="field-label">收单机构</div><select><option>PayPal</option><option>Stripe</option><option>Airwallex</option></select></div>
+              </div>
+              <div class="flex flex-wrap items-center gap-2 mb-2"><span class="text-xs font-semibold text-gray-500">申报编码</span><span class="flex gap-2 pay-method-group"><span class="chip on">122030</span><span class="chip">121010</span></span><span class="text-xs font-semibold text-gray-500 ml-4">贸易背景</span><span class="chip on">订单明细</span><span class="chip">合同</span><span class="chip">银行流水</span></div>
+              <div class="flex flex-wrap items-center gap-2"><span class="text-xs font-semibold text-gray-500">申报人要求</span><span class="text-xs text-gray-500">证件类型</span><span class="chip on">身份证</span><span class="chip">护照</span><span class="chip">营业执照</span><span class="text-xs text-gray-500 ml-2">申报人类型</span><span class="chip on">个人</span><span class="chip">企业</span></div>
+            </div>
+            <div class="p-4">
+              <div class="font-semibold text-gray-800 mb-2">3. 游戏平台</div>
+              <div class="grid grid-cols-2 gap-3 mb-2">
+                <div><div class="field-label">应用市场名称</div><input type="text" placeholder="如 App Store / Google Play"></div>
+                <div><div class="field-label">收单机构</div><select><option>PayPal</option><option>Stripe</option><option>Airwallex</option></select></div>
+              </div>
+              <div class="flex flex-wrap items-center gap-2 mb-2"><span class="text-xs font-semibold text-gray-500">贸易背景</span><span class="chip on">订单明细</span><span class="chip">合同</span><span class="chip">交付物凭证</span></div>
+              <div class="flex flex-wrap items-center gap-2"><span class="text-xs font-semibold text-gray-500">申报人要求</span><span class="text-xs text-gray-500">证件类型</span><span class="chip on">身份证</span><span class="chip">护照</span><span class="chip">营业执照</span><span class="text-xs text-gray-500 ml-2">申报人类型</span><span class="chip on">个人</span><span class="chip">企业</span></div>
+            </div>
+            <div class="p-4">
+              <div class="font-semibold text-gray-800 mb-2">4. 游戏充值站 / 网游</div>
+              <div class="grid grid-cols-2 gap-3 mb-2">
+                <div><div class="field-label">收单机构</div><select><option>PayPal</option><option>Stripe</option><option>Airwallex</option></select></div>
+              </div>
+              <div class="flex flex-wrap items-center gap-2 mb-2"><span class="text-xs font-semibold text-gray-500">申报编码</span><span class="flex gap-2 pay-method-group"><span class="chip on">122030</span><span class="chip">121010</span></span><span class="text-xs font-semibold text-gray-500 ml-4">贸易背景</span><span class="chip on">订单明细</span><span class="chip">银行流水</span></div>
+              <div class="flex flex-wrap items-center gap-2"><span class="text-xs font-semibold text-gray-500">申报人要求</span><span class="text-xs text-gray-500">证件类型</span><span class="chip on">身份证</span><span class="chip">护照</span><span class="chip">营业执照</span><span class="text-xs text-gray-500 ml-2">申报人类型</span><span class="chip on">个人</span><span class="chip">企业</span></div>
+            </div>
+            <div class="p-4">
+              <div class="font-semibold text-gray-800 mb-2">5. 电商自建站</div>
+              <div class="grid grid-cols-2 gap-3 mb-2">
+                <div><div class="field-label">收单机构</div><select><option>PayPal</option><option>Stripe</option><option>Airwallex</option></select></div>
+              </div>
+              <div class="flex flex-wrap items-center gap-2 mb-2"><span class="text-xs font-semibold text-gray-500">申报编码</span><span class="flex gap-2 pay-method-group"><span class="chip on">122030</span><span class="chip">121010</span></span><span class="text-xs font-semibold text-gray-500 ml-4">贸易背景</span><span class="chip on">订单明细</span><span class="chip">物流/快递</span></div>
+              <div class="flex flex-wrap items-center gap-2"><span class="text-xs font-semibold text-gray-500">申报人要求</span><span class="text-xs text-gray-500">证件类型</span><span class="chip on">身份证</span><span class="chip">护照</span><span class="chip">营业执照</span><span class="text-xs text-gray-500 ml-2">申报人类型</span><span class="chip on">个人</span><span class="chip">企业</span></div>
+            </div>
+            <div class="p-4">
+              <div class="font-semibold text-gray-800 mb-2">6. 广告联盟</div>
+              <div class="grid grid-cols-2 gap-3 mb-2">
+                <div><div class="field-label">平台 / 应用市场</div><input type="text" placeholder="平台或应用市场名称"></div>
+                <div><div class="field-label">收单机构</div><select><option>PayPal</option><option>Stripe</option><option>Airwallex</option></select></div>
+              </div>
+              <div class="flex flex-wrap items-center gap-2 mb-2"><span class="text-xs font-semibold text-gray-500">申报编码</span><span class="flex gap-2 pay-method-group"><span class="chip on">122030</span><span class="chip">121010</span></span><span class="text-xs font-semibold text-gray-500 ml-4">贸易背景</span><span class="chip on">合同</span><span class="chip">交付物凭证</span><span class="chip">银行流水</span></div>
+              <div class="flex flex-wrap items-center gap-2"><span class="text-xs font-semibold text-gray-500">申报人要求</span><span class="text-xs text-gray-500">证件类型</span><span class="chip on">身份证</span><span class="chip">护照</span><span class="chip">营业执照</span><span class="text-xs text-gray-500 ml-2">申报人类型</span><span class="chip on">个人</span><span class="chip">企业</span></div>
             </div>
           </div>
         </div>
-        <div class="col-span-2"><div class="field-label">备注（申报信息独立备注）</div><textarea rows="2" placeholder="自由备注"></textarea></div>
+
+        <!-- 线下类 -->
+        <div>
+          <div class="field-label required">明细来源类型 · 线下类</div>
+          <p class="text-xs text-gray-400 mb-2">线下类每行均需配置申报人要求：证件类型（身份证 / 护照 / 营业执照）+ 申报人类型（个人 / 企业）</p>
+          <div class="border border-gray-200 rounded-lg divide-y divide-gray-100 text-sm">
+            <div class="p-4">
+              <div class="font-semibold text-gray-800 mb-2">1. B2B 货贸</div>
+              <p class="text-xs text-gray-400 mb-2">可按申报编码拆多行，不同申报编码对应不同背景材料；行内多选 = OR，多行之间 = AND</p>
+              <div class="space-y-2 mb-2">
+                <div class="flex flex-wrap items-center gap-2"><span class="text-xs font-semibold text-gray-500">申报编码</span><span class="flex gap-2 pay-method-group"><span class="chip">122030</span><span class="chip on">121010</span></span><span class="text-xs font-semibold text-gray-500 ml-4">贸易背景</span><span class="chip on">报关单</span><span class="chip">合同</span><span class="chip">银行流水</span></div>
+                <div class="flex flex-wrap items-center gap-2"><span class="text-xs font-semibold text-gray-500">申报编码</span><span class="flex gap-2 pay-method-group"><span class="chip on">122030</span><span class="chip">121010</span></span><span class="text-xs font-semibold text-gray-500 ml-4">贸易背景</span><span class="chip on">PI</span><span class="chip on">物流/快递</span><span class="chip">合同</span></div>
+                <span class="chip">＋ 加一行</span>
+              </div>
+              <div class="flex flex-wrap items-center gap-2"><span class="text-xs font-semibold text-gray-500">申报人要求</span><span class="text-xs text-gray-500">证件类型</span><span class="chip on">身份证</span><span class="chip">护照</span><span class="chip">营业执照</span><span class="text-xs text-gray-500 ml-2">申报人类型</span><span class="chip on">个人</span><span class="chip">企业</span></div>
+            </div>
+            <div class="p-4">
+              <div class="font-semibold text-gray-800 mb-2">2. 广告服务</div>
+              <div class="flex flex-wrap items-center gap-2 mb-2"><span class="text-xs font-semibold text-gray-500">申报编码</span><span class="flex gap-2 pay-method-group"><span class="chip on">122030</span><span class="chip">121010</span></span><span class="text-xs font-semibold text-gray-500 ml-4">贸易背景</span><span class="chip on">合同</span><span class="chip">交付物凭证</span><span class="chip">银行流水</span></div>
+              <div class="flex flex-wrap items-center gap-2"><span class="text-xs font-semibold text-gray-500">申报人要求</span><span class="text-xs text-gray-500">证件类型</span><span class="chip on">身份证</span><span class="chip">护照</span><span class="chip">营业执照</span><span class="text-xs text-gray-500 ml-2">申报人类型</span><span class="chip">个人</span><span class="chip on">企业</span></div>
+            </div>
+            <div class="p-4">
+              <div class="font-semibold text-gray-800 mb-2">3. 薪资下发</div>
+              <div class="flex flex-wrap items-center gap-2 mb-2"><span class="text-xs font-semibold text-gray-500">申报编码</span><span class="flex gap-2 pay-method-group"><span class="chip on">122030</span><span class="chip">121010</span></span><span class="text-xs font-semibold text-gray-500 ml-4">贸易背景</span><span class="chip on">合同</span><span class="chip">银行流水</span></div>
+              <div class="flex flex-wrap items-center gap-2"><span class="text-xs font-semibold text-gray-500">申报人要求</span><span class="text-xs text-gray-500">证件类型</span><span class="chip on">身份证</span><span class="chip">护照</span><span class="chip">营业执照</span><span class="text-xs text-gray-500 ml-2">申报人类型</span><span class="chip on">个人</span><span class="chip">企业</span></div>
+            </div>
+            <div class="p-4">
+              <div class="font-semibold text-gray-800 mb-2">4. 佣金下发</div>
+              <div class="flex flex-wrap items-center gap-2 mb-2"><span class="text-xs font-semibold text-gray-500">申报编码</span><span class="flex gap-2 pay-method-group"><span class="chip on">122030</span><span class="chip">121010</span></span><span class="text-xs font-semibold text-gray-500 ml-4">贸易背景</span><span class="chip on">合同</span><span class="chip">交付物凭证</span><span class="chip">银行流水</span></div>
+              <div class="flex flex-wrap items-center gap-2"><span class="text-xs font-semibold text-gray-500">申报人要求</span><span class="text-xs text-gray-500">证件类型</span><span class="chip on">身份证</span><span class="chip">护照</span><span class="chip">营业执照</span><span class="text-xs text-gray-500 ml-2">申报人类型</span><span class="chip on">个人</span><span class="chip">企业</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div><div class="field-label">备注（申报信息独立备注）</div><textarea rows="2" placeholder="自由备注"></textarea></div>
       </div>
     </div>
 
-    <!-- ===== 3. 付款能力 ===== -->
+    <!-- ===== 3. 结汇明细配置（明细表） ===== -->
     <div class="border-t border-gray-100 mt-8 pt-6">
-      <h3 class="font-bold text-gray-900 mb-4">3. 付款能力</h3>
+      <h3 class="font-bold text-gray-900 mb-1">3. 结汇明细配置（明细表）</h3>
+      <p class="text-xs text-gray-400 mb-4">参考 IPL 既有结汇明细配置；明细 = 结汇资金的逐笔来源记录，独立于贸易背景申报单独维护</p>
+      <div class="grid grid-cols-2 gap-x-8 gap-y-5">
+        <div>
+          <div class="field-label required">明细支持的币种（多选）</div>
+          <div class="flex flex-wrap gap-2"><span class="chip on">USD</span><span class="chip on">EUR</span><span class="chip">GBP</span><span class="chip">HKD</span><span class="chip">SGD</span><span class="chip">JPY</span><span class="chip">AUD</span><span class="chip">＋ 更多</span></div>
+          <p class="text-xs text-gray-400 mt-1">明细原始币种不在范围内视为不支持币种。</p>
+        </div>
+        <div>
+          <div class="field-label required">不支持币种处理方式（单选）</div>
+          <div class="flex gap-2 pay-method-group"><span class="chip on">拒绝该笔明细</span><span class="chip">换汇为支持币种后结汇</span><span class="chip">人工处理</span></div>
+        </div>
+
+        <div class="col-span-2">
+          <div class="field-label required">明细关键字匹配</div>
+          <p class="text-xs text-gray-400 mb-2">用于将渠道回传的明细（打款方名称 / 摘要）匹配到平台 / 资金来源；可配置多条规则，命中即归类，未命中转人工处理</p>
+          <div class="border border-gray-200 rounded-lg overflow-hidden">
+            <table class="w-full">
+              <thead><tr><th>匹配字段</th><th>匹配方式</th><th>关键字</th><th>匹配结果（平台 / 资金来源）</th><th>操作</th></tr></thead>
+              <tbody>
+                <tr><td>打款方名称</td><td>包含</td><td>AMAZON</td><td>Amazon（平台结算）</td><td class="text-blue-600 cursor-pointer">编辑</td></tr>
+                <tr><td>交易摘要</td><td>包含</td><td>PAYPAL</td><td>PayPal（三方收单行结算款）</td><td class="text-blue-600 cursor-pointer">编辑</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <span class="chip mt-2 inline-block">＋ 加一条规则</span>
+        </div>
+
+        <div class="col-span-2">
+          <div class="field-label required">明细与下发推送关系</div>
+          <div class="space-y-3">
+            <div class="flex items-center gap-2 flex-wrap"><span class="text-xs font-semibold text-gray-500 w-20">关联关系</span><span class="flex gap-2 pay-method-group"><span class="chip on">1:1（一明细一下发）</span><span class="chip">1:N（一明细拆多笔下发）</span><span class="chip">N:1（多明细合并一笔下发）</span></span></div>
+            <div class="flex items-center gap-2 flex-wrap"><span class="text-xs font-semibold text-gray-500 w-20">金额校验</span><span class="flex gap-2 pay-method-group"><span class="chip on">下发金额 = Σ 关联明细</span><span class="chip">下发金额 ≤ Σ 关联明细</span></span></div>
+            <div class="flex items-center gap-2 flex-wrap"><span class="text-xs font-semibold text-gray-500 w-20">推送时机</span><span class="flex gap-2 pay-method-group"><span class="chip on">下发时逐笔推送明细</span><span class="chip">明细先行报备、下发时引用</span></span></div>
+          </div>
+        </div>
+
+        <div class="col-span-2"><div class="field-label">备注（明细配置独立备注）</div><textarea rows="2" placeholder="自由备注"></textarea></div>
+      </div>
+    </div>
+
+    <!-- ===== 4. 付款能力 ===== -->
+    <div class="border-t border-gray-100 mt-8 pt-6">
+      <h3 class="font-bold text-gray-900 mb-4">4. 付款能力</h3>
       <div class="grid grid-cols-2 gap-x-8 gap-y-5">
         <!-- 商户所在国家：独立配置，交互与「收款人所在国家」一致（支持/禁止 + 模糊搜索），不跟随收款人国家 -->
         <div class="col-span-2">
@@ -541,9 +653,15 @@
             </div>
           </div>
 
-          <div class="mb-4 max-w-xs">
-            <div class="field-label required">POBO</div>
-            <select><option>支持</option><option>不支持</option></select>
+          <div class="mb-4">
+            <div class="field-label required">是否支持 POBO（按商户-收款人类型分别配置）</div>
+            <div class="flex flex-wrap gap-x-8 gap-y-2">
+              <div class="flex items-center gap-2"><span class="text-sm font-medium text-gray-600 w-8">B2B</span><span class="flex gap-2 pay-method-group"><span class="chip on">支持</span><span class="chip">不支持</span></span></div>
+              <div class="flex items-center gap-2"><span class="text-sm font-medium text-gray-600 w-8">B2C</span><span class="flex gap-2 pay-method-group"><span class="chip on">支持</span><span class="chip">不支持</span></span></div>
+              <div class="flex items-center gap-2"><span class="text-sm font-medium text-gray-600 w-8">C2B</span><span class="flex gap-2 pay-method-group"><span class="chip">支持</span><span class="chip on">不支持</span></span></div>
+              <div class="flex items-center gap-2"><span class="text-sm font-medium text-gray-600 w-8">C2C</span><span class="flex gap-2 pay-method-group"><span class="chip">支持</span><span class="chip on">不支持</span></span></div>
+            </div>
+            <p class="text-xs text-gray-400 mt-1">仅对上方已勾选的商户-收款人类型生效。</p>
           </div>
 
           <div class="field-label required">渠道限额（按收款人账户币种 + 商户-收款人类型）</div>
@@ -566,13 +684,13 @@
       </div>
     </div>
 
-    <!-- ===== 4. 异常处理 ===== -->
+    <!-- ===== 5. 异常处理 ===== -->
     <div class="col-span-2 border-t border-gray-100 mt-8 pt-6">
-      <h3 class="font-bold text-gray-900 mb-1">4. 异常处理</h3>
+      <h3 class="font-bold text-gray-900 mb-1">5. 异常处理</h3>
       <p class="text-xs text-gray-400 mb-4">付款失败后的资金退回规则；异常处理有独立备注。</p>
       <div class="grid grid-cols-2 gap-x-8 gap-y-5">
         <div><div class="field-label required">付款失败资金退回</div><div class="flex gap-2"><span class="chip on">大账户</span><span class="chip">商户账户</span></div></div>
-        <div><div class="field-label required">退回币种（多选）</div><div class="flex flex-wrap gap-2"><span class="chip on">渠道结算币种</span><span class="chip">收款人账户币种</span><span class="chip">付款钱包币种</span><span class="chip">自定义币种</span></div></div>
+        <div><div class="field-label required">退回币种（多选）</div><div class="flex flex-wrap gap-2"><span class="chip on">渠道结算币种</span><span class="chip">收款人账户币种</span><span class="chip">付款钱包币种</span><span class="chip">自定义币种</span></div><p class="text-xs text-gray-400 mt-1">多选仅作登记，无优先级判断。</p></div>
         <div class="col-span-2">
           <div class="field-label required">退回金额（单选）</div>
           <div class="flex gap-2 mb-2 toggle-pair" data-detail="cny-fee-note"><span class="chip on" data-val="no">原金额</span><span class="chip" data-val="yes">去掉手续费金额</span></div>

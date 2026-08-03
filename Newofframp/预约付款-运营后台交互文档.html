@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>预约付款运营后台交互</title>
+  <style>
+    :root{--nav:#172033;--blue:#1677ff;--bg:#f5f7fa;--line:#e5e7eb;--text:#1f2937;--muted:#667085;--green:#079455;--amber:#b54708;--red:#d92d20;--purple:#6938ef}
+    *{box-sizing:border-box}body{margin:0;font:14px -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;color:var(--text);background:var(--bg)}
+    .app{display:flex;min-height:100vh}.side{width:250px;background:var(--nav);color:#cbd5e1;padding:18px 12px}.brand{font-size:21px;font-weight:700;color:#fff;padding:8px 12px 22px}
+    .l1{font-weight:700;color:#fff;padding:16px 12px 10px;margin-top:12px;border-top:1px solid #344054}.brand+.l1{margin-top:0;border-top:0;padding-top:12px}.l2{margin:3px 0;padding:9px 12px 9px 28px;border-radius:7px;cursor:pointer}.l2.open,.l2:hover{background:#26344f;color:#fff}.l2.active,.l3.active{background:#1668dc;color:#fff}.l3{padding:8px 12px 8px 46px;border-radius:6px;cursor:pointer}
+    main{flex:1;min-width:0;padding:24px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.top h1{font-size:24px;margin:0}.top-actions{display:flex;align-items:center;gap:10px}.role-select{height:36px;border:1px solid #d0d5dd;border-radius:7px;padding:0 10px;background:#fff;color:#344054}.badge{padding:5px 10px;background:#eef4ff;color:#175cd3;border-radius:14px}
+    .card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}.filters{display:grid;grid-template-columns:repeat(4,minmax(170px,1fr));gap:12px}.field{display:flex;flex-direction:column;gap:6px}.field label{font-weight:600;color:#475467}.field input,.field select{height:38px;border:1px solid #d0d5dd;border-radius:6px;padding:0 10px;background:#fff}
+    .actions{display:flex;gap:9px;margin-top:14px}.btn{border:1px solid #d0d5dd;background:#fff;border-radius:6px;padding:8px 14px;cursor:pointer}.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}.btn.link{border:0;padding:0;color:var(--blue);background:none}.tablewrap{overflow:auto}table{border-collapse:collapse;min-width:1450px;width:100%}th,td{padding:11px 10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap;vertical-align:top}th{background:#f9fafb;color:#475467}.entity-cell .entity-name{display:block;font-weight:600;color:#344054}.entity-cell .entity-id,.time-cell span{display:block;color:var(--muted);font-size:12px;margin-top:4px}.tool-tag{display:inline-flex;align-items:center;border-radius:999px;padding:2px 8px;margin-bottom:4px;font-size:11px;line-height:18px;font-weight:700}.tool-tag.va{background:#eaf2ff;color:#175cd3}.tool-tag.rf{background:#f4ebff;color:#7f56d9}.order-cell{font-weight:600;color:#175cd3}.time-cell b{display:block;font-size:12px;font-weight:500}.green{color:var(--green)}.amber{color:var(--amber)}.red{color:var(--red)}.muted{color:var(--muted);font-size:12px}.status{display:inline-flex;align-items:center;border-radius:999px;padding:4px 9px;font-size:12px;font-weight:600}.status.wait{background:#fff7ed;color:#b54708}.status.processing{background:#eff8ff;color:#175cd3}.status.success{background:#ecfdf3;color:#067647}.status.failed{background:#fef3f2;color:#b42318}.status.refund{background:#f4f3ff;color:#5925dc}
+    .hidden{display:none}.toast{display:none;position:fixed;right:24px;bottom:24px;background:#101828;color:#fff;padding:12px 16px;border-radius:7px}.drawerMask{display:none;position:fixed;inset:0;background:#10182866}.drawerMask.show{display:block}.drawer{position:absolute;right:0;top:0;height:100%;width:min(760px,94vw);background:#fff;padding:22px;overflow:auto}.drawer h2{margin:0 0 4px}.drawer h3{margin:24px 0 12px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.item{padding:11px;background:#f8fafc;border-radius:7px}.item span{display:block;color:var(--muted);font-size:12px;margin-bottom:4px}.timeline{border-left:2px solid #dfe4eb;margin-left:8px;padding-left:22px}.event{position:relative;padding:0 0 20px}.event:before{content:"";position:absolute;left:-30px;top:3px;width:12px;height:12px;border:3px solid #12a87a;border-radius:50%;background:#fff}.event b,.event span{display:block}.event span{margin-top:4px;color:var(--muted);font-size:12px}.suborders{display:grid;gap:10px}.suborder{border:1px solid var(--line);border-radius:8px;overflow:hidden}.suborder-head{display:flex;justify-content:space-between;padding:11px 13px;background:#f8fafc}.suborder-body{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line)}.suborder-body div{padding:10px;background:#fff}.suborder-body span,.suborder-body b{display:block}.suborder-body span{color:var(--muted);font-size:12px;margin-bottom:4px}
+    @media(max-width:900px){.side{width:210px}.filters{grid-template-columns:repeat(2,1fr)}}@media(max-width:620px){.app{display:block}.side{width:100%}.filters,.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand">预约付款运营后台（PP）</div>
+    <div class="l1">承兑业务</div>
+    <div class="l2 open">商户收款工具</div>
+    <div class="l3" data-page="crypto">商户数币地址</div>
+    <div class="l3" data-page="va">商户 VA 账户</div>
+    <div class="role-group" data-role-menu="customer"><div class="l2 open">商户业务单</div>
+    <div class="l3" data-page="deposit">充值订单</div>
+    <div class="l3" data-page="withdraw">提现订单</div>
+    <div class="l3" data-page="convert">数法兑换</div>
+    <div class="l3" data-page="realtimeFx">实时换汇</div>
+    <div class="l3" data-page="payment">付款订单</div>
+    <div class="l3 active" data-page="reserved">预约付款订单</div></div>
+    <div class="l2 open">交易单</div>
+    <div class="l3" data-page="depositTx">充值交易单</div>
+    <div class="l3" data-page="fiatPayoutTx">付款交易单</div>
+    <div class="l3" data-page="cryptoFiatTx">数法承兑交易单</div>
+    <div class="l3" data-page="realtimeFxTx">实时换汇交易单</div>
+    <div class="l2 open">渠道单</div>
+    <div class="l3" data-page="reservedDepositCh">预约付款 · 充币渠道单</div>
+    <div class="l3" data-page="reservedConvertCh">预约付款 · 数法承兑渠道单</div>
+    <div class="l3" data-page="reservedPayoutCh">预约付款 · 法币付款渠道单</div>
+    <div class="l2" data-page="payee">收款人</div>
+    <div class="l1">渠道商户管理</div>
+    <div class="l2" data-page="merchantReport">渠道商户报备</div>
+    <div class="l2" data-page="channelVa">渠道 VA 开户</div>
+    <div class="l2" data-page="payeeReport">收款人渠道报备</div>
+    <div class="role-group" data-role-menu="customer"><div class="l1">产品中心</div>
+    <div class="l2" data-page="productOpen">产品开通</div></div>
+  </aside>
+  <main>
+    <div class="top"><div><h1 id="title">预约付款商户业务单</h1><div class="muted" id="roleHint">客户运营：参考产品开通情况查询商户业务单</div></div><div class="top-actions"><select class="role-select" id="roleSelect" aria-label="运营角色"><option value="customer">客户运营</option><option value="channel">渠道运营</option><option value="settlement">清算</option></select><span class="badge">BB 本期</span></div></div>
+    <section class="card">
+      <div class="filters" id="filterGrid">
+        <div class="field"><label>订单号</label><input placeholder="商户单号/交易单号/渠道单号"></div>
+        <div class="field"><label>商户 ID</label><input placeholder="输入商户 ID"></div>
+        <div class="field"><label>商户名称</label><input placeholder="支持模糊查询"></div>
+        <div class="field"><label>机构代理 ID</label><input placeholder="输入机构代理 ID"></div>
+        <div class="field"><label>收款人</label><input placeholder="名称或账户尾号"></div>
+        <div class="field"><label>状态</label><select><option>全部</option><option>待处理</option><option>处理中</option><option>成功</option><option>失败</option><option>已失效</option><option>已退票</option></select></div>
+        <div class="field"><label>创建时间</label><input type="date"></div>
+        <div class="field"><label>渠道</label><select><option>全部</option><option>Gate</option><option>MTC</option></select></div>
+      </div>
+      <div class="actions" id="actionBar"><button class="btn primary" onclick="toast('已按当前条件查询')">查询</button><button class="btn" onclick="toast('筛选条件已重置')">重置</button><button class="btn" onclick="toast('已按当前筛选条件生成导出任务')">导出</button></div>
+    </section>
+    <section class="card tablewrap">
+      <table><thead id="tableHead"><tr><th>商户单号</th><th>商户</th><th>机构代理商</th><th>产品名称</th><th>产品开通状态</th><th>收款人</th><th>预计充值金额</th><th>汇率</th><th>手续费</th><th>收款金额</th><th>状态</th><th>创建 / 更新时间</th><th>操作</th></tr></thead>
+      <tbody id="tableBody"><tr><td class="order-cell">RS-20260717-1028</td><td class="entity-cell"><span class="entity-name">ABCD Trading Limited</span><span class="entity-id">MID：M260001</span></td><td class="entity-cell"><span class="entity-name">EX Hong Kong</span><span class="entity-id">ID：EX-HK-001</span></td><td>预约付款</td><td><button class="btn link" onclick="document.querySelector('[data-page=&quot;productOpen&quot;]').click()">已开通</button></td><td>Shenzhen Supplier A<br><span class="muted">BOC **** 8821</span></td><td>10,023.50 USDC<br><span class="muted">ERC-20</span></td><td>1 USDC = 1 USD</td><td>承兑 15.00<br>付款 12.00<br>POBO 8.00 USD</td><td>10,000.00 USD</td><td><span class="status wait">待充值</span></td><td class="time-cell"><b>创建：2026-07-17 14:08</b><span>更新：2026-07-17 14:12</span></td><td><button class="btn link" onclick="openDetail('merchant')">详情</button></td></tr></tbody></table>
+    </section>
+  </main>
+</div>
+<div id="drawerMask" class="drawerMask" onclick="if(event.target===this)closeDetail()"><div class="drawer"><button class="btn" style="float:right" onclick="closeDetail()">关闭</button><div id="drawerContent"></div></div></div>
+<div id="toast" class="toast"></div>
+<script>
+const titles={crypto:'商户数币地址',va:'商户 VA 账户',withdraw:'提现订单',deposit:'充值订单',convert:'数法兑换',realtimeFx:'实时换汇',payment:'付款订单',reserved:'预约付款商户业务单',depositTx:'充值交易单',fiatCreditTx:'法币入账交易单',withdrawTx:'提币交易单',fiatPayoutTx:'付款交易单',cryptoFiatTx:'数法承兑交易单',realtimeFxTx:'实时换汇交易单',reservedDepositCh:'预约付款 · 充币渠道单',reservedConvertCh:'预约付款 · 数法承兑渠道单',reservedPayoutCh:'预约付款 · 法币付款渠道单',depositCh:'充币渠道单',fiatCreditCh:'法币入账渠道单',withdrawCh:'提币渠道单',fiatPayoutCh:'法币出款渠道单',cryptoFiatCh:'数法承兑渠道单',realtimeFxCh:'实时换汇渠道单',payee:'收款人',merchantReport:'渠道商户报备',channelVa:'渠道 VA 开户',payeeReport:'收款人渠道报备',productOpen:'产品开通'};
+const roleDefaults={customer:'reserved',channel:'reservedPayoutCh',settlement:'depositTx'};
+const roleHints={customer:'客户运营：参考产品开通情况查询商户业务单',channel:'渠道运营：查询并处理渠道单',settlement:'清算：查询交易单及资金执行结果'};
+const reservedHead=document.getElementById('tableHead').innerHTML,reservedBody=document.getElementById('tableBody').innerHTML;
+const defaultFilters=document.getElementById('filterGrid').innerHTML;
+const transactionFilters='<div class="field"><label>交易单号</label><input placeholder="输入交易单号"></div><div class="field"><label>关联商户单号</label><input placeholder="输入商户单号"></div><div class="field"><label>商户 ID</label><input placeholder="输入商户 ID"></div><div class="field"><label>商户名称</label><input placeholder="支持模糊查询"></div><div class="field"><label>机构代理 ID</label><input placeholder="输入机构代理 ID"></div><div class="field"><label>产品名称</label><select><option>全部</option><option>预约付款</option><option>实时换汇</option></select></div><div class="field"><label>交易类型</label><select><option>全部</option><option>充值</option><option>付款</option><option>数法承兑</option><option>实时换汇</option></select></div><div class="field"><label>交易币种</label><input placeholder="如 USD、USDC"></div><div class="field"><label>交易状态</label><select><option>全部</option><option>处理中</option><option>成功</option><option>失败</option></select></div><div class="field"><label>更新时间</label><input type="date"></div>';
+const productFilters='<div class="field"><label>商户 MID</label><input placeholder="输入商户 MID"></div><div class="field"><label>商户名称</label><input placeholder="支持模糊查询"></div><div class="field"><label>机构代理商 ID</label><input placeholder="输入机构代理商 ID"></div><div class="field"><label>开通产品</label><select><option>全部产品</option><option>预约付款</option><option>Gate 渠道服务</option></select></div><div class="field"><label>状态</label><select><option>全部状态</option><option>已开通</option><option>配置中</option><option>已暂停</option><option>已关闭</option></select></div><div class="field"><label>开通时间</label><input type="date"></div>';
+const defaultActions=document.getElementById('actionBar').innerHTML;
+const productActions='<button class="btn primary" onclick="toast(&quot;已按当前条件查询&quot;)">查询</button><button class="btn" onclick="toast(&quot;筛选条件已重置&quot;)">重置</button><button class="btn primary" onclick="openNewProduct()">新增开通</button><button class="btn" onclick="toast(&quot;已生成产品开通记录导出任务&quot;)">导出</button>';
+const payeeReportActions='<button class="btn primary" onclick="toast(&quot;已按当前条件查询&quot;)">查询</button><button class="btn" onclick="toast(&quot;筛选条件已重置&quot;)">重置</button><button class="btn primary" onclick="openNewPayeeReport()">新增报备</button><button class="btn" onclick="toast(&quot;已生成收款人渠道报备导出任务&quot;)">导出</button>';
+const merchantCell='<td class="entity-cell"><span class="entity-name">ABCD Trading Limited</span><span class="entity-id">MID：M260001</span></td>';
+const agentCell='<td class="entity-cell"><span class="entity-name">EX Hong Kong</span><span class="entity-id">ID：EX-HK-001</span></td>';
+const timeCell='<td class="time-cell"><b>创建：2026-07-17 14:08</b><span>更新：2026-07-17 14:12</span></td>';
+const cryptoReceiveTool='<div class="entity-cell"><span class="tag">数币地址</span><span class="entity-name">商户数币地址</span><span class="entity-id">ERC-20 · 0xA81c****90ef</span></div>';
+const vaReceiveTool='<div class="entity-cell"><span class="tool-tag va">VA</span><span class="entity-name">USD Collection Account</span><span class="entity-id">8830 2190 6621</span></div>';
+const rfReceiveTool='<div class="entity-cell"><span class="tool-tag rf">RF</span><span class="entity-name">USD Collection Account</span><span class="entity-id">RF-202607-0018</span></div>';
+const fiatBeneficiary='<div class="entity-cell"><span class="tag">银行账户</span><span class="entity-name">Shenzhen Supplier A</span><span class="entity-id">账号：6300****5606</span></div>';
+const cryptoBeneficiary='<div class="entity-cell"><span class="tag">数币地址</span><span class="entity-name">运营钱包</span><span class="entity-id">TRC-20 · TX9m****7Ka2</span></div>';
+function transactionList(product,type,amount,currency,receiveTool='—',extraType=''){
+  const row=`<tr><td class="order-cell">TX-${type==='实时换汇'?'FX':'20260717'}-7788</td><td><b>${type}</b></td><td><button class="btn link" onclick="openDetail('merchant')">MO-20260717-1028</button></td>${merchantCell}${agentCell}<td>${receiveTool}</td><td>${amount} ${currency}</td><td><span class="status processing">处理中</span></td>${timeCell}<td><button class="btn link" onclick="openDetail('transaction')">详情</button></td></tr>`;
+  const extra=extraType?`<tr><td class="order-cell">TX-20260717-7791</td><td><b>${extraType}</b></td><td>MO-20260717-1031</td>${merchantCell}${agentCell}<td>${rfReceiveTool}</td><td>${amount} ${currency}</td><td><span class="status success">成功</span></td>${timeCell}<td><button class="btn link" onclick="openDetail('transaction')">详情</button></td></tr>`:'';
+  return {head:'<tr><th>交易单号</th><th>交易类型</th><th>商户单号</th><th>商户</th><th>机构代理商</th><th>收款工具</th><th>交易金额</th><th>状态</th><th>创建 / 更新时间</th><th>操作</th></tr>',body:row+extra};
+}
+function channelList(product,type,amount,currency,receiveTool='—',extraType=''){
+  const row=`<tr><td class="order-cell">CH-GT-20260717-6608</td><td><button class="btn link" onclick="openDetail('transaction')">TX-20260717-7788</button></td><td>MO-20260717-1028</td>${merchantCell}${agentCell}<td>${type}</td><td>${receiveTool}</td><td>Gate<br><span class="muted">GT-88421903</span></td><td>${amount} ${currency}<br><span class="muted">费用 12.00 USD</span></td><td><span class="status processing">处理中</span></td>${timeCell}<td><button class="btn link" onclick="toast('已打开渠道单详情')">详情</button>　<button class="btn link" onclick="openMarkChannelFailed()">置为失败</button></td></tr>`;
+  const extra=extraType?`<tr><td class="order-cell">CH-GT-20260717-6612</td><td>TX-20260717-7791</td><td>MO-20260717-1031</td>${merchantCell}${agentCell}<td>${extraType}</td><td>${rfReceiveTool}</td><td>Gate<br><span class="muted">GT-88421912</span></td><td>${amount} ${currency}<br><span class="muted">费用 12.00 USD</span></td><td><span class="status success">成功</span></td>${timeCell}<td><button class="btn link" onclick="toast('已打开渠道单详情')">详情</button></td></tr>`:'';
+  return {head:'<tr><th>渠道单号</th><th>交易单号</th><th>商户单号</th><th>商户</th><th>机构代理商</th><th>交易类型</th><th>收款工具</th><th>渠道</th><th>请求金额 / 费用</th><th>状态</th><th>创建 / 更新时间</th><th>操作</th></tr>',body:row+extra};
+}
+function payoutTransactionList(product,type,amount,currency,beneficiary,country){
+  return {head:'<tr><th>交易单号</th><th>交易类型</th><th>商户单号</th><th>商户</th><th>机构代理商</th><th>收款账户 / 地址</th><th>收款人类型</th><th>收款账户所在国家</th><th>交易金额</th><th>状态</th><th>创建 / 更新时间</th><th>操作</th></tr>',body:`<tr><td class="order-cell">TX-PAYOUT-20260717-7788</td><td><b>${type}</b></td><td>MO-20260717-1028</td>${merchantCell}${agentCell}<td>${beneficiary}</td><td>企业</td><td>${country}</td><td>${amount} ${currency}</td><td><span class="status processing">处理中</span></td>${timeCell}<td><button class="btn link" onclick="openDetail('transaction')">详情</button></td></tr>`};
+}
+function payoutChannelList(product,type,amount,currency,beneficiary,country){
+  return {head:'<tr><th>渠道单号</th><th>交易单号</th><th>商户单号</th><th>商户</th><th>机构代理商</th><th>交易类型</th><th>收款账户 / 地址</th><th>收款人类型</th><th>收款账户所在国家</th><th>渠道</th><th>请求金额 / 费用</th><th>状态</th><th>创建 / 更新时间</th><th>操作</th></tr>',body:`<tr><td class="order-cell">CH-GT-20260717-6608</td><td>TX-PAYOUT-20260717-7788</td><td>MO-20260717-1028</td>${merchantCell}${agentCell}<td>${type}</td><td>${beneficiary}</td><td>企业</td><td>${country}</td><td>Gate<br><span class="muted">GT-88421903</span></td><td>${amount} ${currency}<br><span class="muted">费用 12.00 USD</span></td><td><span class="status processing">处理中</span></td>${timeCell}<td><button class="btn link" onclick="toast('已打开渠道单详情')">详情</button>　<button class="btn link" onclick="openMarkChannelFailed()">置为失败</button></td></tr>`};
+}
+function acceptanceTxList(){
+  const head='<tr><th>交易单号</th><th>交易类型</th><th>商户单号</th><th>商户</th><th>机构代理商</th><th>货币对</th><th>卖出金额</th><th>固定汇率</th><th>承兑手续费</th><th>买入金额</th><th>状态</th><th>创建 / 更新时间</th><th>操作</th></tr>';
+  const row1=`<tr><td class="order-cell">TX-CONVERT-20260729-7782</td><td><b>数法承兑</b></td><td><button class="btn link" onclick="openDetail('merchant')">RS-20260729-1072</button></td>${merchantCell}${agentCell}<td>USDC → USD</td><td>12,000.00 USDC</td><td>1 USDC = 1 USD</td><td>8.00 USD</td><td>11,992.00 USD</td><td><span class="status success">成功</span></td><td class="time-cell"><b>创建：2026-07-29 11:36</b><span>更新：2026-07-29 11:37</span></td><td><button class="btn link" onclick="openDetail('acceptanceTx')">详情</button></td></tr>`;
+  const row2=`<tr><td class="order-cell">TX-CONVERT-20260717-7789</td><td><b>数法承兑</b></td><td><button class="btn link" onclick="openDetail('merchant')">RS-20260717-1028</button></td>${merchantCell}${agentCell}<td>USDC → USD</td><td>9,500.00 USDC</td><td>1 USDC = 1 USD</td><td>15.00 USD</td><td>9,485.00 USD</td><td><span class="status success">成功</span></td><td class="time-cell"><b>创建：2026-07-17 14:20</b><span>更新：2026-07-17 14:23</span></td><td><button class="btn link" onclick="openDetail('acceptanceTx')">详情</button></td></tr>`;
+  return {head,body:row1+row2};
+}
+function acceptanceChList(){
+  const head='<tr><th>渠道单号</th><th>交易单号</th><th>商户单号</th><th>商户</th><th>机构代理商</th><th>渠道交易类型</th><th>货币对</th><th>渠道</th><th>请求金额</th><th>实际买入</th><th>渠道费用</th><th>状态</th><th>创建 / 更新时间</th><th>操作</th></tr>';
+  const row1=`<tr><td class="order-cell">CH-GT-20260729-6602</td><td><button class="btn link" onclick="openDetail('acceptanceTx')">TX-CONVERT-20260729-7782</button></td><td>RS-20260729-1072</td>${merchantCell}${agentCell}<td>数换法</td><td>USDC → USD</td><td>Gate<br><span class="muted">GT-260729-87996</span></td><td>12,000.00 USDC</td><td>11,992.00 USD</td><td>8.00 USD</td><td><span class="status success">成功</span></td><td class="time-cell"><b>创建：2026-07-29 11:36</b><span>完成：2026-07-29 11:37</span></td><td><button class="btn link" onclick="openDetail('acceptanceCh')">详情</button></td></tr>`;
+  const row2=`<tr><td class="order-cell">CH-GT-20260717-6609</td><td><button class="btn link" onclick="openDetail('acceptanceTx')">TX-CONVERT-20260717-7789</button></td><td>RS-20260717-1028</td>${merchantCell}${agentCell}<td>数换法</td><td>USDC → USD</td><td>Gate<br><span class="muted">GT-260717-88002</span></td><td>9,500.00 USDC</td><td>9,485.00 USD</td><td>15.00 USD</td><td><span class="status success">成功</span></td><td class="time-cell"><b>创建：2026-07-17 14:20</b><span>完成：2026-07-17 14:23</span></td><td><button class="btn link" onclick="openDetail('acceptanceCh')">详情</button></td></tr>`;
+  return {head,body:row1+row2};
+}
+function standardTransactionList({id,type,amount,currency,status='处理中',statusClass='processing',product='预约付款',order='RS-20260717-1028',updated='2026-07-17 14:12'}){
+  const head='<tr><th>交易单号</th><th>关联商户单号</th><th>商户 ID</th><th>商户名称</th><th>机构代理 ID</th><th>机构代理名称</th><th>产品名称</th><th>交易类型</th><th>交易金额</th><th>交易币种</th><th>状态</th><th>更新时间</th><th>操作</th></tr>';
+  const row=(suffix, rowStatus=status, rowClass=statusClass, rowAmount=amount, rowCurrency=currency, rowUpdated=updated)=>`<tr><td class="order-cell">${id}${suffix}</td><td><button class="btn link" onclick="openDetail('merchant')">${order}</button></td><td>M260001</td><td>ABCD Trading Limited</td><td>EX-HK-001</td><td>EX Hong Kong</td><td>${product}</td><td><b>${type}</b></td><td class="money">${rowAmount}</td><td>${rowCurrency}</td><td><span class="status ${rowClass}">${rowStatus}</span></td><td>${rowUpdated}</td><td><button class="btn link" onclick="openDetail('${type==='数法承兑'?'acceptanceTx':'transaction'}')">详情</button></td></tr>`;
+  return {head,body:row('',status,statusClass)+row('-02','成功','success',amount,currency,updated)};
+}
+const listViews={
+  depositTx:standardTransactionList({id:'TX-DEPOSIT-20260717-7786',type:'充值',amount:'10,023.50',currency:'USDC · ERC-20',status:'充值确认中',updated:'2026-07-17 14:20'}),
+  fiatCreditTx:transactionList('法币账户','充值','2,200.00','USD',vaReceiveTool,'收款'),
+  withdrawTx:payoutTransactionList('数币钱包','提币','5,000.00','USDT',cryptoBeneficiary,'—'),
+  fiatPayoutTx:standardTransactionList({id:'TX-PAYOUT-20260717-7788',type:'付款',amount:'10,000.00',currency:'USD',status:'付款处理中',updated:'2026-07-17 14:25'}),
+  cryptoFiatTx:standardTransactionList({id:'TX-CONVERT-20260717-7789',type:'数法承兑',amount:'10,023.50',currency:'USDC → USD',status:'承兑处理中',updated:'2026-07-17 14:23'}),
+  realtimeFxTx:standardTransactionList({id:'TX-FX-20260717-7792',type:'实时换汇',amount:'9,228.00',currency:'USD → EUR',status:'换汇处理中',product:'实时换汇',order:'FX-20260717-0098',updated:'2026-07-17 15:06'}),
+  reservedDepositCh:channelList('预约付款','充币','10,023.50','USDC',cryptoReceiveTool),
+  reservedConvertCh:acceptanceChList(),
+  reservedPayoutCh:payoutChannelList('预约付款','法币付款','10,000.00','USD',fiatBeneficiary,'HK'),
+  depositCh:channelList('数币钱包','充币','10,023.50','USDC',cryptoReceiveTool),
+  fiatCreditCh:channelList('法币账户','充值','2,200.00','USD',vaReceiveTool,'收款'),
+  withdrawCh:payoutChannelList('数币钱包','提币','5,000.00','USDT',cryptoBeneficiary,'—'),
+  fiatPayoutCh:payoutChannelList('法币账户','提法币','10,000.00','USD',fiatBeneficiary,'HK'),
+  cryptoFiatCh:acceptanceChList(),
+  realtimeFxCh:channelList('实时换汇','实时换汇','9,228.00','EUR'),
+deposit:{head:'<tr><th>商户单号</th><th>商户</th><th>机构代理商</th><th>类型</th><th>收款工具</th><th>币种</th><th>金额</th><th>手续费</th><th>状态</th><th>创建 / 更新时间</th><th>操作</th></tr>',body:`<tr><td class="order-cell">1042606021044271820489</td>${merchantCell}${agentCell}<td><span class="status refund">法币充值</span></td><td>${vaReceiveTool}</td><td>USD</td><td class="green"><b>2,200.00</b></td><td>13.20 USD</td><td><span class="status success">成功</span></td><td class="time-cell"><b>创建：2026-06-02 02:44:27</b><span>更新：2026-06-02 02:44:27</span></td><td><button class="btn link" onclick="toast('已打开充值订单详情')">查看</button></td></tr><tr><td class="order-cell">1042606021044271820521</td>${merchantCell}${agentCell}<td><span class="status refund">法币充值</span></td><td>${rfReceiveTool}</td><td>USD</td><td class="green"><b>5,000.00</b></td><td>18.00 USD</td><td><span class="status success">成功</span></td><td class="time-cell"><b>创建：2026-06-03 09:12:18</b><span>更新：2026-06-03 09:12:20</span></td><td><button class="btn link" onclick="toast('已打开充值订单详情')">查看</button></td></tr><tr><td class="order-cell">1042606041530229088120</td>${merchantCell}${agentCell}<td><span class="status refund">数币充值</span></td><td>${cryptoReceiveTool}</td><td>USDT</td><td class="green"><b>10,000.00</b></td><td>1.00 USDT</td><td><span class="status success">成功</span></td><td class="time-cell"><b>创建：2026-06-04 15:30:22</b><span>更新：2026-06-04 15:31:08</span></td><td><button class="btn link" onclick="toast('已打开充值订单详情')">查看</button></td></tr>`},
+  withdraw:{head:'<tr><th>商户单号</th><th>商户</th><th>机构代理商</th><th>类型</th><th>收款账户 / 地址</th><th>收款人类型</th><th>收款账户所在国家</th><th>交易金额</th><th>汇率</th><th>手续费</th><th>状态</th><th>创建 / 更新时间</th><th>操作</th></tr>',body:`<tr><td class="order-cell">1052606021427457150574</td>${merchantCell}${agentCell}<td><span class="status refund">提法币</span></td><td>${fiatBeneficiary}</td><td>企业</td><td>HK</td><td><span class="red">- 120.00 USD</span><br><span class="green">+ 84.28 USD</span></td><td>1 USD = 1 USD</td><td>35.72 USD</td><td><span class="status wait">进行中</span></td><td class="time-cell"><b>创建：2026-06-02 06:27:45</b><span>更新：2026-06-02 06:27:45</span></td><td><button class="btn link" onclick="toast('已打开提现订单详情')">查看</button></td></tr><tr><td class="order-cell">1022606011739196812434</td>${merchantCell}${agentCell}<td><span class="status refund">提数币</span></td><td>${cryptoBeneficiary}</td><td>企业</td><td>—</td><td><span class="red">- 210.00 USDT</span><br><span class="green">+ 205.72 USD</span></td><td>1 USD = 0.999637 USDT</td><td>4.20 USD</td><td><span class="status wait">进行中</span></td><td class="time-cell"><b>创建：2026-06-01 09:39:19</b><span>更新：2026-06-01 09:39:19</span></td><td><button class="btn link" onclick="toast('已打开提现订单详情')">查看</button></td></tr>`},
+convert:{head:'<tr><th>商户单号</th><th>商户</th><th>机构代理商</th><th>类型</th><th>货币对</th><th>交易金额</th><th>汇率</th><th>手续费</th><th>状态</th><th>创建 / 更新时间</th><th>操作</th></tr>',body:`<tr><td class="order-cell">1072606011743300352865</td>${merchantCell}${agentCell}<td><span class="status refund">数换法</span></td><td class="entity-cell"><span class="entity-name">卖出：USDT</span><span class="entity-id">买入：USD</span></td><td><span class="red">- 100.00 USDT</span><br><span class="green">+ 98.96 USD</span></td><td>1 USD = 0.999637 USDT</td><td>1.00 USD</td><td><span class="status success">成功</span></td><td class="time-cell"><b>创建：2026-06-01 09:43:30</b><span>更新：2026-06-01 09:43:30</span></td><td><button class="btn link" onclick="toast('已打开数法兑换详情')">查看</button></td></tr><tr><td class="order-cell">1062605251928238940206</td>${merchantCell}${agentCell}<td><span class="status refund">法换数</span></td><td class="entity-cell"><span class="entity-name">卖出：USD</span><span class="entity-id">买入：USDT</span></td><td><span class="red">- 100.00 USD</span><br><span class="green">+ 94.034134 USDT</span></td><td>1 USDT = 0.999637 USD</td><td>6.00 USD</td><td><span class="status success">成功</span></td><td class="time-cell"><b>创建：2026-05-25 11:28:23</b><span>更新：2026-05-25 11:28:23</span></td><td><button class="btn link" onclick="toast('已打开数法兑换详情')">查看</button></td></tr>`},
+realtimeFx:{head:'<tr><th>商户单号</th><th>商户</th><th>机构代理商</th><th>产品名称</th><th>货币对</th><th>交易金额</th><th>汇率</th><th>状态</th><th>创建 / 更新时间</th><th>操作</th></tr>',body:`<tr><td class="order-cell">FX-20260601-0098</td>${merchantCell}${agentCell}<td><span class="status refund">实时换汇</span></td><td class="entity-cell"><span class="entity-name">卖出：USD</span><span class="entity-id">买入：EUR</span></td><td><span class="red">- 10,000.00 USD</span><br><span class="green">+ 9,228.00 EUR</span></td><td>1 USD = 0.9228 EUR</td><td><span class="status success">成功</span></td><td class="time-cell"><b>创建：2026-06-01 10:06:18</b><span>更新：2026-06-01 10:06:20</span></td><td><button class="btn link" onclick="toast('已打开实时换汇详情')">查看</button></td></tr><tr><td class="order-cell">FX-20260530-0072</td>${merchantCell}${agentCell}<td><span class="status refund">实时换汇</span></td><td class="entity-cell"><span class="entity-name">卖出：HKD</span><span class="entity-id">买入：USD</span></td><td><span class="red">- 50,000.00 HKD</span><br><span class="green">+ 6,369.43 USD</span></td><td>1 HKD = 0.127389 USD</td><td><span class="status success">成功</span></td><td class="time-cell"><b>创建：2026-05-30 15:22:09</b><span>更新：2026-05-30 15:22:11</span></td><td><button class="btn link" onclick="toast('已打开实时换汇详情')">查看</button></td></tr>`},
+  payment:{head:'<tr><th>商户单号</th><th>商户</th><th>机构代理商</th><th>产品名称</th><th>收款人</th><th>付款金额</th><th>状态</th><th>创建 / 更新时间</th><th>操作</th></tr>',body:`<tr><td class="order-cell">MO-PAY-20260717-0088</td>${merchantCell}${agentCell}<td>付款</td><td>Shenzhen Supplier A<br><span class="muted">BOC **** 8821</span></td><td>10,000.00 USD</td><td><span class="status processing">处理中</span></td>${timeCell}<td><button class="btn link" onclick="openDetail('merchant')">详情</button></td></tr>`},
+  payee:{head:'<tr><th>机构代理商 ID</th><th>会员 ID</th><th>收款人 ID</th><th>账户类型</th><th>收款人名称</th><th>币种</th><th>银行名称</th><th>银行账号</th><th>收款人主状态</th><th>渠道报备概况</th><th>报备成功渠道</th><th>操作</th></tr>',body:'<tr><td>EX-HK-001</td><td>2507161426271790000574</td><td>2607241429528800003835</td><td>企业</td><td>Milestones Industrial Limited</td><td>USD</td><td>DBS BANK (HONG KONG) LIMITED</td><td>3214****2435</td><td><span class="status success">可用</span></td><td>Gate：报备处理中<br>MTC：成功</td><td><span class="status success">MTC</span></td><td><button class="btn link" onclick="toast(&quot;至少一个渠道成功，收款人主状态为可用&quot;)">查看</button></td></tr><tr><td>EX-HK-001</td><td>2507161426271790000812</td><td>26072810260001882</td><td>企业</td><td>Delta Components Ltd</td><td>USD</td><td>Citibank N.A.</td><td>6628****1026</td><td><span class="status processing">处理中</span></td><td>Gate：待客户补件<br>MTC：报备处理中</td><td>—</td><td><button class="btn link" onclick="toast(&quot;尚无渠道成功且仍有渠道处理中，主状态为处理中&quot;)">查看</button></td></tr><tr><td>EX-HK-001</td><td>2507161426271790000936</td><td>26072714180001220</td><td>企业</td><td>North Star Supplier LLC</td><td>USD</td><td>HSBC Hong Kong</td><td>8820****4412</td><td><span class="status failed">不可用</span></td><td>Gate：失败<br>MTC：失败</td><td>—</td><td><button class="btn link" onclick="toast(&quot;没有成功渠道且全部渠道失败，主状态为不可用&quot;)">查看</button></td></tr>'},
+  merchantReport:{head:'<tr><th>机构代理商 ID</th><th>商户 MID</th><th>商户名称</th><th>渠道</th><th>Gate 条件</th><th>渠道可用性</th><th>渠道返回 ID</th><th>报备状态</th><th>渠道状态</th><th>申请时间</th><th>操作</th></tr>',body:'<tr><td>EX-HK-001</td><td>M260001</td><td>ABCD Trading Limited</td><td>Gate</td><td class="green">满足</td><td class="green">可用</td><td>GA-260626-001</td><td><span class="status success">成功</span></td><td>ACTIVE</td><td>2026-07-23 17:47</td><td><button class="btn link" onclick="toast(&quot;已打开渠道商户报备详情&quot;)">查看详情</button></td></tr>'},
+  channelVa:{head:'<tr><th>机构代理商 ID</th><th>商户 MID</th><th>商户名称</th><th>渠道</th><th>VA 币种</th><th>渠道 VA ID</th><th>开户状态</th><th>申请时间</th><th>操作</th></tr>',body:'<tr><td>EX-SG-002</td><td>M260018</td><td>North Star Commerce</td><td>MTC</td><td>USD</td><td>VA-MTC-260718-008</td><td><span class="status processing">处理中</span></td><td>2026-07-18 11:20</td><td><button class="btn link" onclick="toast(&quot;已打开渠道 VA 开户详情&quot;)">查看</button></td></tr><tr><td>EX-HK-001</td><td>M260001</td><td>ABCD Trading Limited</td><td>Gate</td><td>—</td><td>—</td><td class="muted">Gate 不需要 VA</td><td>—</td><td>—</td></tr>'},
+  payeeReport:{head:'<tr><th>报备 ID</th><th>机构代理商 ID</th><th>目标渠道</th><th>商户 MID</th><th>收款人账户 ID</th><th>收款人名称</th><th>银行名称</th><th>账号</th><th>账户证明</th><th>报备状态</th><th>渠道状态</th><th>RFI 状态</th><th>创建时间</th><th>操作</th></tr>',body:'<tr><td>RPT-202607241348</td><td>EX-HK-001</td><td>Gate</td><td>M260001</td><td>26072413461780001679</td><td>Milestones Industrial Limited</td><td>JPMorgan Chase Bank</td><td>6300****5606</td><td><span class="status success">已提交</span></td><td><span class="status success">成功</span></td><td>APPROVED</td><td>无 RFI</td><td>2026-07-24 13:48</td><td><button class="btn link" onclick="toast(&quot;已打开 Gate 报备详情&quot;)">查看</button></td></tr><tr><td>RPT-202607251120</td><td>EX-HK-001</td><td>MTC</td><td>M260001</td><td>26072413461780001679</td><td>Milestones Industrial Limited</td><td>JPMorgan Chase Bank</td><td>6300****5606</td><td><span class="status success">已提交</span></td><td><span class="status processing">报备处理中</span></td><td>REVIEWING</td><td>无 RFI</td><td>2026-07-25 11:20</td><td><button class="btn link" onclick="toast(&quot;已打开 MTC 报备详情；与 Gate 记录相互独立&quot;)">查看</button></td></tr><tr><td>RPT-202607281026</td><td>EX-HK-001</td><td>Gate</td><td>M260001</td><td>26072810260001882</td><td>Delta Components Ltd</td><td>Citibank N.A.</td><td>6628****1026</td><td><span class="status wait" id="proofStatus">缺失</span></td><td><span class="status processing">报备处理中</span></td><td>PENDING</td><td><span class="status wait" id="supplementStatus">待客户补件</span></td><td>2026-07-28 10:26</td><td><button class="btn link" onclick="toast(&quot;已打开 Gate 报备详情&quot;)">查看</button>　<button class="btn primary" id="triggerSupplementButton" onclick="triggerPayeeSupplement()">触发客户补件</button></td></tr><tr><td>RPT-202607271418</td><td>EX-HK-001</td><td>Gate</td><td>M260018</td><td>26072714180001220</td><td>North Star Supplier LLC</td><td>HSBC Hong Kong</td><td>8820****4412</td><td><span class="status success">已提交</span></td><td><span class="status failed">失败</span></td><td>REJECTED</td><td>无 RFI</td><td>2026-07-27 14:18</td><td><button class="btn link" onclick="toast(&quot;仅 Gate 报备失败，不影响其他渠道资格&quot;)">查看原因</button></td></tr>'},
+  productOpen:{head:'<tr><th>商户 MID</th><th>商户名称</th><th>机构代理商 ID</th><th>开通产品</th><th>申请时间</th><th>状态</th><th>操作</th></tr>',body:'<tr><td>M260001</td><td>ABCD Trading Limited</td><td>EX-HK-001</td><td>预约付款</td><td>2026-07-28 10:35</td><td><span class="status success">已开通</span></td><td><button class="btn link" onclick="openProductConfig()">产品配置</button>　<button class="btn link" onclick="openProductLog()">操作日志</button></td></tr><tr><td>M260001</td><td>ABCD Trading Limited</td><td>EX-HK-001</td><td>预约付款</td><td>2026-07-20 09:18</td><td><span class="status failed">已拒绝</span></td><td><button class="btn link" onclick="openProductLog()">操作日志</button></td></tr><tr><td>M260001</td><td>ABCD Trading Limited</td><td>EX-HK-001</td><td>预约付款</td><td>2026-07-18 16:42</td><td><span class="status wait">待审核</span></td><td><button class="btn link" onclick="approveProductOpen(this)">审核通过</button>　<button class="btn link" onclick="rejectProductOpen(this)">审核拒绝</button>　<button class="btn link" onclick="openProductLog()">操作日志</button></td></tr>'}
+};
+document.querySelectorAll('[data-page]').forEach(item=>item.addEventListener('click',()=>{document.querySelectorAll('[data-page]').forEach(x=>x.classList.remove('active'));item.classList.add('active');const page=item.dataset.page;const isTransaction=['depositTx','fiatPayoutTx','cryptoFiatTx','realtimeFxTx'].includes(page);document.getElementById('title').textContent=titles[page];document.getElementById('filterGrid').innerHTML=page==='productOpen'?productFilters:isTransaction?transactionFilters:defaultFilters;document.getElementById('actionBar').innerHTML=page==='productOpen'?productActions:page==='payeeReport'?payeeReportActions:defaultActions;if(page==='reserved'){document.getElementById('tableHead').innerHTML=reservedHead;document.getElementById('tableBody').innerHTML=reservedBody}else if(listViews[page]){document.getElementById('tableHead').innerHTML=listViews[page].head;document.getElementById('tableBody').innerHTML=listViews[page].body}else{document.getElementById('tableHead').innerHTML='<tr><th>页面说明</th><th>状态</th></tr>';document.getElementById('tableBody').innerHTML=`<tr><td>${titles[page]}列表字段参考对应客户端页面</td><td>菜单结构演示</td></tr>`}}));
+function applyRole(role){
+  document.querySelectorAll('[data-role-menu]').forEach(group=>group.style.display=group.dataset.roleMenu===role?'block':'none');
+  document.getElementById('roleHint').textContent=roleHints[role];
+  document.querySelector(`[data-page="${roleDefaults[role]}"]`)?.click();
+  toast(`已切换为${document.getElementById('roleSelect').selectedOptions[0].text}视角`);
+}
+document.getElementById('roleSelect').addEventListener('change',event=>applyRole(event.target.value));
+applyRole('customer');
+function toast(message){const el=document.getElementById('toast');el.textContent=message;el.style.display='block';clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>el.style.display='none',2600)}
+function triggerPayeeSupplement(){
+  const status=document.getElementById('supplementStatus');
+  const button=document.getElementById('triggerSupplementButton');
+  if(status){status.textContent='已通知客户';status.className='status processing'}
+  if(button){button.textContent='已触发';button.disabled=true}
+  toast('已向客户触发账户证明补件通知');
+}
+function openNewPayeeReport(){
+  document.getElementById('drawerContent').innerHTML=`<h2>新增收款人渠道报备</h2><div class="muted">同一收款人银行账户可以向多个渠道分别报备；同一渠道已有有效记录时不可重复提交。</div>
+  <h3>选择报备对象</h3><div class="grid"><div class="field"><label for="reportChannel">目标渠道</label><select id="reportChannel" onchange="updateReportPayees()"><option value="">请选择渠道</option><option value="Gate">Gate</option><option value="MTC">MTC</option></select></div><div class="field"><label for="reportMerchant">商户</label><select id="reportMerchant" onchange="updateReportPayees()"><option value="">请选择商户</option><option value="M260001">ABCD Trading Limited · M260001</option><option value="M260018">North Star Commerce · M260018</option></select></div><div class="field"><label for="reportPayee">收款人银行账户</label><select id="reportPayee" disabled onchange="updateReportSummary()"><option value="">请先选择渠道和商户</option></select></div></div>
+  <h3>报备信息</h3><div class="grid"><div class="item"><span>目标渠道</span><b id="reportChannelSummary">—</b></div><div class="item"><span>币种</span><b>USD</b></div><div class="item"><span>账户证明</span><b id="reportProof">—</b></div><div class="item"><span>所选渠道已有有效报备</span><b id="reportExisting">—</b></div><div class="item"><span>其他渠道报备</span><b id="reportOtherChannels">—</b></div></div>
+  <div class="card" style="margin-top:12px;background:#f8fafc"><b>提交说明</b><p class="muted">提交后按“收款人账户 + 目标渠道”生成独立报备记录。各渠道记录相互独立；报备状态更新后，系统按全部适用渠道结果重新聚合收款人主状态。</p></div>
+  <div class="actions"><button class="btn primary" id="submitReportButton" disabled onclick="submitPayeeReport()">确认报备</button><button class="btn" onclick="closeDetail()">取消</button></div>`;
+  document.getElementById('drawerMask').classList.add('show');
+}
+function updateReportPayees(){
+  const merchant=document.getElementById('reportMerchant').value;
+  const channel=document.getElementById('reportChannel').value;
+  const payee=document.getElementById('reportPayee');
+  const options=merchant&&channel&&merchant==='M260001'
+    ? '<option value="">请选择收款人银行账户</option><option value="sunrise">Sunrise Supply LLC · HSBC ****7288</option><option value="harbor">Harbor Trading Ltd · Citi ****3619</option>'
+    : merchant&&channel&&merchant==='M260018'
+      ? '<option value="">请选择收款人银行账户</option><option value="north">North Star Supplier LLC · DBS ****4412</option>'
+      : '<option value="">请先选择渠道和商户</option>';
+  payee.innerHTML=options;
+  payee.disabled=!(merchant&&channel);
+  updateReportSummary();
+}
+function updateReportSummary(){
+  const selected=document.getElementById('reportPayee').value;
+  const channel=document.getElementById('reportChannel').value;
+  document.getElementById('reportChannelSummary').textContent=channel||'—';
+  document.getElementById('reportProof').textContent=selected?selected==='sunrise'&&channel==='Gate'?'缺失，提交后创建该渠道 RFI':'已提交':'—';
+  document.getElementById('reportExisting').textContent=selected?'无':'—';
+  document.getElementById('reportOtherChannels').textContent=selected?channel==='Gate'?'MTC：成功':'Gate：成功':'—';
+  document.getElementById('submitReportButton').disabled=!selected;
+}
+function submitPayeeReport(){
+  const payee=document.getElementById('reportPayee');
+  const channel=document.getElementById('reportChannel');
+  if(!payee.value){toast('请先选择收款人银行账户');return}
+  const needsRfi=payee.value==='sunrise'&&channel.value==='Gate';
+  closeDetail();
+  toast(needsRfi?`演示：已创建 ${channel.value} 报备和独立 RFI`:`演示：已创建 ${channel.value} 渠道报备，状态为报备处理中`);
+}
+function merchantDetail(){
+  return `<h2>预约付款商户业务单详情</h2><div class="muted">商户单号：RS-20260717-1028</div>
+  <h3>商户信息</h3><div class="grid"><div class="item"><span>商户 MID</span><b>M260001</b></div><div class="item"><span>商户名称</span><b>ABCD Trading Limited</b></div><div class="item"><span>机构代理 ID</span><b>EX-HK-001</b></div><div class="item"><span>当前状态</span><span class="status failed">出款失败</span></div></div>
+  <h3>客户提交信息</h3><div class="grid"><div class="item"><span>收款人</span><b>Shenzhen Supplier A</b></div><div class="item"><span>收款账户</span><b>BOC **** 8821</b></div><div class="item"><span>收款人应收到</span><b>10,000.00 USD</b></div><div class="item"><span>充值币种 / 网络</span><b>10,023.50 USDC · ERC-20</b></div><div class="item"><span>固定汇率</span><b>1 USDC = 1 USD</b></div><div class="item"><span>付款用途</span><b>CBP · 跨境货物贸易</b></div><div class="item"><span>附言</span><b>INV-20260717-1028</b></div><div class="item"><span>付款人名称</span><b>Shenzhen Supplier A（与收款人一致）</b></div><div class="item"><span>承兑手续费</span><b>15.00 USD</b></div><div class="item"><span>付款手续费</span><b>12.00 USD</b></div><div class="item"><span>POBO 附加费</span><b>8.00 USD</b></div><div class="item"><span>提交时间</span><b>2026-07-17 14:08</b></div></div>
+  <h3>实际执行结果</h3><div class="grid"><div class="item"><span>应充值金额</span><b>10,023.50 USDC</b></div><div class="item"><span>实际到账金额</span><b class="red">9,500.00 USDC</b></div><div class="item"><span>与付款金额比较</span><b class="red">较 10,000.00 USD 少 500.00</b></div><div class="item"><span>实际兑换金额</span><b>0.00 USDC</b></div><div class="item"><span>实际兑换所得</span><b>0.00 USD</b></div><div class="item"><span>实际付出金额</span><b>0.00 USD</b></div><div class="item"><span>资金去向</span><b>商户数币钱包 · 9,500.00 USDC</b></div><div class="item"><span>失败原因</span><b class="red">实际充值金额不够预约金额</b></div></div>
+  <h3>关联交易单</h3><div class="grid"><div class="item"><span>充值交易单</span><b>TX-DEPOSIT-20260717-7786</b><button class="btn link" onclick="jumpToPage('depositTx')">查看交易单</button></div><div class="item"><span>数法承兑交易单</span><b>TX-CONVERT-20260717-7789</b><button class="btn link" onclick="jumpToPage('cryptoFiatTx')">查看交易单</button></div><div class="item"><span>付款交易单</span><b>TX-PAYOUT-20260717-7788</b><button class="btn link" onclick="jumpToPage('fiatPayoutTx')">查看交易单</button></div></div>
+  <h3>处理进度</h3><div class="timeline"><div class="event"><b>预约单已创建</b><span>2026-07-17 14:08 · 付款金额 10,000.00 USD</span></div><div class="event"><b>充值已确认</b><span>2026-07-17 14:20 · 实际到账 9,500.00 USDC，小于付款金额</span></div><div class="event"><b>订单失效</b><span>2026-07-19 14:08 · 有效期内累计金额不足预约金额</span></div><div class="event"><b>资金退回数币钱包</b><span>不执行兑换及原 POBO 付款；已充值资金退回数币钱包，无法享受 1:1 汇率</span></div></div>`;
+}
+function transactionDetail(){
+  return `<h2>交易单详情</h2><div class="muted">交易单号：TX-20260717-7788</div>
+  <h3>交易概要</h3><div class="grid"><div class="item"><span>交易单号</span><b>TX-20260717-7788</b></div><div class="item"><span>交易类型</span><b>法币出款</b></div><div class="item"><span>关联商户单号</span><b>RS-20260717-1028</b></div><div class="item"><span>商户名称</span><b>ABCD Trading Limited</b></div><div class="item"><span>商户 MID</span><b>M260001</b></div><div class="item"><span>机构代理 ID</span><b>EX-HK-001</b></div><div class="item"><span>交易状态</span><span class="status wait">待处理</span></div><div class="item"><span>收款人</span><b>Shenzhen Supplier A · BOC **** 8821</b></div><div class="item"><span>目标金额</span><b>10,000.00 USD</b></div><div class="item"><span>充值金额</span><b>10,023.50 USDC · ERC-20</b></div></div>
+  <h3>处理进度</h3><div class="timeline"><div class="event"><b>交易单已创建</b><span>2026-07-17 14:08 · 已关联商户业务单 RS-20260717-1028</span></div><div class="event"><b>等待充值</b><span>充值确认后继续执行承兑和付款</span></div></div>
+  <h3>关联渠道单</h3><div class="grid"><div class="item"><span>渠道单号</span><b>CH-GT-20260717-6608</b></div><div class="item"><span>渠道</span><b>Gate</b></div><div class="item"><span>渠道交易类型</span><b>法币付款</b></div><div class="item"><span>渠道单状态</span><span class="status wait">待处理</span></div></div>`;
+}
+function returnDetail(){
+  return `<h2>退票交易详情</h2><div class="muted">交易单号：TX-20260713-7306</div><h3>交易概要</h3><div class="grid"><div class="item"><span>关联商户单号</span><b>RS-20260713-0619</b></div><div class="item"><span>交易状态</span><span class="status refund">已退票</span></div><div class="item"><span>原付款金额</span><b>12,000.00 USD</b></div><div class="item"><span>退票金额</span><b>11,988.00 USD</b></div><div class="item"><span>渠道单号</span><b>CH-GT-20260713-6182</b></div><div class="item"><span>退票交易子单号</span><b>SUB-RET-20260713-04</b></div></div><h3>处理进度</h3><div class="timeline"><div class="event"><b>付款成功</b><span>2026-07-13 16:48 · 收款行已受理</span></div><div class="event"><b>银行退票</b><span>2026-07-14 09:56 · 渠道返回退票结果</span></div><div class="event"><b>退票入账完成</b><span>2026-07-14 10:32 · 已扣除渠道退票费用 12.00 USD</span></div></div>`;
+}
+function openNewProduct(){
+  document.getElementById('drawerContent').innerHTML=`<h2>新增产品开通</h2><div class="muted">每次提交生成一条独立开通记录；同一商户、同一产品允许多次开通。</div>
+  <h3>开通信息</h3><div class="grid"><div class="field"><label>商户</label><select><option>ABCD Trading Limited · M260001</option><option>North Star Commerce · M260018</option></select></div><div class="field"><label>机构代理商</label><select><option>EX Hong Kong · EX-HK-001</option><option>EX Singapore · EX-SG-012</option></select></div><div class="field"><label>开通产品</label><select><option>预约付款</option><option>Gate 渠道服务</option></select></div><div class="field"><label>开通方式</label><select><option>新开通</option><option>重新开通</option></select></div><div class="field"><label>关联审批编号</label><input placeholder="输入 OA 或审批编号"></div><div class="field"><label>备注</label><input placeholder="填写本次开通原因"></div></div>
+  <div class="actions"><button class="btn primary" onclick="submitNewProduct()">提交开通</button><button class="btn" onclick="closeDetail()">取消</button></div>`;
+  document.getElementById('drawerMask').classList.add('show');
+}
+function submitNewProduct(){closeDetail();toast('演示：已新增一条产品开通记录，状态为待审核')}
+function approveProductOpen(button){
+  const row=button.closest('tr');
+  const status=row.querySelector('.status');
+  status.textContent='已开通';
+  status.className='status success';
+  row.querySelector('td:last-child').innerHTML='<button class="btn link" onclick="openProductConfig()">产品配置</button>　<button class="btn link" onclick="openProductLog()">操作日志</button>';
+  toast('演示：产品开通审核已通过');
+}
+function rejectProductOpen(button){
+  const row=button.closest('tr');
+  const status=row.querySelector('.status');
+  status.textContent='已拒绝';
+  status.className='status failed';
+  row.querySelector('td:last-child').innerHTML='<button class="btn link" onclick="openProductLog()">操作日志</button>';
+  toast('演示：产品开通审核已拒绝');
+}
+function openProductConfig(){
+  document.getElementById('drawerContent').innerHTML=`<h2>产品配置</h2><div class="muted">商户 MID：M260001 · ABCD Trading Limited · EX-HK-001</div>
+  <h3>开通产品</h3><div class="grid"><div class="field"><label>产品</label><select><option>预约付款</option><option>Gate 渠道服务</option></select></div><div class="field"><label>状态</label><select><option>已开通</option><option>暂停</option><option>关闭</option></select></div><div class="field"><label>生效时间</label><input type="datetime-local" value="2026-07-28T10:35"></div><div class="field"><label>机构代理商 ID</label><input value="EX-HK-001" readonly></div></div>
+  <h3>渠道能力</h3><div class="grid"><div class="item"><span>商户渠道报备</span><b>Gate · 已通过</b></div><div class="item"><span>收款人渠道报备</span><b>Gate · 已启用</b></div><div class="item"><span>商户数币地址</span><b>Gate · 已配置</b></div><div class="item"><span>出款渠道</span><b>Gate · 已配置</b></div></div>
+  <h3>产品参数</h3><div class="grid"><div class="field"><label>最低起付金额</label><div style="display:flex;gap:8px"><input type="number" min="0" value="10000"><input value="USD" readonly style="width:88px"></div></div><div class="field"><label for="configDepositValidity">充值有效期</label><div style="display:flex;gap:8px"><input id="configDepositValidity" type="number" min="1" step="1" value="48"><input value="小时" readonly style="width:88px"></div><span class="muted">从充值指令生成时间起算，仅影响新订单。</span></div><div class="field"><label>支持开通的商户国家/地区</label><select multiple size="3"><option selected>Vietnam</option><option>Hong Kong SAR</option><option>Singapore</option></select></div><div class="item"><span>本期付款人名称</span><b>固定为所选收款人名称</b></div><div class="item"><span>开通校验</span><b>按商户主体所在国家/地区匹配</b></div></div>
+  <h3>充值金额处理</h3><div class="grid"><div class="item"><span>实际充值金额＜付款金额</span><b>失败；不执行原 POBO 付款</b></div><div class="item"><span>实际充值金额＝付款金额</span><b>继续直接付款</b></div><div class="item"><span>实际充值金额＞付款金额</span><b>继续付款；超出余额进法币账户</b></div><div class="item"><span>数币账户留存</span><b>不允许</b></div></div>
+  <div class="card" style="margin-top:12px;background:#fff7ed"><b>本期固定规则</b><p class="muted">实际充值金额按 1:1 折算为 USD 后与预约付款金额比较。余额统一进入商户法币账户，不留存在数币账户。</p></div>
+  <div class="actions"><button class="btn primary" onclick="saveProductConfig()">保存配置</button><button class="btn" onclick="closeDetail()">取消</button></div>`;
+  document.getElementById('drawerMask').classList.add('show');
+}
+function saveProductConfig(){
+  const validity=document.getElementById('configDepositValidity');
+  if(validity&&(!Number.isInteger(Number(validity.value))||Number(validity.value)<=0)){toast('充值有效期必须为大于 0 的整数小时');validity.focus();return}
+  closeDetail();toast(`演示：产品配置已保存，充值有效期 ${validity?.value||48} 小时，仅影响新订单`);
+}
+function openMarkChannelFailed(){
+  document.getElementById('drawerContent').innerHTML=`<h2>Gate 渠道单置为失败</h2><div class="muted">渠道单号：CH-GT-20260717-6608 · 当前状态：处理中</div>
+  <div class="card" style="margin-top:16px;background:#fff7ed;border-color:#fdba74"><b style="color:#c2410c">重要提醒</b><p style="margin-bottom:0">请先与渠道确认退款金额以及是否退回手续费。</p></div>
+  <h3>失败及退款确认</h3><div class="grid"><div class="field"><label for="channelFailReason">失败原因</label><select id="channelFailReason"><option value="">请选择失败原因</option><option>Gate 已确认出款失败</option><option>Gate 已确认无法继续执行</option><option>其他渠道异常</option></select></div><div class="field"><label for="channelEvidence">渠道确认凭证/沟通记录编号</label><input id="channelEvidence" placeholder="请输入凭证或沟通记录编号"></div><div class="field"><label for="refundAmount">确认退款金额</label><div style="display:flex;gap:8px"><input id="refundAmount" type="number" min="0" step="0.01" placeholder="0.00"><input value="USD" readonly style="width:88px"></div></div><div class="field"><label for="feeRefunded">是否退回手续费</label><select id="feeRefunded" onchange="document.getElementById('feeRefundAmount').disabled=this.value!=='yes'"><option value="">请选择</option><option value="yes">是</option><option value="no">否</option></select></div><div class="field"><label for="feeRefundAmount">退回手续费金额</label><div style="display:flex;gap:8px"><input id="feeRefundAmount" type="number" min="0" step="0.01" placeholder="0.00" disabled><input value="USD" readonly style="width:88px"></div></div><div class="field"><label for="channelFailRemark">操作备注</label><input id="channelFailRemark" placeholder="补充说明（选填）"></div></div>
+  <label style="display:flex;align-items:flex-start;gap:10px;margin-top:18px"><input id="channelConfirmChecked" type="checkbox" style="width:18px;height:18px;margin-top:2px"><span>我已与渠道确认退款金额及手续费退回情况，并确认以上信息无误。</span></label>
+  <div class="actions"><button class="btn primary" onclick="submitMarkChannelFailed()">确认置为失败</button><button class="btn" onclick="closeDetail()">取消</button></div>`;
+  document.getElementById('drawerMask').classList.add('show');
+}
+function submitMarkChannelFailed(){
+  const reason=document.getElementById('channelFailReason').value;
+  const evidence=document.getElementById('channelEvidence').value.trim();
+  const refund=document.getElementById('refundAmount').value;
+  const feeRefunded=document.getElementById('feeRefunded').value;
+  const feeAmount=document.getElementById('feeRefundAmount').value;
+  const confirmed=document.getElementById('channelConfirmChecked').checked;
+  if(!reason||!evidence||refund===''||!feeRefunded){toast('请完整填写失败原因、渠道凭证、退款金额及手续费退回情况');return}
+  if(feeRefunded==='yes'&&feeAmount===''){toast('请填写退回手续费金额');return}
+  if(!confirmed){toast('请确认已与渠道核实退款金额及手续费退回情况');return}
+  closeDetail();toast('演示：Gate 渠道单已置为失败，并已创建退款跟踪记录');
+}
+function openProductLog(){
+  document.getElementById('drawerContent').innerHTML=`<h2>产品开通操作日志</h2><div class="muted">商户 MID：M260001 · ABCD Trading Limited</div>
+  <h3>变更记录</h3><div class="timeline"><div class="event"><b>开通 Gate 渠道服务</b><span>2026-07-28 10:35 · operator.pp01 · 关联审批 OA-20260728-018</span></div><div class="event"><b>配置 Gate 商户报备</b><span>2026-07-28 10:42 · operator.pp01 · 渠道返回 ID GA-260626-001</span></div><div class="event"><b>配置商户数币地址</b><span>2026-07-28 10:48 · operator.pp02 · TRC-20、ERC-20</span></div><div class="event"><b>开通预约付款</b><span>2026-07-28 11:05 · compliance.pp01 · 审核通过</span></div></div>`;
+  document.getElementById('drawerMask').classList.add('show');
+}
+function acceptanceTxDetail(){
+  return `<h2>承兑交易单详情</h2><div class="muted">交易单号：TX-CONVERT-20260717-7789</div>
+  <h3>承兑概要</h3><div class="grid"><div class="item"><span>交易单号</span><b>TX-CONVERT-20260717-7789</b></div><div class="item"><span>交易类型</span><b>数法承兑（数换法）</b></div><div class="item"><span>关联商户单号</span><b>RS-20260717-1028</b></div><div class="item"><span>商户名称</span><b>ABCD Trading Limited</b></div><div class="item"><span>商户 MID</span><b>M260001</b></div><div class="item"><span>机构代理 ID</span><b>EX-HK-001</b></div><div class="item"><span>货币对</span><b>USDC → USD</b></div><div class="item"><span>固定汇率</span><b>1 USDC = 1 USD</b></div><div class="item"><span>卖出金额</span><b>9,500.00 USDC</b></div><div class="item"><span>承兑手续费</span><b>15.00 USD</b></div><div class="item"><span>买入金额</span><b>9,485.00 USD</b></div><div class="item"><span>交易状态</span><span class="status success">成功</span></div></div>
+  <h3>处理进度</h3><div class="timeline"><div class="event"><b>承兑交易单已创建</b><span>2026-07-17 14:20 · 已关联商户业务单 RS-20260717-1028</span></div><div class="event"><b>充值已确认</b><span>2026-07-17 14:20 · 实际到账 9,500.00 USDC（应充 10,023.50 USDC）</span></div><div class="event"><b>按实完成承兑</b><span>2026-07-17 14:23 · 固定汇率 1:1，买入 9,485.00 USD</span></div><div class="event"><b>资金已入商户法币账户</b><span>充值金额较付款金额 10,000.00 USD 少 500.00，不执行原 POBO 付款</span></div></div>
+  <h3>关联单据</h3><div class="grid"><div class="item"><span>商户业务单</span><b>RS-20260717-1028（预约付款）</b></div><div class="item"><span>承兑渠道单</span><b>CH-GT-20260717-6609</b></div><div class="item"><span>法币付款交易单</span><b>TX-PAYOUT-20260717-7788（不执行）</b></div><div class="item"><span>资金去向</span><b>商户法币账户 · 9,485.00 USD</b></div></div>`;
+}
+function acceptanceChannelDetail(){
+  return `<h2>承兑渠道单详情</h2><div class="muted">渠道单号：CH-GT-20260717-6609</div>
+  <h3>关联信息</h3><div class="grid"><div class="item"><span>关联交易单号</span><b>TX-CONVERT-20260717-7789</b></div><div class="item"><span>关联商户单号</span><b>RS-20260717-1028</b></div><div class="item"><span>商户名称</span><b>ABCD Trading Limited</b></div><div class="item"><span>渠道交易类型</span><b>数换法</b></div><div class="item"><span>执行模式</span><b>API</b></div><div class="item"><span>渠道单状态</span><span class="status success">成功</span></div></div>
+  <h3>渠道执行</h3><div class="grid"><div class="item"><span>出款渠道 / 流水</span><b>Gate · GT-260717-88002</b></div><div class="item"><span>渠道账户</span><b>GA_26fa93c2</b></div><div class="item"><span>货币对</span><b>USDC → USD</b></div><div class="item"><span>固定汇率</span><b>1 USDC = 1 USD</b></div><div class="item"><span>请求金额</span><b>9,500.00 USDC</b></div><div class="item"><span>实际买入</span><b>9,485.00 USD</b></div><div class="item"><span>渠道费用</span><b>15.00 USD</b></div><div class="item"><span>结算账户</span><b>商户法币账户 · 9,485.00 USD</b></div></div>
+  <h3>处理进度</h3><div class="timeline"><div class="event"><b>渠道单已创建</b><span>2026-07-17 14:20 · 充值确认后自动发起承兑</span></div><div class="event"><b>渠道承兑成功</b><span>2026-07-17 14:23 · Gate 返回 SUCCESS</span></div><div class="event"><b>结算入账完成</b><span>2026-07-17 14:23 · 已同步交易单状态并回写商户法币账户余额</span></div></div>
+  <div class="actions"><button class="btn primary" onclick="toast('已打开退款跟踪记录')">退款跟踪</button>　<button class="btn" onclick="openMarkChannelFailed()">置为失败</button></div>`;
+}
+function openDetail(type='merchant'){document.getElementById('drawerContent').innerHTML=type==='transaction'?transactionDetail():type==='acceptanceTx'?acceptanceTxDetail():type==='acceptanceCh'?acceptanceChannelDetail():type==='return'?returnDetail():merchantDetail();document.getElementById('drawerMask').classList.add('show')}
+function closeDetail(){document.getElementById('drawerMask').classList.remove('show')}
+function jumpToPage(page){closeDetail();document.querySelector(`[data-page="${page}"]`)?.click()}
+function approveReservedAccess(){localStorage.setItem('reservedPaymentAccess','approved');const status=document.getElementById('reviewStatus');if(status){status.textContent='审核通过';status.className='green'}toast('合规审核已通过，客户端预约付款权限已开通')}
+</script>
+</body>
+</html>
