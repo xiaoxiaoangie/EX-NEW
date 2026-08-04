@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>渠道中心 · 渠道基本信息 + 外币付款</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f5f6f8}
+  .card{background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+  th{background:#f9fafb;font-size:12px;color:#6b7280;font-weight:500;text-align:left;padding:10px 16px}
+  td{padding:12px 16px;font-size:13px;color:#374151;border-top:1px solid #f3f4f6}
+  input[type=text],input[type=number],input[type=date],select,textarea{width:100%;border:1px solid #e5e7eb;border-radius:8px;padding:8px 12px;font-size:13px;outline:none}
+  input:focus,select:focus,textarea:focus{border-color:#3b82f6}
+  input:disabled,textarea:disabled,select:disabled{background:#f9fafb;color:#9ca3af;cursor:not-allowed}
+  .field-label{font-size:13px;font-weight:500;color:#374151;margin-bottom:6px}
+  .field-label.required::after{content:" *";color:#ef4444}
+  .chip{display:inline-flex;align-items:center;padding:4px 12px;border-radius:9999px;border:1px solid #e5e7eb;font-size:12px;color:#6b7280;cursor:pointer;user-select:none}
+  .chip.on{background:#eff6ff;border-color:#3b82f6;color:#1d4ed8}
+  .chip.deny.on{background:#fef2f2;border-color:#ef4444;color:#b91c1c}
+  .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:500}
+  .b-blue{background:#eff6ff;color:#1d4ed8}.b-green{background:#ecfdf5;color:#047857}
+  .b-gray{background:#f3f4f6;color:#6b7280}.b-amber{background:#fffbeb;color:#b45309}
+  .usage{display:inline-flex;align-items:center;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:600;margin-left:4px;vertical-align:1px}
+  .u-route{background:#eff6ff;color:#1d4ed8}.u-disp{background:#f3f4f6;color:#6b7280}
+  .role{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:9999px;font-size:11px;font-weight:600}
+  .r-compliance{background:#fef2f2;color:#b91c1c}
+  .r-ops{background:#eff6ff;color:#1d4ed8}
+  .r-product{background:#f5f3ff;color:#6d28d9}
+  .r-settle{background:#ecfdf5;color:#047857}
+  .r-fibd{background:#fff7ed;color:#c2410c}
+  .rule-bar{background:#fffbeb;border:1px solid #fde68a;color:#92400e;font-size:12px;border-radius:8px;padding:8px 12px}
+  .nav-item{display:block;padding:9px 14px;border-radius:8px;font-size:13px;color:#4b5563;cursor:pointer}
+  .nav-item:hover{background:#f3f4f6}
+  .nav-item.active{background:#eff6ff;color:#1d4ed8;font-weight:600}
+  .hidden{display:none}
+  section.role-section{border:1px solid #e5e7eb;border-radius:12px;padding:20px;margin-top:20px;position:relative}
+  section.role-section.locked{opacity:.55;pointer-events:none}
+  section.role-section.locked::after{content:"当前视角无编辑权限（只读）";position:absolute;top:12px;right:16px;font-size:11px;color:#9ca3af;pointer-events:none}
+  .rail-module{border:1px solid #dbeafe;border-radius:12px;padding:16px;margin-top:12px;background:#fbfdff}
+  .workflow{display:flex;align-items:center;gap:0;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 16px;overflow-x:auto}
+  .wf-step{display:flex;align-items:center;gap:8px;padding:0 14px;position:relative}
+  .wf-step:not(:last-child)::after{content:"→";color:#d1d5db;margin-left:14px}
+  .wf-dot{width:22px;height:22px;border-radius:9999px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;background:#d1d5db;flex-shrink:0}
+  .wf-step.done .wf-dot{background:#10b981}
+  .wf-step.active .wf-dot{background:#3b82f6;box-shadow:0 0 0 3px #dbeafe}
+  .wf-step.wait .wf-dot{background:#d1d5db}
+  .wf-name{font-size:12px;font-weight:600;color:#374151;white-space:nowrap}
+  .wf-sub{font-size:10px;color:#9ca3af;white-space:nowrap}
+  .section-foot{display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-top:16px;padding-top:12px;border-top:1px dashed #e5e7eb}
+  .section-status{font-size:11px;font-weight:600}
+</style>
+</head>
+<body>
+<div class="flex min-h-screen">
+
+  <!-- ===== 侧边栏 ===== -->
+  <aside class="w-56 bg-white border-r border-gray-200 p-4 shrink-0">
+    <div class="font-bold text-gray-900 mb-1">渠道中心</div>
+    <p class="text-[11px] text-gray-400 mb-4">基本信息 + 外币付款</p>
+    <a class="nav-item active" data-nav="list-channel" onclick="show('list-channel')">渠道基本信息</a>
+    <a class="nav-item" data-nav="list-fiat" onclick="show('list-fiat')">外币付款能力</a>
+    <div class="mt-6 pt-4 border-t border-gray-100">
+      <div class="text-[11px] text-gray-400 mb-2">维护角色图例（不同人维护不同分区）</div>
+      <div class="space-y-1.5">
+        <div><span class="role r-compliance">合规</span><span class="text-[11px] text-gray-500 ml-1">合规政策</span></div>
+        <div><span class="role r-ops">渠道运营</span><span class="text-[11px] text-gray-500 ml-1">渠道能力</span></div>
+        <div><span class="role r-product">产品</span><span class="text-[11px] text-gray-500 ml-1">账户体系 / 过滤标签</span></div>
+        <div><span class="role r-settle">清算</span><span class="text-[11px] text-gray-500 ml-1">资金处理</span></div>
+      </div>
+    </div>
+    <div class="mt-6 pt-4 border-t border-gray-100">
+      <div class="text-[11px] text-gray-400 mb-2">字段用途图例</div>
+      <div class="space-y-1.5 text-[11px] text-gray-500">
+        <div><span class="usage u-route">过滤</span> 交易时参与渠道过滤（路由第一部分，无策略）</div>
+        <div><span class="usage u-disp">登记</span> 仅登记，无系统逻辑</div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="flex-1 p-8 max-w-6xl">
+
+  <!-- ================= 渠道基本信息 · 列表 ================= -->
+  <section id="list-channel">
+    <div class="flex items-center justify-between mb-4">
+      <div><h1 class="text-lg font-bold text-gray-900">渠道基本信息（签约信息）</h1>
+        <p class="text-xs text-gray-400 mt-1">工作流：FIBD 新增基本信息 → 合规配置合规政策 → 完成同步 FIBD。基本信息与合规政策各自独立编辑 / 提交。</p></div>
+      <button class="px-4 py-2 text-sm rounded-lg bg-blue-600 text-white" onclick="openChannel('fibd')">＋ 新增渠道（FIBD 发起）</button>
+    </div>
+    <div class="card overflow-hidden">
+      <table class="w-full">
+        <thead><tr><th>渠道code</th><th>渠道名称</th><th>渠道主体</th><th>我司主体</th><th>所在国家</th><th>提供服务</th><th>合规政策</th><th>有效期</th><th>操作</th></tr></thead>
+        <tbody>
+          <tr><td class="font-mono text-xs">CH001</td><td class="font-medium">Nium</td><td>Nium Pte. Ltd.</td><td>IPL HK</td><td>新加坡</td><td><span class="badge b-blue">法币付款</span> <span class="badge b-blue">换汇</span></td><td><span class="badge b-green">已配置</span></td><td>2025-01-01 ~ 2026-12-31</td><td class="whitespace-nowrap"><span class="text-blue-600 cursor-pointer" onclick="openChannel('fibd')">基本信息编辑</span> <span class="text-gray-300">|</span> <span class="text-blue-600 cursor-pointer" onclick="openChannel('compliance')">合规政策编辑</span></td></tr>
+          <tr><td class="font-mono text-xs">CH002</td><td class="font-medium">宝付</td><td>宝付网络科技（上海）</td><td>IPL HK</td><td>中国</td><td><span class="badge b-blue">人民币结汇</span></td><td><span class="badge b-amber">待合规配置</span></td><td>2025-06-01 ~ 2027-05-31</td><td class="whitespace-nowrap"><span class="text-blue-600 cursor-pointer" onclick="openChannel('fibd')">基本信息编辑</span> <span class="text-gray-300">|</span> <span class="text-blue-600 cursor-pointer" onclick="openChannel('compliance')">合规政策编辑</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ================= 渠道基本信息 · 表单 ================= -->
+  <section id="form-channel" class="hidden">
+    <button class="text-sm text-gray-500 mb-3" onclick="show('list-channel')">← 返回列表</button>
+    <div class="card p-6">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="font-bold text-gray-900">渠道基本信息</h2>
+        <div class="flex items-center gap-3">
+          <span class="text-xs text-gray-400">当前身份：</span>
+          <select id="ch-role-view" class="!w-40 text-xs" onchange="applyChRoleView()">
+            <option value="all">全部（管理员预览）</option>
+            <option value="fibd">FIBD</option>
+            <option value="compliance">合规</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 工作流状态条：FIBD → 合规 → 同步 -->
+      <div class="workflow mb-3" id="ch-workflow">
+        <div class="wf-step active" data-stage="fibd"><span class="wf-dot">1</span><div><div class="wf-name">FIBD · 基本信息</div><div class="wf-sub" data-wf-sub>发起 / 维护中</div></div></div>
+        <div class="wf-step wait" data-stage="compliance"><span class="wf-dot">2</span><div><div class="wf-name">合规 · 合规政策</div><div class="wf-sub" data-wf-sub>待配置</div></div></div>
+        <div class="wf-step wait" data-stage="sync"><span class="wf-dot">✓</span><div><div class="wf-name">同步 FIBD</div><div class="wf-sub" data-wf-sub>配置完成后同步</div></div></div>
+      </div>
+      <div class="rule-bar mb-4">FIBD 发起并维护基本信息 → 通知合规配置合规政策 → 合规提交后同步回 FIBD。两部分各自独立编辑 / 提交，互不覆盖。</div>
+
+      <!-- ===== 1. 基本信息（FIBD 维护） ===== -->
+      <section class="role-section" data-role="fibd">
+        <h3 class="font-bold text-gray-900 mb-3">1. 基本信息 <span class="role r-fibd">FIBD 维护</span></h3>
+        <div class="grid grid-cols-2 gap-x-8 gap-y-5">
+          <div><div class="field-label required">渠道名称</div><input type="text" placeholder="如 Nium"></div>
+          <div><div class="field-label required">渠道主体</div><input type="text" placeholder="渠道签约法律主体"></div>
+          <div><div class="field-label required">我司主体</div><select><option>IPL HK</option><option>IPL SG</option><option>IPL UK</option></select></div>
+          <div><div class="field-label required">渠道所在国家</div><input type="text" list="countryDatalist" placeholder="模糊搜索，如「新加坡」"></div>
+          <div><div class="field-label required">签约有效期</div><div class="flex items-center gap-2"><input type="date"><span class="text-gray-400">—</span><input type="date"></div></div>
+          <div><div class="field-label">渠道牌照</div><input type="text" placeholder="如 MAS MPI"></div>
+          <div class="col-span-2">
+            <div class="field-label required">渠道提供服务（多选，决定能力模块上限）</div>
+            <div class="flex flex-wrap gap-2">
+              <span class="chip on">法币付款</span><span class="chip">VA 收款</span><span class="chip">换汇</span><span class="chip">人民币结汇</span><span class="chip">数币钱包</span><span class="chip">承兑</span>
+            </div>
+          </div>
+          <div class="col-span-2"><div class="field-label">附件（协议 / 补充协议，非必填）</div><input type="text" placeholder="上传附件（原型示意）"></div>
+        </div>
+        <div class="section-foot">
+          <span class="section-status" style="color:#c2410c">● FIBD 维护中</span>
+          <button class="px-3 py-1.5 text-xs border rounded-lg" onclick="alert('已保存草稿')">保存草稿</button>
+          <button class="px-3 py-1.5 text-xs rounded-lg bg-blue-600 text-white" onclick="submitChSection('fibd','基本信息')">提交并通知合规</button>
+        </div>
+      </section>
+
+      <!-- ===== 2. 合规政策（合规维护） ===== -->
+      <section class="role-section locked" data-role="compliance">
+        <h3 class="font-bold text-gray-900 mb-1">2. 合规政策 <span class="role r-compliance">合规维护</span> <span class="badge b-gray">渠道级 · 对该渠道所有能力生效</span></h3>
+        <p class="text-xs text-gray-400 mb-4">支持 / 禁止国家与行业为渠道级合规边界，能力级配置不得超出此范围（提交时校验）。字段参与渠道过滤 <span class="usage u-route">过滤</span>。</p>
+        <div class="grid grid-cols-1 gap-y-6">
+          <div data-country-field>
+            <div class="field-label required">商户主体所在国家（先配置，支持 / 禁止 二选一）</div>
+            <div class="flex gap-2 mb-2">
+              <span class="chip mode-chip on" data-mode="allow">支持国家（正向）</span>
+              <span class="chip mode-chip deny" data-mode="deny">禁止国家（反向）</span>
+            </div>
+            <input type="text" list="countryDatalist" class="country-search" data-tags="ch-merchant-country-tags" placeholder="搜索国家后回车添加（自动去重）">
+            <div id="ch-merchant-country-tags" class="country-tags flex flex-wrap gap-2 mt-2"></div>
+          </div>
+          <div data-country-field>
+            <div class="field-label required">收款人所在国家</div>
+            <div class="flex gap-2 mb-2 single-group toggle-pair" data-detail="payee-country-custom">
+              <span class="chip on" data-val="no">同商户配置（默认）</span>
+              <span class="chip" data-val="yes">单独配置</span>
+            </div>
+            <p class="text-[11px] text-gray-400">默认与商户主体所在国家一致；如收款人国家范围不同，选「单独配置」。</p>
+            <div id="payee-country-custom" class="hidden mt-2">
+              <div class="flex gap-2 mb-2">
+                <span class="chip mode-chip on" data-mode="allow">支持国家（正向）</span>
+                <span class="chip mode-chip deny" data-mode="deny">禁止国家（反向）</span>
+              </div>
+              <input type="text" list="countryDatalist" class="country-search" data-tags="ch-payee-country-tags" placeholder="搜索国家后回车添加（自动去重）">
+              <div id="ch-payee-country-tags" class="country-tags flex flex-wrap gap-2 mt-2"></div>
+            </div>
+          </div>
+          <div>
+            <div class="field-label required">支持 / 禁止行业</div>
+            <div class="flex gap-2 mb-2">
+              <span class="chip mode-chip on" data-mode="allow">支持行业（正向）</span>
+              <span class="chip mode-chip deny" data-mode="deny">禁止行业（反向）</span>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <span class="chip on">货物贸易</span><span class="chip on">服务贸易</span><span class="chip">跨境电商</span><span class="chip">广告营销</span><span class="chip">物流服务</span>
+            </div>
+          </div>
+          <div><div class="field-label">备注（合规备注）</div><textarea rows="2" placeholder="自由备注"></textarea></div>
+        </div>
+        <div class="section-foot">
+          <span class="section-status" style="color:#9ca3af">● 待合规配置</span>
+          <button class="px-3 py-1.5 text-xs rounded-lg bg-blue-600 text-white" onclick="submitChSection('compliance','合规政策')">提交并同步 FIBD</button>
+        </div>
+      </section>
+
+      <div class="flex justify-end gap-2 mt-6 pt-4 border-t border-gray-100">
+        <button class="px-4 py-2 text-sm border rounded-lg" onclick="show('list-channel')">返回列表</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 外币付款 · 列表 ================= -->
+  <section id="list-fiat" class="hidden">
+    <div class="flex items-center justify-between mb-4">
+      <div><h1 class="text-lg font-bold text-gray-900">外币付款能力</h1>
+        <p class="text-xs text-gray-400 mt-1">一条数据 = 渠道 + 支付方式 · 工作流：渠道运营发起 → 产品 → 清算，每步完成同步上一步；各部分独立编辑 / 提交</p></div>
+      <button class="px-4 py-2 text-sm rounded-lg bg-blue-600 text-white" onclick="openFiat('ops')">＋ 新增付款能力（渠道运营发起）</button>
+    </div>
+    <div class="card overflow-hidden">
+      <table class="w-full">
+        <thead><tr><th>渠道</th><th>支付方式</th><th>清算系统</th><th>覆盖国家数</th><th>状态</th><th>更新时间</th><th>操作</th></tr></thead>
+        <tbody>
+          <tr><td class="font-medium">Nium <span class="text-gray-400 font-mono text-xs">CH001</span></td><td>TT</td><td><span class="badge b-gray">SWIFT</span></td><td>100</td><td><span class="badge b-green">生效</span></td><td>2026-07-30</td><td class="whitespace-nowrap text-xs"><span class="text-blue-600 cursor-pointer" onclick="openFiat('ops')">付款能力</span> <span class="text-gray-300">|</span> <span class="text-blue-600 cursor-pointer" onclick="openFiat('product')">账户体系</span> <span class="text-gray-300">|</span> <span class="text-blue-600 cursor-pointer" onclick="openFiat('settle')">资金处理</span></td></tr>
+          <tr><td class="font-medium">Nium <span class="text-gray-400 font-mono text-xs">CH001</span></td><td>Local Bank Transfer</td><td><span class="badge b-gray">PESONET</span> <span class="badge b-gray">InstaPay</span> <span class="badge b-gray">SEPA</span></td><td>28</td><td><span class="badge b-green">生效</span></td><td>2026-07-28</td><td class="whitespace-nowrap text-xs"><span class="text-blue-600 cursor-pointer" onclick="openFiat('ops')">付款能力</span> <span class="text-gray-300">|</span> <span class="text-blue-600 cursor-pointer" onclick="openFiat('product')">账户体系</span> <span class="text-gray-300">|</span> <span class="text-blue-600 cursor-pointer" onclick="openFiat('settle')">资金处理</span></td></tr>
+          <tr><td class="font-medium">宝付 <span class="text-gray-400 font-mono text-xs">CH002</span></td><td>Wallet</td><td>—</td><td>1 (VN)</td><td><span class="badge b-amber">审批中</span></td><td>2026-08-01</td><td class="whitespace-nowrap text-xs"><span class="text-blue-600 cursor-pointer" onclick="openFiat('ops')">付款能力</span> <span class="text-gray-300">|</span> <span class="text-blue-600 cursor-pointer" onclick="openFiat('product')">账户体系</span> <span class="text-gray-300">|</span> <span class="text-blue-600 cursor-pointer" onclick="openFiat('settle')">资金处理</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ================= 外币付款 · 表单 ================= -->
+  <section id="form-fiat" class="hidden">
+    <button class="text-sm text-gray-500 mb-3" onclick="show('list-fiat')">← 返回列表</button>
+    <div class="card p-6">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="font-bold text-gray-900">新增外币付款能力 <span id="fiat-channel-code" class="text-xs text-gray-400 font-normal ml-2"></span></h2>
+        <div class="flex items-center gap-3">
+          <span class="text-xs text-gray-400">当前身份：</span>
+          <select id="role-view" class="!w-36 text-xs" onchange="applyRoleView()">
+            <option value="all">全部（管理员预览）</option>
+            <option value="compliance">合规</option>
+            <option value="ops">渠道运营</option>
+            <option value="product">产品</option>
+            <option value="settle">清算</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 工作流状态条：渠道运营 → 产品 → 清算（每步完成同步上一步） -->
+      <div class="workflow mb-3" id="workflow">
+        <div class="wf-step active" data-stage="ops"><span class="wf-dot">1</span><div><div class="wf-name">渠道运营 · 付款能力</div><div class="wf-sub" data-wf-sub>发起 / 维护中</div></div></div>
+        <div class="wf-step wait" data-stage="product"><span class="wf-dot">2</span><div><div class="wf-name">产品 · 账户体系</div><div class="wf-sub" data-wf-sub>待维护</div></div></div>
+        <div class="wf-step wait" data-stage="settle"><span class="wf-dot">3</span><div><div class="wf-name">清算 · 资金处理</div><div class="wf-sub" data-wf-sub>待维护</div></div></div>
+      </div>
+      <div class="rule-bar mb-4">合规政策为渠道级母集，此处只读引用。付款能力工作流：<b>渠道运营发起 → 产品 → 清算</b>，每部分各自独立编辑 / 提交，完成后同步上一步的人。切换「当前身份」可模拟各角色权限。</div>
+
+      <!-- ===== 0. 合规政策（合规 · 只读引用） ===== -->
+      <section class="role-section" data-role="compliance">
+        <h3 class="font-bold text-gray-900 mb-1">0. 合规政策（国家 / 行业母集）<span class="role r-compliance">合规维护</span> <span class="badge b-gray">渠道级 · 本表单只读引用</span></h3>
+        <p class="text-xs text-gray-400 mb-3">由合规在渠道维度先维护，作为<b>母集</b>：收款国家、商户主体国家均只能在此范围内选取（提交时校验）。渠道运营只做子集收窄。<span class="usage u-route">过滤</span></p>
+        <div class="grid grid-cols-2 gap-x-8 gap-y-2 text-sm text-gray-600">
+          <div><span class="text-gray-400 text-xs">商户国家（母集）：</span>美国、日本、新加坡、菲律宾、欧盟 27 国…（共 96）</div>
+          <div><span class="text-gray-400 text-xs">收款人国家：</span>同商户配置</div>
+          <div><span class="text-gray-400 text-xs">支持行业：</span>货物贸易、服务贸易</div>
+        </div>
+        <div class="section-foot">
+          <span class="section-status" style="color:#047857">● 合规已提交 · 2026-07-25</span>
+          <button class="px-3 py-1.5 text-xs border rounded-lg" onclick="show('form-channel')">前往渠道基本信息编辑合规政策 →</button>
+        </div>
+      </section>
+
+      <!-- ===== 1. 基本信息（渠道运营） ===== -->
+      <section class="role-section" data-role="ops">
+        <h3 class="font-bold text-gray-900 mb-1">1. 基本信息 <span class="role r-ops">渠道运营</span></h3>
+        <p class="text-xs text-gray-400 mb-4">渠道 + 支付方式构成唯一键（一条数据），编辑时均不可修改。</p>
+        <div class="grid grid-cols-2 gap-x-8 gap-y-5">
+          <div>
+            <div class="field-label required">选择渠道 <span class="usage u-route">过滤</span></div>
+            <select id="fiat-channel-select" onchange="document.getElementById('fiat-channel-code').textContent = this.value ? this.selectedOptions[0].dataset.code + ' · ' + this.value : ''">
+              <option value="">请选择</option>
+              <option value="Nium" data-code="CH001">Nium</option>
+              <option value="宝付" data-code="CH002">宝付</option>
+            </select>
+          </div>
+          <div>
+            <div class="field-label required">支付方式（单选，决定清算系统模块）<span class="usage u-route">过滤</span></div>
+            <div class="flex gap-2 single-group" id="pay-method">
+              <span class="chip on" data-pay="TT">TT</span>
+              <span class="chip" data-pay="LBT">LOCAL BANK TRANSFER</span>
+              <span class="chip" data-pay="WALLET">WALLET</span>
+            </div>
+          </div>
+          <div>
+            <div class="field-label">服务时间 <span class="usage u-disp">登记</span></div>
+            <div class="flex items-center gap-2">
+              <select class="!w-28"><option>自然日</option><option>工作日</option></select>
+              <input type="text" class="!w-24" value="00:00"><span class="text-gray-400">—</span><input type="text" class="!w-24" value="23:59">
+            </div>
+            <p class="text-[11px] text-gray-400 mt-1">默认 7*24</p>
+          </div>
+          <div><div class="field-label">备注（基本信息备注）</div><textarea rows="1" placeholder="自由备注"></textarea></div>
+        </div>
+      </section>
+
+      <!-- ===== 2. 清算系统能力模块（渠道运营） ===== -->
+      <section class="role-section" data-role="ops">
+        <div class="flex items-center justify-between mb-1">
+          <h3 class="font-bold text-gray-900">2. 清算系统能力模块 <span class="role r-ops">渠道运营</span></h3>
+          <button id="add-rail-btn" class="px-3 py-1.5 text-xs border border-blue-200 text-blue-600 rounded-lg hidden" onclick="addRail()">＋ 添加清算系统</button>
+        </div>
+        <p class="text-xs text-gray-400 mb-2">每个清算系统一个独立模块：国家 / 币种 / 类型 / 时效 / 限额互不影响。TT 为单一模块（SWIFT）可挂大量国家统一配置；Local Bank Transfer 可添加多个模块（如 PESONET / SEPA / ACH），限额时效各自配置。个别国家例外 → 拆独立模块（例外覆盖一期待定）。</p>
+        <div id="rail-box"></div>
+      </section>
+
+      <!-- ===== 3. 能力条目级公共字段（渠道运营） ===== -->
+      <section class="role-section" data-role="ops">
+        <h3 class="font-bold text-gray-900 mb-1">3. 能力条目级公共字段 <span class="role r-ops">渠道运营</span> <span class="badge b-gray">对所有清算系统生效</span></h3>
+        <div class="grid grid-cols-2 gap-x-8 gap-y-5 mt-4">
+          <div class="col-span-2" data-country-field>
+            <div class="field-label required">商户主体所在国家 <span class="usage u-route">过滤</span></div>
+            <div class="flex gap-2 mb-2 single-group toggle-pair" data-detail="merchant-country-custom">
+              <span class="chip on" data-val="no">继承合规母集（默认）</span>
+              <span class="chip" data-val="yes">自定义子集</span>
+            </div>
+            <p class="text-[11px] text-gray-400">默认与合规支持国家一致，无需配置；仅当商户国家需比收款国家更收窄时才自定义（仍不得超出合规母集）。</p>
+            <div id="merchant-country-custom" class="hidden mt-2">
+              <input type="text" list="countryDatalist" class="country-search" data-tags="fiat-merchant-country-tags" placeholder="搜索国家后回车添加（须 ⊆ 合规母集，自动去重）">
+              <div id="fiat-merchant-country-tags" class="country-tags flex flex-wrap gap-2 mt-2"></div>
+            </div>
+          </div>
+          <div>
+            <div class="field-label required">收付款人关系（可多选）<span class="usage u-route">过滤</span></div>
+            <div class="flex gap-2"><span class="chip on">同名</span><span class="chip">异名</span></div>
+            <p class="text-[11px] text-gray-400 mt-1">异名场景（股东 / 关联公司 / 供应商 / 广告服务商 / 物流服务商 / 员工 / 其他）推送渠道时映射</p>
+          </div>
+          <div>
+            <div class="field-label required">收款人报备开户 <span class="usage u-disp">登记</span></div>
+            <div class="flex gap-2 single-group toggle-pair" data-detail="report-note">
+              <span class="chip on" data-val="no">不需要</span><span class="chip" data-val="yes">需要</span>
+            </div>
+            <div id="report-note" class="hidden mt-2"><textarea rows="2" placeholder="报备所需资料清单"></textarea></div>
+          </div>
+          <div class="col-span-2">
+            <div class="field-label required">是否支持 POBO（按商户-收款人类型分别配置）<span class="usage u-disp">登记</span></div>
+            <div class="border border-gray-200 rounded-lg overflow-hidden">
+              <table class="w-full">
+                <thead><tr><th>类型</th><th>是否支持</th><th>POBO 要求</th></tr></thead>
+                <tbody>
+                  <tr><td>B2B</td><td><div class="flex gap-2 single-group"><span class="chip on">支持</span><span class="chip">不支持</span></div></td><td><div class="flex gap-2 single-group"><span class="chip on">只能用入网商户信息</span><span class="chip">自定义</span></div></td></tr>
+                  <tr><td>B2C</td><td><div class="flex gap-2 single-group"><span class="chip">支持</span><span class="chip on">不支持</span></div></td><td class="text-gray-300">—</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-[11px] text-gray-400 mt-1">行 = 清算系统模块中已勾选的商户-收款人类型并集</p>
+          </div>
+          <div class="col-span-2"><div class="field-label">备注（基本能力备注，独立于异常处理备注）</div><textarea rows="2" placeholder="自由备注"></textarea></div>
+        </div>
+        <div class="section-foot">
+          <span class="section-status" style="color:#1d4ed8">● 渠道运营维护中（基本信息 + 清算系统 + 公共字段）</span>
+          <button class="px-3 py-1.5 text-xs border rounded-lg" onclick="alert('已保存草稿')">保存草稿</button>
+          <button class="px-3 py-1.5 text-xs rounded-lg bg-blue-600 text-white" onclick="submitSection('ops','渠道能力')">提交渠道能力</button>
+        </div>
+      </section>
+
+      <!-- ===== 4. 账户体系（产品） ===== -->
+      <section class="role-section" data-role="product">
+        <h3 class="font-bold text-gray-900 mb-1">4. 账户体系 <span class="role r-product">产品维护</span></h3>
+        <p class="text-xs text-gray-400 mb-4">目的：明确渠道的资金怎么走。仅登记，不参与渠道过滤 <span class="usage u-disp">登记</span>。</p>
+        <div class="grid grid-cols-2 gap-x-8 gap-y-5">
+          <div>
+            <div class="field-label required">账户要求（可多选）</div>
+            <div class="flex flex-wrap gap-2 account-req-chips">
+              <span class="chip on">创建子账户</span><span class="chip" data-vba-chip>使用单独的付款 VBA</span>
+            </div>
+          </div>
+          <div id="vba-scope" class="hidden">
+            <div class="field-label required">VBA 使用范围（单选）</div>
+            <div class="flex gap-2 single-group"><span class="chip on">仅用于付款</span><span class="chip">收付一体</span></div>
+            <p class="text-[11px] text-gray-400 mt-1">影响账户结构设计与资金归集方式</p>
+          </div>
+          <div class="col-span-2">
+            <div class="field-label">账户结构说明</div>
+            <textarea rows="3" placeholder="描述渠道的资金怎么走：账户层级、结算币种、入金 / 出金路径、归集方式等"></textarea>
+          </div>
+          <div class="col-span-2">
+            <div class="field-label">账户结构附件（可上传结构图 / 说明文档）</div>
+            <div class="border border-dashed border-gray-300 rounded-lg p-4 text-center text-xs text-gray-400 cursor-pointer hover:border-blue-300" onclick="alert('选择文件（原型示意）')">
+              点击上传附件，或拖拽文件到此处（支持 PNG / PDF / XLSX）
+            </div>
+            <div class="flex flex-wrap gap-2 mt-2">
+              <span class="chip">账户结构图.png <span class="ml-1 cursor-pointer" onclick="this.parentElement.remove()">×</span></span>
+            </div>
+          </div>
+          <div class="col-span-2 rule-bar">产品另在<b>系统配置</b>中维护各字段「是否参与渠道过滤」的标签（非逐条能力配置）；本表单角标即来源于该配置。</div>
+        </div>
+        <div class="section-foot">
+          <span class="section-status" style="color:#9ca3af">● 待产品维护</span>
+          <button class="px-3 py-1.5 text-xs rounded-lg bg-blue-600 text-white" onclick="submitSection('product','账户体系')">提交账户体系</button>
+        </div>
+      </section>
+
+      <!-- ===== 5. 资金处理与异常（清算） ===== -->
+      <section class="role-section" data-role="settle">
+        <h3 class="font-bold text-gray-900 mb-1">5. 资金处理与异常处理 <span class="role r-settle">清算维护</span> <span class="usage u-disp">登记</span></h3>
+        <p class="text-xs text-gray-400 mb-4">渠道对资金的接收 / 使用限制与失败退回规则；仅作登记备案，系统不据此自动处理；有独立备注。</p>
+        <div class="grid grid-cols-2 gap-x-8 gap-y-5">
+          <div>
+            <div class="field-label required">接受的打款币种（可多选）</div>
+            <div class="flex flex-wrap gap-2"><span class="chip on">USD</span><span class="chip">EUR</span><span class="chip">HKD</span><span class="chip">SGD</span><span class="chip">自定义</span></div>
+            <p class="text-[11px] text-gray-400 mt-1">如：该渠道只能接受 USD 打过去</p>
+          </div>
+          <div>
+            <div class="field-label required">收款资金直接付款（单选）</div>
+            <div class="flex gap-2 single-group"><span class="chip">支持（收付一体）</span><span class="chip on">需先归集后再付</span></div>
+          </div>
+          <div>
+            <div class="field-label required">付款失败资金退回</div>
+            <div class="flex gap-2 single-group"><span class="chip on">大账户</span><span class="chip">商户账户</span></div>
+          </div>
+          <div>
+            <div class="field-label required">退回币种（多选，仅登记、无优先级判断）</div>
+            <div class="flex flex-wrap gap-2"><span class="chip on">渠道结算币种</span><span class="chip">收款人账户币种</span><span class="chip">付款钱包币种</span><span class="chip">自定义币种</span></div>
+          </div>
+          <div class="col-span-2">
+            <div class="field-label required">退回金额（单选）</div>
+            <div class="flex gap-2 mb-2 single-group toggle-pair" data-detail="fee-note">
+              <span class="chip on" data-val="no">原金额</span><span class="chip" data-val="yes">去掉手续费金额</span>
+            </div>
+            <div id="fee-note" class="hidden"><textarea rows="2" placeholder="备注：手续费预计多少（金额不确定时仅填备注）"></textarea></div>
+          </div>
+          <div class="col-span-2"><div class="field-label">备注（异常处理独立备注）</div><textarea rows="2" placeholder="自由备注"></textarea></div>
+        </div>
+        <div class="section-foot">
+          <span class="section-status" style="color:#9ca3af">● 待清算维护</span>
+          <button class="px-3 py-1.5 text-xs rounded-lg bg-blue-600 text-white" onclick="submitSection('settle','资金处理')">提交资金处理</button>
+        </div>
+      </section>
+
+      <!-- ===== 分区状态与同步记录（始终可见） ===== -->
+      <div class="role-section" data-role="status">
+        <h3 class="font-bold text-gray-900 mb-1">分区状态与同步记录</h3>
+        <p class="text-xs text-gray-400 mb-3">各分区独立编辑 / 提交，互不阻塞；提交后自动同步上一步的人（产品完成同步渠道运营，清算完成同步产品 / 渠道运营）。</p>
+        <div class="border border-gray-200 rounded-lg overflow-hidden">
+          <table class="w-full">
+            <thead><tr><th>分区</th><th>维护角色</th><th>状态</th><th>最近提交</th><th>同步对象</th></tr></thead>
+            <tbody>
+              <tr><td>付款能力</td><td><span class="role r-ops">渠道运营</span></td><td><span class="badge b-amber">维护中</span></td><td>2026-08-04</td><td>—（发起方）</td></tr>
+              <tr><td>账户体系</td><td><span class="role r-product">产品</span></td><td><span class="badge b-gray">待维护</span></td><td>—</td><td>渠道运营</td></tr>
+              <tr><td>资金处理</td><td><span class="role r-settle">清算</span></td><td><span class="badge b-gray">待维护</span></td><td>—</td><td>产品 / 渠道运营</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 mt-6 pt-4 border-t border-gray-100">
+        <button class="px-4 py-2 text-sm border rounded-lg" onclick="show('list-fiat')">返回列表</button>
+      </div>
+    </div>
+  </section>
+
+  </main>
+</div>
+
+<datalist id="countryDatalist">
+  <option value="新加坡"><option value="美国"><option value="日本"><option value="菲律宾"><option value="德国"><option value="法国"><option value="英国"><option value="澳大利亚"><option value="韩国"><option value="越南"><option value="印度尼西亚"><option value="泰国"><option value="马来西亚"><option value="中国香港">
+</datalist>
+
+<script>
+/* ===== 导航 ===== */
+function show(id){
+  document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  const navMap = {'list-channel':'list-channel','form-channel':'list-channel','list-fiat':'list-fiat','form-fiat':'list-fiat'};
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.nav === navMap[id]));
+  window.scrollTo(0,0);
+}
+
+/* ===== 付款能力：角色视角（模拟分区权限） ===== */
+const FIAT_EDIT_ROLES = ['ops','product','settle'];
+function applyRoleView(){
+  const v = document.getElementById('role-view').value;
+  document.querySelectorAll('#form-fiat .role-section').forEach(sec => {
+    const role = sec.dataset.role;
+    /* 状态板等非编辑分区始终可见、不锁定 */
+    if (!FIAT_EDIT_ROLES.includes(role)) { sec.classList.remove('locked'); return; }
+    sec.classList.toggle('locked', v !== 'all' && role !== v);
+  });
+}
+
+/* ===== 付款能力：分区独立提交 → 同步上一步 ===== */
+const FIAT_SYNC = { ops:'—（发起方）', product:'渠道运营', settle:'产品 / 渠道运营' };
+function submitSection(stage, name){
+  const step = document.querySelector(`#workflow .wf-step[data-stage="${stage}"]`);
+  if (step){
+    step.classList.remove('wait','active'); step.classList.add('done');
+    const sub = step.querySelector('[data-wf-sub]'); if (sub) sub.textContent = '已提交 · 已同步';
+  }
+  alert(`已提交「${name}」分区（仅更新本分区）。\n\n已同步：${FIAT_SYNC[stage] || '相关人'}。`);
+}
+
+/* ===== 付款能力：从列表按操作打开对应分区 ===== */
+function openFiat(role){
+  show('form-fiat');
+  const sel = document.getElementById('role-view');
+  if (sel){ sel.value = role; applyRoleView(); }
+  const sec = document.querySelector(`#form-fiat .role-section[data-role="${role}"]`);
+  if (sec) sec.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* ===== 渠道基本信息：工作流 FIBD → 合规 → 同步 ===== */
+function openChannel(role){
+  show('form-channel');
+  const sel = document.getElementById('ch-role-view');
+  if (sel){ sel.value = role; applyChRoleView(); }
+}
+function applyChRoleView(){
+  const v = document.getElementById('ch-role-view').value;
+  document.querySelectorAll('#form-channel .role-section').forEach(sec => {
+    sec.classList.toggle('locked', v !== 'all' && sec.dataset.role !== v);
+  });
+}
+function submitChSection(stage, name){
+  const step = document.querySelector(`#ch-workflow .wf-step[data-stage="${stage}"]`);
+  if (step){
+    step.classList.remove('wait','active'); step.classList.add('done');
+    const sub = step.querySelector('[data-wf-sub]'); if (sub) sub.textContent = '已提交';
+  }
+  if (stage === 'fibd'){
+    const c = document.querySelector('#ch-workflow .wf-step[data-stage="compliance"]');
+    if (c){ c.classList.remove('wait'); c.classList.add('active'); const s=c.querySelector('[data-wf-sub]'); if(s) s.textContent='待配置'; }
+    alert('已提交「基本信息」并通知合规配置合规政策。');
+  } else if (stage === 'compliance'){
+    const sync = document.querySelector('#ch-workflow .wf-step[data-stage="sync"]');
+    if (sync){ sync.classList.remove('wait'); sync.classList.add('done'); const s=sync.querySelector('[data-wf-sub]'); if(s) s.textContent='已同步 FIBD'; }
+    alert('已提交「合规政策」并同步 FIBD，渠道基本信息完成。');
+  }
+}
+
+/* ===== chips 通用交互 ===== */
+document.addEventListener('click', e => {
+  const chip = e.target.closest('.chip');
+  if (!chip) return;
+  const single = chip.closest('.single-group');
+  const modeChip = chip.classList.contains('mode-chip');
+  if (modeChip){
+    const field = chip.closest('[data-country-field]') || chip.parentElement.parentElement;
+    chip.parentElement.querySelectorAll('.mode-chip').forEach(c => c.classList.remove('on'));
+    chip.classList.add('on');
+    const tags = field.querySelector('.country-tags'); if (tags) tags.innerHTML = '';
+    return;
+  }
+  if (single){
+    single.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
+    chip.classList.add('on');
+    const pair = single.closest('.toggle-pair') || (single.classList.contains('toggle-pair') ? single : null);
+    if (pair){
+      const detail = document.getElementById(pair.dataset.detail);
+      if (detail) detail.classList.toggle('hidden', chip.dataset.val !== 'yes');
+    }
+  } else {
+    chip.classList.toggle('on');
+  }
+  /* VBA 联动 */
+  if (chip.hasAttribute('data-vba-chip')){
+    document.getElementById('vba-scope').classList.toggle('hidden', !chip.classList.contains('on'));
+  }
+  /* 币种 / 商户-收款人类型 chips → 限额表（行=币种，列=B2X） */
+  if (chip.closest('.ccy-chips') || chip.closest('.b2x-chips')) syncLimit(chip.closest('[data-rail]'));
+  /* 支付方式 → 清算系统模块 */
+  if (chip.closest('#pay-method')) renderRails();
+});
+
+/* ===== 国家标签输入 ===== */
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter' || !e.target.classList.contains('country-search')) return;
+  e.preventDefault();
+  const val = e.target.value.trim(); if (!val) return;
+  const tags = document.getElementById(e.target.dataset.tags);
+  if ([...tags.children].some(t => t.dataset.v === val)) { e.target.value=''; return; }
+  const tag = document.createElement('span');
+  tag.className = 'chip on'; tag.dataset.v = val;
+  tag.innerHTML = val + ' <span class="ml-1 cursor-pointer" onclick="this.parentElement.remove()">×</span>';
+  tags.appendChild(tag); e.target.value='';
+});
+
+/* ===== 清算系统模块 ===== */
+let railSeq = 0;
+const railOptions = ['CHATS','FPS','SEPA','SEPA Instant','ACH','PESONET','InstaPay'];
+function railTemplate(name, removable){
+  const id = ++railSeq;
+  const ccyId = 'ccy-' + id, limitId = 'limit-' + id, rname = 'arr-' + id, tagsId = 'rail-country-' + id;
+  return `<div class="rail-module" data-rail>
+    <div class="flex items-center justify-between mb-3">
+      <div class="flex items-center gap-2">
+        <span class="badge b-blue">清算系统</span>
+        ${removable
+          ? `<select class="!w-44 text-sm">${railOptions.map(o => `<option${o===name?' selected':''}>${o}</option>`).join('')}</select>
+             <span class="text-[11px] text-gray-400">（每个国家的清算系统做基础数据）</span>`
+          : `<span class="font-bold text-gray-900">${name}</span><span class="text-[11px] text-gray-400">（TT 单一清算系统，可挂大量国家统一配置）</span>`}
+      </div>
+      ${removable ? '<button class="text-xs text-red-400" onclick="removeRail(this)">删除模块</button>' : ''}
+    </div>
+    <div class="grid grid-cols-2 gap-x-8 gap-y-4">
+      <div class="col-span-2" data-country-field>
+        <div class="field-label required">收款国家（支持 / 禁止 二选一）<span class="usage u-route">过滤</span></div>
+        <div class="flex gap-2 mb-2">
+          <span class="chip mode-chip on" data-mode="allow">支持国家（正向）</span>
+          <span class="chip mode-chip deny" data-mode="deny">禁止国家（反向）</span>
+        </div>
+        <input type="text" list="countryDatalist" class="country-search" data-tags="${tagsId}" placeholder="搜索国家后回车添加；不得超出渠道级合规政策">
+        <div id="${tagsId}" class="country-tags flex flex-wrap gap-2 mt-2"></div>
+      </div>
+      <div>
+        <div class="field-label required">收款人账户币种（勾选生成限额表行）<span class="usage u-route">过滤</span></div>
+        <div class="flex flex-wrap gap-2 ccy-chips" data-limit="${limitId}">
+          <span class="chip on">USD</span><span class="chip">EUR</span><span class="chip">JPY</span><span class="chip">SGD</span><span class="chip">GBP</span><span class="chip">PHP</span>
+        </div>
+        <p class="text-[11px] text-gray-400 mt-1">结算币种在渠道账户模块维护，不在此配置</p>
+      </div>
+      <div>
+        <div class="field-label required">商户-收款人类型（可多选，决定下方限额表的列）<span class="usage u-route">过滤</span></div>
+        <div class="flex gap-2 b2x-chips"><span class="chip on">B2B</span><span class="chip on">B2C</span><span class="chip">C2B</span><span class="chip">C2C</span></div>
+      </div>
+      <div>
+        <div class="field-label">支持的行业分类（暂不支持，占位）<span class="usage u-route">过滤</span></div>
+        <div class="flex gap-2"><span class="chip on">货物贸易</span><span class="chip on">服务贸易</span></div>
+        <p class="text-[11px] text-gray-400 mt-1">不得超出渠道级合规政策</p>
+      </div>
+      <div>
+        <div class="field-label">支持的资金来源（暂不支持，占位）<span class="usage u-route">过滤</span></div>
+        <div class="flex flex-wrap gap-2"><span class="chip">平台结算款</span><span class="chip">线下贸易款</span><span class="chip">三方收单行结算款</span></div>
+      </div>
+      <div class="col-span-2">
+        <div class="field-label required">到账时效（单选）<span class="usage u-disp">登记</span></div>
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-600">
+          <label class="flex items-center gap-1"><input type="radio" name="${rname}" checked><span>T+</span></label><input type="number" min="0" value="3" class="!w-16">
+          <label class="flex items-center gap-1"><input type="radio" name="${rname}"><span>n 小时</span></label><input type="number" min="1" placeholder="2" class="!w-16">
+          <label class="flex items-center gap-1"><input type="radio" name="${rname}"><span>下一工作日</span></label>
+          <label class="flex items-center gap-1"><input type="radio" name="${rname}"><span>当天</span></label>
+          <label class="flex items-center gap-1"><input type="radio" name="${rname}"><span>实时</span></label>
+        </div>
+      </div>
+      <div class="col-span-2">
+        <div class="field-label required">渠道限额（行 = 已勾选币种，列 = 已勾选商户-收款人类型）<span class="usage u-disp">登记</span></div>
+        <div class="border border-gray-200 rounded-lg overflow-hidden">
+          <table class="w-full limit-table"><thead><tr class="limit-head"></tr></thead><tbody class="limit-body"></tbody></table>
+        </div>
+        <p class="text-[11px] text-gray-400 mt-1">未勾选的类型不出现对应列，无需配置其限额（如未选 B2C 则无 B2C 限额）。</p>
+      </div>
+      <div class="col-span-2">
+        <div class="field-label">超限处理方式（仅登记，自由填写）<span class="usage u-disp">登记</span></div>
+        <input type="text" placeholder="如：页面拦截提示 / 自动拆单 / 人工审核…（系统不据此自动执行）">
+      </div>
+    </div>
+  </div>`;
+}
+function syncLimit(rail){
+  if (!rail) return;
+  const ccy = [...rail.querySelectorAll('.ccy-chips .chip.on')].map(c => c.textContent.trim());
+  const b2x = [...rail.querySelectorAll('.b2x-chips .chip.on')].map(c => c.textContent.trim());
+  const head = rail.querySelector('.limit-head');
+  const body = rail.querySelector('.limit-body');
+  if (!head || !body) return;
+  head.innerHTML = '<th>币种</th>' + b2x.map(t => `<th>${t}限额</th>`).join('') + '<th>操作</th>';
+  if (!ccy.length){
+    body.innerHTML = `<tr><td colspan="${b2x.length + 2}" class="text-center text-gray-400 py-4">未选择币种，无限额行</td></tr>`;
+    return;
+  }
+  if (!b2x.length){
+    body.innerHTML = `<tr><td colspan="2" class="text-center text-gray-400 py-4">未选择商户-收款人类型，无限额列</td></tr>`;
+    return;
+  }
+  body.innerHTML = ccy.map(c =>
+    `<tr><td class="font-medium">${c}</td>${'<td>单笔：无限额<br>单日：无限额</td>'.repeat(b2x.length)}<td class="text-blue-600 cursor-pointer">设置</td></tr>`
+  ).join('');
+}
+function syncAllLimits(){ document.querySelectorAll('#rail-box [data-rail]').forEach(syncLimit); }
+function renderRails(){
+  const method = document.querySelector('#pay-method .chip.on')?.dataset.pay || 'TT';
+  const box = document.getElementById('rail-box');
+  const addBtn = document.getElementById('add-rail-btn');
+  box.innerHTML = '';
+  if (method === 'LBT'){
+    addBtn.classList.remove('hidden');
+    box.insertAdjacentHTML('beforeend', railTemplate('PESONET', true));
+  } else {
+    addBtn.classList.add('hidden');
+    box.insertAdjacentHTML('beforeend', railTemplate(method === 'TT' ? 'SWIFT' : 'WALLET', false));
+  }
+  syncAllLimits();
+}
+function removeRail(btn){ btn.closest('[data-rail]').remove(); }
+function addRail(){
+  document.getElementById('rail-box').insertAdjacentHTML('beforeend', railTemplate('SEPA', true));
+  syncAllLimits();
+}
+renderRails();
+applyRoleView();
+applyChRoleView();
+</script>
+</body>
+</html>

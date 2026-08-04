@@ -760,16 +760,73 @@
     .app {
       height: 100vh;
       display: grid;
-      grid-template-columns: 252px 1fr;
+      grid-template-columns: 260px 1fr;
+      grid-template-rows: 64px 1fr;
       background: #f4f1fb;
     }
+    .topnav {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      padding: 0 26px;
+      background: #ffffff;
+      border-bottom: 1px solid #ece7f6;
+      min-width: 0;
+    }
+    .topnav-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 900;
+      font-size: 22px;
+      color: #1e1b4b;
+      flex: 0 0 auto;
+    }
+    .topnav-tabs {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+    }
+    .topnav-item {
+      border: 0;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 14px;
+      font-size: 15px;
+      font-weight: 750;
+      color: #334155;
+      border-radius: 10px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .topnav-item:hover { color: #7c3aed; background: #f4effe; }
+    .topnav-item.active { color: #7c3aed; }
+    .topnav-icon { font-size: 16px; line-height: 1; }
+    .topnav-actions {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 0 0 auto;
+    }
+    @media (max-width: 1100px) {
+      .topnav { gap: 14px; padding: 0 14px; }
+      .topnav-brand span:last-child { display: none; }
+      .topnav-item { padding: 7px 9px; font-size: 13px; }
+    }
     .sidebar {
-      background: var(--nav);
+      background: #2f2666;
       color: #ffffff;
       display: flex;
       flex-direction: column;
       min-height: 0;
       border-right: 0;
+      margin: 14px 0 14px 14px;
+      border-radius: 18px;
     }
     .side-brand {
       padding: 18px 22px 14px;
@@ -824,10 +881,14 @@
       margin: 4px 0;
       cursor: pointer;
     }
-    .menu-item.active, .menu-item:hover {
-      background: #7c3aed;
+    .menu-item.active {
+      background: linear-gradient(90deg, #8b5cf6, #7c3aed);
       color: #ffffff;
-      box-shadow: 0 8px 18px rgba(19, 8, 58, .24);
+      box-shadow: 0 8px 18px rgba(19, 8, 58, .28);
+    }
+    .menu-item:hover {
+      background: rgba(139, 92, 246, .35);
+      color: #ffffff;
     }
     .menu-icon {
       width: 22px;
@@ -3953,62 +4014,32 @@
   </section>
 
   <section id="appShell" class="app">
+    <header class="topnav">
+      <div class="topnav-brand"><span class="brand-knot"></span><span>BlancBlock</span></div>
+      <nav class="topnav-tabs" aria-label="主导航">
+        <button class="topnav-item" data-topnav="dashboard"><span class="topnav-icon">⌂</span>首页</button>
+        <button class="topnav-item active" data-topnav="wallet"><span class="topnav-icon">◈</span>钱包</button>
+        <button class="topnav-item" data-topnav="exchange"><span class="topnav-icon">⇄</span>资金承兑</button>
+        <button class="topnav-item" data-topnav="cards"><span class="topnav-icon">▭</span>卡片</button>
+      </nav>
+      <div class="topnav-actions">
+        <span class="status">审核通过</span>
+        <button class="btn ghost" id="resetDemo">重新开户</button>
+      </div>
+    </header>
     <aside class="sidebar">
-      <div class="side-brand"><span>BlancBlock</span><span class="brand-knot"></span></div>
-      <nav class="nav" aria-label="主菜单">
-        <button class="menu-item active" data-page="dashboard"><span class="menu-icon">▦</span><span>仪表盘</span></button>
-
-        <div class="menu-section">
-          <div class="menu-section-title">资产</div>
-          <button class="menu-item" data-page="assets" data-tab="myAssets"><span class="menu-icon">▣</span><span>资产</span></button>
-          <button class="menu-item" data-page="assets" data-tab="deposit"><span class="menu-icon">◎</span><span>充值</span></button>
-          <button class="menu-item" data-page="assets" data-tab="withdraw"><span class="menu-icon">↟</span><span>法币提现</span></button>
-          <button class="menu-item" data-page="payout" data-tab="reservedPayment"><span class="menu-icon">◷</span><span>预约付款</span></button>
-        </div>
-
-        <div class="menu-section">
-          <div class="menu-section-title green">兑换</div>
-          <button class="menu-item" data-page="exchange" data-tab="realtime"><span class="menu-icon">⇄</span><span>兑换</span></button>
-          <!-- 挂单入口暂时隐藏：<button class="menu-item" data-page="exchange" data-tab="orders"><span class="menu-icon">☷</span><span>委托挂单</span></button> -->
-        </div>
-
-        <div class="menu-section">
-          <div class="menu-section-title purple">交易对手方</div>
-          <button class="menu-item" data-page="directory" data-tab="beneficiaryAddress"><span class="menu-icon">◇</span><span>对手方地址簿</span></button>
-          <button class="menu-item" data-page="directory" data-tab="beneficiaryAccount"><span class="menu-icon">▤</span><span>收款人银行账户</span></button>
-        </div>
-
-        <div class="menu-section">
-          <div class="menu-section-title blue">收款</div>
-          <button class="menu-item" data-page="collection" data-tab="tools"><span class="menu-icon">▥</span><span>收款工具</span></button>
-          <button class="menu-item" data-page="collection" data-tab="collectionRecords"><span class="menu-icon">▧</span><span>收款记录</span></button>
-        </div>
-
-        <div class="menu-section">
-          <div class="menu-section-title orange">付款</div>
-          <button class="menu-item" data-page="payout" data-tab="balancePayment"><span class="menu-icon">▭</span><span>钱包付款</span></button>
-        </div>
-
-        <div class="menu-section hidden" aria-hidden="true" data-deferred-module="cards">
-          <div class="menu-section-title purple">我的卡片</div>
-          <button class="menu-item" tabindex="-1" data-page="cards" data-tab="mycards"><span class="menu-icon">▭</span><span>卡片列表</span></button>
-          <button class="menu-item" tabindex="-1" data-page="cards" data-tab="orders"><span class="menu-icon">▣</span><span>卡订单</span></button>
-          <button class="menu-item" tabindex="-1" data-page="cards" data-tab="billing"><span class="menu-icon">☰</span><span>卡账单</span></button>
-        </div>
-
-        <div class="menu-section">
-          <div class="menu-section-title dark">报表中心</div>
-          <button class="menu-item hidden" aria-hidden="true" tabindex="-1" data-page="reports" data-tab="transactionRecords"><span class="menu-icon">≡</span><span>交易记录</span></button>
-          <button class="menu-item" data-page="reports" data-tab="balanceDetails"><span class="menu-icon">▤</span><span>余额明细</span></button>
-        </div>
-
-        <div class="menu-section hidden" aria-hidden="true" data-deferred-module="settings">
-          <div class="menu-section-title blue">设置中心</div>
-          <button class="menu-item" tabindex="-1" data-page="profile" data-tab="profile"><span class="menu-icon">☻</span><span>个人信息</span></button>
-          <button class="menu-item" tabindex="-1" data-page="profile" data-tab="api"><span class="menu-icon">&lt;/&gt;</span><span>API申请</span></button>
-          <button class="menu-item" tabindex="-1" data-page="profile" data-tab="security"><span class="menu-icon">▣</span><span>安全设置</span></button>
-          <button class="menu-item" tabindex="-1" data-page="profile" data-tab="roles"><span class="menu-icon">♢</span><span>角色与权限</span></button>
-        </div>
+      <nav class="nav" aria-label="钱包菜单">
+        <button class="menu-item active" data-page="assets" data-tab="myAssets"><span class="menu-icon">▣</span><span>资产总览</span></button>
+        <button class="menu-item" data-page="assets" data-tab="cryptoDeposit"><span class="menu-icon">◉</span><span>充币</span></button>
+        <button class="menu-item" data-page="assets" data-tab="cryptoWithdraw"><span class="menu-icon">↟</span><span>提币</span></button>
+        <button class="menu-item" data-page="assets" data-tab="fiatDeposit"><span class="menu-icon">◎</span><span>法币充值</span></button>
+        <button class="menu-item" data-page="assets" data-tab="fiatWithdraw"><span class="menu-icon">▤</span><span>法币提现</span></button>
+        <button class="menu-item" data-page="payout" data-tab="reservedPayment"><span class="menu-icon">◷</span><span>预约付款</span></button>
+        <button class="menu-item" data-page="reports" data-tab="balanceDetails"><span class="menu-icon">▦</span><span>余额明细</span></button>
+        <button class="menu-item" data-page="reports" data-tab="transactionRecords"><span class="menu-icon">≡</span><span>钱包交易</span></button>
+        <button class="menu-item" data-page="directory" data-tab="beneficiaryAddress"><span class="menu-icon">◇</span><span>收款人地址簿</span></button>
+        <button class="menu-item" data-page="directory" data-tab="beneficiaryAccount"><span class="menu-icon">▥</span><span>收款人银行账户</span></button>
+        <button class="menu-item" data-page="collection" data-tab="tools"><span class="menu-icon">▧</span><span>收款工具</span></button>
       </nav>
       <div class="side-foot">KYC passed · Fiat + Crypto enabled</div>
     </aside>
@@ -4017,10 +4048,6 @@
         <div class="top-title">
           <h2 id="pageTitle">资产管理</h2>
           <p id="pageSubtitle">总余额、法币余额、数币余额、充值和提现。</p>
-        </div>
-        <div class="top-actions">
-          <span class="status">审核通过</span>
-          <button class="btn ghost" id="resetDemo">重新开户</button>
         </div>
       </header>
       <main id="main" class="main"></main>
@@ -4305,6 +4332,24 @@
       });
     });
 
+    const topnavTargets = {
+      dashboard: ['dashboard', 'overview'],
+      wallet: ['assets', 'myAssets'],
+      exchange: ['exchange', 'fiatCryptoAccept'],
+      cards: ['cards', 'mycards']
+    };
+    document.querySelectorAll('.topnav-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = topnavTargets[btn.dataset.topnav] || topnavTargets.wallet;
+        state.returnContext = null;
+        renderPage(target[0], target[1]);
+      });
+    });
+    function syncTopnav(page) {
+      const group = page === 'dashboard' ? 'dashboard' : (page === 'exchange' ? 'exchange' : (page === 'cards' ? 'cards' : 'wallet'));
+      document.querySelectorAll('.topnav-item').forEach(btn => btn.classList.toggle('active', btn.dataset.topnav === group));
+    }
+
     function defaultTab(page) {
       return {
         dashboard: 'overview',
@@ -4327,8 +4372,9 @@
           ? assetNavGroup(tab)
           : (page === 'exchange' ? exchangeNavGroup(tab) : (page === 'directory' ? directoryNavGroup(tab) : (page === 'collection' ? collectionNavGroup(tab) : (page === 'payout' ? payoutNavGroup(tab) : (page === 'reports' ? reportNavGroup(tab) : tab)))));
         const itemTab = btn.dataset.tab || defaultTab(btn.dataset.page);
-        btn.classList.toggle('active', btn.dataset.page === page && itemTab === activeTab);
+        btn.classList.toggle('active', btn.dataset.page === page && (itemTab === tab || itemTab === activeTab));
       });
+      syncTopnav(page);
       const meta = getPageMeta(page, tab);
       pageTitle.textContent = meta.title;
       pageSubtitle.textContent = meta.subtitle;
