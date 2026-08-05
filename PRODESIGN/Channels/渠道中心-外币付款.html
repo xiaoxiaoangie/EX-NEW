@@ -340,7 +340,10 @@
               <table class="w-full">
                 <thead><tr><th>类型</th><th>是否支持</th><th>POBO 要求</th></tr></thead>
                 <tbody>
-                  <tr><td>B2B</td><td><div class="flex gap-2 single-group"><span class="chip on">支持</span><span class="chip">不支持</span></div></td><td><div class="flex gap-2 single-group"><span class="chip on">只能用入网商户信息</span><span class="chip">自定义</span></div></td></tr>
+                  <tr><td>B2B</td><td><div class="flex gap-2 single-group"><span class="chip on">支持</span><span class="chip">不支持</span></div></td><td>
+                    <div class="flex gap-2 single-group toggle-pair" data-detail="pobo-note-b2b"><span class="chip on" data-val="no">仅商户信息</span><span class="chip" data-val="yes">收款人信息</span><span class="chip" data-val="yes">自定义</span></div>
+                    <div id="pobo-note-b2b" class="hidden mt-2"><textarea rows="2" placeholder="POBO 备注（选择「收款人信息」或「自定义」时必填）"></textarea></div>
+                  </td></tr>
                   <tr><td>B2C</td><td><div class="flex gap-2 single-group"><span class="chip">支持</span><span class="chip on">不支持</span></div></td><td class="text-gray-300">—</td></tr>
                 </tbody>
               </table>
