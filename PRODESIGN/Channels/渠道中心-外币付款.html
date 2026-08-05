@@ -65,8 +65,8 @@
       <div class="space-y-1.5">
         <div><span class="role r-compliance">合规</span><span class="text-[11px] text-gray-500 ml-1">合规政策</span></div>
         <div><span class="role r-ops">渠道运营</span><span class="text-[11px] text-gray-500 ml-1">渠道能力</span></div>
-        <div><span class="role r-product">产品</span><span class="text-[11px] text-gray-500 ml-1">账户体系 / 过滤标签</span></div>
-        <div><span class="role r-settle">清算</span><span class="text-[11px] text-gray-500 ml-1">资金处理</span></div>
+        <div><span class="role r-product">产品经理</span><span class="text-[11px] text-gray-500 ml-1">账户体系 / 过滤标签</span></div>
+        <div><span class="role r-settle">资金清算</span><span class="text-[11px] text-gray-500 ml-1">资金处理</span></div>
       </div>
     </div>
     <div class="mt-6 pt-4 border-t border-gray-100">
@@ -205,7 +205,7 @@
   <section id="list-fiat" class="hidden">
     <div class="flex items-center justify-between mb-4">
       <div><h1 class="text-lg font-bold text-gray-900">外币付款能力</h1>
-        <p class="text-xs text-gray-400 mt-1">一条数据 = 渠道 + 支付方式 · 工作流：渠道运营发起 → 产品 → 清算，每步完成同步上一步；各部分独立编辑 / 提交</p></div>
+        <p class="text-xs text-gray-400 mt-1">一条数据 = 渠道 + 支付方式 · 工作流：渠道运营发起 → 产品经理 → 资金清算，每步完成同步上一步；各部分独立编辑 / 提交</p></div>
       <button class="px-4 py-2 text-sm rounded-lg bg-blue-600 text-white" onclick="openFiat('ops')">＋ 新增付款能力（渠道运营发起）</button>
     </div>
     <div class="card overflow-hidden">
@@ -232,19 +232,19 @@
             <option value="all">全部（管理员预览）</option>
             <option value="compliance">合规</option>
             <option value="ops">渠道运营</option>
-            <option value="product">产品</option>
-            <option value="settle">清算</option>
+            <option value="product">产品经理</option>
+            <option value="settle">资金清算</option>
           </select>
         </div>
       </div>
 
-      <!-- 工作流状态条：渠道运营 → 产品 → 清算（每步完成同步上一步） -->
+      <!-- 工作流状态条：渠道运营 → 产品经理 → 资金清算（每步完成同步上一步） -->
       <div class="workflow mb-3" id="workflow">
         <div class="wf-step active" data-stage="ops"><span class="wf-dot">1</span><div><div class="wf-name">渠道运营 · 付款能力</div><div class="wf-sub" data-wf-sub>发起 / 维护中</div></div></div>
-        <div class="wf-step wait" data-stage="product"><span class="wf-dot">2</span><div><div class="wf-name">产品 · 账户体系</div><div class="wf-sub" data-wf-sub>待维护</div></div></div>
-        <div class="wf-step wait" data-stage="settle"><span class="wf-dot">3</span><div><div class="wf-name">清算 · 资金处理</div><div class="wf-sub" data-wf-sub>待维护</div></div></div>
+        <div class="wf-step wait" data-stage="product"><span class="wf-dot">2</span><div><div class="wf-name">产品经理 · 账户体系</div><div class="wf-sub" data-wf-sub>待维护</div></div></div>
+        <div class="wf-step wait" data-stage="settle"><span class="wf-dot">3</span><div><div class="wf-name">资金清算 · 资金处理</div><div class="wf-sub" data-wf-sub>待维护</div></div></div>
       </div>
-      <div class="rule-bar mb-4">合规政策为渠道级母集，此处只读引用。付款能力工作流：<b>渠道运营发起 → 产品 → 清算</b>，每部分各自独立编辑 / 提交，完成后同步上一步的人。切换「当前身份」可模拟各角色权限。</div>
+      <div class="rule-bar mb-4">合规政策为渠道级母集，此处只读引用。付款能力工作流：<b>渠道运营发起 → 产品经理 → 资金清算</b>，每部分各自独立编辑 / 提交，完成后同步上一步的人。切换「当前身份」可模拟各角色权限。</div>
 
       <!-- ===== 0. 合规政策（合规 · 只读引用） ===== -->
       <section class="role-section" data-role="compliance">
@@ -358,7 +358,7 @@
 
       <!-- ===== 4. 账户体系（产品） ===== -->
       <section class="role-section" data-role="product">
-        <h3 class="font-bold text-gray-900 mb-1">4. 账户体系 <span class="role r-product">产品维护</span></h3>
+        <h3 class="font-bold text-gray-900 mb-1">4. 账户体系 <span class="role r-product">产品经理维护</span></h3>
         <p class="text-xs text-gray-400 mb-4">目的：明确渠道的资金怎么走。仅登记，不参与渠道过滤 <span class="usage u-disp">登记</span>。</p>
         <div class="grid grid-cols-2 gap-x-8 gap-y-5">
           <div>
@@ -385,10 +385,10 @@
               <span class="chip">账户结构图.png <span class="ml-1 cursor-pointer" onclick="this.parentElement.remove()">×</span></span>
             </div>
           </div>
-          <div class="col-span-2 rule-bar">产品另在<b>系统配置</b>中维护各字段「是否参与渠道过滤」的标签（非逐条能力配置）；本表单角标即来源于该配置。</div>
+          <div class="col-span-2 rule-bar">产品经理另在<b>系统配置</b>中维护各字段「是否参与渠道过滤」的标签（非逐条能力配置）；本表单角标即来源于该配置。</div>
         </div>
         <div class="section-foot">
-          <span class="section-status" style="color:#9ca3af">● 待产品维护</span>
+          <span class="section-status" style="color:#9ca3af">● 待产品经理维护</span>
           <button class="px-3 py-1.5 text-xs rounded-lg bg-blue-600 text-white" onclick="submitSection('product','账户体系')">提交账户体系</button>
         </div>
       </section>
@@ -433,14 +433,14 @@
       <!-- ===== 分区状态与同步记录（始终可见） ===== -->
       <div class="role-section" data-role="status">
         <h3 class="font-bold text-gray-900 mb-1">分区状态与同步记录</h3>
-        <p class="text-xs text-gray-400 mb-3">各分区独立编辑 / 提交，互不阻塞；提交后自动同步上一步的人（产品完成同步渠道运营，清算完成同步产品 / 渠道运营）。</p>
+        <p class="text-xs text-gray-400 mb-3">各分区独立编辑 / 提交，互不阻塞；提交后自动同步上一步的人（产品经理完成同步渠道运营，资金清算完成同步产品经理 / 渠道运营）。</p>
         <div class="border border-gray-200 rounded-lg overflow-hidden">
           <table class="w-full">
             <thead><tr><th>分区</th><th>维护角色</th><th>状态</th><th>最近提交</th><th>同步对象</th></tr></thead>
             <tbody>
               <tr><td>付款能力</td><td><span class="role r-ops">渠道运营</span></td><td><span class="badge b-amber">维护中</span></td><td>2026-08-04</td><td>—（发起方）</td></tr>
-              <tr><td>账户体系</td><td><span class="role r-product">产品</span></td><td><span class="badge b-gray">待维护</span></td><td>—</td><td>渠道运营</td></tr>
-              <tr><td>资金处理</td><td><span class="role r-settle">清算</span></td><td><span class="badge b-gray">待维护</span></td><td>—</td><td>产品 / 渠道运营</td></tr>
+              <tr><td>账户体系</td><td><span class="role r-product">产品经理</span></td><td><span class="badge b-gray">待维护</span></td><td>—</td><td>渠道运营</td></tr>
+              <tr><td>资金处理</td><td><span class="role r-settle">资金清算</span></td><td><span class="badge b-gray">待维护</span></td><td>—</td><td>产品经理 / 渠道运营</td></tr>
             </tbody>
           </table>
         </div>
@@ -482,7 +482,7 @@ function applyRoleView(){
 }
 
 /* ===== 付款能力：分区独立提交 → 同步上一步 ===== */
-const FIAT_SYNC = { ops:'—（发起方）', product:'渠道运营', settle:'产品 / 渠道运营' };
+const FIAT_SYNC = { ops:'—（发起方）', product:'渠道运营', settle:'产品经理 / 渠道运营' };
 function submitSection(stage, name){
   const step = document.querySelector(`#workflow .wf-step[data-stage="${stage}"]`);
   if (step){
