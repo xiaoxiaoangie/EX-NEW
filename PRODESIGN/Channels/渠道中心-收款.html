@@ -17,6 +17,7 @@
   .field-label.required::after{content:" *";color:#ef4444}
   .chip{display:inline-flex;align-items:center;padding:4px 12px;border-radius:9999px;border:1px solid #e5e7eb;font-size:12px;color:#6b7280;cursor:pointer;user-select:none}
   .chip.on{background:#eff6ff;border-color:#3b82f6;color:#1d4ed8}
+  .chip.deny.on{background:#fef2f2;border-color:#ef4444;color:#b91c1c}
   .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:500}
   .b-blue{background:#eff6ff;color:#1d4ed8}.b-green{background:#ecfdf5;color:#047857}
   .b-gray{background:#f3f4f6;color:#6b7280}.b-amber{background:#fffbeb;color:#b45309}
@@ -281,6 +282,10 @@
   </main>
 </div>
 
+<datalist id="countryDatalist">
+  <option value="新加坡"><option value="美国"><option value="日本"><option value="菲律宾"><option value="德国"><option value="法国"><option value="英国"><option value="澳大利亚"><option value="韩国"><option value="越南"><option value="印度尼西亚"><option value="泰国"><option value="马来西亚"><option value="中国香港">
+</datalist>
+
 <script>
 /* ===== 导航 ===== */
 function show(id){
@@ -324,6 +329,15 @@ function openCollect(role){
 document.addEventListener('click', e => {
   const chip = e.target.closest('.chip');
   if (!chip) return;
+  /* 支持 / 禁止 国家模式切换 */
+  if (chip.classList.contains('mode-chip')){
+    chip.parentElement.querySelectorAll('.mode-chip').forEach(c => c.classList.remove('on'));
+    chip.classList.add('on');
+    const field = chip.closest('[data-country-field]');
+    const tags = field && field.querySelector('.country-tags');
+    if (tags) tags.innerHTML = '';
+    return;
+  }
   const single = chip.closest('.single-group');
   if (single){
     single.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
@@ -338,6 +352,29 @@ document.addEventListener('click', e => {
   }
   /* 收款方式 → 收款清算系统模块 */
   if (chip.closest('#c-pay-method')) renderCRails();
+  /* 资金来源大类 → 明细面板展开 / 收起 */
+  if (chip.closest('[data-fund-cats]')){
+    const rail = chip.closest('[data-crail]');
+    const panel = rail && rail.querySelector(`[data-fund-panel="${chip.dataset.fund}"]`);
+    if (panel) panel.classList.toggle('hidden', !chip.classList.contains('on'));
+  }
+  /* 平台结算子类型 → 明细行 */
+  if (chip.closest('[data-platform-types]')) renderPlatformRows(chip.closest('[data-crail]'));
+  /* 收单机构 行业 / 站点形态 → 明细 */
+  if (chip.closest('[data-acq-industry]') || chip.closest('[data-acq-mode]')) renderAcqDetail(chip.closest('[data-crail]'));
+});
+
+/* ===== 国家标签输入 ===== */
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter' || !e.target.classList.contains('country-search')) return;
+  e.preventDefault();
+  const val = e.target.value.trim(); if (!val) return;
+  const tags = document.getElementById(e.target.dataset.tags);
+  if ([...tags.children].some(t => t.dataset.v === val)) { e.target.value=''; return; }
+  const tag = document.createElement('span');
+  tag.className = 'chip on'; tag.dataset.v = val;
+  tag.innerHTML = val + ' <span class="ml-1 cursor-pointer" onclick="this.parentElement.remove()">×</span>';
+  tags.appendChild(tag); e.target.value='';
 });
 
 /* ===== 收款清算系统模块 ===== */
@@ -369,6 +406,59 @@ function cRailTemplate(name, removable){
           <label class="flex items-center gap-1"><input type="radio" name="${rname}"><span>实时</span></label>
         </div>
       </div>
+      <div class="col-span-2" data-country-field>
+        <div class="field-label required">汇款人所在国家（支持 / 禁止 二选一）<span class="usage u-route">过滤</span></div>
+        <div class="flex gap-2 mb-2">
+          <span class="chip mode-chip on" data-mode="allow">支持国家（正向）</span>
+          <span class="chip mode-chip deny" data-mode="deny">禁止国家（反向）</span>
+        </div>
+        <input type="text" list="countryDatalist" class="country-search" data-tags="crail-${id}-payer-tags" placeholder="搜索国家后回车添加，如「越南」">
+        <div id="crail-${id}-payer-tags" class="country-tags flex flex-wrap gap-2 mt-2"></div>
+      </div>
+      
+      <div class="col-span-2">
+        <div class="field-label required">支持的资金来源（多选大类，展开配置明细）<span class="usage u-route">过滤</span></div>
+        <div class="flex flex-wrap gap-2" data-fund-cats>
+          <span class="chip" data-fund="platform">平台结算</span>
+          <span class="chip" data-fund="acq">收单机构</span>
+          <span class="chip" data-fund="offline">线下服务</span>
+        </div>
+        <div class="hidden rounded-lg border border-gray-200 bg-gray-50 p-3 mt-2" data-fund-panel="platform">
+          <div class="text-xs font-medium text-gray-600 mb-2">平台结算 · 勾选平台类型后逐类配置「平台 + 站点 + 备注」</div>
+          <div class="flex flex-wrap gap-2 mb-2" data-platform-types>
+            <span class="chip" data-ptype="电商平台">电商平台</span>
+            <span class="chip" data-ptype="游戏平台">游戏平台</span>
+            <span class="chip" data-ptype="广告联盟">广告联盟</span>
+          </div>
+          <div data-platform-rows class="space-y-2"></div>
+        </div>
+        <div class="hidden rounded-lg border border-gray-200 bg-gray-50 p-3 mt-2" data-fund-panel="acq">
+          <div class="text-xs font-medium text-gray-600 mb-2">收单机构 · 先选行业，再选独立站 / 自建站</div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-xs text-gray-400 w-14 shrink-0">行业</span>
+            <div class="flex gap-2 single-group" data-acq-industry><span class="chip">电商</span><span class="chip">游戏</span></div>
+          </div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-xs text-gray-400 w-14 shrink-0">站点形态</span>
+            <div class="flex gap-2 single-group" data-acq-mode><span class="chip">独立站</span><span class="chip">自建站</span></div>
+          </div>
+          <div data-acq-detail><p class="text-[11px] text-gray-400">选择行业与站点形态后配置明细</p></div>
+          <input type="text" class="mt-2" placeholder="备注">
+        </div>
+        <div class="hidden rounded-lg border border-gray-200 bg-gray-50 p-3 mt-2" data-fund-panel="offline">
+          <div class="text-xs font-medium text-gray-600 mb-2">线下服务 · 货贸 / 服贸</div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-xs text-gray-400 w-14 shrink-0">货贸类</span>
+            <div class="flex gap-2"><span class="chip">B2B 贸易</span></div>
+          </div>
+          <input type="text" class="mb-3" placeholder="货贸类备注">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-xs text-gray-400 w-14 shrink-0">服贸类</span>
+            <div class="flex gap-2"><span class="chip">广告</span><span class="chip">薪资</span><span class="chip">佣金</span></div>
+          </div>
+          <input type="text" placeholder="服贸类备注">
+        </div>
+      </div>
       <div class="col-span-2">
         <div class="field-label">重要说明 <span class="usage u-disp">登记</span></div>
         <textarea rows="2" placeholder="该清算系统的重要说明（如到账规则 / 例外 / 限制等）"></textarea>
@@ -387,6 +477,44 @@ function renderCRails(){
   } else {
     addBtn.classList.add('hidden');
     box.insertAdjacentHTML('beforeend', cRailTemplate('SWIFT', false));
+  }
+}
+/* ===== 资金来源明细渲染 ===== */
+const PLATFORM_OPTIONS = {
+  '电商平台': ['Amazon','Shopee','Lazada','TikTok Shop','eBay'],
+  '游戏平台': ['App Store','Google Play','Steam'],
+  '广告联盟': ['Google Ads','Meta Ads','TikTok Ads']
+};
+function renderPlatformRows(rail){
+  const box = rail.querySelector('[data-platform-rows]');
+  const types = [...rail.querySelectorAll('[data-platform-types] .chip.on')].map(c => c.dataset.ptype);
+  box.innerHTML = types.map(t => {
+    const opts = PLATFORM_OPTIONS[t].map(o => `<option>${o}</option>`).join('');
+    return `<div class="grid grid-cols-[80px_1fr_110px_1fr] items-center gap-2">
+      <span class="text-xs text-gray-500">${t}</span>
+      <select class="text-xs"><option value="">选择平台</option>${opts}</select>
+      <input type="text" class="text-xs" placeholder="站点（如 US）">
+      <input type="text" class="text-xs" placeholder="备注">
+    </div>`;
+  }).join('');
+}
+function renderAcqDetail(rail){
+  const industry = rail.querySelector('[data-acq-industry] .chip.on')?.textContent || '';
+  const mode = rail.querySelector('[data-acq-mode] .chip.on')?.textContent || '';
+  const box = rail.querySelector('[data-acq-detail]');
+  if (!mode){ box.innerHTML = '<p class="text-[11px] text-gray-400">选择行业与站点形态后配置明细</p>'; return; }
+  if (mode === '独立站'){
+    box.innerHTML = `<div class="grid grid-cols-2 gap-2">
+      <div><div class="text-[11px] text-gray-400 mb-1">${industry}独立站 · 建站工具</div>
+        <select class="text-xs"><option value="">选择建站工具</option><option>Shopify</option><option>Shoplazza</option><option>Shopline</option><option>WooCommerce</option></select></div>
+      <div><div class="text-[11px] text-gray-400 mb-1">收单机构</div>
+        <select class="text-xs"><option value="">选择收单机构</option><option>PayPal</option><option>Stripe</option><option>Checkout.com</option><option>Airwallex</option></select></div>
+    </div>`;
+  } else {
+    box.innerHTML = `<div class="flex items-center gap-2">
+      <span class="text-[11px] text-gray-400 shrink-0">${industry}自建站类型</span>
+      <div class="flex gap-2 single-group"><span class="chip">游戏自建站</span><span class="chip">电商自建站</span></div>
+    </div>`;
   }
 }
 function removeCRail(btn){ btn.closest('[data-crail]').remove(); }
