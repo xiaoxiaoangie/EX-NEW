@@ -162,47 +162,51 @@
       <!-- ===== 2. 收款清算能力模块（渠道运营） ===== -->
       <section class="role-section" data-role="ops">
         <div class="flex items-center justify-between mb-1">
-          <h3 class="font-bold text-gray-900">2. 收款清算能力模块 <span class="role r-ops">渠道运营</span></h3>
+          <h3 class="font-bold text-gray-900">2. 收款能力配置 <span class="role r-ops">渠道运营</span></h3>
           <button id="add-crail-btn" class="px-3 py-1.5 text-xs border border-blue-200 text-blue-600 rounded-lg hidden" onclick="addCRail()">＋ 添加清算系统</button>
         </div>
-        <p class="text-xs text-gray-400 mb-2">银行收款方式：TT / Local Transfer。Local Transfer 下选择清算系统，可添加多个；每个模块的限额 / 时效 / 重要说明各自配置。</p>
-        <div class="mb-3">
+        <p class="text-xs text-gray-400 mb-3">按收款方式类型（TT / Local Transfer）配置能力：先选类型，其下公共字段按该类型统一维护；再往下每个清算系统单独配置资金来源 / 限额 / 时效 / 提供凭证。</p>
+        <div class="mb-4">
           <div class="field-label required">收款方式（单选，决定清算系统模块）<span class="usage u-route">过滤</span></div>
           <div class="flex gap-2 single-group" id="c-pay-method">
             <span class="chip on" data-pay="TT">TT</span>
             <span class="chip" data-pay="LBT">LOCAL TRANSFER</span>
           </div>
         </div>
-        <div id="crail-box"></div>
-      </section>
-
-      <!-- ===== 3. 能力条目级公共字段（渠道运营） ===== -->
-      <section class="role-section" data-role="ops">
-        <h3 class="font-bold text-gray-900 mb-1">3. 能力条目级公共字段 <span class="role r-ops">渠道运营</span> <span class="badge b-gray">对所有清算系统生效</span></h3>
-        <div class="grid grid-cols-2 gap-x-8 gap-y-5 mt-4">
+        <!-- 收款方式类型级公共字段 -->
+        <div class="grid grid-cols-2 gap-x-8 gap-y-5 mb-5 p-4 rounded-lg bg-gray-50 border border-gray-100">
+          <div class="col-span-2 text-sm font-semibold text-gray-700">收款方式类型级公共字段 <span class="badge b-gray">按收款方式类型统一，非逐个清算系统</span></div>
+          <div class="col-span-2" data-country-field>
+            <div class="field-label required">汇款人国家（支持 / 禁止 二选一）<span class="usage u-route">过滤</span></div>
+            <div class="flex gap-2 mb-2">
+              <span class="chip mode-chip on" data-mode="allow">支持国家（正向）</span>
+              <span class="chip mode-chip deny" data-mode="deny">禁止国家（反向）</span>
+            </div>
+            <input type="text" list="countryDatalist" class="country-search" data-tags="collect-payer-country-tags" placeholder="搜索国家后回车添加，如「越南」">
+            <div id="collect-payer-country-tags" class="country-tags flex flex-wrap gap-2 mt-2"></div>
+            <p class="text-[11px] text-gray-400 mt-1">该收款方式类型（TT / Local Transfer）支持的汇款人国家</p>
+          </div>
           <div>
-            <div class="field-label required">收款人关系（可多选）<span class="usage u-route">过滤</span></div>
+            <div class="field-label required">收款人关系（同名 / 异名，可多选）<span class="usage u-route">过滤</span></div>
             <div class="flex gap-2"><span class="chip on">同名收</span><span class="chip">异名收</span></div>
             <p class="text-[11px] text-gray-400 mt-1">与付款侧同名 / 异名逻辑一致，推送渠道时映射</p>
           </div>
           <div>
             <div class="field-label">备注（基本能力备注）</div><textarea rows="2" placeholder="自由备注"></textarea>
           </div>
-          <div class="col-span-2">
-            <div class="field-label required">凭证提供（可多选 + 说明）<span class="usage u-disp">登记</span></div>
-            <div class="flex flex-wrap gap-2 mb-2"><span class="chip on">提供 MT103</span><span class="chip">提供 UETR 码</span><span class="chip">提供汇入凭证</span><span class="chip">更正</span></div>
-            <textarea rows="2" placeholder="凭证提供说明（如提供方式 / 时效 / 限制等，可直接输入）"></textarea>
-          </div>
         </div>
+        <div class="field-label">清算系统明细（每个清算系统一个独立模块：资金来源 / 限额 / 时效 / 提供凭证）</div>
+        <div id="crail-box"></div>
         <div class="section-foot">
-          <span class="section-status" style="color:#2563eb">● 渠道运营维护中</span>
-          <button class="px-3 py-1.5 text-xs rounded-lg bg-blue-600 text-white" onclick="submitCSection('ops','收款能力')">提交收款能力（1-3 分区）</button>
+          <span class="section-status" style="color:#2563eb">● 渠道运营维护中（收款方式类型公共字段 + 清算系统）</span>
+          <button class="px-3 py-1.5 text-xs rounded-lg bg-blue-600 text-white" onclick="submitCSection('ops','收款能力')">提交收款能力</button>
         </div>
       </section>
 
+
       <!-- ===== 4. 账户体系（产品经理） ===== -->
       <section class="role-section locked" data-role="product">
-        <h3 class="font-bold text-gray-900 mb-1">4. 账户体系 <span class="role r-product">产品经理维护</span></h3>
+        <h3 class="font-bold text-gray-900 mb-1">3. 账户体系 <span class="role r-product">产品经理维护</span></h3>
         <p class="text-xs text-gray-400 mb-4">目的：明确收款资金的账户结构。仅登记，不参与渠道过滤 <span class="usage u-disp">登记</span>。</p>
         <div class="grid grid-cols-1 gap-y-5">
           <div>
@@ -227,7 +231,7 @@
 
       <!-- ===== 5. 资金处理与异常（资金清算） ===== -->
       <section class="role-section locked" data-role="settle">
-        <h3 class="font-bold text-gray-900 mb-1">5. 资金处理与异常处理 <span class="role r-settle">资金清算维护</span> <span class="usage u-disp">登记</span></h3>
+        <h3 class="font-bold text-gray-900 mb-1">4. 资金处理与异常处理 <span class="role r-settle">资金清算维护</span> <span class="usage u-disp">登记</span></h3>
         <p class="text-xs text-gray-400 mb-4">收款资金结算关系与退款规则；仅作登记备案，系统不据此自动处理。</p>
         <div class="grid grid-cols-1 gap-y-6">
           <div>
@@ -358,10 +362,10 @@ document.addEventListener('click', e => {
     const panel = rail && rail.querySelector(`[data-fund-panel="${chip.dataset.fund}"]`);
     if (panel) panel.classList.toggle('hidden', !chip.classList.contains('on'));
   }
-  /* 平台结算子类型 → 明细行 */
+  /* 平台结算子类型 → 明细块 */
   if (chip.closest('[data-platform-types]')) renderPlatformRows(chip.closest('[data-crail]'));
-  /* 收单机构 行业 / 站点形态 → 明细 */
-  if (chip.closest('[data-acq-industry]') || chip.closest('[data-acq-mode]')) renderAcqDetail(chip.closest('[data-crail]'));
+  /* 收单机构类型（可多选）→ 明细块 */
+  if (chip.closest('[data-acq-types]')) renderAcqBlocks(chip.closest('[data-crail]'));
 });
 
 /* ===== 国家标签输入 ===== */
@@ -406,16 +410,6 @@ function cRailTemplate(name, removable){
           <label class="flex items-center gap-1"><input type="radio" name="${rname}"><span>实时</span></label>
         </div>
       </div>
-      <div class="col-span-2" data-country-field>
-        <div class="field-label required">汇款人所在国家（支持 / 禁止 二选一）<span class="usage u-route">过滤</span></div>
-        <div class="flex gap-2 mb-2">
-          <span class="chip mode-chip on" data-mode="allow">支持国家（正向）</span>
-          <span class="chip mode-chip deny" data-mode="deny">禁止国家（反向）</span>
-        </div>
-        <input type="text" list="countryDatalist" class="country-search" data-tags="crail-${id}-payer-tags" placeholder="搜索国家后回车添加，如「越南」">
-        <div id="crail-${id}-payer-tags" class="country-tags flex flex-wrap gap-2 mt-2"></div>
-      </div>
-      
       <div class="col-span-2">
         <div class="field-label required">支持的资金来源（多选大类，展开配置明细）<span class="usage u-route">过滤</span></div>
         <div class="flex flex-wrap gap-2" data-fund-cats>
@@ -424,7 +418,7 @@ function cRailTemplate(name, removable){
           <span class="chip" data-fund="offline">线下服务</span>
         </div>
         <div class="hidden rounded-lg border border-gray-200 bg-gray-50 p-3 mt-2" data-fund-panel="platform">
-          <div class="text-xs font-medium text-gray-600 mb-2">平台结算 · 勾选平台类型后逐类配置「平台 + 站点 + 备注」</div>
+          <div class="text-xs font-medium text-gray-600 mb-2">平台结算 · 勾选平台类型（可多选），每类可添加多个「平台 + 站点 + 备注」</div>
           <div class="flex flex-wrap gap-2 mb-2" data-platform-types>
             <span class="chip" data-ptype="电商平台">电商平台</span>
             <span class="chip" data-ptype="游戏平台">游戏平台</span>
@@ -433,17 +427,13 @@ function cRailTemplate(name, removable){
           <div data-platform-rows class="space-y-2"></div>
         </div>
         <div class="hidden rounded-lg border border-gray-200 bg-gray-50 p-3 mt-2" data-fund-panel="acq">
-          <div class="text-xs font-medium text-gray-600 mb-2">收单机构 · 先选行业，再选独立站 / 自建站</div>
-          <div class="flex items-center gap-2 mb-2">
-            <span class="text-xs text-gray-400 w-14 shrink-0">行业</span>
-            <div class="flex gap-2 single-group" data-acq-industry><span class="chip">电商</span><span class="chip">游戏</span></div>
+          <div class="text-xs font-medium text-gray-600 mb-2">收单机构 · 选择类型（可多选），逐类配置建站工具 / 收单机构</div>
+          <div class="flex flex-wrap gap-2 mb-2" data-acq-types>
+            <span class="chip" data-atype="电商独立站">电商独立站</span>
+            <span class="chip" data-atype="电商自建站">电商自建站</span>
+            <span class="chip" data-atype="游戏自建站">游戏自建站</span>
           </div>
-          <div class="flex items-center gap-2 mb-2">
-            <span class="text-xs text-gray-400 w-14 shrink-0">站点形态</span>
-            <div class="flex gap-2 single-group" data-acq-mode><span class="chip">独立站</span><span class="chip">自建站</span></div>
-          </div>
-          <div data-acq-detail><p class="text-[11px] text-gray-400">选择行业与站点形态后配置明细</p></div>
-          <input type="text" class="mt-2" placeholder="备注">
+          <div data-acq-blocks class="space-y-2"></div>
         </div>
         <div class="hidden rounded-lg border border-gray-200 bg-gray-50 p-3 mt-2" data-fund-panel="offline">
           <div class="text-xs font-medium text-gray-600 mb-2">线下服务 · 货贸 / 服贸</div>
@@ -458,6 +448,11 @@ function cRailTemplate(name, removable){
           </div>
           <input type="text" placeholder="服贸类备注">
         </div>
+      </div>
+      <div class="col-span-2">
+        <div class="field-label required">提供的凭证（可多选 + 说明）<span class="usage u-disp">登记</span></div>
+        <div class="flex flex-wrap gap-2 mb-2"><span class="chip on">提供 MT103</span><span class="chip">提供 UETR 码</span><span class="chip">提供汇入凭证</span><span class="chip">更正</span></div>
+        <textarea rows="2" placeholder="凭证提供说明（如提供方式 / 时效 / 限制等，可直接输入）"></textarea>
       </div>
       <div class="col-span-2">
         <div class="field-label">重要说明 <span class="usage u-disp">登记</span></div>
@@ -485,37 +480,78 @@ const PLATFORM_OPTIONS = {
   '游戏平台': ['App Store','Google Play','Steam'],
   '广告联盟': ['Google Ads','Meta Ads','TikTok Ads']
 };
+const BUILDER_TOOLS = ['Shopify','Shoplazza','Shopline','WooCommerce','Magento'];
+const ACQUIRERS = ['PayPal','Stripe','Checkout.com','Airwallex','Adyen'];
+const SITE_OPTIONS = ['US','UK','DE','FR','JP','SG','AU','CA','IT','ES','全站点'];
+/* 平台结算：每个已选平台类型一个块，块内可添加多行平台 */
 function renderPlatformRows(rail){
   const box = rail.querySelector('[data-platform-rows]');
-  const types = [...rail.querySelectorAll('[data-platform-types] .chip.on')].map(c => c.dataset.ptype);
-  box.innerHTML = types.map(t => {
-    const opts = PLATFORM_OPTIONS[t].map(o => `<option>${o}</option>`).join('');
-    return `<div class="grid grid-cols-[80px_1fr_110px_1fr] items-center gap-2">
-      <span class="text-xs text-gray-500">${t}</span>
-      <select class="text-xs"><option value="">选择平台</option>${opts}</select>
-      <input type="text" class="text-xs" placeholder="站点（如 US）">
-      <input type="text" class="text-xs" placeholder="备注">
-    </div>`;
-  }).join('');
+  const selected = new Set([...rail.querySelectorAll('[data-platform-types] .chip.on')].map(c => c.dataset.ptype));
+  box.querySelectorAll('[data-ptype-block]').forEach(b => { if (!selected.has(b.dataset.ptypeBlock)) b.remove(); });
+  selected.forEach(t => {
+    if (!box.querySelector(`[data-ptype-block="${t}"]`)){
+      box.insertAdjacentHTML('beforeend', platformBlock(t));
+    }
+  });
 }
-function renderAcqDetail(rail){
-  const industry = rail.querySelector('[data-acq-industry] .chip.on')?.textContent || '';
-  const mode = rail.querySelector('[data-acq-mode] .chip.on')?.textContent || '';
-  const box = rail.querySelector('[data-acq-detail]');
-  if (!mode){ box.innerHTML = '<p class="text-[11px] text-gray-400">选择行业与站点形态后配置明细</p>'; return; }
-  if (mode === '独立站'){
-    box.innerHTML = `<div class="grid grid-cols-2 gap-2">
-      <div><div class="text-[11px] text-gray-400 mb-1">${industry}独立站 · 建站工具</div>
-        <select class="text-xs"><option value="">选择建站工具</option><option>Shopify</option><option>Shoplazza</option><option>Shopline</option><option>WooCommerce</option></select></div>
-      <div><div class="text-[11px] text-gray-400 mb-1">收单机构</div>
-        <select class="text-xs"><option value="">选择收单机构</option><option>PayPal</option><option>Stripe</option><option>Checkout.com</option><option>Airwallex</option></select></div>
-    </div>`;
-  } else {
-    box.innerHTML = `<div class="flex items-center gap-2">
-      <span class="text-[11px] text-gray-400 shrink-0">${industry}自建站类型</span>
-      <div class="flex gap-2 single-group"><span class="chip">游戏自建站</span><span class="chip">电商自建站</span></div>
-    </div>`;
-  }
+function platformBlock(t){
+  return `<div data-ptype-block="${t}" class="rounded border border-gray-200 bg-white p-2">
+    <div class="flex items-center justify-between mb-1">
+      <span class="text-xs font-medium text-gray-600">${t}</span>
+      <button type="button" class="text-xs text-blue-600" data-ptype="${t}" onclick="addPlatformRow(this)">＋ 添加平台</button>
+    </div>
+    <div data-prows class="space-y-2">${platformRow(t)}</div>
+  </div>`;
+}
+function platformRow(t){
+  const opts = PLATFORM_OPTIONS[t].map(o => `<option>${o}</option>`).join('');
+  const sites = SITE_OPTIONS.map(o => `<option>${o}</option>`).join('');
+  return `<div class="grid grid-cols-[130px_1.4fr_1fr_24px] items-start gap-2">
+    <select class="text-xs"><option value="">选择平台</option>${opts}</select>
+    <select multiple size="3" class="text-xs !h-auto" title="站点（可多选，按住 Ctrl/Cmd 选多个）">${sites}</select>
+    <input type="text" class="text-xs" placeholder="备注">
+    <button type="button" class="text-red-400 text-sm" onclick="this.parentElement.remove()">×</button>
+  </div>`;
+}
+function addPlatformRow(btn){
+  btn.closest('[data-ptype-block]').querySelector('[data-prows]').insertAdjacentHTML('beforeend', platformRow(btn.dataset.ptype));
+}
+/* 收单机构：每个已选类型一个块（建站工具多选 + 收单机构多选 + 备注） */
+function renderAcqBlocks(rail){
+  const box = rail.querySelector('[data-acq-blocks]');
+  const selected = new Set([...rail.querySelectorAll('[data-acq-types] .chip.on')].map(c => c.dataset.atype));
+  box.querySelectorAll('[data-acq-block]').forEach(b => { if (!selected.has(b.dataset.acqBlock)) b.remove(); });
+  selected.forEach(t => {
+    if (!box.querySelector(`[data-acq-block="${t}"]`)){
+      box.insertAdjacentHTML('beforeend', acqBlock(t));
+    }
+  });
+}
+function acqBlock(t){
+  const isIndep = t.includes('独立站');
+  const head = isIndep ? '建站工具 + 收单机构（组合，可多组合）' : '收单机构（可多个）';
+  return `<div data-acq-block="${t}" class="rounded border border-gray-200 bg-white p-2">
+    <div class="flex items-center justify-between mb-1">
+      <span class="text-xs font-medium text-gray-600">${t} · ${head}</span>
+      <button type="button" class="text-xs text-blue-600" data-atype="${t}" onclick="addAcqRow(this)">＋ 添加组合</button>
+    </div>
+    <div data-arows class="space-y-2">${acqRow(t)}</div>
+  </div>`;
+}
+function acqRow(t){
+  const isIndep = t.includes('独立站');
+  const builderSel = isIndep ? `<select class="text-xs"><option value="">建站工具</option>${BUILDER_TOOLS.map(o => `<option>${o}</option>`).join('')}</select>` : '';
+  const acqSel = `<select class="text-xs"><option value="">收单机构</option>${ACQUIRERS.map(o => `<option>${o}</option>`).join('')}</select>`;
+  const cols = isIndep ? 'grid-cols-[1fr_1fr_1fr_24px]' : 'grid-cols-[1fr_1fr_24px]';
+  return `<div class="grid ${cols} items-center gap-2">
+    ${builderSel}
+    ${acqSel}
+    <input type="text" class="text-xs" placeholder="备注">
+    <button type="button" class="text-red-400 text-sm" onclick="this.parentElement.remove()">×</button>
+  </div>`;
+}
+function addAcqRow(btn){
+  btn.closest('[data-acq-block]').querySelector('[data-arows]').insertAdjacentHTML('beforeend', acqRow(btn.dataset.atype));
 }
 function removeCRail(btn){ btn.closest('[data-crail]').remove(); }
 function addCRail(){

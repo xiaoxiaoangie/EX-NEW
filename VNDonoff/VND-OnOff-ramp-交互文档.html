@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>VND On/Off-ramp 交互文档</title>
+  <style>
+    :root{--ink:#18212f;--muted:#677386;--line:#dfe5ed;--bg:#f4f7fb;--card:#fff;--primary:#1769e0;--soft:#eaf2ff;--warn:#a65b00;--warnbg:#fff4df;--ok:#177245;--okbg:#e9f8f0;--bad:#b42318;--badbg:#fff0ee}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.55 system-ui,-apple-system,"Segoe UI","PingFang SC",sans-serif}
+    header{background:#12233f;color:#fff;padding:20px 28px} header h1{margin:0 0 4px;font-size:22px} header p{margin:0;color:#cbd7e8}
+    .layout{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 92px)} nav{padding:20px 14px;background:#fff;border-right:1px solid var(--line)}
+    nav button{display:block;width:100%;margin:0 0 8px;padding:10px 12px;text-align:left;border:0;border-radius:8px;background:transparent;color:var(--ink);cursor:pointer}nav button.active{background:var(--soft);color:var(--primary);font-weight:650}
+    main{padding:24px;max-width:1120px}.page{display:none}.page.active{display:block}.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(19,40,70,.04)}
+    h2{margin:0 0 6px;font-size:20px}h3{margin:0 0 14px;font-size:16px}.desc{color:var(--muted);margin:0 0 18px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}
+    label{font-weight:600}input,select,textarea{width:100%;border:1px solid #cbd4e0;border-radius:8px;padding:10px 11px;background:#fff;color:var(--ink)}textarea{min-height:88px;resize:vertical}.hint{font-size:12px;color:var(--muted)}
+    .btns{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}.btn{border:1px solid #c8d1de;background:#fff;border-radius:8px;padding:9px 15px;cursor:pointer}.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}.btn:disabled{opacity:.5;cursor:not-allowed}
+    .status{display:inline-flex;padding:4px 9px;border-radius:999px;font-size:12px;font-weight:650}.pending{background:var(--warnbg);color:var(--warn)}.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}
+    .notice{padding:12px 14px;border-radius:8px;background:var(--soft);color:#21528d;margin:12px 0}.notice.warn{background:var(--warnbg);color:var(--warn)}table{width:100%;border-collapse:collapse}th,td{padding:11px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:12px;color:var(--muted);background:#fafbfd}
+    .steps{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0}.step{padding:7px 10px;border-radius:7px;background:#edf1f6;color:var(--muted)}.step.current{background:var(--soft);color:var(--primary);font-weight:650}.result{display:none;margin-top:14px}.result.show{display:block}
+    @media(max-width:760px){.layout{grid-template-columns:1fr}nav{display:flex;overflow:auto;border-right:0;border-bottom:1px solid var(--line)}nav button{min-width:max-content;margin:0 6px 0 0}.grid{grid-template-columns:1fr}.field.full{grid-column:auto}main{padding:16px}}
+  </style>
+</head>
+<body>
+  <header><h1>VND On/Off-ramp 页面交互</h1><p>业务原型；所有数据均为演示，不会提交真实申请或交易。</p></header>
+  <div class="layout">
+    <nav aria-label="原型页面">
+      <button class="active" data-page="oa">OP · 渠道报备</button>
+      <button data-page="va">MP · 申请VND VA</button>
+      <button data-page="supplement">MP · 交易补件</button>
+      <button data-page="payee">MP · VND收款人</button>
+      <button data-page="address">MP · 提币地址</button>
+    </nav>
+    <main>
+      <section class="page active" id="oa">
+        <h2>运营 OP：渠道报备与补件</h2><p class="desc">OA 合规审批通过后生成 OP 任务；渠道合规在 OP 操作宝付报备、补件和结果回填。</p>
+        <div class="card"><div class="steps"><span class="step">OA审批通过</span><span class="step current">OP渠道报备</span><span class="step">OP渠道补件</span><span class="step">技术开户</span><span class="step">通知销售</span></div>
+          <div class="grid"><div class="field"><label for="merchant">商户</label><select id="merchant"><option>越南示例贸易有限公司</option></select></div><div class="field"><label for="volume">预计月交易量（VND）</label><input id="volume" value="2,000,000,000"></div><div class="field full"><label for="scene">业务场景</label><textarea id="scene">向越南买方收取货款，并换为 USD 后购买 USDT/USDC。</textarea></div></div>
+          <div class="notice warn">渠道报备尚未线上化。渠道合规在线下向宝付提交，所有补件和结果均在 OP 任务中操作并留痕。</div><div class="btns"><button class="btn" data-demo="supp">渠道待补件</button><button class="btn primary" data-demo="approve">报备成功并开户</button></div><div class="result" id="oaResult"></div>
+        </div>
+      </section>
+      <section class="page" id="va">
+        <h2>商户 MP：申请 VND VA</h2><p class="desc">仅已完成 VND 能力开通的商户可申请。</p>
+        <div class="card"><h3>账户申请</h3><div class="grid"><div class="field"><label>币种</label><input value="VND" disabled></div><div class="field"><label>用途</label><select><option>商户同名充值及已审核异名收款</option></select></div><div class="field full"><label><input id="agree" type="checkbox" style="width:auto"> 我已阅读并确认 VA 收款要求</label></div></div><div class="btns"><button class="btn primary" id="applyVa">提交申请</button></div><div class="result" id="vaResult"></div></div>
+      </section>
+      <section class="page" id="supplement">
+        <h2>商户 MP：交易申请阶段补件</h2><p class="desc">处理 BB 风控或宝付在交易申请阶段提出的材料要求；事后补件由合规通过邮件处理。</p>
+        <div class="card"><table><thead><tr><th>关联业务</th><th>需求方</th><th>材料</th><th>截止时间</th><th>状态</th></tr></thead><tbody><tr><td>VND 入账<br>#IN-VND-20260809-018</td><td>BB 风控 / 宝付</td><td>贸易合同、发票、汇款人关系说明</td><td>2026-08-12 18:00</td><td><span class="status pending">待补件</span></td></tr></tbody></table></div>
+        <div class="card"><h3>提交材料</h3><div class="notice warn">该笔资金在审核通过前不会进入可用 VND 余额。</div><div class="grid"><div class="field full"><label for="files">材料文件</label><input id="files" type="file" multiple accept=".pdf,.png,.jpg,.jpeg"><span class="hint">演示原型不上传真实文件；单个文件最大 20 MB。</span></div><div class="field full"><label for="explain">补充说明</label><textarea id="explain" placeholder="说明交易背景及汇款人与商户的关系"></textarea></div></div><div class="btns"><button class="btn primary" id="submitSupplement">提交审核</button></div><div class="result" id="suppResult"></div></div>
+      </section>
+      <section class="page" id="payee">
+        <h2>商户 MP：新增 VND 法币收款人</h2><p class="desc">收款人须经 BB 与宝付报备为可用，才能用于 USD→VND 付款。</p>
+        <div class="card"><div class="grid"><div class="field"><label for="payeeName">收款人名称</label><input id="payeeName" placeholder="须与银行账户户名一致"></div><div class="field"><label for="payeeType">主体类型</label><select id="payeeType"><option>企业</option><option>个人（是否开放待风控确认）</option></select></div><div class="field"><label for="bank">银行</label><input id="bank" placeholder="选择或输入越南银行"></div><div class="field"><label for="account">VND 银行账号</label><input id="account" inputmode="numeric" placeholder="输入账号"></div><div class="field full"><label for="relation">与商户关系及付款用途</label><textarea id="relation" placeholder="例如：越南供应商，支付采购货款"></textarea></div></div><div class="btns"><button class="btn primary" id="submitPayee">提交报备</button></div><div class="result" id="payeeResult"></div></div>
+      </section>
+      <section class="page" id="address">
+        <h2>商户 MP：新增提币地址</h2><p class="desc">USDT/USDC 提币前完成地址白名单与 KYT 审核。</p>
+        <div class="card"><div class="grid"><div class="field"><label for="coin">币种</label><select id="coin"><option>USDT</option><option>USDC</option></select></div><div class="field"><label for="network">网络</label><select id="network"><option value="">请选择网络</option><option>TRON</option><option>Ethereum</option></select></div><div class="field full"><label for="wallet">钱包地址</label><input id="wallet" placeholder="输入与所选网络匹配的地址"></div><div class="field"><label for="ownership">地址归属</label><select id="ownership"><option>商户自有钱包</option><option>第三方地址</option></select></div><div class="field"><label for="label">地址备注</label><input id="label" placeholder="例如：财务主钱包"></div></div><div class="notice">网络选择错误可能造成资产不可找回。提交后需通过格式校验、归属声明、白名单与 KYT 审核。</div><div class="btns"><button class="btn primary" id="submitAddress">提交审核</button></div><div class="result" id="addressResult"></div></div>
+      </section>
+    </main>
+  </div>
+  <script>
+    const showResult=(id,html)=>{const el=document.getElementById(id);el.innerHTML=html;el.classList.add('show')};
+    document.querySelectorAll('nav button').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('nav button,.page').forEach(el=>el.classList.remove('active'));btn.classList.add('active');document.getElementById(btn.dataset.page).classList.add('active')}));
+    document.querySelector('[data-demo="supp"]').addEventListener('click',()=>showResult('oaResult','<div class="notice warn"><span class="status pending">渠道待补件</span> 运营可在 OP 补充材料后再次提交宝付。</div>'));
+    document.querySelector('[data-demo="approve"]').addEventListener('click',()=>showResult('oaResult','<div class="notice"><span class="status ok">报备成功</span> 已生成 BB 技术开户任务。</div>'));
+    document.getElementById('applyVa').addEventListener('click',()=>{if(!document.getElementById('agree').checked)return showResult('vaResult','<div class="notice warn">请先确认 VA 收款要求。</div>');showResult('vaResult','<div class="notice"><span class="status pending">申请中</span> 已提交演示申请，请等待宝付返回结果。</div>')});
+    document.getElementById('submitSupplement').addEventListener('click',()=>{if(!document.getElementById('files').files.length||!document.getElementById('explain').value.trim())return showResult('suppResult','<div class="notice warn">请添加至少一个材料文件并填写补充说明。</div>');showResult('suppResult','<div class="notice"><span class="status pending">补件审核中</span> 演示材料已暂存，未上传真实系统。</div>')});
+    document.getElementById('submitPayee').addEventListener('click',()=>{const ids=['payeeName','bank','account','relation'];if(ids.some(id=>!document.getElementById(id).value.trim()))return showResult('payeeResult','<div class="notice warn">请完整填写收款人名称、银行、账号和关系用途。</div>');showResult('payeeResult','<div class="notice"><span class="status pending">渠道报备中</span> BB 审核通过后将提交宝付。</div>')});
+    document.getElementById('submitAddress').addEventListener('click',()=>{if(!document.getElementById('network').value||!document.getElementById('wallet').value.trim())return showResult('addressResult','<div class="notice warn">请选择网络并填写钱包地址。</div>');showResult('addressResult','<div class="notice"><span class="status pending">审核中</span> 地址将执行格式、白名单和 KYT 校验。</div>')});
+  </script>
+</body>
+</html>
