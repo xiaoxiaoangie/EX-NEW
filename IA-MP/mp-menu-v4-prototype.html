@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MP 菜单 v4 · 交互原型（转入/转出 · 数币优先）</title>
+<style>
+  :root{
+    --brand:#7b5cfa; --brand-dark:#6544e8; --brand-soft:#f2eeff;
+    --ink:#20222b; --muted:#8b8f9c; --line:#ebedf2; --canvas:#f6f7fa;
+    --success:#16a673; --danger:#e45151; --sidebar:212px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%;font-family:Inter,"PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink);background:var(--canvas);font-size:13px}
+  button,select,input{font:inherit;outline:none}
+  button{cursor:pointer}
+  a{color:var(--brand);text-decoration:none}
+
+  /* ---------- sidebar ---------- */
+  .sidebar{position:fixed;inset:0 auto 0 0;width:var(--sidebar);overflow-y:auto;background:#fff;border-right:1px solid var(--line);z-index:30}
+  .brand{height:56px;display:flex;align-items:center;gap:9px;padding:0 16px;border-bottom:1px solid var(--line)}
+  .brand-mark{display:grid;place-items:center;width:26px;height:26px;border-radius:8px;color:#fff;font-weight:800;font-size:12px;background:linear-gradient(145deg,#9b83ff,#6544e8)}
+  .brand-name{font-size:14px;font-weight:750}
+  .brand-name small{display:block;color:#a3a7b3;font-size:9px;font-weight:500;letter-spacing:.5px}
+  .nav{padding:10px 9px 40px}
+  .nav-group{margin-bottom:12px}
+  .group-title{display:flex;align-items:center;gap:6px;padding:0 9px;margin:0 0 3px;color:var(--brand);font-size:10.5px;font-weight:700}
+  .group-title::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--brand)}
+  .nav-link{width:100%;min-height:34px;display:flex;align-items:center;gap:9px;padding:0 9px;border:0;border-radius:7px;background:transparent;color:#5b606d;text-align:left;font-size:12.5px}
+  .nav-link:hover{color:var(--brand);background:#f8f6ff}
+  .nav-link.active{color:var(--brand);background:var(--brand-soft);font-weight:650}
+  .nav-icon{width:15px;text-align:center;font-size:12px;opacity:.85}
+
+  /* ---------- shell ---------- */
+  .main{min-height:100vh;margin-left:var(--sidebar)}
+  .topbar{position:sticky;top:0;z-index:20;height:56px;display:flex;align-items:center;gap:14px;padding:0 22px;background:rgba(255,255,255,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}
+  .crumb{color:var(--muted);font-size:12.5px}
+  .crumb b{color:var(--ink);font-weight:600}
+  .top-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+  .pick{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:11.5px}
+  select.pick-sel{height:30px;padding:0 8px;border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--ink);font-size:11.5px}
+  .avatar{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#262a35;color:#fff;font-size:11px;font-weight:700}
+  .content{padding:18px 22px 60px}
+  .page-title{margin:0 0 14px;font-size:19px;letter-spacing:-.3px}
+
+  .tabbar{display:flex;gap:24px;border-bottom:1px solid var(--line)}
+  .tab{position:relative;padding:0 0 10px;border:0;background:transparent;color:#6b7080;font-size:13.5px}
+  .tab:hover{color:var(--brand)}
+  .tab.active{color:var(--brand);font-weight:650}
+  .tab.active::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;border-radius:2px;background:var(--brand)}
+  .subtabbar{display:flex;gap:8px;margin-top:14px}
+  .subtab{height:28px;padding:0 12px;border:1px solid var(--line);border-radius:99px;background:#fff;color:#6b7080;font-size:11.5px}
+  .subtab:hover{color:var(--brand);border-color:#cfc2ff}
+  .subtab.active{color:#fff;border-color:var(--brand);background:var(--brand)}
+
+  /* ---------- layout ---------- */
+  .layout{display:grid;grid-template-columns:minmax(0,1fr) 292px;gap:16px;margin-top:16px;align-items:start}
+  .layout.full{grid-template-columns:minmax(0,1fr)}
+  .card{background:#fff;border:1px solid var(--line);border-radius:11px}
+  .pad{padding:18px 20px}
+  .card h3{margin:0 0 4px;font-size:15px}
+  .card .sub{margin:0 0 16px;color:var(--muted);font-size:12px;line-height:1.7}
+  .rail-card{padding:16px 18px}
+  .rail-card h4{margin:0 0 10px;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--danger)}
+  .rail-card h4.plain{color:var(--ink)}
+  .tip{margin:0;padding:0;list-style:none;font-size:11.5px;line-height:1.85;color:#6b7080}
+  .tip li{position:relative;padding-left:11px;margin-bottom:7px}
+  .tip li::before{content:"";position:absolute;left:0;top:8px;width:4px;height:4px;border-radius:50%;background:#e0b0b0}
+  .tip b{color:#4c515e}
+  .rail-desc{margin:0 0 12px;color:var(--muted);font-size:11.5px;line-height:1.7}
+  .btn-ghost{width:100%;height:32px;border:1px solid var(--brand);border-radius:7px;background:#fff;color:var(--brand);font-size:12px}
+
+  /* ---------- form bits ---------- */
+  .banner{display:flex;gap:10px;align-items:center;padding:10px 12px;border:1px solid #f4e2bd;border-radius:8px;background:#fffaf0;color:#8a6a2a;font-size:11.5px;line-height:1.7;margin-bottom:18px}
+  .banner a{margin-left:auto;white-space:nowrap}
+  .label{margin:0 0 8px;font-size:12.5px;font-weight:600}
+  .row-label{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .row-label .link{font-size:11.5px}
+  .opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+  .opt-grid.three{grid-template-columns:repeat(3,1fr)}
+  .opt{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--line);border-radius:9px;background:#fff;text-align:left}
+  .opt:hover{border-color:#cfc2ff}
+  .opt.on{border-color:var(--brand);box-shadow:0 0 0 3px #7b5cfa12}
+  .opt strong{font-size:12.5px}
+  .opt small{display:block;color:var(--muted);font-size:10.5px;margin-top:2px}
+  .coin{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;color:#fff;font-size:10px;font-weight:800;background:#26a17b}
+  .coin.usdc{background:#2775ca}
+  .coin.usd{background:#e8e9ee;color:#41454f}
+  .coin.eur{background:#e8e9ee;color:#41454f}
+  .chip-row{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+  .chip{display:flex;align-items:center;gap:7px;padding:8px 14px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:12.5px;font-weight:600}
+  .chip.on{border-color:var(--brand);color:var(--brand);box-shadow:0 0 0 3px #7b5cfa12}
+  .field{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:6px;background:#fff}
+  .field:focus-within{border-color:#b7a6ff;box-shadow:0 0 0 3px #7b5cfa12}
+  .field input{flex:1;height:40px;padding:0 13px;border:0;background:transparent}
+  .field .suffix{display:flex;align-items:center;gap:7px;padding:0 13px;border-left:1px solid var(--line);background:#fafbfc;font-size:12px;font-weight:600}
+  .helper{display:flex;gap:12px;margin:0 0 18px;color:var(--muted);font-size:11.5px}
+  .helper .link{color:var(--brand)}
+  .select{width:100%;height:40px;padding:0 13px;border:1px solid var(--line);border-radius:8px;background:#fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M1 1l4 4 4-4' fill='none' stroke='%238b8f9c' stroke-width='1.4'/></svg>") no-repeat right 13px center;color:#6b7080;appearance:none;margin-bottom:18px;text-align:left}
+  .select.green{background-color:#f4fbf7;border-color:#d5ecdf}
+  .rate-line{display:flex;align-items:center;gap:12px;margin:0 0 18px;color:#5b606d;font-size:12px}
+  .swap{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--brand)}
+  .rate-line .fee{color:var(--muted);font-size:11.5px}
+  .summary{padding:14px 16px;border:1px solid var(--line);border-radius:9px;background:#fbfbfd;margin-bottom:18px}
+  .summary-row{display:flex;justify-content:space-between;padding:5px 0;font-size:12px;color:#6b7080}
+  .summary-row b{color:var(--ink);font-weight:600}
+  .summary-row.total b{color:var(--brand)}
+  .btn-primary{width:100%;height:42px;border:0;border-radius:8px;background:var(--brand);color:#fff;font-size:13.5px;font-weight:600}
+  .btn-primary:hover{background:var(--brand-dark)}
+  .btn-primary.soft{background:#b9a5ff}
+  .convert{display:flex;gap:10px;padding:12px 14px;border:1px dashed var(--brand);border-radius:9px;background:#faf8ff;color:#5d5378;font-size:11.5px;line-height:1.8;margin-bottom:18px}
+  .convert b{color:var(--brand-dark)}
+
+  /* ---------- va / list ---------- */
+  .va-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .va{padding:14px;border:1px solid var(--line);border-radius:10px;background:#fff}
+  .va-top{display:flex;align-items:flex-start;gap:8px;margin-bottom:10px}
+  .va-bank{flex:1;font-size:12px;font-weight:650;line-height:1.5}
+  .tag{padding:2px 7px;border-radius:5px;background:var(--brand-soft);color:var(--brand);font-size:10px;font-weight:650;white-space:nowrap}
+  .tag.gray{background:#f0f1f5;color:#8b8f9c}
+  .tag.green{background:#eaf8f3;color:#16a673}
+  .tag.blue{background:#eaf1fd;color:#3a72c8}
+  .tag.off{background:#f7f8fa;color:#b4b8c2;text-decoration:line-through}
+  .caps{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px;padding-top:9px;border-top:1px dashed var(--line)}
+  .caps-k{color:#a8adb9;font-size:10px;margin-right:2px;line-height:16px}
+  .va-acct{padding:8px 10px;border-radius:7px;background:#f7f8fa;font-size:12px;letter-spacing:.5px;margin-bottom:8px}
+  .va-meta{color:var(--muted);font-size:11px;line-height:1.8}
+  .list-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .list-head .acts{display:flex;gap:14px;font-size:11.5px}
+
+  /* ---------- filters + table ---------- */
+  .filters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;padding:16px 18px}
+  .filters .f{display:flex;flex-direction:column;gap:6px}
+  .filters label{color:#6b7080;font-size:11.5px}
+  .filters input,.filters select{height:32px;padding:0 10px;border:1px solid var(--line);border-radius:7px;background:#fff;color:#6b7080;font-size:12px}
+  .filter-acts{display:flex;justify-content:flex-end;gap:8px;padding:0 18px 16px}
+  .btn-sm{height:30px;padding:0 14px;border:1px solid var(--line);border-radius:7px;background:#fff;color:#6b7080;font-size:12px}
+  .btn-sm.primary{border-color:var(--brand);background:var(--brand);color:#fff}
+  table{width:100%;border-collapse:collapse;white-space:nowrap}
+  th,td{height:46px;padding:0 16px;border-bottom:1px solid #f2f3f6;text-align:left;font-size:12px}
+  th{height:38px;color:#8b8f9c;background:#fafbfc;font-weight:600}
+  tbody tr:last-child td{border-bottom:0}
+  tbody tr:hover{background:#fbfaff}
+  .table-wrap{overflow-x:auto}
+  .badge{display:inline-block;padding:2px 8px;border-radius:5px;background:var(--brand-soft);color:var(--brand);font-size:11px;font-weight:600}
+  .badge.gray{background:#f0f1f5;color:#7c818e}
+  .ok{color:var(--success);font-weight:600}
+  .pos{color:var(--success);font-weight:650}
+  .neg{color:#e45151;font-weight:650}
+  .empty{display:grid;place-items:center;min-height:280px;color:#a8adb9;font-size:12.5px}
+  .empty div{text-align:center}
+  .empty .ico{font-size:34px;opacity:.35;margin-bottom:10px}
+
+  /* ---------- assets ---------- */
+  .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
+  .stat{padding:16px 18px}
+  .stat .k{color:var(--muted);font-size:11.5px}
+  .stat .v{margin-top:10px;font-size:21px;font-weight:750;letter-spacing:-.4px}
+  .stat .d{margin-top:6px;color:var(--muted);font-size:11px}
+  .quick{display:flex;gap:10px;flex-wrap:wrap;padding:14px 16px;margin-bottom:14px}
+  .qbtn{height:34px;padding:0 16px;border:1px solid var(--line);border-radius:8px;background:#fff;color:#4f5360;font-size:12.5px}
+  .qbtn:hover{color:var(--brand);border-color:#cfc2ff;background:#faf9ff}
+  .qbtn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+  .sec-title{display:flex;align-items:center;gap:6px;margin:22px 0 10px;font-size:12.5px;font-weight:650}
+  .sec-title::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--brand)}
+  .sec-title:first-child{margin-top:16px}
+  .acct-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+  .acct{padding:18px 20px}
+  .acct-head{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:650}
+  .acct-bal{margin:14px 0 16px;font-size:26px;font-weight:750;letter-spacing:-.5px}
+  .acct-btns{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+  .acct-btns button{height:32px;border-radius:7px;border:1px solid var(--line);background:#fff;color:#5b606d;font-size:12.5px}
+  .acct-btns button.fill{border-color:transparent;background:var(--brand-soft);color:var(--brand);font-weight:600}
+  .acct-btns button:hover{border-color:#cfc2ff;color:var(--brand)}
+  .acct-meta{padding-top:12px;border-top:1px solid var(--line)}
+  .acct-meta div{display:flex;justify-content:space-between;padding:3px 0;color:var(--muted);font-size:11.5px}
+  .acct-meta b{color:#4c515e;font-weight:600}
+  .note{margin-top:14px;padding:11px 14px;border:1px solid #ece7ff;border-radius:9px;background:#faf8ff;color:#6b6480;font-size:11.5px;line-height:1.85}
+  .note b{color:var(--brand-dark)}
+  .sub-inline{color:var(--muted);font-size:11px}
+  /* 卡片栏格：小屏 2 列，大屏 3 / 4 列 */
+  @media(min-width:1500px){.va-grid,.acct-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+  @media(min-width:1920px){.va-grid,.acct-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+  @media(max-width:1180px){.layout{grid-template-columns:minmax(0,1fr)}.stats{grid-template-columns:repeat(2,1fr)}.filters{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:820px){.va-grid,.acct-grid{grid-template-columns:minmax(0,1fr)}}
+  @media(max-width:760px){.sidebar{transform:translateX(-100%)}.main{margin-left:0}}
+</style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">E</div><div class="brand-name">MP Console<small>MENU v4 · CRYPTO FIRST</small></div></div>
+    <nav class="nav" id="nav"></nav>
+  </aside>
+  <main class="main">
+    <header class="topbar">
+      <div class="crumb" id="crumb"></div>
+      <div class="top-right">
+        <div class="pick"><span>业务形态</span>
+          <select class="pick-sel" id="profile">
+            <option value="full">数币＋法币（全业务）</option>
+            <option value="fiat">只做法币业务</option>
+            <option value="otc">只做承兑（同名进 → 承兑 → 同名出）</option>
+          </select>
+        </div>
+        <div class="avatar">KL</div>
+      </div>
+    </header>
+    <div class="content">
+      <h1 class="page-title" id="pageTitle"></h1>
+      <div class="tabbar" id="tabbar"></div>
+      <div class="subtabbar" id="subtabbar"></div>
+      <div id="stage"></div>
+      <div class="note" id="note"></div>
+    </div>
+  </main>
+<script>
+(() => {
+/* =============== 通用片段 =============== */
+const rail = (tips, extra='') => `<aside>
+  <div class="card rail-card"><h4>● 重要提示</h4><ul class="tip">${tips.map(t=>`<li>${t}</li>`).join('')}</ul></div>
+  ${extra}</aside>`;
+const railCard = (title, desc, btn) => `<div class="card rail-card" style="margin-top:14px"><h4 class="plain">${title}</h4><p class="rail-desc">${desc}</p><button class="btn-ghost">${btn}</button></div>`;
+const filters = (fs) => `<div class="card"><div class="filters">${fs.map(f=>`<div class="f"><label>${f}</label>${f.includes('日期')?'<input type="date">':(f.includes('类型')||f.includes('状态')||f.includes('币种')?'<select><option>全部</option></select>':'<input placeholder="请输入">')}</div>`).join('')}</div><div class="filter-acts"><button class="btn-sm">重置</button><button class="btn-sm primary">查询</button><button class="btn-sm">导出</button></div></div>`;
+const table = (cols, rows) => `<div class="card table-wrap" style="margin-top:14px"><table><thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+const empty = (t='暂无数据') => `<div class="card empty"><div><div class="ico">▤</div>${t}</div></div>`;
+const listPage = (fs, cols, rows) => `<div class="layout full">${filters(fs)}${rows.length?table(cols,rows):empty()}</div>`;
+
+/* =============== 页面内容 =============== */
+/* --- 转入 · 数币地址 --- */
+const inCrypto = `<div class="layout">
+  <section class="card pad">
+    <div class="list-head"><div><h3 style="margin:0 0 4px">数币转入地址</h3><p class="sub" style="margin:0">选择币种与网络，获取专属链上地址。所有链上转入共用同一地址。</p></div><div class="acts"><a href="#">数币地址簿</a></div></div>
+    <p class="label">币种</p>
+    <div class="opt-grid" data-group="coin">
+      <button class="opt on"><span class="coin">T</span><span><strong>USDT</strong><small>Tether</small></span></button>
+      <button class="opt"><span class="coin usdc">C</span><span><strong>USDC</strong><small>USD Coin</small></span></button>
+    </div>
+    <p class="label">网络</p>
+    <div class="opt-grid" data-group="net">
+      <button class="opt on"><span class="coin" style="background:#6c7cf0">E</span><span><strong>Ethereum (ERC-20)</strong><small>Ethereum Network</small></span></button>
+      <button class="opt"><span class="coin" style="background:#e33a3a">T</span><span><strong>Tron (TRC-20)</strong><small>Tron Network</small></span></button>
+    </div>
+    <button class="btn-primary">显示地址</button>
+  </section>
+  ${rail([
+    '<b>网络要求：</b>务必通过对应网络发送所选加密资产（Ethereum 请用 ERC-20，TRON 请用 TRC-20）。跨网络转账将导致资产永久丢失。',
+    '<b>地址确认：</b>发送前请再次核对充值地址，地址错误或智能合约转账均不受理。',
+    '<b>来源地址：</b>请在地址簿中把发币地址勾上<b>转入来源</b>并完成核验，否则可能延迟入账。',
+    '<b>确认时间：</b>ERC-20 需 64 个确认（约 20-30 分钟），TRC-20 需 19 个确认（约 1-2 分钟）。',
+    '<b>联系支持：</b>请联系您的客户经理或邮件联系 support@ex.com'
+  ], railCard('数币地址簿','一个地址只需添加一次，勾选「转入来源」即可用于来账核验，同时可勾「转出」作提币目标。','去维护'))}
+</div>`;
+
+/* --- 入金 · 收款账户（法币，含原收款工具） --- */
+const vaCard = (kind,name,acct,bank,cur,st,ownName,caps) => `<div class="va">
+  <div class="va-top"><span class="tag${kind==='机构大账户'?' blue':''}">${kind}</span><span class="va-bank">${name}</span><span class="tag green">${st}</span></div>
+  <div class="va-acct">**** **** **** ${acct}</div>
+  <div class="va-meta">▣ ${bank}<br>户名：${ownName}&nbsp;&nbsp;·&nbsp;&nbsp;地区：SG&nbsp;&nbsp;·&nbsp;&nbsp;<span class="tag gray">${cur}</span></div>
+  <div class="caps"><span class="caps-k">可用能力</span>${caps.map(c=>`<span class="tag ${c[1]?'green':'off'}">${c[0]}</span>`).join('')}</div></div>`;
+const inFiat = `<div class="layout">
+  <section class="card pad">
+    <div class="list-head"><div><h3 style="margin:0 0 4px">银行转入账户</h3><p class="sub" style="margin:0">仅展示当前可用的账户。</p></div><div class="acts"><a href="#">查看不可用账户（2）</a><a href="#">＋ 申请账户</a></div></div>
+    <p class="label">币种</p>
+    <div class="chip-row"><button class="chip on"><span class="coin usd">$</span>USD</button><button class="chip"><span class="coin eur">€</span>EUR</button></div>
+    <p class="label">用途</p>
+    <div class="chip-row"><button class="chip on">全部</button><button class="chip">同名充值</button><button class="chip">三方收款</button></div>
+    <p class="label">银行账户</p>
+    <div class="va-grid">
+      ${vaCard('同名 VA','Everway Global Limited','0069','SINGAPORE GULF BANK B.S.C.','USD','已激活','本公司（同名）',[['同名充值',1],['三方收款',1]])}
+      ${vaCard('同名 VA','Everway Global Limited','0070','SINGAPORE GULF BANK B.S.C.','USD','已激活','本公司（同名）',[['同名充值',1],['三方收款',0]])}
+      ${vaCard('机构大账户','BlancBlock Digital AG','4122','SINGAPORE GULF BANK B.S.C.','USD','已激活','服务商客资账户',[['同名充值',1],['三方收款',1]])}
+    </div>
+  </section>
+  ${rail([
+    '<b>账户类型：</b><b>同名 VA</b> 户名为贵司本身，账号唯一对应贵司；<b>机构大账户</b> 户名为服务商客资账户，靠参考代码与汇款人识别归属。',
+    '<b>能力以卡片为准：</b>是否支持<b>三方收款</b>由渠道决定，与账户类型无关，请以卡片上的能力标签为准。',
+    '<b>参考代码：</b>使用机构大账户时务必在转账附言中填写参考代码，否则资金无法自动入账。',
+    '<b>处理时间：</b>银行转账通常需要 1-3 个工作日，到账以银行实际到账时间为准。'
+  ])}
+</div>`;
+
+/* --- 转入 · 记录 --- */
+const inRecords = listPage(['交易 ID','转入类型','订单状态','开始日期'],
+  ['交易 ID','时间','交易类型','来源','币种','金额','手续费','状态','操作'],
+  [
+    ['104260827182743558165','2026-08-27 18:27:43','<span class="badge">数币</span>','链上地址 0x7a41…3f21','USDT','<span class="pos">+ 1,234.00</span>','0','<span class="ok">成功</span>','<a href="#">查看</a>'],
+    ['100260827172519731390','2026-08-27 17:21:51','<span class="badge">数币</span>','链上地址 TQ9m…c1x8','USDT','<span class="pos">+ 5.00</span>','0','<span class="ok">成功</span>','<a href="#">查看</a>'],
+    ['104260827165721664191','2026-08-27 16:57:21','<span class="badge gray">同名充值</span>','同名 VA · ****0069','USD','<span class="pos">+ 1,200.00</span>','0 USD','<span class="ok">成功</span>','<a href="#">查看</a>'],
+    ['100260821184146236198','2026-08-21 18:41:46','<span class="badge gray">三方收款</span>','机构大账户 · Sunrise Trading','USD','<span class="pos">+ 298.50</span>','0 USD','<span class="ok">成功</span>','<a href="#">查看</a>'],
+    ['100260817156206440096','2026-08-17 15:52:06','<span class="badge">数币</span>','链上地址 0x7a41…3f21','USDT','<span class="pos">+ 500.00</span>','0','<span class="ok">成功</span>','<a href="#">查看</a>']
+  ]);
+
+/* --- 转出 · 到数币地址 --- */
+const outCrypto = `<div class="layout">
+  <section class="card pad">
+    <h3>转出到数币地址</h3>
+    <p class="sub">先选择转出钱包并输入金额，再选择收款地址。</p>
+    <p class="label">转出钱包</p>
+    <div class="chip-row"><button class="chip on"><span class="coin">T</span>USDT</button><button class="chip"><span class="coin usdc">C</span>USDC</button></div>
+    <p class="label">转出金额</p>
+    <div class="field"><input placeholder="请输入转出金额"><span class="suffix"><span class="coin">T</span>USDT</span></div>
+    <div class="helper"><span>可用余额：373.81 USDT</span><span class="link">全部转出</span></div>
+    <div class="row-label"><p class="label" style="margin:0">转出到</p><a class="link" href="#">＋ 添加地址</a></div>
+    <button class="select green">从地址簿选择（仅列出勾了「转出」的地址）</button>
+    <div class="summary">
+      <div class="summary-row"><span>转出到</span><b>链上地址 · --</b></div>
+      <div class="summary-row"><span>出款币种</span><b>USDT · ERC-20</b></div>
+      <div class="summary-row"><span>手续费</span><b>-- USDT</b></div>
+      <div class="summary-row total"><span>预计到账</span><b>-- USDT</b></div>
+    </div>
+    <button class="btn-primary soft">提交</button>
+  </section>
+  ${rail([
+    '<b>处理时间：</b>转出处理时长约 2 小时，处理时间可能因突发情况延长。',
+    '<b>警告：</b>请勿与受制裁实体进行交易。',
+    '<b>地址要求：</b>地址需通过风控审核，审核不通过则无法进行交易。'
+  ], railCard('数币地址簿','地址只需登记一次，勾上「转出」即可在此选取；自己的钱包地址可充提共用。','去维护'))}
+</div>`;
+
+/* --- 转出 · 到银行账户（含内嵌兑换） --- */
+const outFiat = `<div class="layout">
+  <section class="card pad">
+    <h3>转出到银行账户</h3>
+    <p class="sub">选择转出资金来源与金额，再选择收款账户。若资金来源为数币，系统会在本页内完成兑换，无需跳转。</p>
+    <p class="label">转出资金来源</p>
+    <div class="chip-row"><button class="chip on"><span class="coin">T</span>USDT</button><button class="chip"><span class="coin usdc">C</span>USDC</button><button class="chip"><span class="coin usd">$</span>USD</button></div>
+    <p class="label">转出金额</p>
+    <div class="field"><input placeholder="请输入金额"><span class="suffix"><span class="coin">T</span>USDT</span></div>
+    <div class="helper"><span>可用余额：373.81 USDT</span><span class="link">全部转出</span></div>
+    <div class="convert"><span>⇄</span><span>资金来源为 <b>USDT</b>，收款账户为 <b>USD</b>，本笔将<b>先兑换后出款</b>：参考汇率 1 USDT = 0.9992 USD，兑换手续费 0.2 USD，本页确认后一并执行，<b>无需跳到兑换页</b>。</span></div>
+    <p class="label">收款方类型</p>
+    <div class="chip-row"><button class="chip on">同名账户</button><button class="chip" disabled style="opacity:.45;cursor:not-allowed">第三方账户</button></div>
+    <div class="convert" style="border-color:#f0d7a8;background:#fffaf0;color:#8a6a2a"><span>!</span><span>当前资金来源为<b>数币</b>（承兑业务），<b>仅支持同名账户出款</b>；如需付款给第三方，请将资金来源切为<b>法币余额</b>。</span></div>
+    <div class="row-label"><p class="label" style="margin:0">收款人</p><a class="link" href="#">＋ 添加收款账户</a></div>
+    <button class="select">请选择同名收款账户</button>
+    <p class="label">费用承担方</p>
+    <div class="opt-grid"><button class="opt on"><span><strong>双方共同承担费用（SHA）</strong></span></button><button class="opt"><span><strong>您单方面承担费用（OUR）</strong></span></button></div>
+    <p class="label">用途</p>
+    <button class="select">请选择</button>
+    <p class="label">附言（仅支持大小写英文字母、数字、空格、.&amp;）</p>
+    <button class="select" style="text-align:left">请输入附言　0 / 50</button>
+    <div class="summary">
+      <div class="summary-row"><span>转出到</span><b>银行账户 · --</b></div>
+      <div class="summary-row"><span>收款方类型</span><b>同名账户</b></div>
+      <div class="summary-row"><span>出款币种</span><b>USD</b></div>
+      <div class="summary-row"><span>兑换手续费</span><b>-- USD</b></div>
+      <div class="summary-row"><span>出款手续费</span><b>-- USD</b></div>
+      <div class="summary-row total"><span>预计到账</span><b>-- USD</b></div>
+    </div>
+    <button class="btn-primary">提交</button>
+  </section>
+  ${rail([
+    '<b>账户核验：</b>转出前需添加对手方银行账户，账户需通过风控审核，审核通过后方可发起转出。',
+    '<b>处理时间：</b>银行转账常规 0~2 个工作日到账，跨境跨行业务可能需要延迟，实际到账以到账时间为准。',
+    '<b>汇率说明：</b>兑换采用实时市场汇率，最终到账金额以银行实际到账金额为准。',
+    '<b>同名限制：</b>资金来源为数币（承兑业务）时仅支持出款至<b>同名账户</b>；法币余额出款可选同名或第三方。',
+    '<b>风控规则：</b>所有转出订单均经过风控审核，保障资金安全。'
+  ], railCard('银行收款人','维护同名（提现）与第三方（付款）的银行账户，转出时直接选取。','去维护'))}
+</div>`;
+
+/* --- 转出 · 记录 --- */
+const outRecords = listPage(['交易 ID','转出类型','订单状态','开始日期'],
+  ['交易 ID','时间','类型','收款人','币种','金额','手续费','状态','操作'],
+  [
+    ['205260827182743558165','2026-08-27 18:12:03','<span class="badge">数币转出</span>','0x7a41…3f21','USDT','<span class="neg">- 2,000.00</span>','1 USDT','<span class="ok">成功</span>','<a href="#">查看</a>'],
+    ['205260827160210338771','2026-08-27 16:02:10','<span class="badge">数币转出</span>','Kraft Ltd · TQ9m…c1x8','USDT','<span class="neg">- 860.00</span>','1 USDT','<span class="ok">成功</span>','<a href="#">查看</a>'],
+    ['205260826114508229910','2026-08-26 11:45:08','<span class="badge gray">法币 · 同名</span>','Everway Global · ****0069','USD','<span class="neg">- 12,000.00</span>','8 USD','<span class="ok">成功</span>','<a href="#">查看</a>'],
+    ['205260825095512004432','2026-08-25 09:55:12','<span class="badge gray">法币 · 第三方</span>','Sunrise Trading Pte Ltd','USD','<span class="neg">- 8,420.50</span>','8 USD','<span class="ok">成功</span>','<a href="#">查看</a>']
+  ]);
+
+/* --- 兑换 · 数法兑换 --- */
+const exFC = `<div class="layout">
+  <section class="card pad">
+    <h3>数法兑换</h3>
+    <p class="sub">选择卖出币种和买入币种，并输入对应金额实时兑换，您将实时收到买入金额。</p>
+    <p class="label">卖出</p>
+    <div class="field"><span class="suffix" style="border-left:0;border-right:1px solid var(--line)"><span class="coin">T</span>USDT ▾</span><input placeholder="请输入金额　最低 10　最高 1,000,000"><span class="suffix">USDT</span></div>
+    <div class="helper"><span class="link">全部卖出</span><span>可用余额 373.81 USDT</span></div>
+    <div class="rate-line"><span class="swap">⇅</span><span>参考汇率 1 USDT = 0.9992 USD</span><span class="fee">手续费 0.2%</span></div>
+    <p class="label">买入</p>
+    <div class="field"><span class="suffix" style="border-left:0;border-right:1px solid var(--line)"><span class="coin usd">$</span>USD ▾</span><input placeholder="0.00"><span class="suffix">USD</span></div>
+    <div style="height:12px"></div>
+    <button class="btn-primary soft">下一步</button>
+  </section>
+  ${rail([
+    '<b>货币对：</b>数币与 USD',
+    '<b>承兑汇率：</b>实时汇率',
+    '<b>处理时间：</b>7×24 小时',
+    '<b>联系支持：</b>请联系您的客户经理或邮件联系 support@ex.com'
+  ])}
+</div>`;
+
+/* --- 兑换 · 实时换汇 --- */
+const exFX = `<div class="layout">
+  <section class="card pad">
+    <h3>实时换汇</h3>
+    <p class="sub">手续费从卖出货币中扣除，预计买入金额实时更新。</p>
+    <p class="label">卖出</p>
+    <div class="field"><span class="suffix" style="border-left:0;border-right:1px solid var(--line)"><span class="coin usd">$</span>USD ▾</span><input placeholder="0.01 ~ 999,999.99"><span class="suffix">USD</span></div>
+    <div class="helper"><span class="link">全部卖出</span><span>可用余额 687.16 USD</span></div>
+    <div class="rate-line"><span class="swap">⇅</span><span>参考汇率 1 USD = 0.9130 EUR</span></div>
+    <p class="label">买入</p>
+    <div class="field"><span class="suffix" style="border-left:0;border-right:1px solid var(--line)"><span class="coin eur">€</span>EUR ▾</span><input placeholder="0.00"><span class="suffix">EUR</span></div>
+    <div style="height:12px"></div>
+    <button class="btn-primary soft">下一步</button>
+  </section>
+  ${rail([
+    '<b>处理时间：</b>7×24 小时',
+    '<b>换汇能力：</b>支持已开通法币账户之间的实时换汇。',
+    '<b>联系支持：</b>请联系您的客户经理或邮件联系 support@ex.com'
+  ])}
+</div>`;
+
+/* --- 兑换 · 记录 --- */
+const exRecords = listPage(['交易 ID','交易类型','订单状态','开始日期'],
+  ['交易 ID','时间','类型','交易金额','汇率','手续费','状态','操作'],
+  [
+    ['106260827191549893202','2026-08-27 19:15:49','<span class="badge">法换数</span>','<span class="neg">- 500 USD</span><br><span class="pos">+ 499 USDT</span>','1 USDT = 1 USD','1 USD','<span class="ok">成功</span>','<a href="#">查看</a>'],
+    ['106260827170441210153','2026-08-27 17:04:41','<span class="badge">法换数</span>','<span class="neg">- 600 USD</span><br><span class="pos">+ 598.8 USDT</span>','1 USDT = 1 USD','1.2 USD','<span class="ok">成功</span>','<a href="#">查看</a>'],
+    ['107260827170418583178','2026-08-27 17:04:18','<span class="badge">数换法</span>','<span class="neg">- 100 USDT</span><br><span class="pos">+ 99.8 USD</span>','1 USD = 1 USDT','0.2 USD','<span class="ok">成功</span>','<a href="#">查看</a>'],
+    ['106260523214710486345','2026-08-23 21:47:10','<span class="badge gray">换汇 FX</span>','<span class="neg">- 178 USD</span><br><span class="pos">+ 162.5 EUR</span>','1 USD = 0.9130 EUR','0.36 USD','<span class="ok">成功</span>','<a href="#">查看</a>']
+  ]);
+
+/* --- 我的资产（卡片式，数币在前） --- */
+const acct = (coinCls,sym,cur,bal,avail,total) => `<div class="card acct">
+  <div class="acct-head"><span class="coin ${coinCls}">${sym}</span>${cur}</div>
+  <div class="acct-bal">${bal}</div>
+  <div class="acct-btns"><button class="fill">转入</button><button>转出</button><button>兑换</button></div>
+  <div class="acct-meta"><div><span>可用余额：</span><b>${avail}</b></div><div><span>总可用余额：</span><b>${total}</b></div></div>
+</div>`;
+const assetsOverview = `<div>
+  <div class="sec-title">数币账户</div>
+  <div class="acct-grid">
+    ${acct('','T','USDT','373.81','373.81','373.81')}
+    ${acct('usdc','C','USDC','0','0','0')}
+  </div>
+  <div class="sec-title">法币账户</div>
+  <div class="acct-grid">
+    ${acct('usd','$','USD','687.16','687.16','687.16')}
+  </div>
+</div>`;
+
+/* --- 数币地址簿（单表 + 用途标签） --- */
+const useTags = (out,inn) => `${out?'<span class="tag green">转出</span>':'<span class="tag off">转出</span>'}　${inn?'<span class="tag green">转入来源</span>':'<span class="tag off">转入来源</span>'}`;
+const ADDR_MINE=[
+  ['MetaMask 热钱包','<span class="badge">我的钱包</span>','ERC-20','0x3c88…1a09',useTags(1,1),'<span class="ok">已通过</span>','<a href="#">转出</a>　<a href="#">编辑</a>'],
+  ['自有冷钱包','<span class="badge">我的钱包</span>','ERC-20','0x7a41…3f21',useTags(1,0),'<span class="ok">已通过</span>','<a href="#">转出</a>　<a href="#">编辑</a>']
+];
+const ADDR_CP=[
+  ['Kraft Ltd','<span class="badge gray">对手方</span>','TRC-20','TQ9m…c1x8',useTags(1,0),'<span class="ok">已通过</span>','<a href="#">转出</a>　<a href="#">编辑</a>'],
+  ['Meta Trade Ltd','<span class="badge gray">对手方</span>','TRC-20','TXk2…77fa',useTags(0,1),'<span class="ok">已通过</span>','<a href="#">编辑</a>　<a href="#">删除</a>']
+];
+const addrBook = (p) => `<div style="margin-top:16px">
+  <div class="card pad" style="padding:16px 18px 6px">
+    <div class="list-head" style="margin-bottom:12px"><div><h3 style="margin:0 0 4px">数币地址簿</h3><p class="sub" style="margin:0">${p==='otc'
+      ? '承兑形态：只能添加<b>贵司自己的钱包地址</b>，充提共用同一批地址。'
+      : '一个地址<b>只添加一次</b>，勾选用途后同时用于转出与转入登记，风控<b>只扫描一次</b>。'}</p></div><div class="acts"><a href="#">＋ 添加地址</a></div></div>
+    <!-- 用途/归属筛选，暂时隐藏，需要时取消注释
+    <div class="chip-row" style="margin-bottom:4px"><button class="chip on">全部</button><button class="chip">可转出</button><button class="chip">转入来源</button>${p==='otc'?'':'<button class="chip">我的钱包</button><button class="chip">对手方</button>'}</div>
+    -->
+  </div>
+  ${table(['名称','归属','链','地址','用途','风控 / 验证状态','操作'], p==='otc'?ADDR_MINE:[...ADDR_MINE,...ADDR_CP])}
+</div>`;
+const payeeBankPage = (rows,tip) => `<div style="margin-top:16px">
+  <div class="card pad" style="padding:16px 18px 6px">
+    <div class="list-head" style="margin-bottom:12px"><div><h3 style="margin:0 0 4px">银行收款人</h3><p class="sub" style="margin:0">${tip}</p></div><div class="acts"><a href="#">＋ 添加收款人</a></div></div>
+    <div class="chip-row" style="margin-bottom:4px"><button class="chip on">全部</button><button class="chip">同名账户</button><button class="chip">第三方账户</button></div>
+  </div>
+  ${table(['收款人','账户类型','币种','开户行','账号','风控状态','操作'],rows)}
+</div>`;
+const cpBank = payeeBankPage([
+  ['Everway Global Limited','<span class="badge">同名</span>　<span class="sub-inline">提现到自己账户</span>','USD','SINGAPORE GULF BANK','****0069','<span class="ok">已通过</span>','<a href="#">转出</a>　<a href="#">删除</a>'],
+  ['Sunrise Trading Pte Ltd','<span class="badge gray">第三方</span>　<span class="sub-inline">付款给他人</span>','USD','DBS BANK','****8821','<span class="ok">已通过</span>','<a href="#">转出</a>　<a href="#">删除</a>']
+],'<b>同名</b>＝户名与贵司主体一致，出款记为<b>提现</b>；<b>第三方</b>＝其他收款人，出款记为<b>付款</b>。');
+
+/* =============== 业务形态变体 =============== */
+/* 只做法币：无数币账户 */
+const assetsFiatOnly = `<div>
+  <div class="sec-title">法币账户</div>
+  <div class="acct-grid">
+    ${acct('usd','$','USD','687.16','687.16','687.16')}
+    ${acct('eur','€','EUR','0','0','0')}
+  </div>
+</div>`;
+
+/* 只做承兑：转入银行账户仅同名充值 */
+const inFiatOTC = `<div class="layout">
+  <section class="card pad">
+    <div class="list-head"><div><h3 style="margin:0 0 4px">银行转入账户</h3><p class="sub" style="margin:0">承兑业务仅支持<b>同名充值</b>，请从贵司同名银行账户汇入。</p></div><div class="acts"><a href="#">查看不可用账户（1）</a><a href="#">＋ 申请账户</a></div></div>
+    <p class="label">币种</p>
+    <div class="chip-row"><button class="chip on"><span class="coin usd">$</span>USD</button></div>
+    <p class="label">银行账户</p>
+    <div class="va-grid">
+      ${vaCard('同名 VA','Everway Global Limited','0069','SINGAPORE GULF BANK B.S.C.','USD','已激活','本公司（同名）',[['同名充值',1],['三方收款',0]])}
+      ${vaCard('同名 VA','Everway Global Limited','0070','SINGAPORE GULF BANK B.S.C.','USD','已激活','本公司（同名）',[['同名充值',1],['三方收款',0]])}
+    </div>
+  </section>
+  ${rail([
+    '<b>仅限同名：</b>承兑业务只接受<b>贵司同名账户</b>汇入，非同名汇款将被退回。',
+    '<b>汇款人一致：</b>汇款户名须与贵司主体名称完全一致，否则无法自动入账。',
+    '<b>处理时间：</b>银行转账通常需要 1-3 个工作日，到账以银行实际到账时间为准。'
+  ])}
+</div>`;
+
+/* 只做法币：转出资金来源为法币，第三方可选 */
+const outFiatOnly = `<div class="layout">
+  <section class="card pad">
+    <h3>转出到银行账户</h3>
+    <p class="sub">选择转出资金来源与金额，再选择收款人。币种不一致时在本页内嵌换汇，无需跳转。</p>
+    <p class="label">转出资金来源</p>
+    <div class="chip-row"><button class="chip on"><span class="coin usd">$</span>USD</button><button class="chip"><span class="coin eur">€</span>EUR</button></div>
+    <p class="label">转出金额</p>
+    <div class="field"><input placeholder="请输入金额"><span class="suffix"><span class="coin usd">$</span>USD</span></div>
+    <div class="helper"><span>可用余额：687.16 USD</span><span class="link">全部转出</span></div>
+    <p class="label">收款方类型</p>
+    <div class="chip-row"><button class="chip on">同名账户</button><button class="chip">第三方账户</button></div>
+    <div class="row-label"><p class="label" style="margin:0">收款人</p><a class="link" href="#">＋ 添加收款账户</a></div>
+    <button class="select">请选择收款人</button>
+    <p class="label">费用承担方</p>
+    <div class="opt-grid"><button class="opt on"><span><strong>双方共同承担费用（SHA）</strong></span></button><button class="opt"><span><strong>您单方面承担费用（OUR）</strong></span></button></div>
+    <p class="label">用途</p>
+    <button class="select">请选择</button>
+    <p class="label">附言（仅支持大小写英文字母、数字、空格、.&amp;）</p>
+    <button class="select" style="text-align:left">请输入附言　0 / 50</button>
+    <div class="summary">
+      <div class="summary-row"><span>转出到</span><b>银行账户 · --</b></div>
+      <div class="summary-row"><span>收款方类型</span><b>同名账户</b></div>
+      <div class="summary-row"><span>出款币种</span><b>USD</b></div>
+      <div class="summary-row"><span>出款手续费</span><b>-- USD</b></div>
+      <div class="summary-row total"><span>预计到账</span><b>-- USD</b></div>
+    </div>
+    <button class="btn-primary">提交</button>
+  </section>
+  ${rail([
+    '<b>账户核验：</b>转出前需添加收款人银行账户，账户需通过风控审核。',
+    '<b>处理时间：</b>银行转账常规 0~2 个工作日到账，跨境跨行可能延迟。',
+    '<b>同名与第三方：</b>纯法币业务两者均可，同名记为提现，第三方记为付款。',
+    '<b>风控规则：</b>所有转出订单均经过风控审核，保障资金安全。'
+  ], railCard('银行收款人','维护同名（提现）与第三方（付款）的银行账户，转出时直接选取。','去维护'))}
+</div>`;
+
+/* 记录：按形态过滤 */
+const IN_ROWS=[
+  ['104260827182743558165','2026-08-27 18:27:43','<span class="badge">数币</span>','链上地址 0x7a41…3f21','USDT','<span class="pos">+ 1,234.00</span>','0','<span class="ok">成功</span>','<a href="#">查看</a>'],
+  ['104260827165721664191','2026-08-27 16:57:21','<span class="badge gray">同名充值</span>','同名 VA · ****0069','USD','<span class="pos">+ 1,200.00</span>','0 USD','<span class="ok">成功</span>','<a href="#">查看</a>'],
+  ['100260821184146236198','2026-08-21 18:41:46','<span class="badge gray">三方收款</span>','机构大账户 · Sunrise Trading','USD','<span class="pos">+ 298.50</span>','0 USD','<span class="ok">成功</span>','<a href="#">查看</a>']
+];
+const OUT_ROWS=[
+  ['205260827182743558165','2026-08-27 18:12:03','<span class="badge">数币转出</span>','0x7a41…3f21','USDT','<span class="neg">- 2,000.00</span>','1 USDT','<span class="ok">成功</span>','<a href="#">查看</a>'],
+  ['205260826114508229910','2026-08-26 11:45:08','<span class="badge gray">法币 · 同名</span>','Everway Global · ****0069','USD','<span class="neg">- 12,000.00</span>','8 USD','<span class="ok">成功</span>','<a href="#">查看</a>'],
+  ['205260825095512004432','2026-08-25 09:55:12','<span class="badge gray">法币 · 第三方</span>','Sunrise Trading Pte Ltd','USD','<span class="neg">- 8,420.50</span>','8 USD','<span class="ok">成功</span>','<a href="#">查看</a>']
+];
+const EX_ROWS=[
+  ['106260827191549893202','2026-08-27 19:15:49','<span class="badge">法换数</span>','<span class="neg">- 500 USD</span><br><span class="pos">+ 499 USDT</span>','1 USDT = 1 USD','1 USD','<span class="ok">成功</span>','<a href="#">查看</a>'],
+  ['107260827170418583178','2026-08-27 17:04:18','<span class="badge">数换法</span>','<span class="neg">- 100 USDT</span><br><span class="pos">+ 99.8 USD</span>','1 USD = 1 USDT','0.2 USD','<span class="ok">成功</span>','<a href="#">查看</a>'],
+  ['106260523214710486345','2026-08-23 21:47:10','<span class="badge gray">换汇 FX</span>','<span class="neg">- 178 USD</span><br><span class="pos">+ 162.5 EUR</span>','1 USD = 0.9130 EUR','0.36 USD','<span class="ok">成功</span>','<a href="#">查看</a>']
+];
+const pick=(rows,keep)=>rows.filter(r=>keep.some(k=>r[2].includes(k)));
+const inRec=p=>listPage(['交易 ID','交易类型','订单状态','开始日期'],['交易 ID','时间','标的','来源','币种','金额','手续费','状态','操作'],
+  p==='fiat'?pick(IN_ROWS,['同名充值','三方收款']):p==='otc'?pick(IN_ROWS,['数币','同名充值']):IN_ROWS);
+const outRec=p=>listPage(['交易 ID','交易类型','订单状态','开始日期'],['交易 ID','时间','类型','收款人','币种','金额','手续费','状态','操作'],
+  p==='fiat'?pick(OUT_ROWS,['法币']):p==='otc'?pick(OUT_ROWS,['数币转出','法币 · 同名']):OUT_ROWS);
+const exRec=p=>listPage(['交易 ID','交易类型','订单状态','开始日期'],['交易 ID','时间','类型','交易金额','汇率','手续费','状态','操作'],
+  p==='fiat'?pick(EX_ROWS,['换汇 FX']):p==='otc'?pick(EX_ROWS,['法换数','数换法']):EX_ROWS);
+
+/* =============== 菜单（按业务形态生成） =============== */
+const NOTE_IN='<b>命名</b>：转入 / Transfer In，替代法币味过重的「入金」。<br><b>VA 去重</b>：原「充值 › 充值法币」与「收款工具」是同一批账户，合并为唯一入口。账户按<b>户名归属</b>分类——<b>同名 VA</b>（户名＝贵司）/ <b>机构大账户</b>（户名＝服务商客资账户）；是否支持<b>同名充值 / 三方收款</b>是<b>独立的能力标签</b>，由渠道决定。';
+const NOTE_EX='兑换放在<b>转入与转出中间</b>：钱进来 → 换成想要的 → 钱出去。兑换后钱仍在账户里，是形态转换而非转出。英文建议用 <b>Convert</b>。';
+
+function bizGroup(p){
+  const inTabs=[], exTabs=[], outTabs=[];
+  if(p!=='fiat') inTabs.push({label:'数币地址', html:inCrypto});
+  inTabs.push({label:'银行账户', html:p==='otc'?inFiatOTC:inFiat});
+  inTabs.push({label:'转入记录', html:inRec(p)});
+  if(p!=='fiat') exTabs.push({label:'数法兑换', html:exFC});
+  if(p!=='otc')  exTabs.push({label:'实时换汇', html:exFX});
+  exTabs.push({label:'兑换记录', html:exRec(p)});
+  if(p!=='fiat') outTabs.push({label:'转出到数币地址', html:outCrypto});
+  outTabs.push({label:'转出到银行账户', html:p==='fiat'?outFiatOnly:outFiat});
+  outTabs.push({label:'转出记录', html:outRec(p)});
+  const noteOut = p==='fiat'
+    ? '纯法币形态：<b>同名（提现）与第三方都可用</b>，合并在一个页面，由<b>收款方类型</b>切换。'
+    : p==='otc'
+    ? '承兑形态：<b>同名进 → 承兑 → 同名出</b>。法币转出<b>第三方账户置灰不可选</b>，只能提回贵司同名账户。'
+    : '<b>数币侧不分同名/异名</b>，直接选地址。<br><b>法币侧必须区分</b>：资金来源为数币（承兑）时第三方置灰，切为法币余额后可付第三方。<br>币种不一致时<b>本页内嵌兑换</b>一并执行。';
+  return { title:'资产', items:[
+    { key:'assets', label:'资产', icon:'◈',
+      note: p==='fiat'?'纯法币形态：<b>不展示数币账户</b>。':'本期保留卡片式，仅把<b>数币账户提到法币账户之前</b>，每张卡片直接给出<b>转入 / 转出 / 兑换</b>三个动作，不用回到菜单再选币种。',
+      tabs:[{label:'资产', html:p==='fiat'?assetsFiatOnly:assetsOverview}] },
+    { key:'in',  label:'转入', icon:'↓', note:p==='otc'?'承兑形态：转入<b>仅支持同名充值</b>，机构大账户与三方收款不开放。':NOTE_IN, tabs:inTabs },
+    { key:'exchange', label:'兑换', icon:'⇄', note:p==='otc'?'承兑形态：只有<b>数法兑换</b>，不开放法币间换汇。':p==='fiat'?'纯法币形态：只有<b>实时换汇</b>（FX）。':NOTE_EX, tabs:exTabs },
+    { key:'out', label:'转出', icon:'↑', note:noteOut, tabs:outTabs }
+  ]};
+}
+const cpBankOTC = `<div style="margin-top:16px">
+  <div class="card pad" style="padding:16px 18px">
+    <div class="list-head" style="margin:0"><div><h3 style="margin:0 0 4px">银行收款人</h3><p class="sub" style="margin:0">承兑业务<b>仅支持同名账户</b>，不可添加第三方收款人。</p></div><div class="acts"><a href="#">＋ 添加同名账户</a></div></div>
+  </div>
+  ${table(['收款人','账户类型','币种','开户行','账号','风控状态','操作'],[
+    ['Everway Global Limited','<span class="badge">同名</span>　<span class="sub-inline">提现到自己账户</span>','USD','SINGAPORE GULF BANK','****0069','<span class="ok">已通过</span>','<a href="#">转出</a>　<a href="#">删除</a>']
+  ])}
+</div>`;
+function bookGroup(p){
+  const items=[];
+  if(p!=='fiat') items.push({ key:'cp-addr', label:'数币地址簿', icon:'⌖',
+    note:p==='otc'
+      ? '承兑形态：地址簿<b>只放贵司自己的钱包地址</b>，充值与提币共用同一批地址，不能添加对手方地址。'
+      : '<b>不按收款人/汇款人拆表。</b>大部分客户是从自己钱包（MetaMask 等）充进来、再提回同一个地址——拆成两张表就要<b>录两遍、风控扫两遍</b>。<br>所以做成<b>一张地址表 + 用途标签</b>：勾「转出」可作提币目标，勾「转入来源」用于来账登记核验，两者可同时勾选。<br><b>归属</b>（我的钱包 / 对手方）只是标签，用于风控分级与报表，不影响录入次数。',
+    tabs:[{label:'地址列表', html:addrBook(p)}] });
+  items.push({ key:'cp-payee', label:'银行收款人', icon:'◉',
+    note:p==='otc'
+      ? '承兑形态：收款人<b>只能是贵司同名账户</b>，不支持添加第三方收款人。'
+      : '法币这边<b>不需要用途标签</b>：转入用的是平台发的 VA（在<b>转入 › 银行账户</b>，客户没得选），这里的银行账户<b>只用于付出去</b>，两者物理上就是不同的东西。<br>方向差异已由<b>同名（提现）/ 第三方（付款）</b>表达。',
+    tabs:[{label:'收款人列表', html:p==='otc'?cpBankOTC:cpBank}] });
+  return { title:'地址与账户', items };
+}
+
+function buildMenu(p){ return [
+  { items:[{ key:'dashboard', label:'仪表盘', icon:'◫', tabs:[{label:'概览', html:p==='fiat'?assetsFiatOnly:assetsOverview}] }]},
+  bizGroup(p),
+  bookGroup(p),
+  { title:'卡业务', req:'card', items:[
+    { key:'card-list', label:'卡片列表', icon:'▭', tabs:[{label:'全部', html:table(['卡号','卡种','币种','余额','状态','操作'],[['**** 4821','虚拟卡','USD','1,200.00','<span class="ok">正常</span>','<a href="#">充值</a>　<a href="#">冻结</a>']])},{label:'虚拟卡', html:empty()},{label:'实体卡', html:empty()}] },
+    { key:'card-order', label:'卡订单', icon:'▣', tabs:[{label:'消费', html:empty()},{label:'退款', html:empty()},{label:'ATM', html:empty()}] },
+    { key:'card-bill', label:'卡账单', icon:'≣', tabs:[{label:'账单周期', html:empty()},{label:'账单明细', html:empty()}] }
+  ]},
+  { title:'收单业务', req:'payment', items:[
+    { key:'checkout', label:'支付单', icon:'▤', tabs:[{label:'收银台', html:empty()},{label:'支付链接', html:empty()},{label:'订阅', html:empty()}] },
+    { key:'settlement', label:'结算单', icon:'▦', tabs:[{label:'待结算', html:empty()},{label:'已结算', html:empty()}] },
+    { key:'pay-refund', label:'退款单', icon:'↺', tabs:[{label:'退款申请', html:empty()},{label:'退款记录', html:empty()}] },
+    { key:'pay-config', label:'支付配置', icon:'⚙', tabs:[{label:'收银台配置', html:empty('配置项占位')},{label:'结算配置', html:empty('配置项占位')}] }
+  ]},
+  { title:'报表中心', items:[
+    { key:'report', label:'余额明细', icon:'▥', tabs:[
+      ...(p==='fiat'?[]:[{label:'数币', html:listPage(['账户','币种','类型','开始日期'],['时间','币种','变动','余额','关联单号'],[['2026-08-27 18:27','USDT','<span class="pos">+1,234.00</span>','824,560.25','1042608…']])}]),
+      {label:'法币', html:listPage(['账户','币种','类型','开始日期'],['时间','币种','变动','余额','关联单号'],[['2026-08-27 16:57','USD','<span class="pos">+1,200.00</span>','435,211.22','1042608…']])}] }
+  ]},
+  { title:'导出中心', items:[{ key:'export', label:'我的导出', icon:'⇩', tabs:[{label:'导出任务', html:table(['任务','范围','创建时间','状态','操作'],[['入金记录导出','2026-08','2026-08-28 09:12','<span class="ok">已完成</span>','<a href="#">下载</a>']])}] }]},
+  { title:'开发者中心', items:[{ key:'api', label:'API 配置', icon:'{ }', tabs:[{label:'密钥管理', html:empty('密钥占位')},{label:'Webhook', html:empty('Webhook 占位')},{label:'IP 白名单', html:empty('白名单占位')}] }]},
+  { title:'设置中心', items:[
+    { key:'roles', label:'角色与权限', icon:'⚙', tabs:[{label:'成员', html:empty()},{label:'角色', html:empty()}] },
+    { key:'agreement', label:'我的协议', icon:'▤', tabs:[{label:'协议列表', html:empty()}] },
+    { key:'security', label:'个人与安全', icon:'☗', tabs:[{label:'个人信息', html:empty('资料占位')},{label:'安全设置', html:empty('安全设置占位')}] }
+  ]}
+];}
+
+const PROFILES={full:['card','payment'],fiat:[],otc:[]};
+const nav=document.getElementById('nav'),tabbar=document.getElementById('tabbar'),subtabbar=document.getElementById('subtabbar'),stage=document.getElementById('stage'),noteEl=document.getElementById('note');
+const state={profile:'full',item:'in',tab:0};
+const groups=()=>buildMenu(state.profile).filter(g=>!g.req||PROFILES[state.profile].includes(g.req));
+const allItems=()=>groups().flatMap(g=>g.items.map(i=>({...i,group:g.title||''})));
+
+function renderNav(){
+  nav.innerHTML=groups().map(g=>`<div class="nav-group">${g.title?`<div class="group-title">${g.title}</div>`:''}
+    ${g.items.map(i=>`<button class="nav-link${state.item===i.key?' active':''}" data-key="${i.key}"><span class="nav-icon">${i.icon}</span><span>${i.label}</span></button>`).join('')}</div>`).join('');
+  nav.querySelectorAll('.nav-link').forEach(b=>b.onclick=()=>{state.item=b.dataset.key;state.tab=0;renderNav();render();});
+}
+function bindChoices(){
+  stage.querySelectorAll('.opt-grid').forEach(g=>g.querySelectorAll('.opt').forEach(o=>o.onclick=()=>{g.querySelectorAll('.opt').forEach(x=>x.classList.remove('on'));o.classList.add('on');}));
+  stage.querySelectorAll('.chip-row').forEach(g=>g.querySelectorAll('.chip').forEach(o=>o.onclick=()=>{g.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));o.classList.add('on');}));
+}
+function render(){
+  const item=allItems().find(i=>i.key===state.item);
+  if(!item)return;
+  document.getElementById('pageTitle').textContent=item.label;
+  document.getElementById('crumb').innerHTML=`${item.group?item.group+' / ':''}<b>${item.label}</b>`;
+  const tabs=item.tabs||[];
+  tabbar.innerHTML=tabs.map((t,i)=>`<button class="tab${i===state.tab?' active':''}" data-i="${i}">${t.label}</button>`).join('');
+  tabbar.style.display=tabs.length>1?'flex':'none';
+  tabbar.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{state.tab=+b.dataset.i;render();});
+  subtabbar.style.display='none';
+  stage.innerHTML=tabs.length?tabs[state.tab].html:'';
+  noteEl.innerHTML=item.note||''; noteEl.style.display=item.note?'block':'none';
+  bindChoices(); window.scrollTo({top:0,behavior:'smooth'});
+}
+document.getElementById('profile').onchange=e=>{
+  state.profile=e.target.value;
+  const keys=allItems().map(i=>i.key);
+  if(!keys.includes(state.item))state.item=keys[0];
+  state.tab=0;renderNav();render();
+};
+renderNav();render();
+})();
+</script>
+</body>
+</html>

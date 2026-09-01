@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>EX 商户端｜提现到法币账户</title>
+  <style>
+    :root{--purple:#7c36f5;--purple-soft:#f4efff;--blue:#4158f5;--green:#12b981;--ink:#273248;--muted:#7b879f;--line:#dfe5ef;--bg:#f5f6f9;--danger:#e5484d;--amber:#b9780b}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}button,input,select,textarea{font:inherit}.app{min-height:100vh}.sidebar{position:fixed;inset:0 auto 0 0;width:252px;background:#fff;border-right:1px solid var(--line);padding:0 18px;overflow:auto}.brand{height:78px;display:flex;align-items:center;gap:12px;font-size:28px;font-weight:900;color:#1f2937}.mark{width:34px;height:34px;transform:rotate(45deg);background:linear-gradient(135deg,#253cf4 0 52%,#ff562f 52%);border-radius:4px}.group{margin:18px 7px 8px;color:#20b87d;font-weight:800}.group.purple{color:var(--purple)}.nav{width:100%;height:52px;border:0;background:transparent;border-radius:12px;text-align:left;padding:0 18px;color:#566176;font-size:16px;font-weight:650;cursor:pointer}.nav.active{background:#eef1ff;color:#4f55e8}.nav span{display:inline-block;width:28px}.main{margin-left:252px;min-width:900px}.topbar{height:78px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 30px;color:#74809a;font-size:17px;gap:20px}.topbar b{color:#4a5670}.tabs{height:66px;display:flex;align-items:end;gap:38px;padding:0 32px;border-bottom:1px solid var(--line)}.tab{border:0;background:transparent;padding:0 12px 17px;font-size:16px;font-weight:800;color:#313b4d}.tab.active{color:var(--purple);border-bottom:3px solid var(--purple)}.content{display:grid;grid-template-columns:minmax(680px,980px) minmax(260px,360px);gap:24px;padding:24px 32px 40px}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:28px;box-shadow:0 3px 12px #2635520a}.title{font-size:22px;margin:0 0 4px}.subtitle{color:var(--muted);margin:0 0 25px}.field{margin:0 0 22px}.labelrow{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;font-weight:750}.balance{font-size:12px;color:#65749a}.chips{display:grid;grid-template-columns:1fr 1fr;gap:12px;border:1px solid var(--line);background:#fafbfe;padding:12px;border-radius:12px}.chip{height:66px;border:1px solid #d8e0ec;background:#fff;border-radius:11px;color:#3a465d;font-size:17px;font-weight:800;cursor:pointer}.chip.active{border:2px solid var(--purple);background:#faf7ff;color:var(--purple)}.coin{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;margin-right:9px;color:#fff;font-size:13px}.coin.usdt{background:#14aa7b}.coin.usdc{background:#1597d5}.amountrow{display:grid;grid-template-columns:1fr 130px;border:1px solid #d8e0ec;border-radius:10px;overflow:hidden}.amountrow input{height:54px;border:0;outline:0;padding:0 17px;font-size:18px}.amountrow .unit{border-left:1px solid var(--line);font-weight:800;text-align:center;color:#4d5970;background:#fff}.rate-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.rate-head button{border:0;background:transparent;color:#347af2;cursor:pointer}.rates{display:grid;grid-template-columns:1fr 1fr;gap:12px}.rate{position:relative;min-height:122px;border:1px solid #d8e0ec;border-radius:12px;background:#fff;padding:17px;text-align:left;cursor:pointer;color:var(--ink)}.rate.active{border:2px solid var(--purple);background:#faf7ff;padding:16px}.rate.disabled{background:#f6f7f9;color:#a0a8b6;cursor:not-allowed}.rate strong{display:block;font-size:18px}.rate .value{font-size:17px;font-weight:850;color:#402875;margin-top:11px}.rate.disabled .value{color:#a0a8b6}.rate small{display:block;margin-top:6px;color:var(--muted)}.rate.disabled small{color:#a0a8b6}.badge{position:absolute;right:12px;top:12px;padding:3px 8px;border-radius:20px;background:#eee7ff;color:#7032db;font-size:11px;font-weight:800}.rate.disabled .badge{background:#e7e9ed;color:#929aa7}.select,textarea{width:100%;border:1px solid #d8e0ec;border-radius:10px;background:#fff;color:#374258;padding:0 15px;outline:0}.select{height:50px}textarea{height:76px;padding-top:12px;resize:vertical}.fee-choices{display:grid;grid-template-columns:1fr 1fr;gap:12px}.fee-choice{height:64px;border:1px solid #d8e0ec;border-radius:10px;background:#fff;font-weight:750;color:#4c576d;cursor:pointer}.fee-choice.active{border:2px solid var(--purple);background:#faf7ff;color:var(--purple)}.verification{margin:0 0 18px;padding:13px 15px;border:1px solid #f0d39a;border-radius:10px;background:#fff8e9;color:#875b13;line-height:1.6}.verification b{color:#69430a}.verification a{color:#347af2;font-weight:800;text-decoration:none;margin-left:8px}.summary{background:#f5f2ff;border-radius:12px;padding:16px 18px}.row{display:flex;justify-content:space-between;margin:9px 0}.row b{color:#354159}.row.total{border-top:1px solid #ddd5f5;padding-top:12px;font-size:16px}.row.total b{color:var(--purple)}.actions{display:flex;justify-content:flex-end;margin-top:22px}.primary{height:44px;border:0;border-radius:9px;background:var(--purple);color:#fff;padding:0 28px;font-weight:800;cursor:pointer}.primary:disabled{opacity:.45;cursor:not-allowed}.sidecard{background:#fff;border:1px solid var(--line);border-radius:18px;padding:23px;margin-bottom:18px}.sidecard h3{margin:0 0 16px;font-size:18px}.sidecard.alert h3{color:var(--danger)}.sidecard ul{padding-left:20px;color:#66728a}.sidecard li{margin:12px 0}.notice{margin-top:10px;padding:11px 13px;border-radius:9px;background:#fff8e9;border:1px solid #f0d39a;color:#8f6114}.notice.good{background:#edf9f5;border-color:#bee8d9;color:#087b5d}.mask{display:none;position:fixed;inset:0;background:#17203375;z-index:20;align-items:center;justify-content:center}.mask.show{display:flex}.modal{width:min(560px,90vw);background:#fff;border-radius:14px;padding:26px;box-shadow:0 20px 60px #17203355}.modal h2{margin:0 0 18px}.modal .check{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line)}.modal .check div{background:#fff;padding:12px}.modal .check span{display:block;color:var(--muted);font-size:12px}.modal .buttons{display:flex;justify-content:flex-end;gap:10px;margin-top:22px}.secondary{height:40px;border:1px solid var(--line);background:#fff;border-radius:8px;padding:0 18px;cursor:pointer}.hidden{display:none!important}.toast{display:none;position:fixed;left:50%;top:28px;transform:translateX(-50%);background:#263248;color:#fff;padding:10px 18px;border-radius:8px;z-index:40}.toast.show{display:block}@media(max-width:1150px){.content{grid-template-columns:1fr}.right{display:none}}@media(max-width:760px){.sidebar{display:none}.main{margin-left:0;min-width:0}.content{padding:16px}.rates,.chips,.fee-choices{grid-template-columns:1fr}.tabs{overflow:auto}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><i class="mark"></i><span>APay</span></div>
+    <button class="nav"><span>▦</span>仪表盘</button>
+    <div class="group">● 资产</div>
+    <button class="nav"><span>▣</span>资产</button>
+    <button class="nav"><span>◉</span>充值</button>
+    <button class="nav active"><span>⊙</span>提现</button>
+    <div class="group purple">● 我的卡片</div>
+    <button class="nav"><span>▤</span>卡片列表</button>
+    <button class="nav"><span>▤</span>卡订单</button>
+    <div class="group purple">● 兑换</div>
+    <button class="nav"><span>◌</span>实时换汇</button>
+    <button class="nav"><span>◌</span>数法兑换</button>
+    <div class="group">● 交易对手方</div>
+    <button class="nav"><span>▥</span>对手方账户</button>
+  </aside>
+  <main class="main">
+    <header class="topbar"><span>☰</span><span>⟳</span><b>资产　/　提现</b></header>
+    <nav class="tabs"><button class="tab">提到数币地址</button><button class="tab active">提到法币账户</button><button class="tab">提现记录</button></nav>
+    <div class="content">
+      <section class="card">
+        <h1 class="title">提现到法币账户</h1>
+        <p class="subtitle">选择 USDT 或 USDC，输入提现金额和汇率类型，再提现到您的同名 USD 银行账户。</p>
+
+        <div class="field">
+          <div class="labelrow"><span>提现钱包</span></div>
+          <div class="chips">
+            <button class="chip active" data-token="USDT"><i class="coin usdt">₮</i>USDT</button>
+            <button class="chip" data-token="USDC"><i class="coin usdc">$</i>USDC</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="labelrow"><span>提现金额</span><span class="balance" id="balance">可用余额：132,440.24 USDT</span></div>
+          <div class="amountrow"><input id="amount" type="number" min="0" step="0.01" value="60000" placeholder="请输入金额" aria-label="提现金额"><input class="unit" id="unit" value="USDT" readonly aria-label="提现币种"></div>
+        </div>
+
+        <div class="field">
+          <div class="rate-head"><b>选择汇率</b><button id="refresh"></div>
+          <div class="rates">
+            <button class="rate" data-rate="fixed" aria-disabled="false"><strong>1:1 固定汇率</strong><span class="value" id="fixedValue">1 USDT = 1.0000 USD</span><small id="fixedRule">单笔达到 50,000 USD 等值可选择</small><em class="badge" id="fixedBadge">已开通</em></button>
+            <button class="rate active" data-rate="realtime"><strong>实时汇率</strong><span class="value" id="liveValue">1 USDT = 0.9988 USD</span><small id="liveRule">按当前市场实时报价执行</small><em class="badge" id="liveBadge">实时报价</em></button>
+          </div>
+          <div class="notice" id="rateNotice">您已开通固定汇率提现，本笔达到 50,000 USD 等值，可选择1:1固定汇率。</div>
+        </div>
+
+        <div class="field">
+          <div class="labelrow"><span>提现到</span><a href="#" onclick="event.preventDefault();toast('演示：进入新增同名法币账户')" style="color:#347af2;text-decoration:none">＋ 添加同名账户</a></div>
+          <select class="select" id="account"><option value="">请选择账户证明信审核通过的同名银行账户</option><option value="BOC **** 8821">ABCD Trading Limited · BOC **** 8821 · USD ·</option><option value="HSBC **** 3906">ABCD Trading Limited · HSBC **** 3906 · USD </option><option disabled>ABCD Trading Limited · Citi **** 1026 · 账户证明信待审核（不可选）</option><option disabled>ABCD Trading Limited · Citi **** 1026 · 补充账户证明信（不可选）</option></select>
+        </div>
+
+        <div class="field"><div class="labelrow"><span>费用承担方</span></div><div class="fee-choices"><button class="fee-choice active" data-fee="SHA">双方共同承担费用（SHA）</button><button class="fee-choice" data-fee="OUR">您单方面承担费用（OUR）</button></div></div>
+        <div class="field"><div class="labelrow"><span>用途</span></div><select class="select" id="purpose"><option value="">请选择</option><option>货物贸易</option><option>服务贸易</option><option>其他经批准用途</option></select></div>
+        <div class="field"><div class="labelrow"><span>附言</span></div><textarea id="memo" maxlength="140" placeholder="请输入附言（选填）"></textarea></div>
+
+        <div class="summary">
+          <div class="row"><span>卖出金额</span><b id="sell">60,000.00 USDT</b></div>
+          <div class="row"><span>汇率类型</span><b id="modeText">实时汇率</b></div>
+          <div class="row"><span>当前汇率</span><b id="rateText">1 USDT = 0.9988 USD</b></div>
+          <div class="row"><span>预计手续费</span><b id="fee">125.00 USD</b></div>
+          <div class="row total"><span>预计到账</span><b id="receive">59,803.00 USD</b></div>
+        </div>
+        <div class="actions"><button class="primary" id="submit">确认提现</button></div>
+      </section>
+
+      <aside class="right">
+        <div class="sidecard alert"><h3>！重要提示</h3><ul><li><b>同名提现：</b>银行账户名称须与商户认证主体一致。</li><li><b>账户证明信：</b>审核时效为 T+1；审核通过后方可选择，仍无法选择时请联系客户经理。</li><li><b>固定汇率：</b>仅已开通客户且单笔达到 50,000 USD 等值时可选择。</li><li><b>实时汇率：</b>按市场报价执行，可能低于、等于或优于1:1。</li><li><b>报价有效期：</b>实时汇率提交前会再次校验，过期需重新确认。</li></ul></div>
+        <div class="sidecard"><h3>对手方账户</h3><p style="color:var(--muted)">仅展示已验证且与商户认证主体同名的 USD 银行账户。</p><button class="primary" style="width:100%" onclick="toast('演示：进入对手方账户管理')">管理法币账户</button></div>
+      </aside>
+    </div>
+  </main>
+</div>
+
+<div class="mask" id="mask"><div class="modal"><h2>确认提现信息</h2><div class="check"><div><span>提现币种</span><b id="confirmToken">USDT</b></div><div><span>提现金额</span><b id="confirmAmount">60,000.00</b></div><div><span>汇率类型</span><b id="confirmMode">实时汇率</b></div><div><span>预计到账</span><b id="confirmReceive">59,803.00 USD</b></div><div><span>收款账户</span><b id="confirmAccount">—</b></div><div><span>费用承担</span><b id="confirmFee">SHA</b></div></div><div class="notice">本页面为交互演示，不会实际提交提现订单。</div><div class="buttons"><button class="secondary" onclick="closeModal()">返回修改</button><button class="primary" onclick="closeModal();toast('演示：提现订单已提交')">确认提交</button></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+  const balances={USDT:132440.24,USDC:86620.50};
+  const quotes=[.9988,1.0012,.9994,1];
+  const threshold=50000;
+  let token='USDT',mode='realtime',feeMode='SHA',quoteIndex=0;
+  const $=id=>document.getElementById(id);
+  const money=n=>Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const rate=()=>mode==='fixed'?1:quotes[quoteIndex];
+  const fixedAvailable=()=>Number($('amount').value||0)>=threshold;
+
+  function render(){
+    const amount=Math.max(0,Number($('amount').value)||0),live=quotes[quoteIndex],available=fixedAvailable();
+    $('balance').textContent=`可用余额：${money(balances[token])} ${token}`;
+    $('unit').value=token;
+    $('fixedValue').textContent=`1 ${token} = 1.0000 USD`;
+    $('liveValue').textContent=`1 ${token} = ${live.toFixed(4)} USD`;
+    const fixed=document.querySelector('[data-rate="fixed"]');
+    fixed.classList.toggle('disabled',!available);fixed.setAttribute('aria-disabled',String(!available));
+    $('fixedRule').textContent=available?'本笔金额已达到 50,000 USD 等值':`还差 ${money(Math.max(0,threshold-amount))} USD 等值可选择`;
+    $('fixedBadge').textContent=available?'可选择':'未达门槛';
+    if(!available&&mode==='fixed')mode='realtime';
+    $('liveBadge').textContent=live>1?'当前更优':live===1?'与1:1相同':'实时报价';
+    $('liveRule').textContent=live>1?'当前市场报价优于1:1，仍按实时汇率计费':'按当前市场实时报价执行';
+    document.querySelectorAll('[data-rate]').forEach(x=>x.classList.toggle('active',x.dataset.rate===mode));
+    $('rateNotice').className=`notice ${available?'good':''}`;
+    $('rateNotice').textContent=available?'您已开通固定汇率提现，本笔达到 50,000 USD 等值，可选择1:1固定汇率。':'本笔未达到 50,000 USD 等值，1:1固定汇率暂不可选；您仍可按实时汇率提现。';
+    const service=amount*.0015+(feeMode==='OUR'?35:20),receive=Math.max(0,amount*rate()-service);
+    $('sell').textContent=`${money(amount)} ${token}`;$('modeText').textContent=mode==='fixed'?'1:1固定汇率':'实时汇率';
+    $('rateText').textContent=`1 ${token} = ${rate().toFixed(4)} USD`;$('fee').textContent=`${money(service)} USD`;$('receive').textContent=`${money(receive)} USD`;
+  }
+  document.querySelectorAll('[data-token]').forEach(b=>b.onclick=()=>{token=b.dataset.token;document.querySelectorAll('[data-token]').forEach(x=>x.classList.toggle('active',x===b));render()});
+  document.querySelectorAll('[data-rate]').forEach(b=>b.onclick=()=>{if(b.dataset.rate==='fixed'&&!fixedAvailable()){toast('本笔金额未达到 50,000 USD 等值，暂不可选择1:1固定汇率');return}mode=b.dataset.rate;render()});
+  document.querySelectorAll('[data-fee]').forEach(b=>b.onclick=()=>{feeMode=b.dataset.fee;document.querySelectorAll('[data-fee]').forEach(x=>x.classList.toggle('active',x===b));render()});
+  $('amount').oninput=render;$('refresh').onclick=()=>{quoteIndex=(quoteIndex+1)%quotes.length;render();toast('实时报价已刷新')};
+  $('submit').onclick=()=>{const amount=Number($('amount').value)||0,account=$('account').value,purpose=$('purpose').value;if(amount<=0){toast('请输入提现金额');return}if(amount>balances[token]){toast('提现金额不能超过可用余额');return}if(!account){toast('请选择收款银行账户');return}if(!purpose){toast('请选择提现用途');return}if(mode==='fixed'&&!fixedAvailable()){toast('当前金额不满足1:1固定汇率条件');return}$('confirmToken').textContent=token;$('confirmAmount').textContent=money(amount);$('confirmMode').textContent=mode==='fixed'?'1:1固定汇率':'实时汇率';$('confirmReceive').textContent=$('receive').textContent;$('confirmAccount').textContent=account;$('confirmFee').textContent=feeMode;$('mask').classList.add('show')};
+  function closeModal(){$('mask').classList.remove('show')}
+  function toast(text){const t=$('toast');t.textContent=text;t.classList.add('show');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.remove('show'),2200)}
+  $('mask').onclick=e=>{if(e.target===$('mask'))closeModal()};render();
+</script>
+</body>
+</html>

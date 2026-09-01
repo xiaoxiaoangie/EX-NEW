@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>数字资产支付后台</title>
+  <style>
+    :root {
+      --brand: #6d4aff;
+      --brand-dark: #5635e8;
+      --brand-soft: #f0edff;
+      --ink: #20222b;
+      --muted: #747985;
+      --line: #e8eaf0;
+      --canvas: #f6f7fa;
+      --card: #fff;
+      --success: #16a673;
+      --warning: #e58b19;
+      --danger: #e45151;
+      --sidebar: 248px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; font-family: Inter, "PingFang SC", "Microsoft YaHei", sans-serif; color: var(--ink); background: var(--canvas); }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    .app { min-height: 100vh; }
+
+    .sidebar {
+      position: fixed; inset: 0 auto 0 0; z-index: 30; width: var(--sidebar); overflow-y: auto;
+      background: #fff; border-right: 1px solid var(--line); transition: transform .25s ease;
+    }
+    .brand { height: 68px; display: flex; align-items: center; gap: 11px; padding: 0 22px; border-bottom: 1px solid var(--line); }
+    .brand-mark { display: grid; place-items: center; width: 32px; height: 32px; color: #fff; font-weight: 800; border-radius: 10px; background: linear-gradient(145deg, #8c72ff, #5934e7); box-shadow: 0 7px 16px #7556f040; }
+    .brand-name { font-size: 17px; font-weight: 750; letter-spacing: -.2px; }
+    .brand-name small { display: block; margin-top: 1px; color: #9a9eaa; font-size: 10px; font-weight: 500; letter-spacing: .5px; }
+    .nav { padding: 14px 12px 22px; }
+    .nav-section { margin-bottom: 5px; }
+    .nav-link, .nav-parent {
+      width: 100%; min-height: 43px; display: flex; align-items: center; gap: 11px; padding: 0 12px;
+      border: 0; border-radius: 8px; color: #555a66; background: transparent; text-align: left; text-decoration: none;
+      transition: color .15s, background .15s;
+    }
+    .nav-link:hover, .nav-parent:hover { color: var(--brand); background: #f7f5ff; }
+    .nav-link.active { color: var(--brand); background: var(--brand-soft); font-weight: 650; }
+    .nav-icon { width: 20px; text-align: center; font-size: 17px; filter: grayscale(.25); }
+    .nav-label { flex: 1; font-size: 14px; }
+    .chevron { color: #aaaeba; font-size: 12px; transition: transform .2s ease; }
+    .nav-section.open .chevron { transform: rotate(90deg); }
+    .subnav { display: none; margin: 2px 0 4px 43px; }
+    .nav-section.open .subnav { display: block; }
+    .subnav .nav-link { min-height: 37px; padding: 0 10px; font-size: 13px; position: relative; }
+    .subnav .nav-link::before { content: ""; position: absolute; left: -12px; width: 4px; height: 4px; border-radius: 50%; background: #c7cad2; }
+    .subnav .nav-link.active::before { width: 6px; height: 6px; background: var(--brand); }
+
+    .main { min-height: 100vh; margin-left: var(--sidebar); }
+    .topbar {
+      position: sticky; top: 0; z-index: 20; height: 68px; display: flex; align-items: center; gap: 18px;
+      padding: 0 28px; background: rgba(255,255,255,.94); border-bottom: 1px solid var(--line); backdrop-filter: blur(12px);
+    }
+    .menu-toggle { display: none; border: 0; background: transparent; font-size: 22px; }
+    .top-search { position: relative; width: min(360px, 35vw); }
+    .top-search input { width: 100%; height: 38px; padding: 0 14px 0 38px; border: 1px solid var(--line); border-radius: 9px; outline: none; background: #f8f9fb; }
+    .top-search input:focus { border-color: #aa98ff; background: #fff; box-shadow: 0 0 0 3px #6d4aff12; }
+    .top-search span { position: absolute; left: 13px; top: 9px; color: #9ca0aa; }
+    .top-actions { margin-left: auto; display: flex; align-items: center; gap: 11px; }
+    .icon-button { width: 38px; height: 38px; border: 1px solid var(--line); border-radius: 9px; background: #fff; color: #5e626d; }
+    .profile { display: flex; align-items: center; gap: 10px; margin-left: 5px; }
+    .avatar { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; color: #fff; background: #252833; font-size: 12px; font-weight: 700; }
+    .profile-name { font-size: 13px; font-weight: 650; }
+    .profile-role { margin-top: 2px; color: var(--muted); font-size: 11px; }
+
+    .content { padding: 28px; }
+    .page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 22px; }
+    .page-head h1 { margin: 0 0 6px; font-size: 24px; letter-spacing: -.4px; }
+    .page-head p { margin: 0; color: var(--muted); font-size: 13px; }
+    .date-chip { padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; color: #676b76; background: #fff; font-size: 12px; }
+
+    .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 15px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 2px 8px rgba(31,35,48,.025); }
+    .stat { min-height: 145px; padding: 20px; }
+    .stat-top { display: flex; align-items: center; justify-content: space-between; color: var(--muted); font-size: 13px; }
+    .stat-icon { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 9px; background: var(--brand-soft); color: var(--brand); font-size: 17px; }
+    .stat-value { margin: 20px 0 8px; font-size: 25px; font-weight: 760; letter-spacing: -.4px; }
+    .trend { color: var(--success); font-size: 12px; }
+    .trend.muted { color: var(--muted); }
+
+    .quick-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; padding: 14px; }
+    .action-btn { min-width: 110px; height: 38px; padding: 0 15px; border: 1px solid var(--line); border-radius: 8px; color: #4f5360; background: #fff; }
+    .action-btn:hover { color: var(--brand); border-color: #c7bbff; background: #faf9ff; }
+    .action-btn.primary { color: #fff; border-color: var(--brand); background: var(--brand); }
+    .action-btn.primary:hover { background: var(--brand-dark); }
+
+    .dashboard-grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(300px, .8fr); gap: 15px; }
+    .panel-head { min-height: 58px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; border-bottom: 1px solid var(--line); }
+    .panel-head h2 { margin: 0; font-size: 15px; }
+    .text-button { border: 0; color: var(--brand); background: transparent; font-size: 12px; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+    th, td { height: 52px; padding: 0 20px; border-bottom: 1px solid #f0f1f4; text-align: left; font-size: 12px; }
+    th { height: 42px; color: #8b8f99; background: #fafbfc; font-weight: 600; }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:hover { background: #fbfaff; }
+    .amount { font-weight: 650; }
+    .status { display: inline-flex; align-items: center; gap: 5px; padding: 4px 8px; border-radius: 99px; color: #147a59; background: #eaf8f3; font-size: 11px; }
+    .status.processing { color: #9a641c; background: #fff6e7; }
+    .status::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+    .currency { display: flex; align-items: center; gap: 9px; }
+    .coin { display: grid; place-items: center; width: 27px; height: 27px; border-radius: 50%; color: #fff; background: #25a17b; font-size: 10px; font-weight: 800; }
+    .coin.usd { background: #4285de; }
+    .asset-list { padding: 6px 20px 12px; }
+    .asset-row { display: grid; grid-template-columns: 1fr auto; align-items: center; min-height: 67px; border-bottom: 1px solid #f0f1f4; }
+    .asset-row:last-child { border-bottom: 0; }
+    .asset-balance { text-align: right; font-size: 13px; font-weight: 650; }
+    .asset-balance small { display: block; margin-top: 4px; color: var(--muted); font-weight: 400; }
+
+    .placeholder { display: none; min-height: 440px; padding: 36px; text-align: center; }
+    .placeholder.visible { display: grid; place-items: center; }
+    .placeholder-icon { width: 58px; height: 58px; display: grid; place-items: center; margin: 0 auto 16px; border-radius: 16px; color: var(--brand); background: var(--brand-soft); font-size: 25px; }
+    .placeholder h2 { margin: 0 0 8px; font-size: 20px; }
+    .placeholder p { max-width: 450px; margin: 0 auto 20px; color: var(--muted); font-size: 13px; line-height: 1.7; }
+    .overlay { display: none; position: fixed; inset: 0; z-index: 25; background: rgba(20,22,30,.35); }
+    .toast { position: fixed; right: 24px; bottom: 24px; z-index: 50; padding: 12px 16px; border-radius: 9px; color: #fff; background: #262933; box-shadow: 0 10px 30px #15172240; font-size: 13px; transform: translateY(80px); opacity: 0; transition: .25s; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    @media (max-width: 1100px) {
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .dashboard-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 760px) {
+      .sidebar { transform: translateX(-100%); box-shadow: 12px 0 30px rgba(23,25,35,.12); }
+      .sidebar.mobile-open { transform: translateX(0); }
+      .overlay.show { display: block; }
+      .main { margin-left: 0; }
+      .menu-toggle { display: block; }
+      .topbar { padding: 0 16px; }
+      .top-search, .profile-copy { display: none; }
+      .content { padding: 20px 16px; }
+      .page-head { align-items: flex-start; flex-direction: column; }
+      .stats { grid-template-columns: 1fr; }
+      .stat { min-height: 125px; }
+      .quick-actions { display: grid; grid-template-columns: 1fr 1fr; }
+      .action-btn { min-width: 0; }
+      .dashboard-grid { grid-template-columns: minmax(0, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar" aria-label="主导航">
+      <div class="brand">
+        <div class="brand-mark">B</div>
+        <div class="brand-name">BB Business<small>DIGITAL ASSET PAYMENT</small></div>
+      </div>
+      <nav class="nav" id="mainNav">
+        <div class="nav-section">
+          <a class="nav-link active" href="#dashboard" data-page="仪表盘" data-icon="◫"><span class="nav-icon">◫</span><span class="nav-label">仪表盘</span></a>
+        </div>
+        <div class="nav-section open">
+          <button class="nav-parent" type="button" aria-expanded="true"><span class="nav-icon">◈</span><span class="nav-label">资产中心</span><span class="chevron">›</span></button>
+          <div class="subnav"><a class="nav-link" href="#my-assets" data-page="我的资产" data-icon="◈">我的资产</a></div>
+        </div>
+        <div class="nav-section open">
+          <button class="nav-parent" type="button" aria-expanded="true"><span class="nav-icon">⇄</span><span class="nav-label">钱包交易中心</span><span class="chevron">›</span></button>
+          <div class="subnav"><a class="nav-link" href="#wallet-in" data-page="充值/收款" data-icon="↓">充值/收款</a><a class="nav-link" href="#wallet-out" data-page="提现/付款" data-icon="↗">提现/付款</a><a class="nav-link" href="#fiat-crypto" data-page="数法兑换" data-icon="≈">数法兑换</a><a class="nav-link" href="#exchange" data-page="实时换汇" data-icon="⇆">实时换汇</a><a class="nav-link" href="#collection-tools" data-page="收款工具" data-icon="⊕">收款工具</a></div>
+        </div>
+        <div class="nav-section">
+          <button class="nav-parent" type="button" aria-expanded="false"><span class="nav-icon">▭</span><span class="nav-label">卡业务</span><span class="chevron">›</span></button>
+          <div class="subnav"><a class="nav-link" href="#cards" data-page="卡片列表" data-icon="▭">卡片列表</a><a class="nav-link" href="#card-orders" data-page="卡订单" data-icon="▣">卡订单</a><a class="nav-link" href="#card-bills" data-page="卡账单" data-icon="≣">卡账单</a></div>
+        </div>
+        <div class="nav-section">
+          <button class="nav-parent" type="button" aria-expanded="false"><span class="nav-icon">◉</span><span class="nav-label">交易对手方</span><span class="chevron">›</span></button>
+          <div class="subnav"><a class="nav-link" href="#address-book" data-page="地址簿" data-icon="⌖">地址簿</a><a class="nav-link" href="#counterparties" data-page="对手方账户" data-icon="◉">对手方账户</a></div>
+        </div>
+        <div class="nav-section">
+          <button class="nav-parent" type="button" aria-expanded="false"><span class="nav-icon">⇩</span><span class="nav-label">导出中心</span><span class="chevron">›</span></button>
+          <div class="subnav"><a class="nav-link" href="#exports" data-page="我的导出" data-icon="⇩">我的导出</a></div>
+        </div>
+        <div class="nav-section">
+          <button class="nav-parent" type="button" aria-expanded="false"><span class="nav-icon">▥</span><span class="nav-label">报表中心</span><span class="chevron">›</span></button>
+          <div class="subnav"><a class="nav-link" href="#balance-report" data-page="余额明细" data-icon="▥">余额明细</a></div>
+        </div>
+        <div class="nav-section">
+          <button class="nav-parent" type="button" aria-expanded="false"><span class="nav-icon">⌨</span><span class="nav-label">开发者中心</span><span class="chevron">›</span></button>
+          <div class="subnav"><a class="nav-link" href="#api" data-page="API 配置" data-icon="{ }">API 配置</a></div>
+        </div>
+        <div class="nav-section">
+          <button class="nav-parent" type="button" aria-expanded="false"><span class="nav-icon">⚙</span><span class="nav-label">设置中心</span><span class="chevron">›</span></button>
+          <div class="subnav"><a class="nav-link" href="#roles" data-page="角色与权限" data-icon="⚙">角色与权限</a><a class="nav-link" href="#agreements" data-page="我的协议" data-icon="▤">我的协议</a></div>
+        </div>
+      </nav>
+    </aside>
+
+    <div class="overlay" id="overlay"></div>
+    <main class="main">
+      <header class="topbar">
+        <button class="menu-toggle" id="menuToggle" type="button" aria-label="打开导航">☰</button>
+        <div class="top-search"><span>⌕</span><input id="searchInput" type="search" placeholder="搜索订单、账户或交易…" aria-label="全局搜索"></div>
+        <div class="top-actions">
+          <button class="icon-button" type="button" data-toast="帮助中心为原型示例">？</button>
+          <button class="icon-button" type="button" data-toast="暂无新通知">♢</button>
+          <div class="profile"><div class="avatar">KL</div><div class="profile-copy"><div class="profile-name">Kevin Liu</div><div class="profile-role">超级管理员</div></div></div>
+        </div>
+      </header>
+
+      <div class="content">
+        <section id="dashboardView">
+          <div class="page-head">
+            <div><h1>仪表盘</h1><p>欢迎回来，以下是今日业务概况。</p></div>
+            <div class="date-chip">更新于 2026-08-27 14:30 (UTC+8)</div>
+          </div>
+
+          <div class="stats">
+            <article class="card stat"><div class="stat-top"><span>总资产折合</span><span class="stat-icon">◈</span></div><div class="stat-value">$1,258,930.42</div><div class="trend">↑ 2.46% 较昨日</div></article>
+            <article class="card stat"><div class="stat-top"><span>今日收款</span><span class="stat-icon">↓</span></div><div class="stat-value">$86,420.00</div><div class="trend">↑ 12.08% 较昨日</div></article>
+            <article class="card stat"><div class="stat-top"><span>今日付款</span><span class="stat-icon">↗</span></div><div class="stat-value">$42,780.50</div><div class="trend muted">18 笔交易</div></article>
+            <article class="card stat"><div class="stat-top"><span>待处理事项</span><span class="stat-icon">◷</span></div><div class="stat-value">6</div><div class="trend muted">2 笔付款待审核</div></article>
+          </div>
+
+          <div class="card quick-actions" aria-label="快捷操作">
+            <button class="action-btn primary" data-page-jump="提现/付款">＋ 发起提现/付款</button>
+            <button class="action-btn" data-page-jump="充值/收款">↓ 充值/收款</button>
+            <button class="action-btn" data-page-jump="提现/付款">↑ 提现/付款</button>
+            <button class="action-btn" data-page-jump="实时换汇">⇆ 实时换汇</button>
+            <button class="action-btn" data-page-jump="对手方账户">◉ 添加对手方</button>
+          </div>
+
+          <div class="dashboard-grid">
+            <section class="card">
+              <div class="panel-head"><h2>近期交易</h2><button class="text-button" data-page-jump="充值/收款">查看全部 →</button></div>
+              <div class="table-wrap"><table><thead><tr><th>交易时间</th><th>类型</th><th>币种</th><th>金额</th><th>状态</th></tr></thead><tbody>
+                <tr><td>08-27 13:48</td><td>商户收款</td><td>USDT</td><td class="amount">+ 25,000.00</td><td><span class="status">成功</span></td></tr>
+                <tr><td>08-27 12:16</td><td>供应商付款</td><td>USD</td><td class="amount">- 8,420.50</td><td><span class="status processing">处理中</span></td></tr>
+                <tr><td>08-27 10:32</td><td>数法兑换</td><td>USDT → USD</td><td class="amount">50,000.00</td><td><span class="status">成功</span></td></tr>
+                <tr><td>08-26 18:09</td><td>银行充值</td><td>USD</td><td class="amount">+ 100,000.00</td><td><span class="status">成功</span></td></tr>
+              </tbody></table></div>
+            </section>
+            <section class="card">
+              <div class="panel-head"><h2>资产概览</h2><button class="text-button" data-page-jump="我的资产">资产详情 →</button></div>
+              <div class="asset-list">
+                <div class="asset-row"><div class="currency"><span class="coin">T</span><div><strong>USDT</strong><div class="profile-role">Tether</div></div></div><div class="asset-balance">824,560.25<small>≈ $823,719.20</small></div></div>
+                <div class="asset-row"><div class="currency"><span class="coin usd">$</span><div><strong>USD</strong><div class="profile-role">US Dollar</div></div></div><div class="asset-balance">435,211.22<small>≈ $435,211.22</small></div></div>
+                <div class="asset-row"><div class="currency"><span class="coin" style="background:#2775ca">U</span><div><strong>USDC</strong><div class="profile-role">USD Coin</div></div></div><div class="asset-balance">0.00<small>≈ $0.00</small></div></div>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="card placeholder" id="placeholderView">
+          <div><div class="placeholder-icon" id="placeholderIcon">◈</div><h2 id="placeholderTitle">资产</h2><p id="placeholderCopy">该页面已纳入导航原型。后续可在此接入具体的业务表单、列表和审批流程。</p><button class="action-btn primary" id="backDashboard">返回仪表盘</button></div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('overlay');
+      const dashboard = document.getElementById('dashboardView');
+      const placeholder = document.getElementById('placeholderView');
+      const title = document.getElementById('placeholderTitle');
+      const icon = document.getElementById('placeholderIcon');
+      const navLinks = [...document.querySelectorAll('.nav-link[data-page]')];
+
+      function closeMobileNav() {
+        sidebar.classList.remove('mobile-open');
+        overlay.classList.remove('show');
+      }
+
+      function showPage(pageName, pageIcon = '◈') {
+        navLinks.forEach(link => link.classList.toggle('active', link.dataset.page === pageName));
+        const activeLink = navLinks.find(link => link.dataset.page === pageName);
+        if (activeLink) {
+          const group = activeLink.closest('.nav-section');
+          if (group && group.querySelector('.nav-parent')) {
+            group.classList.add('open');
+            group.querySelector('.nav-parent').setAttribute('aria-expanded', 'true');
+          }
+        }
+        if (pageName === '仪表盘') {
+          dashboard.style.display = 'block';
+          placeholder.classList.remove('visible');
+          document.title = '仪表盘 - BB Business';
+        } else {
+          dashboard.style.display = 'none';
+          placeholder.classList.add('visible');
+          title.textContent = pageName;
+          icon.textContent = pageIcon;
+          document.title = `${pageName} - BB Business`;
+        }
+        closeMobileNav();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      document.querySelectorAll('.nav-parent').forEach(button => {
+        button.addEventListener('click', () => {
+          const group = button.closest('.nav-section');
+          const open = group.classList.toggle('open');
+          button.setAttribute('aria-expanded', String(open));
+        });
+      });
+
+      navLinks.forEach(link => link.addEventListener('click', event => {
+        event.preventDefault();
+        showPage(link.dataset.page, link.dataset.icon || link.querySelector('.nav-icon')?.textContent || '◈');
+      }));
+
+      document.querySelectorAll('[data-page-jump]').forEach(button => button.addEventListener('click', () => {
+        const page = button.dataset.pageJump;
+        const link = navLinks.find(item => item.dataset.page === page);
+        showPage(page, link?.dataset.icon || '→');
+      }));
+
+      document.getElementById('menuToggle').addEventListener('click', () => {
+        sidebar.classList.add('mobile-open');
+        overlay.classList.add('show');
+      });
+      overlay.addEventListener('click', closeMobileNav);
+      document.addEventListener('keydown', event => { if (event.key === 'Escape') closeMobileNav(); });
+      document.getElementById('backDashboard').addEventListener('click', () => showPage('仪表盘', '◫'));
+
+      const toast = document.getElementById('toast');
+      let toastTimer;
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+      }
+      document.querySelectorAll('[data-toast]').forEach(button => button.addEventListener('click', () => showToast(button.dataset.toast)));
+      document.getElementById('searchInput').addEventListener('keydown', event => {
+        if (event.key === 'Enter') showToast(event.currentTarget.value.trim() ? `正在搜索：${event.currentTarget.value.trim()}` : '请输入搜索关键词');
+      });
+    })();
+  </script>
+</body>
+</html>
