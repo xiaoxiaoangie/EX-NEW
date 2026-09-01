@@ -115,7 +115,8 @@
   .va-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
   .va{padding:14px;border:1px solid var(--line);border-radius:10px;background:#fff}
   .va-top{display:flex;align-items:flex-start;gap:8px;margin-bottom:10px}
-  .va-bank{flex:1;font-size:12px;font-weight:650;line-height:1.5}
+  .va-bank{flex:1;font-size:11px;color:var(--muted);line-height:1.6}
+  .va-bankname{font-size:13px;font-weight:750;line-height:1.5;margin-bottom:8px;display:flex;align-items:center;gap:6px}
   .tag{padding:2px 7px;border-radius:5px;background:var(--brand-soft);color:var(--brand);font-size:10px;font-weight:650;white-space:nowrap}
   .tag.gray{background:#f0f1f5;color:#8b8f9c}
   .tag.green{background:#eaf8f3;color:#16a673}
@@ -123,8 +124,8 @@
   .tag.off{background:#f7f8fa;color:#b4b8c2;text-decoration:line-through}
   .caps{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px;padding-top:9px;border-top:1px dashed var(--line)}
   .caps-k{color:#a8adb9;font-size:10px;margin-right:2px;line-height:16px}
-  .va-acct{padding:8px 10px;border-radius:7px;background:#f7f8fa;font-size:12px;letter-spacing:.5px;margin-bottom:8px}
-  .va-meta{color:var(--muted);font-size:11px;line-height:1.8}
+  .va-acct{padding:10px 12px;border-radius:7px;background:#f7f8fa;font-size:15.5px;font-weight:750;letter-spacing:1px;color:var(--ink);margin-bottom:8px;font-variant-numeric:tabular-nums}
+  .va-meta{color:var(--muted);font-size:11px;line-height:1.8;display:flex;align-items:center;gap:6px}
   .list-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
   .list-head .acts{display:flex;gap:14px;font-size:11.5px}
 
@@ -200,6 +201,7 @@
             <option value="full">数币＋法币（全业务）</option>
             <option value="fiat">只做法币业务</option>
             <option value="otc">只做承兑（同名进 → 承兑 → 同名出）</option>
+            <option value="card">只做卡业务</option>
           </select>
         </div>
         <div class="avatar">KL</div>
@@ -254,8 +256,9 @@ const inCrypto = `<div class="layout">
 /* --- 入金 · 收款账户（法币，含原收款工具） --- */
 const vaCard = (kind,name,acct,bank,cur,st,ownName,caps) => `<div class="va">
   <div class="va-top"><span class="tag${kind==='机构大账户'?' blue':''}">${kind}</span><span class="va-bank">${name}</span><span class="tag green">${st}</span></div>
+  <div class="va-bankname">▣ ${bank}</div>
   <div class="va-acct">**** **** **** ${acct}</div>
-  <div class="va-meta">▣ ${bank}<br>户名：${ownName}&nbsp;&nbsp;·&nbsp;&nbsp;地区：SG&nbsp;&nbsp;·&nbsp;&nbsp;<span class="tag gray">${cur}</span></div>
+  <div class="va-meta"><span>地区：SG</span>·<span class="tag gray">${cur}</span></div>
   <div class="caps"><span class="caps-k">可用能力</span>${caps.map(c=>`<span class="tag ${c[1]?'green':'off'}">${c[0]}</span>`).join('')}</div></div>`;
 const inFiat = `<div class="layout">
   <section class="card pad">
@@ -644,7 +647,7 @@ function buildMenu(p){ return [
   ]}
 ];}
 
-const PROFILES={full:['card','payment'],fiat:[],otc:[]};
+const PROFILES={full:['card','payment'],fiat:[],otc:[],card:['card']};
 const nav=document.getElementById('nav'),tabbar=document.getElementById('tabbar'),subtabbar=document.getElementById('subtabbar'),stage=document.getElementById('stage'),noteEl=document.getElementById('note');
 const state={profile:'full',item:'in',tab:0};
 const groups=()=>buildMenu(state.profile).filter(g=>!g.req||PROFILES[state.profile].includes(g.req));
