@@ -578,6 +578,7 @@ function bizGroup(p){
   if(p!=='fiat') exTabs.push({label:'数法兑换', html:exFC});
   if(p!=='otc')  exTabs.push({label:'实时换汇', html:exFX});
   exTabs.push({label:'兑换记录', html:exRec(p)});
+    exTabs.push({label:'换汇记录', html:exRec(p)});
   if(p!=='fiat') outTabs.push({label:'转出到数币地址', html:outCrypto});
   outTabs.push({label:'转出到银行账户', html:p==='fiat'?outFiatOnly:outFiat});
   outTabs.push({label:'转出记录', html:outRec(p)});
